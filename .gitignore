@@ -1,0 +1,42 @@
+# dependencies and build output
+node_modules/
+dist/
+build/
+coverage/
+*.log
+
+# environment and secrets (never commit)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+
+# data that must never reach Git
+db-dumps/
+*.sql.gz
+*.dump
+backups/
+uploads/
+private-media/
+patient-images/
+*.heic
+*.jpg
+*.jpeg
+*.png
+*.webp
+!docs/**/*.png
+!tests/fixtures/synthetic/**
+
+# editor and OS
+.DS_Store
+.vscode/
+.idea/
+
+vendor/
+
+# Laravel generated/local files
+bootstrap/cache/*.php
+database/*.sqlite
+

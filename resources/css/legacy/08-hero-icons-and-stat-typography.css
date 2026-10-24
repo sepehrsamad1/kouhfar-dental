@@ -1,0 +1,7 @@
+
+.hero-stat__icon{display:flex;align-items:center;justify-content:center;height:28px;color:#125ecb}
+.hero-stat__icon svg{display:block;width:24px;height:24px;flex:none}
+.hero .hero-book-icon{display:block;width:19px;height:19px;flex:none}
+.hero-stat b{font-family:"Estedad",sans-serif;font-size:21px;font-weight:600;font-synthesis:none;line-height:1.55;letter-spacing:normal;font-variant-numeric:normal;color:#11264f;margin-top:5px}
+.hero-stat small{font-family:var(--fa);font-size:12px;font-weight:600;line-height:1.8;letter-spacing:normal;color:#405475;margin-top:2px}
+@media(max-width:680px){.hero-stat b{font-size:19px}.hero-stat small{font-size:11px}.hero-stat__icon svg{width:22px;height:22px}}

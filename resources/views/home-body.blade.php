@@ -1,0 +1,495 @@
+<div class="hero-loader" id="heroLoader" aria-label="در حال بارگذاری">
+  <div class="hero-loader__in"><div class="hero-loader__mark">AK</div><div class="hero-loader__label">دندانپزشکی دیجیتال</div><div class="hero-loader__bar"><i></i></div><div class="hero-loader__percent" id="heroLoaderPercent">۰٪</div></div>
+</div>
+
+<div class="hero-video-modal" id="heroVideoModal" role="dialog" aria-modal="true" aria-label="معرفی کلینیک" aria-hidden="true">
+  <div class="hero-video-modal__card"><div class="hero-video-modal__preview" aria-hidden="true"></div><h3>معرفی کلینیک</h3><p>ویدیوی معرفی در نسخه‌ی نهایی سایت از همین پنجره پخش می‌شود.</p><button type="button" id="heroVideoClose">بستن</button></div>
+</div>
+
+
+
+<!-- ===================== HEADER ===================== -->
+<header class="header" id="header">
+  <div class="container header__in">
+    <a href="#home" class="brand" id="brand" data-nav aria-label="کلینیک دندانپزشکی دیجیتال دکتر آرش کوهفر">
+      <img class="brand__img" id="brandImg" alt="" width="160" height="40">
+      <span class="brand__fallback" aria-hidden="true">
+        <span class="brand__mark">AK</span>
+        <span class="brand__txt">
+          <span class="brand__name">Dr Arash KouhFar</span>
+          <span class="brand__role">Implantologist</span>
+        </span>
+      </span>
+    </a>
+    <button class="btn btn--primary btn--compact" data-book>رزرو نوبت</button>
+    <button class="burger" id="burger" aria-expanded="false" aria-controls="nav" aria-label="منو"><i></i><i></i></button>
+  </div>
+</header>
+
+<!-- ===================== NAV OVERLAY ===================== -->
+<div class="nav" id="nav" role="dialog" aria-modal="true" aria-label="منوی اصلی">
+  <div aria-hidden="true"></div>
+  <div class="container nav__body">
+    <ul class="nav__list">
+      <li class="nav__item" style="--i:0"><a class="nav__link" href="#home" data-nav><span class="nav__num">01</span>خانه</a></li>
+      <li class="nav__item" style="--i:1"><a class="nav__link" href="#services" data-nav><span class="nav__num">02</span>خدمات</a></li>
+      <li class="nav__item" style="--i:2"><a class="nav__link" href="#doctor" data-nav><span class="nav__num">03</span>درباره دکتر</a></li>
+      <li class="nav__item" style="--i:3"><a class="nav__link" href="#results" data-nav><span class="nav__num">04</span>نتایج درمان</a></li>
+      <li class="nav__item" style="--i:4"><a class="nav__link" href="#smile" data-nav><span class="nav__num">05</span>ارزیابی لبخند</a></li>
+      <li class="nav__item" style="--i:5"><a class="nav__link" href="#faq" data-nav><span class="nav__num">06</span>پرسش‌های متداول</a></li>
+      <li class="nav__item" style="--i:6"><button class="nav__link" data-ai><span class="nav__num">07</span>دستیار هوشمند</button></li>
+      <li class="nav__item" style="--i:7"><a class="nav__link" href="#contact" data-nav><span class="nav__num">08</span>تماس با ما</a></li>
+      <li class="nav__item" style="--i:8">
+        <button class="nav__link nav__link--cta" data-book><span class="diamond" aria-hidden="true"></span>رزرو نوبت</button>
+      </li>
+    </ul>
+  </div>
+  <div class="container nav__foot">
+    <span class="en">دندانپزشکی دیجیتال</span>
+    <span>شهرری، خیابان ۲۴ متری، نبش خیابان نفری، ساختمان عقیق، طبقه ۲، واحد ۸</span>
+  </div>
+</div>
+
+<main>
+<!-- ===================== HERO ===================== -->
+<section class="hero" id="home">
+  <div class="hero__pool" aria-hidden="true"></div>
+  <div class="container hero__grid">
+    <div class="hero__copy">
+      <h1>
+        <span class="hero__line1 reveal" style="--i:0">کلینیک دندانپزشکی دیجیتال</span>
+        <span class="hero__line2 reveal" style="--i:1">دکتر آرش کوهفر</span>
+      </h1>
+      <p class="hero__lede reveal" style="--i:2">درمان دقیق، زیبایی طبیعی، تجربه‌ای متفاوت از دندانپزشکی</p>
+      <div class="hero__cta reveal" style="--i:3">
+        <button class="btn btn--primary btn--lg" data-book>رزرو نوبت</button>
+        <a href="#services" class="btn btn--ghost btn--lg" data-nav>مشاهده خدمات</a>
+      </div>
+    </div>
+    <div class="hero__art">
+      <figure class="hero__figure" id="heroFigure">
+        <span class="hero__halo" aria-hidden="true"></span>
+        <img class="hero__img" id="heroImg" alt="" width="1108" height="1440" decoding="async">
+        <div class="slot" aria-hidden="true"><span class="slot__note">ASSET_01<b>فایل asset-01-doctor-hero.png را کنار همین صفحه قرار دهید</b></span></div>
+        <span class="hero__ground" aria-hidden="true"></span>
+      </figure>
+    </div>
+  </div>
+  <div class="hero__cue" aria-hidden="true"><i></i>ادامه صفحه</div>
+</section>
+<!-- ===================== SERVICES ===================== -->
+<section class="section section--paper" id="services">
+  <div class="container">
+    <div class="head head--split">
+      <div>
+        <p class="eyebrow reveal">خدمات</p>
+        <h2 class="h2 reveal" style="--i:1">خدمات کلینیک، از ایمپلنت دیجیتال تا زیبایی و ترمیم.</h2>
+      </div>
+      <p class="lede reveal" style="--i:2">هر خدمت با توضیح کامل، مراحل درمان و پرسش‌های رایج ارائه شده است. روی هر مورد بزنید تا جزئیات آن باز شود.</p>
+    </div>
+    <div class="svc" id="svcMount"></div>
+  </div>
+</section>
+
+<!-- ===================== RESULTS ===================== -->
+<section class="section section--bone" id="results">
+  <div class="container">
+    <div class="head head--split">
+      <div>
+        <p class="eyebrow reveal">نتایج درمان</p>
+        <h2 class="h2 reveal" style="--i:1">نتایج درمان، بدون توضیح اضافه.</h2>
+      </div>
+      <p class="lede reveal" style="--i:2">دستگیره را بکشید تا وضعیت پیش و پس از درمان را مقایسه کنید. کیس‌های جدید به‌سادگی به همین بخش اضافه می‌شوند.</p>
+    </div>
+    <div class="res reveal" style="--i:3">
+      <div class="res__tabs" role="tablist" aria-label="دسته‌بندی نتایج" id="resTabs"></div>
+      <div class="res__stage">
+        <div class="compare" id="compare" tabindex="0" role="slider" aria-label="مقایسه پیش و پس از درمان" aria-orientation="horizontal"
+             aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
+          <img id="cmpAfter" alt="" decoding="async">
+          <img id="cmpBefore" class="compare__before" alt="" decoding="async">
+          <span class="compare__tag compare__tag--b">قبل</span>
+          <span class="compare__tag compare__tag--a">بعد</span>
+          <span class="compare__handle"><span class="compare__grip" aria-hidden="true"><svg width="28" height="22" viewBox="0 0 28 22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="m9 6-5 5 5 5m10-10 5 5-5 5"/><path d="M14 6v10" opacity=".28"/></svg></span></span>
+        </div>
+        <div class="res__meta">
+          <p class="res__case" id="resCase">نمونه ۰۱</p>
+          <h3 class="res__title" id="resTitle">لمینت سرامیکی / اصلاح طرح لبخند</h3>
+          <p class="res__note" id="resNote">تصاویر واقعی ارائه‌شده توسط کلینیک. هر جفت تصویر تنها به همان کیس تعلق دارد و با کیس‌های دیگر ترکیب نمی‌شود.</p>
+          <p class="res__hint"><span class="diamond" aria-hidden="true"></span>برای مقایسه بکشید، یا از کلیدهای جهت‌دار استفاده کنید</p>
+          <div class="res__cta">
+            <button class="btn btn--ghost" data-service="aesthetic">مشاهده خدمات زیبایی</button>
+            <button class="btn btn--primary" data-book>رزرو نوبت</button>
+          </div>
+        </div>
+      </div>
+      <div class="res__slots" id="resSlots"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SMILE ASSESSMENT (DEMO) ===================== -->
+<section class="section section--ink smile" id="smile">
+  <div class="container">
+    <div class="smile__grid">
+      <div class="smile__copy">
+        <p class="eyebrow reveal">ارزیابی لبخند</p>
+        <h2 class="h2 reveal" style="--i:1">ارزیابی هوشمند لبخند</h2>
+        <p class="lede reveal" style="--i:2">با یک تصویر، نمایی از وضعیت ظاهری لبخند خود مشاهده کنید.</p>
+        <p class="smile__desc reveal" style="--i:3">تصویر دندان‌های خود را انتخاب کنید تا نمونه‌ای از نحوه ارزیابی دیجیتال لبخند را مشاهده کنید.</p>
+        <div class="smile__actions reveal" style="--i:4">
+          <button class="smile__cta" id="smileStart" type="button" aria-haspopup="dialog">
+            <span class="smile__ctaIcon" aria-hidden="true">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 8h3l2-2.5h6L17 8h3a1.5 1.5 0 011.5 1.5V18a1.5 1.5 0 01-1.5 1.5H4A1.5 1.5 0 012.5 18V9.5A1.5 1.5 0 014 8z"/><circle cx="12" cy="13.5" r="3.5"/></svg>
+            </span>
+            شروع ارزیابی لبخند
+          </button>
+          <p class="smile__note"><span class="diamond" aria-hidden="true"></span>نسخه نمایشی — تصویری ارسال یا ذخیره نمی‌شود</p>
+        </div>
+      </div>
+      <button class="smile__preview reveal" style="--i:2" id="smilePreview" type="button" aria-haspopup="dialog" aria-label="شروع ارزیابی هوشمند لبخند — نسخه نمایشی">
+        <span class="smile__previewTop">
+          <span class="smile__chip">نسخه نمایشی</span>
+          <span class="smile__previewLabel">ارزیابی هوشمند لبخند</span>
+        </span>
+        <span class="smile__frame">
+          <img id="smilePrevAfter" alt="" decoding="async">
+          <img id="smilePrevBefore" class="smile__frameBefore" alt="" decoding="async">
+          <span class="smile__frameTag smile__frameTag--b">قبل</span>
+          <span class="smile__frameTag smile__frameTag--a">بعد</span>
+          <span class="smile__frameDiv" aria-hidden="true"></span>
+          <span class="smile__frameGrip" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6M9 6l6 6-6 6" opacity=".55"/></svg>
+          </span>
+          <span class="smile__scan" aria-hidden="true"></span>
+        </span>
+        <span class="smile__previewHint">برای مشاهده نسخه نمایشی، اینجا را بزنید
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 6l-6 6 6 6"/></svg>
+        </span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DOCTOR ===================== -->
+<section class="section section--paper" id="doctor">
+  <div class="container">
+    <p class="eyebrow reveal">درباره دکتر</p>
+    <div class="doc">
+      <figure class="doc__figure reveal" id="docFigure" style="--i:1">
+        <img class="doc__img" id="docImg" alt="" width="1108" height="1440" loading="lazy" decoding="async">
+        <div class="slot" aria-hidden="true"><span class="slot__note">ASSET_01<b>تصویر برند کلینیک</b></span></div>
+        <figcaption class="doc__cap"><b>دکتر آرش کوهفر</b><span>به‌همراه تیم کلینیک</span></figcaption>
+      </figure>
+      <div class="doc__body">
+        <h2 class="doc__name reveal" style="--i:2">دکتر آرش کوهفر</h2>
+        <p class="doc__pos reveal" style="--i:3">دندانپزشکی دیجیتال با تمرکز بر دقت، زیبایی طبیعی و درمان شخصی‌سازی‌شده</p>
+        <div class="doc__phil reveal" style="--i:4">
+          <h3 class="doc__philH">رویکرد درمان</h3>
+          <p>طرح درمان پیش از شروع کار مشخص می‌شود؛ از بررسی اولیه و طراحی دیجیتال تا اجرای نهایی. هدف، نتیجه‌ای است که با چهره و ساختار طبیعی لبخند هماهنگ باشد و در گذر زمان طبیعی بماند.</p>
+        </div>
+        <div class="doc__creds reveal" style="--i:5">
+          <h3 class="doc__credsH">سوابق و مدارک</h3>
+          <div class="doc__credsL">
+            <span class="placeholder">تحصیلات — در انتظار اطلاعات کلینیک</span>
+            <span class="placeholder">دوره‌های تخصصی</span>
+            <span class="placeholder">سابقه فعالیت</span>
+            <span class="placeholder">عضویت‌ها</span>
+          </div>
+        </div>
+        <div class="doc__cta reveal" style="--i:6">
+          <button class="btn btn--primary" data-book>رزرو نوبت</button>
+          <button class="btn btn--ghost" data-ai>آشنایی بیشتر با دکتر</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== WHY US ===================== -->
+<section class="section section--ink" id="why">
+  <div class="container">
+    <div class="head head--split">
+      <div>
+        <p class="eyebrow reveal">رویکرد ما</p>
+        <h2 class="h2 reveal" style="--i:1">چهار اصل که در همه درمان‌ها ثابت می‌ماند.</h2>
+      </div>
+    </div>
+    <div class="why">
+      <div class="why__item reveal"><span class="why__n">01</span><div><h3 class="why__t">دندانپزشکی دیجیتال</h3><p class="why__d">استفاده از رویکردها و فناوری‌های دیجیتال برای افزایش دقت فرآیند درمان.</p></div></div>
+      <div class="why__item reveal" style="--i:1"><span class="why__n">02</span><div><h3 class="why__t">زیبایی طبیعی</h3><p class="why__d">تمرکز بر نتیجه‌ای متناسب با چهره و ساختار طبیعی لبخند.</p></div></div>
+      <div class="why__item reveal" style="--i:2"><span class="why__n">03</span><div><h3 class="why__t">درمان شخصی‌سازی‌شده</h3><p class="why__d">هر طرح درمان متناسب با شرایط و نیازهای فردی طراحی می‌شود.</p></div></div>
+      <div class="why__item reveal" style="--i:3"><span class="why__n">04</span><div><h3 class="why__t">توجه به جزئیات</h3><p class="why__d">تمرکز بر دقت و کیفیت در تمام مراحل درمان.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section class="section" id="faq">
+  <div class="container">
+    <div class="head head--split">
+      <div>
+        <p class="eyebrow reveal">پرسش‌های متداول</p>
+        <h2 class="h2 reveal" style="--i:1">پرسش‌های متداول</h2>
+      </div>
+      <p class="lede reveal" style="--i:2">پاسخ پرسش‌های عمومی درباره مسیر درمان و رزرو نوبت. برای بررسی شرایط اختصاصی، مشاوره حضوری لازم است.</p>
+    </div>
+    <div class="acc reveal" id="faqMount" style="--i:3;margin-block-start:clamp(24px,5vh,48px);max-width:80ch"></div>
+  </div>
+</section>
+
+<!-- ===================== CTA BAND ===================== -->
+<section class="band" id="booking-cta">
+  <div class="container band__in">
+    <p class="eyebrow reveal">رزرو نوبت</p>
+    <h2 class="reveal" style="--i:1">نوبت خود را در چند مرحله کوتاه رزرو کنید.</h2>
+    <p class="reveal" style="--i:2">خدمت، تاریخ و ساعت را انتخاب کنید و شماره تماس بگذارید. تأیید نهایی از طرف کلینیک انجام می‌شود.</p>
+    <div class="band__cta reveal" style="--i:3">
+      <button class="btn btn--primary btn--lg" data-book>رزرو نوبت</button>
+      <button class="btn btn--ghost btn--lg" data-ai>پرسش از دستیار هوشمند</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CONTACT ===================== -->
+<section class="section section--paper" id="contact">
+  <div class="container">
+    <div class="head head--split">
+      <div>
+        <p class="eyebrow reveal">تماس با کلینیک</p>
+        <h2 class="h2 reveal" style="--i:1">تماس با کلینیک</h2>
+      </div>
+    </div>
+    <div class="ct">
+      <div class="reveal" style="--i:2">
+        <div class="ct__rows" id="ctMount"></div>
+        <div style="display:flex;flex-wrap:wrap;gap:var(--s-3);margin-block-start:var(--s-6)">
+          <button class="btn btn--primary" data-book>رزرو نوبت</button>
+          <button class="btn btn--ghost" data-ai>پرسش سریع</button>
+        </div>
+      </div>
+      <div class="ct__map reveal" style="--i:3;padding:0;display:block">
+        <iframe title="موقعیت کلینیک دندانپزشکی دکتر آرش کوهفر در گوگل مپ" src="https://maps.google.com/maps?cid=14904391215910991147&amp;q=%DA%A9%D9%84%DB%8C%D9%86%DB%8C%DA%A9%20%D8%AF%D9%86%D8%AF%D8%A7%D9%86%D9%BE%D8%B2%D8%B4%DA%A9%DB%8C%20%D8%AF%DB%8C%D8%AC%DB%8C%D8%AA%D8%A7%D9%84%20%D8%AF%DA%A9%D8%AA%D8%B1%20%D8%A2%D8%B1%D8%B4%20%DA%A9%D9%88%D9%87%D9%81%D8%B1%D8%8C%20%D8%B4%D9%87%D8%B1%D8%B1%DB%8C%D8%8C%20%D8%AE%DB%8C%D8%A7%D8%A8%D8%A7%D9%86%20%D9%86%D9%81%D8%B1%DB%8C%D8%8C%20%D8%B3%D8%A7%D8%AE%D8%AA%D9%85%D8%A7%D9%86%20%D8%B9%D9%82%DB%8C%D9%82&amp;z=16&amp;hl=fa&amp;output=embed" width="600" height="450" style="position:absolute;inset:0;width:100%;height:100%;border:0" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>
+        <a href="https://maps.app.goo.gl/rQddN7iHYZitX6b27" target="_blank" rel="noopener noreferrer" class="btn btn--primary btn--compact" style="position:absolute;bottom:16px;left:16px;z-index:1">مسیریابی در گوگل مپ</a>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="ft">
+  <div class="container">
+    <div class="ft__grid">
+      <div class="ft__brand" id="ftBrand">
+        <img class="ft__brandImg" id="ftBrandImg" alt="" width="150" height="38">
+        <span class="ft__brandFallback" aria-hidden="true">Dr Arash KouhFar</span>
+        <p class="ft__name">کلینیک دندانپزشکی دیجیتال دکتر آرش کوهفر — درمان دقیق، زیبایی طبیعی.</p>
+      </div>
+      <div class="ft__col">
+        <h3>دسترسی سریع</h3>
+        <ul>
+          <li><a href="#home" data-nav>خانه</a></li>
+          <li><a href="#services" data-nav>خدمات</a></li>
+          <li><a href="#doctor" data-nav>درباره دکتر</a></li>
+          <li><a href="#results" data-nav>نتایج درمان</a></li>
+          <li><a href="#smile" data-nav>ارزیابی هوشمند لبخند</a></li>
+          <li><a href="#faq" data-nav>پرسش‌های متداول</a></li>
+          <li><button data-ai>دستیار هوشمند</button></li>
+        </ul>
+      </div>
+      <div class="ft__col"><h3>خدمات</h3><ul id="ftServices"></ul></div>
+      <div class="ft__col">
+        <h3>تماس با کلینیک</h3>
+        <p class="ft__addr">شهرری، خیابان ۲۴ متری، نبش خیابان نفری، ساختمان عقیق، طبقه ۲، واحد ۸</p>
+        <ul style="margin-block-start:var(--s-3)">
+          <li>تلفن: <a href="tel:+982155953553"><bdi dir="ltr">۰۲۱-۵۵۹۵۳۵۵۳</bdi></a></li>
+          <li>واتس‌اپ: <a href="https://wa.me/989194464951" target="_blank" rel="noopener noreferrer"><bdi dir="ltr">۰۹۱۹۴۴۶۴۹۵۱</bdi></a></li>
+          <li>اینستاگرام: <a href="https://www.instagram.com/dr.arash.kouhfar?stkn=OHRqcXVmNzl0ODJq" target="_blank" rel="noopener noreferrer">کلیک کنید</a></li>
+          <li>ساعات کاری: شنبه تا پنجشنبه (از ساعت ۱۲ ظهر تا ۸ شب)</li>
+        </ul>
+        <div style="margin-block-start:var(--s-4)"><button class="btn btn--light btn--compact" data-book>رزرو نوبت</button></div>
+      </div>
+    </div>
+    <div class="ft__bottom">
+      <span class="en">دندانپزشکی دیجیتال</span>
+      <span>نمونه اولیه ارائه — محتوای نهایی و اطلاعات تماس تکمیل خواهد شد.</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ===================== AI ASSISTANT ===================== -->
+<button class="fab" id="fab" aria-controls="ai" aria-expanded="false">
+  <span class="fab__dot" aria-hidden="true"></span><span>دستیار هوشمند</span>
+</button>
+
+<aside class="ai" id="ai" aria-label="دستیار هوشمند کلینیک">
+  <div class="ai__bar">
+    <span class="ai__avatar" aria-hidden="true">AK</span>
+    <span class="ai__id"><b>دستیار هوشمند کلینیک</b><span><i aria-hidden="true"></i>آنلاین · پاسخ‌های نمونه</span></span>
+    <button class="ai__close" id="aiClose" aria-label="بستن">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+  <div class="ai__log" id="aiLog" role="log" aria-live="polite"></div>
+  <div class="ai__quick" id="aiQuick"></div>
+  <form class="ai__form" id="aiForm">
+    <input class="ai__input" id="aiInput" placeholder="سؤال خود را بنویسید…" autocomplete="off" aria-label="پیام">
+    <button class="ai__send" type="submit" aria-label="ارسال">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 12H4M10 6l-6 6 6 6"/></svg>
+    </button>
+  </form>
+</aside>
+
+<!-- ===================== SERVICE SHEET ===================== -->
+<dialog class="sheet" id="sheet" aria-label="جزئیات خدمت">
+  <div class="sheet__panel">
+    <div class="sheet__bar">
+      <button class="iconbtn" id="sheetClose" aria-label="بستن">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <span class="sheet__barLabel">معرفی خدمت</span>
+      <button class="iconbtn" id="sheetPrev" aria-label="خدمت قبلی">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+      <button class="iconbtn" id="sheetNext" aria-label="خدمت بعدی">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 6l-6 6 6 6"/></svg>
+      </button>
+    </div>
+    <div class="sheet__body" id="sheetBody"></div>
+  </div>
+</dialog>
+
+<!-- ===================== BOOKING ===================== -->
+<dialog class="modal" id="bk" aria-label="رزرو نوبت">
+  <div class="modal__panel">
+    <div class="bk__bar" id="bkBar">
+      <img class="bk__barImg" id="bkBarImg" alt="" width="120" height="30">
+      <span class="bk__barTxt">Dr Arash KouhFar</span>
+      <button class="iconbtn" id="bkClose" aria-label="بستن">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+
+    <div class="bk__body">
+      <div class="container">
+        <div class="bk__rail" id="bkRail" aria-hidden="true"></div>
+
+        <!-- step 1 -->
+        <section class="bk__pane" data-step="1">
+          <h2 class="bk__h">انتخاب خدمت</h2>
+          <p class="bk__sub">خدمت مورد نظر خود را انتخاب کنید. اگر مطمئن نیستید، «مشاوره و بررسی اولیه» را انتخاب کنید.</p>
+          <div class="bk__opts" id="bkServices"></div>
+        </section>
+
+        <!-- step 2 -->
+        <section class="bk__pane" data-step="2">
+          <h2 class="bk__h">انتخاب تاریخ</h2>
+          <p class="bk__sub">تاریخ‌های نمایش‌داده‌شده نمونه‌اند و در نسخه نهایی از تقویم کلینیک خوانده می‌شوند.</p>
+          <div class="bk__dates" id="bkDates"></div>
+        </section>
+
+        <!-- step 3 -->
+        <section class="bk__pane" data-step="3">
+          <h2 class="bk__h">انتخاب ساعت</h2>
+          <p class="bk__sub" id="bkTimeSub">ساعت‌های خالی برای تاریخ انتخابی</p>
+          <div class="bk__times" id="bkTimes"></div>
+        </section>
+
+        <!-- step 4 -->
+        <section class="bk__pane" data-step="4">
+          <h2 class="bk__h">اطلاعات تماس</h2>
+          <p class="bk__sub">برای هماهنگی نهایی نوبت با شما تماس گرفته می‌شود.</p>
+          <div class="bk__fields">
+            <div class="field" id="fName">
+              <label for="bkName">نام و نام خانوادگی</label>
+              <input id="bkName" autocomplete="name" placeholder="مثلاً سارا محمدی">
+              <span class="field__err" id="eName"></span>
+            </div>
+            <div class="field" id="fPhone">
+              <label for="bkPhone">شماره موبایل</label>
+              <input id="bkPhone" dir="ltr" inputmode="numeric" autocomplete="tel" placeholder="09xxxxxxxxx" maxlength="13">
+              <span class="field__err" id="ePhone"></span>
+            </div>
+          </div>
+        </section>
+
+        <!-- step 5 -->
+        <section class="bk__pane" data-step="5">
+          <h2 class="bk__h">تأیید رزرو</h2>
+          <p class="bk__sub">اطلاعات را بررسی کنید و رزرو را تأیید نمایید.</p>
+          <div class="bk__review" id="bkReview"></div>
+          <p class="bk__note">این نمونه اولیه است و رزرو واقعی ثبت نمی‌شود. در نسخه نهایی، اطلاعات به سیستم نوبت‌دهی کلینیک ارسال خواهد شد.</p>
+        </section>
+
+        <!-- confirmation -->
+        <section class="bk__pane" data-step="6">
+          <div class="bk__ok">
+            <span class="bk__okIcon" aria-hidden="true">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+            </span>
+            <h2 class="bk__okH">رزرو شما با موفقیت ثبت شد</h2>
+            <p class="bk__sub">همکاران کلینیک برای تأیید نهایی با شما تماس می‌گیرند.</p>
+            <div class="bk__ref"><span class="bk__refK">کد پیگیری</span><span class="bk__refV" id="bkRef">—</span></div>
+            <div class="bk__review" id="bkDetails" hidden></div>
+            <div style="display:flex;flex-wrap:wrap;gap:var(--s-3)">
+              <button class="btn btn--ghost" id="bkShow">مشاهده جزئیات رزرو</button>
+              <button class="btn btn--primary" id="bkHome">بازگشت به صفحه اصلی</button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <div class="bk__foot" id="bkFoot">
+      <div class="container bk__footIn">
+        <button class="bk__back" id="bkBack" hidden>مرحله قبل</button>
+        <button class="btn btn--primary" id="bkNext" aria-disabled="true">مرحله بعد</button>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite">
+  <span class="diamond" aria-hidden="true"></span><span id="toastMsg"></span>
+</div>
+
+<!-- ===================== SMILE ASSESSMENT MODAL (DEMO) ===================== -->
+<dialog class="smile-modal smart-smile-v2" id="smileModal" aria-label="ارزیابی هوشمند لبخند">
+  <div class="smile-modal__panel">
+    <div class="smile-modal__bar">
+      <span class="smile-modal__brand">ارزیابی هوشمند لبخند</span>
+      <span class="smile-badge"><i aria-hidden="true"></i>نمایش نمایشی</span>
+      <button class="iconbtn" id="smileClose" aria-label="بستن">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="smile-modal__body">
+      <section class="ssa-stage is-now" data-ssa-stage="choose">
+        <div class="ssa-head"><span class="ssa-eyebrow"><i></i> تحلیل نمایشی با هوش مصنوعی</span><h2 class="ssa-title">مسیر نمونه را برای ارزیابی هوشمند لبخند انتخاب کنید</h2><p class="ssa-sub">هر مسیر یک مدل آماده‌ی قبل و بعد دارد. این تجربه صرفاً برای نمایش قابلیت‌های بصری سامانه است و تصویر یا داده‌ی شما را دریافت و تحلیل نمی‌کند.</p></div>
+        <div class="ssa-choice-grid">
+          <button type="button" class="ssa-choice" data-ssa-choice="gallery"><img class="ssa-choice__photo" src="assets/a-022.png" alt=""><span class="ssa-choice__shade"></span><span class="ssa-choice__content"><span class="ssa-choice__icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="9" cy="10" r="1.8"/><path d="M4.5 17.5l4.5-4.5 3.5 3.5 3-3 4 4"/></svg></span><b class="ssa-choice__title">انتخاب از گالری</b><span class="ssa-choice__desc">نمایش نمونه آماده‌ی شماره ۱: مقایسه‌ی رنگ، رسوبات سطحی و تراز دندان‌ها.</span><span class="ssa-choice__chip">مدل آماده‌ی گالری</span></span></button>
+          <button type="button" class="ssa-choice" data-ssa-choice="camera"><img class="ssa-choice__photo" src="assets/a-024.jpg" alt=""><span class="ssa-choice__shade"></span><span class="ssa-choice__content"><span class="ssa-choice__icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 8h3l2-2.5h6L17 8h3a1.5 1.5 0 011.5 1.5V18a1.5 1.5 0 01-1.5 1.5H4A1.5 1.5 0 012.5 18V9.5A1.5 1.5 0 014 8z"/><circle cx="12" cy="13.5" r="3.5"/></svg></span><b class="ssa-choice__title">گرفتن عکس با دوربین</b><span class="ssa-choice__desc">نمایش نمونه آماده‌ی شماره ۲: تمرکز بر بی‌نظمی چیدمان و ازدحام دندان‌های پیشین.</span><span class="ssa-choice__chip">مدل آماده‌ی دوربین</span></span></button>
+        </div>
+        <p class="ssa-note"><b>شفاف‌سازی:</b> در نسخه فعلی، این دو دکمه به دوربین یا گالری دستگاه دسترسی ندارند؛ برای ارائه‌ی تبلیغاتی، مدل‌های از پیش آماده‌شده نمایش داده می‌شوند.</p>
+      </section>
+
+      <section class="ssa-stage ssa-confirm" data-ssa-stage="confirm">
+        <div class="ssa-confirm__preview"><img id="ssaChosenImage" alt="نمونه انتخاب شده برای ارزیابی"><span class="ssa-confirm__source" id="ssaChosenSource"></span></div>
+        <div class="ssa-confirm__copy"><div class="ssa-head"><span class="ssa-eyebrow"><i></i> تصویر نمونه آماده است</span><h2 class="ssa-title">اسکن مجازی را شروع کنیم؟</h2><p class="ssa-sub">در چند ثانیه، روند نمایشی تشخیص نواحی قابل توجه اجرا و سپس نتیجه‌ی تعاملی نمایش داده می‌شود.</p></div><div class="ssa-steps"><span class="ssa-step">تشخیص محدوده‌ی لبخند</span><span class="ssa-step">نشانه‌گذاری نقاط قابل توجه</span><span class="ssa-step">آماده‌سازی مقایسه قبل و بعد</span></div><div class="ssa-confirm__actions"><button type="button" class="btn btn--primary" id="ssaStartScan">شروع اسکن مجازی</button><button type="button" class="btn btn--ghost" id="ssaChangeModel">تغییر نمونه</button></div></div>
+      </section>
+
+      <section class="ssa-stage ssa-processing" data-ssa-stage="scan" aria-live="polite">
+        <div class="ssa-scan-frame"><img id="ssaScanImage" alt="تصویر در حال اسکن"><span class="ssa-scanner"></span><span class="ssa-target ssa-target--a"></span><span class="ssa-target ssa-target--b"></span></div>
+        <div class="ssa-process-copy"><b id="ssaProcessTitle">در حال شناسایی محدوده‌ی لبخند…</b><span id="ssaProcessText">این فرایند یک شبیه‌سازی گرافیکی است.</span></div><div class="ssa-progress" aria-hidden="true"><i id="ssaProgress"></i></div><div class="ssa-percent" id="ssaPercent">۰٪</div>
+      </section>
+
+      <section class="ssa-stage ssa-result" data-ssa-stage="result">
+        <div class="ssa-result__visual"><div class="ssa-head"><span class="ssa-eyebrow"><i></i> نتیجه‌ی نمایشی</span><h2 class="ssa-title">نقشه‌ی مشاهده‌های ظاهری</h2><p class="ssa-sub">روی شماره‌های تصویر یا کارت‌های کنار آن بزنید تا ناحیه‌ی مربوطه برجسته شود.</p></div><div class="ssa-toggle" role="tablist" aria-label="نمای نتیجه"><button type="button" class="is-active" data-ssa-view="analysis" role="tab" aria-selected="true">نقشه‌ی ارزیابی</button><button type="button" data-ssa-view="compare" role="tab" aria-selected="false">قبل و بعد</button></div><div class="ssa-analysis-photo" id="ssaAnalysisPhoto"><img id="ssaBeforeImage" alt="نمونه پیش از درمان با نواحی قابل توجه"><div id="ssaZones"></div><div id="ssaHotspots"></div><span class="ssa-photo-label">تصویر قبل از درمان</span></div><div class="ssa-compare" id="ssaCompare"><div class="ssa-compare__pane"><img id="ssaCompareBefore" alt="نمونه قبل از درمان"><span>قبل</span></div><div class="ssa-compare__pane"><img id="ssaCompareAfter" alt="نمونه بعد از درمان"><span>بعد</span></div></div><p class="ssa-caption">نشانه‌گذاری‌ها فقط تفسیر بصریِ نمونه‌ها هستند و تشخیص یا توصیه پزشکی محسوب نمی‌شوند.</p></div>
+        <aside class="ssa-findings-panel"><div class="ssa-findings-panel__head"><h3>موارد قابل توجه</h3><p>با انتخاب هر مورد، محدوده‌ی همان مشاهده در تصویر سمت راست نمایش داده می‌شود.</p></div><div class="ssa-findings" id="ssaFindings"></div><div class="ssa-detail" id="ssaDetail" aria-live="polite"></div></aside>
+        <p class="ssa-disclaimer">این نتیجه یک دموی تبلیغاتی مبتنی بر تصاویر از پیش آماده است؛ هیچ‌گونه تحلیل واقعی تصویر، تشخیص پزشکی یا ذخیره‌سازی داده انجام نمی‌شود. تصمیم درمانی فقط پس از معاینه توسط پزشک امکان‌پذیر است.</p>
+        <div class="ssa-result-actions"><button type="button" class="btn btn--primary" data-book="مشاوره و بررسی اولیه" id="ssaConsult">درخواست مشاوره تخصصی</button><button type="button" class="btn btn--ghost" id="ssaRestart">ارزیابی یک نمونه دیگر</button></div>
+      </section>
+    </div>
+  </div>
+</dialog>

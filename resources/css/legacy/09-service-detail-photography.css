@@ -1,0 +1,4 @@
+
+#sheet .sd__photo{margin:24px 0 28px;padding:5px;background:#fff;border:1px solid rgba(24,57,85,.08);border-radius:22px;box-shadow:0 14px 32px -18px rgba(18,48,70,.35),0 3px 10px rgba(18,48,70,.05)}
+#sheet .sd__photo img{display:block;width:100%;height:auto;aspect-ratio:auto;border-radius:17px}
+@media(max-width:600px){#sheet .sd__photo{margin:20px 0 24px;padding:4px;border-radius:18px}#sheet .sd__photo img{border-radius:14px}}

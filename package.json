@@ -1,0 +1,27 @@
+{
+  "name": "kouhfar-dental-clinic",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Kouhfar dental clinic site and booking system. Task 05 modular web package.",
+  "engines": {
+    "node": ">=22 <23"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "install:all": "npm install --workspaces",
+    "dev": "node tools/dev-server.mjs",
+    "lint": "node tools/lint.mjs",
+    "typecheck": "node tools/typecheck.mjs",
+    "test": "node tools/test.mjs",
+    "build": "vite build",
+    "build:legacy": "node tools/build.mjs"
+  },
+  "type": "module",
+  "devDependencies": {
+    "laravel-vite-plugin": "^3.1",
+    "vite": "^8.0.0"
+  }
+}

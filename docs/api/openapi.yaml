@@ -1,0 +1,377 @@
+openapi: 3.1.0
+info:
+  title: Kouhfar Dental Clinic API
+  version: 0.3.0
+  description: Package 3 contract. Drafted, not implemented. Frontend and backend build against this file.
+servers:
+  - url: /
+tags:
+  - { name: public }
+  - { name: staff }
+  - { name: admin }
+  - { name: health }
+components:
+  securitySchemes:
+    staffSession:
+      type: apiKey
+      in: cookie
+      name: sid
+    followUpToken:
+      type: http
+      scheme: bearer
+  parameters:
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema: { type: string, minLength: 16, maxLength: 128 }
+    CsrfToken:
+      name: X-CSRF-Token
+      in: header
+      required: true
+      schema: { type: string }
+    Cursor:
+      name: cursor
+      in: query
+      schema: { type: string }
+    Limit:
+      name: limit
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 100, default: 20 }
+  responses:
+    Error:
+      description: Standard error envelope
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+  schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message, requestId]
+          properties:
+            code:
+              type: string
+              enum: [VALIDATION_FAILED, UNAUTHENTICATED, FORBIDDEN, NOT_FOUND, CONFLICT, SLOT_UNAVAILABLE, INVALID_STATE_TRANSITION, IDEMPOTENCY_KEY_REUSED, REQUEST_IN_PROGRESS, RATE_LIMITED, CSRF_INVALID, INTERNAL]
+            message: { type: string }
+            requestId: { type: string }
+            details:
+              type: array
+              items:
+                type: object
+                properties:
+                  field: { type: string }
+                  issue: { type: string }
+    Page:
+      type: object
+      required: [data]
+      properties:
+        data: { type: array, items: {} }
+        nextCursor: { type: [string, "null"] }
+    BookingStatus:
+      type: string
+      enum: [pending, confirmed, completed, cancelled, no_show, expired]
+    Timestamp:
+      type: string
+      format: date-time
+      description: ISO 8601 with offset. Server returns UTC (Z).
+    Service:
+      type: object
+      required: [id, name, durationMinutes]
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        durationMinutes: { type: integer, minimum: 1 }
+    Slot:
+      type: object
+      required: [startAt, endAt]
+      properties:
+        startAt: { $ref: '#/components/schemas/Timestamp' }
+        endAt: { $ref: '#/components/schemas/Timestamp' }
+    BookingRequest:
+      type: object
+      required: [serviceId, startAt, fullName, mobile]
+      properties:
+        serviceId: { type: string, format: uuid }
+        startAt: { $ref: '#/components/schemas/Timestamp' }
+        fullName: { type: string, minLength: 3, maxLength: 120 }
+        mobile: { type: string, description: 'Persian, Arabic, or Latin digits. Normalized on server.' }
+        verificationGrant: { type: string, description: 'Required only if D8 approved.' }
+      additionalProperties: false
+    BookingCreated:
+      type: object
+      required: [id, status, expiresAt, followUpToken]
+      properties:
+        id: { type: string, format: uuid }
+        status: { const: pending }
+        expiresAt: { $ref: '#/components/schemas/Timestamp' }
+        followUpToken: { type: string, description: 'One booking, limited action scope. Not a staff session.' }
+    Appointment:
+      type: object
+      required: [id, status, startAt, endAt, version]
+      properties:
+        id: { type: string, format: uuid }
+        status: { $ref: '#/components/schemas/BookingStatus' }
+        serviceId: { type: string, format: uuid }
+        practitionerId: { type: string, format: uuid }
+        startAt: { $ref: '#/components/schemas/Timestamp' }
+        endAt: { $ref: '#/components/schemas/Timestamp' }
+        expiresAt: { oneOf: [{ $ref: '#/components/schemas/Timestamp' }, { type: 'null' }] }
+        version: { type: integer }
+    TransitionRequest:
+      type: object
+      required: [action, expectedVersion]
+      properties:
+        action:
+          type: string
+          enum: [confirm, reject, cancel, complete, no_show, reschedule]
+        expectedVersion: { type: integer }
+        startAt: { $ref: '#/components/schemas/Timestamp' }
+        reason: { type: string, maxLength: 500 }
+      additionalProperties: false
+    Patient:
+      type: object
+      required: [id, fullName, mobile]
+      properties:
+        id: { type: string, format: uuid }
+        fullName: { type: string }
+        mobile: { type: string }
+        dateOfBirth: { type: [string, "null"], format: date }
+        archivedAt: { oneOf: [{ $ref: '#/components/schemas/Timestamp' }, { type: 'null' }] }
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string, format: email }
+        password: { type: string, minLength: 8, maxLength: 256 }
+      additionalProperties: false
+paths:
+  /health/live:
+    get:
+      tags: [health]
+      responses:
+        '200': { description: Process is up }
+  /health/ready:
+    get:
+      tags: [health]
+      description: Checks DB only. No details publicly.
+      responses:
+        '200': { description: Ready }
+        '503': { description: Not ready }
+  /api/public/services:
+    get:
+      tags: [public]
+      responses:
+        '200':
+          description: Active, public-bookable services
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { type: array, items: { $ref: '#/components/schemas/Service' } }
+  /api/public/availability:
+    get:
+      tags: [public]
+      parameters:
+        - { name: serviceId, in: query, required: true, schema: { type: string, format: uuid } }
+        - { name: date, in: query, required: true, schema: { type: string, format: date, description: 'Gregorian date in clinic timezone' } }
+      responses:
+        '200':
+          description: Free slots only. No patient data.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { type: array, items: { $ref: '#/components/schemas/Slot' } }
+        '400': { $ref: '#/components/responses/Error' }
+        '429': { description: Rate limited }
+  /api/public/booking-requests:
+    post:
+      tags: [public]
+      parameters:
+        - { $ref: '#/components/parameters/IdempotencyKey' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/BookingRequest' }
+      responses:
+        '201':
+          description: Pending request created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/BookingCreated' }
+        '409': { $ref: '#/components/responses/Error' }
+        '422': { $ref: '#/components/responses/Error' }
+        '429': { description: Rate limited }
+  /api/public/booking-requests/{id}:
+    get:
+      tags: [public]
+      security: [{ followUpToken: [] }]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200':
+          description: Own booking only, minimal fields
+          content: { application/json: { schema: { $ref: '#/components/schemas/Appointment' } } }
+        '401': { $ref: '#/components/responses/Error' }
+        '404': { description: Not found or not allowed (same response for both) }
+    delete:
+      tags: [public]
+      security: [{ followUpToken: [] }]
+      description: Cancel own pending or confirmed booking before D10 cutoff. Re-verification required if D8 approved.
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Cancelled, content: { application/json: { schema: { $ref: '#/components/schemas/Appointment' } } } }
+        '401': { $ref: '#/components/responses/Error' }
+        '409': { $ref: '#/components/responses/Error' }
+  /api/staff/auth/login:
+    post:
+      tags: [staff]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/LoginRequest' } } }
+      responses:
+        '200': { description: Session created, rotated cookie set }
+        '401': { description: Generic failure (non-enumerable), content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+        '429': { description: Locked or rate limited }
+  /api/staff/auth/logout:
+    post:
+      tags: [staff]
+      security: [{ staffSession: [] }]
+      parameters: [{ $ref: '#/components/parameters/CsrfToken' }]
+      responses:
+        '204': { description: Session revoked }
+  /api/staff/patients:
+    get:
+      tags: [staff]
+      security: [{ staffSession: [] }]
+      parameters:
+        - { $ref: '#/components/parameters/Cursor' }
+        - { $ref: '#/components/parameters/Limit' }
+        - { name: q, in: query, schema: { type: string, maxLength: 100 } }
+      responses:
+        '200':
+          description: Paginated, capped search. Near-matches flagged.
+          content: { application/json: { schema: { $ref: '#/components/schemas/Page' } } }
+        '401': { $ref: '#/components/responses/Error' }
+        '403': { $ref: '#/components/responses/Error' }
+    post:
+      tags: [staff]
+      security: [{ staffSession: [] }]
+      parameters:
+        - { $ref: '#/components/parameters/CsrfToken' }
+        - { $ref: '#/components/parameters/IdempotencyKey' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [fullName, mobile]
+              properties:
+                fullName: { type: string, minLength: 3, maxLength: 120 }
+                mobile: { type: string }
+                dateOfBirth: { type: [string, "null"], format: date }
+              additionalProperties: false
+      responses:
+        '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/Patient' } } } }
+        '409': { description: Possible duplicate; returned as flag, not merged, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+  /api/staff/appointments:
+    get:
+      tags: [staff]
+      security: [{ staffSession: [] }]
+      parameters:
+        - { $ref: '#/components/parameters/Cursor' }
+        - { $ref: '#/components/parameters/Limit' }
+        - { name: status, in: query, schema: { $ref: '#/components/schemas/BookingStatus' } }
+        - { name: from, in: query, schema: { $ref: '#/components/schemas/Timestamp' } }
+        - { name: to, in: query, schema: { $ref: '#/components/schemas/Timestamp' } }
+      responses:
+        '200': { description: Paginated list, content: { application/json: { schema: { $ref: '#/components/schemas/Page' } } } }
+    post:
+      tags: [staff]
+      security: [{ staffSession: [] }]
+      description: Staff direct booking (D7). Creates a confirmed booking.
+      parameters:
+        - { $ref: '#/components/parameters/CsrfToken' }
+        - { $ref: '#/components/parameters/IdempotencyKey' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [patientId, serviceId, startAt]
+              properties:
+                patientId: { type: string, format: uuid }
+                serviceId: { type: string, format: uuid }
+                practitionerId: { type: string, format: uuid }
+                startAt: { $ref: '#/components/schemas/Timestamp' }
+              additionalProperties: false
+      responses:
+        '201': { description: Confirmed, content: { application/json: { schema: { $ref: '#/components/schemas/Appointment' } } } }
+        '409': { $ref: '#/components/responses/Error' }
+  /api/staff/appointments/{id}/transitions:
+    post:
+      tags: [staff]
+      security: [{ staffSession: [] }]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+        - { $ref: '#/components/parameters/CsrfToken' }
+        - { $ref: '#/components/parameters/IdempotencyKey' }
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/TransitionRequest' } } }
+      responses:
+        '200': { description: Transition applied, content: { application/json: { schema: { $ref: '#/components/schemas/Appointment' } } } }
+        '403': { $ref: '#/components/responses/Error' }
+        '409': { description: INVALID_STATE_TRANSITION, SLOT_UNAVAILABLE, or version mismatch, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+        '422': { $ref: '#/components/responses/Error' }
+  /api/admin/users:
+    get:
+      tags: [admin]
+      security: [{ staffSession: [] }]
+      parameters:
+        - { $ref: '#/components/parameters/Cursor' }
+        - { $ref: '#/components/parameters/Limit' }
+      responses:
+        '200': { description: Paginated staff users, content: { application/json: { schema: { $ref: '#/components/schemas/Page' } } } }
+        '403': { $ref: '#/components/responses/Error' }
+    post:
+      tags: [admin]
+      security: [{ staffSession: [] }]
+      description: Account creation. No public registration exists.
+      parameters:
+        - { $ref: '#/components/parameters/CsrfToken' }
+        - { $ref: '#/components/parameters/IdempotencyKey' }
+      responses:
+        '201': { description: Created via invite or temporary-secret flow. No password returned. }
+        '403': { $ref: '#/components/responses/Error' }
+  /api/admin/users/{id}/deactivate:
+    post:
+      tags: [admin]
+      security: [{ staffSession: [] }]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+        - { $ref: '#/components/parameters/CsrfToken' }
+      responses:
+        '200': { description: Deactivated, all sessions revoked }
+        '403': { $ref: '#/components/responses/Error' }
+  /api/admin/audit-logs:
+    get:
+      tags: [admin]
+      security: [{ staffSession: [] }]
+      parameters:
+        - { $ref: '#/components/parameters/Cursor' }
+        - { $ref: '#/components/parameters/Limit' }
+      responses:
+        '200': { description: Paginated, redacted, content: { application/json: { schema: { $ref: '#/components/schemas/Page' } } } }
+        '403': { $ref: '#/components/responses/Error' }

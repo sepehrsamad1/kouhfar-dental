@@ -1,0 +1,13 @@
+
+/* Persian labels with natural spacing. */
+.eyebrow,.ft__col h3,.nav__foot .en,.ft__bottom .en,
+.hero-loader__label,.hero__cue,.svc__leadEn,.sd__en,.sheet__barLabel,
+.res__case,.compare__tag,.smile__chip,.smile__previewLabel,
+.smile-modal__brand,.implant-visual__label,.bk__optS{
+font-family:var(--fa);letter-spacing:normal;text-transform:none;line-height:1.8;
+}
+.eyebrow{font-size:.8125rem;font-weight:600}
+.eyebrow::after{display:none}
+.ft__col h3{font-size:.8125rem;font-weight:700}
+.nav__foot .en,.ft__bottom .en,.svc__leadEn,.sd__en,.sheet__barLabel,.res__case,.smile__previewLabel,.smile-modal__brand,.bk__optS{font-size:.75rem}
+.implant-visual__label{font-size:.625rem}

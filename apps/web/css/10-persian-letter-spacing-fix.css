@@ -1,0 +1,8 @@
+
+/* Preserve natural Persian shaping without condensed letter spacing. */
+.hero__line1,.hero__line2,.h2,.svc__title,.svc__leadTitle,
+.sd__title,.res__title,.doc__name,.why__t,.band h2,
+.bk__h,.bk__okH,.smile-stage__title,.smile-findings__h,
+.ssa-title,.nav__link,.btn,.smile__cta{
+  letter-spacing:normal!important;
+}

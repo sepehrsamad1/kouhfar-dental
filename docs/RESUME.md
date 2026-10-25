@@ -1,22 +1,29 @@
-# Resume point (as of 2026-10-23)
+# Resume point (as of 2026-10-25)
 
-Prompt source of truth: Dental_Clinic_32_AI_Prompts_v2 (English, Tasks 01-32).
-Note: the "Full Prompts" file is a translation of the same pack (Packages 1-32). Use v2 numbering here.
+Prompt source of truth: the Laravel 13, 32-task prompt pack.
 
 ## Status
-| Task | State | What is missing |
-|---|---|---|
-| 01 UI audit | Docs done | No browser baseline (screenshots, console log). Needs a real browser. |
-| 02 Requirements | Draft done | Owner decisions D1 to D16 still open (docs/product-spec.md section 8). |
-| 03 Architecture and API contract | Design done | Not validated with a linter; TS types not generated. |
-| 04 Repo setup | Scaffold done | Lockfile not generated (needs npm install with network). Clean-clone check not run. GitHub settings pending owner. |
-| 05 Modularize UI | VERIFIED | Modular web split, static data modules, extracted assets, lightweight build/dev/lint tooling, sanitizer policy, smoke checks, and 375/768/1440 browser comparison completed. Official Task 01 screenshots were unavailable, so comparison used the exact original HTML source. |
-| 06 to 32 | NOT STARTED | |
 
-## Next prompt to send
-Task 05 is VERIFIED. Move on to Task 06. `package-lock.json` was generated locally with npm; no external runtime dependency was added.
-Also run `npm install` on a machine with network to create package-lock.json and commit it (Task 04 item 3).
+| Task | State | Notes |
+|---|---|---|
+| 01 UI audit | Docs done | Original browser screenshots and console log were not captured. |
+| 02 Requirements | Draft done | Owner decisions D1 to D16 remain open in `docs/product-spec.md` section 8. |
+| 03 Architecture and API contract | Design done | Contract was not validated against a running server. |
+| 04 Repo setup | Scaffold done | Lockfiles are present. Clean-clone verification and GitHub settings still need owner verification. |
+| 05 Laravel migration and existing UI integration | Verified | See `docs/task05-visual-diff.md` and `docs/task05-status.md`. |
+| 06 CI, testing, and developer tooling | Verified | PR #1 merged into `main`; GitHub Actions passed 1/1 checks. Local PostgreSQL integration test was skipped; CI uses PostgreSQL. |
+| 07 Core Eloquent data model | Not started | Next task. Check the owner decisions before implementing fields. |
+| 08–32 | Not started | Follow the roadmap in order. |
+
+## Next step
+
+Start Task 07 only. Include the Master Engineering Prompt and exactly the Task 07 prompt from the prompt pack.
+
+Before implementing, review `docs/product-spec.md` section 8 and `docs/data-model.md`. Do not invent fields that depend on unresolved owner decisions. If a required model field depends on an unresolved decision, report it as blocked and ask the owner.
 
 ## Rules for resuming
-- Do not redo finished tasks. Pick up at the first Not started or Pending item above.
-- Record each finished task here and in docs/STATUS.md, with its commit SHA once the repo exists.
+
+- Do not redo verified tasks.
+- Work on one task at a time.
+- Record each finished task here and in `docs/STATUS.md`.
+- Do not claim a task is verified without evidence.

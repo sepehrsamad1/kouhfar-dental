@@ -1,6 +1,6 @@
 # Project status
 
-Last updated: 2026-10-25.
+Last updated: 2026-10-26.
 
 | Package | Status | Notes |
 |---|---|---|
@@ -10,7 +10,7 @@ Last updated: 2026-10-25.
 | 4 Repo setup | Scaffold done | GitHub repository is active. Repository settings still need owner verification. |
 | 5 Modularize UI | VERIFIED | See docs/task05-visual-diff.md and docs/task05-status.md. |
 | 6 CI, testing, and developer tooling | VERIFIED | PR #1 merged into main; GitHub Actions passed 1/1 checks. Local PostgreSQL integration test was skipped; CI uses PostgreSQL. |
-| 7 to 32 | Not started | Task 07 is next. |
+| 7 Core Eloquent data model | In progress (partial) | Model classes, factories, and configuration tests are on the Task 07 branch. No migrations have been added. See docs/RESUME.md for remaining models and decisions. |
 
 ## Blocking owner decisions
 

@@ -72,3 +72,7 @@ Mobile normalization: Persian and Arabic digits to Latin, strip separators, stor
 - Foreign keys on every reference. `ON DELETE RESTRICT` for patients, services, practitioners, resources referenced by appointments.
 - Booking conflicts enforced by EXCLUDE constraints, not application checks alone.
 - Migrations are forward-only. Destructive changes need approval (Package 8 rule).
+
+## Task 07 entity naming decision
+
+Use one generic `Job` entity for queued background work. Image processing is represented by a job type; `ImageJob` is not a separate table or model. This reconciles the Task 03 entity-list wording with this document's Operations schema and the architecture's Postgres-backed queue. Task 07 adds only the model shape; queue execution and database schema remain out of scope here.

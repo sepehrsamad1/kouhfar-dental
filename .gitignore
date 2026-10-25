@@ -40,3 +40,8 @@ vendor/
 bootstrap/cache/*.php
 database/*.sqlite
 
+
+# Test and analysis generated files
+storage/framework/phpstan/
+test-results/
+playwright-report/

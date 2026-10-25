@@ -17,10 +17,12 @@
     "typecheck": "node tools/typecheck.mjs",
     "test": "node tools/test.mjs",
     "build": "vite build",
-    "build:legacy": "node tools/build.mjs"
+    "build:legacy": "node tools/build.mjs",
+    "test:browser": "playwright test"
   },
   "type": "module",
   "devDependencies": {
+    "@playwright/test": "^1.64.1",
     "laravel-vite-plugin": "^3.1",
     "vite": "^8.0.0"
   }

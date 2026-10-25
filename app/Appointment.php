@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Appointment extends Model
@@ -52,5 +53,17 @@ class Appointment extends Model
     public function events(): HasMany
     {
         return $this->hasMany(AppointmentEvent::class);
+    }
+
+    public function practitioners(): BelongsToMany
+    {
+        return $this->belongsToMany(Practitioner::class, 'appointment_practitioners')
+            ->withPivot(['occupied', 'active']);
+    }
+
+    public function resources(): BelongsToMany
+    {
+        return $this->belongsToMany(Resource::class, 'appointment_resources')
+            ->withPivot(['occupied', 'active']);
     }
 }

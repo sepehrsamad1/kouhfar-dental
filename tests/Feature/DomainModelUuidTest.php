@@ -4,9 +4,11 @@ use App\Appointment;
 use App\AppointmentEvent;
 use App\AuditLog;
 use App\ContentItem;
+use App\DeletionRequest;
 use App\FollowUpToken;
 use App\LoginAttempt;
 use App\MediaAsset;
+use App\NotificationOutbox;
 use App\Patient;
 use App\Practitioner;
 use App\Resource;
@@ -24,6 +26,8 @@ it('configures all domain models to use non-incrementing string UUID keys', func
         Appointment::class,
         AppointmentEvent::class,
         FollowUpToken::class,
+        DeletionRequest::class,
+        NotificationOutbox::class,
         Session::class,
         LoginAttempt::class,
         WorkingHour::class,

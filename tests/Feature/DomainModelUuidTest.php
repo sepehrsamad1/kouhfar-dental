@@ -4,12 +4,14 @@ use App\Appointment;
 use App\AppointmentEvent;
 use App\AuditLog;
 use App\ContentItem;
+use App\LoginAttempt;
 use App\MediaAsset;
 use App\Patient;
 use App\Practitioner;
 use App\Resource;
 use App\ScheduleException;
 use App\Service;
+use App\Session;
 use App\WorkingHour;
 
 it('configures all domain models to use non-incrementing string UUID keys', function () {
@@ -20,6 +22,8 @@ it('configures all domain models to use non-incrementing string UUID keys', func
         Resource::class,
         Appointment::class,
         AppointmentEvent::class,
+        Session::class,
+        LoginAttempt::class,
         WorkingHour::class,
         ScheduleException::class,
         AuditLog::class,

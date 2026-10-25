@@ -10,8 +10,8 @@ Last updated: 2026-10-26.
 | 4 Repo setup | Scaffold done | GitHub repository is active. Repository settings still need owner verification. |
 | 5 Modularize UI | VERIFIED | See docs/task05-visual-diff.md and docs/task05-status.md. |
 | 6 CI, testing, and developer tooling | VERIFIED | PR #1 merged into main; GitHub Actions passed 1/1 checks. Local PostgreSQL integration test was skipped; CI uses PostgreSQL. |
-| 7 Core Eloquent data model | In progress (partial) | Model classes, factories, and configuration tests are on the Task 07 branch. No migrations have been added. See docs/RESUME.md for remaining models and decisions. |
+| 7 Core Eloquent data model | Complete for approved scope (OTP deferred) | Model classes, factories, and configuration tests are merged into main. OTP and VerificationChallenge are deferred. Migrations and database-backed checks belong to Task 08. |
 
 ## Blocking owner decisions
 
-Owner decisions D1 to D16 remain open. See docs/product-spec.md section 8. Do not implement model fields that depend on these decisions until they are resolved.
+Owner decisions D1 to D16 remain open. OTP and VerificationChallenge are deliberately deferred. Do not implement behavior that depends on unresolved decisions until they are approved.

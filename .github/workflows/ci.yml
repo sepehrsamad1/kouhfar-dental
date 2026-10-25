@@ -63,18 +63,6 @@ jobs:
       - name: Generate application key
         run: php artisan key:generate --force
 
-      - name: Check PHP formatting
-        run: vendor/bin/pint --test
-
-      - name: Run PHP static analysis
-        run: vendor/bin/phpstan analyse
-
-      - name: Run database migrations
-        run: php artisan migrate --force
-
-      - name: Run Laravel tests
-        run: php artisan test
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -93,11 +81,20 @@ jobs:
       - name: Build frontend assets
         run: npm run build
 
+      - name: Check PHP formatting
+        run: vendor/bin/pint --test
+
+      - name: Run PHP static analysis
+        run: vendor/bin/phpstan analyse
+
+      - name: Run database migrations
+        run: php artisan migrate --force
+
+      - name: Run Laravel tests
+        run: php artisan test
+
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
 
       - name: Run browser smoke tests
         run: npm run test:browser
-
-
-

@@ -45,3 +45,5 @@ database/*.sqlite
 storage/framework/phpstan/
 test-results/
 playwright-report/
+!public/assets/a-022.png
+!public/assets/a-024.jpg

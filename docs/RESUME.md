@@ -1,4 +1,4 @@
-# Resume point (as of 2026-10-25)
+# Resume point (as of 2026-10-26)
 
 Prompt source of truth: the Laravel 13, 32-task prompt pack.
 
@@ -12,14 +12,12 @@ Prompt source of truth: the Laravel 13, 32-task prompt pack.
 | 04 Repo setup | Scaffold done | Lockfiles are present. Clean-clone verification and GitHub settings still need owner verification. |
 | 05 Laravel migration and existing UI integration | Verified | See `docs/task05-visual-diff.md` and `docs/task05-status.md`. |
 | 06 CI, testing, and developer tooling | Verified | PR #1 merged into `main`; GitHub Actions passed 1/1 checks. Local PostgreSQL integration test was skipped; CI uses PostgreSQL. |
-| 07 Core Eloquent data model | Not started | Next task. Check the owner decisions before implementing fields. |
+| 07 Core Eloquent data model | In progress (partial) | Model classes, factories, and model-configuration tests are in progress. Database-backed checks remain for Task 08. |
 | 08–32 | Not started | Follow the roadmap in order. |
 
 ## Next step
 
-Start Task 07 only. Include the Master Engineering Prompt and exactly the Task 07 prompt from the prompt pack.
-
-Before implementing, review `docs/product-spec.md` section 8 and `docs/data-model.md`. Do not invent fields that depend on unresolved owner decisions. If a required model field depends on an unresolved decision, report it as blocked and ask the owner.
+Task 07 is at a review checkpoint and remains partial. The generic `Job` model and factory are implemented; image processing is a job type, not a separate `ImageJob` model. `Session`, `LoginAttempt`, `FollowUpToken`, `VerificationChallenge`, `NotificationOutbox`, and `DeletionRequest` remain blocked pending policy/provider decisions. Task 08 covers migrations, indexes, database constraints, and persisted relationship tests.
 
 ## Rules for resuming
 

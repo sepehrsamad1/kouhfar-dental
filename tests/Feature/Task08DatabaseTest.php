@@ -5,7 +5,6 @@ declare(strict_types=1);
 use App\Appointment;
 use App\Patient;
 use App\Practitioner;
-use App\Resource;
 use App\Service;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;

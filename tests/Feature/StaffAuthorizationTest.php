@@ -11,7 +11,9 @@ use App\Patient;
 use App\Practitioner;
 use App\StaffUser;
 use App\Support\AuditLogger;
+use Illuminate\Database\Query\Expression;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
 uses(RefreshDatabase::class);
@@ -19,6 +21,19 @@ uses(RefreshDatabase::class);
 function makeAuthorizedStaff(string $role, array $attributes = []): StaffUser
 {
     return StaffUser::factory()->active()->create(array_merge(['role' => $role], $attributes));
+}
+
+function assignPractitioner(Appointment $appointment, Practitioner $practitioner): void
+{
+    $start = $appointment->start_at->toIso8601String();
+    $end = $appointment->end_at->toIso8601String();
+
+    DB::table('appointment_practitioners')->insert([
+        'appointment_id' => $appointment->id,
+        'practitioner_id' => $practitioner->id,
+        'active' => true,
+        'occupied' => new Expression("tstzrange('{$start}', '{$end}', '[)')"),
+    ]);
 }
 
 it('enforces patient access and practitioner scope', function (): void {
@@ -29,7 +44,7 @@ it('enforces patient access and practitioner scope', function (): void {
     $practitionerRecord = Practitioner::factory()->create(['staff_user_id' => $practitioner->id]);
     $patient = Patient::factory()->create();
     $appointment = Appointment::factory()->create(['patient_id' => $patient->id]);
-    $appointment->practitioners()->attach($practitionerRecord->id);
+    assignPractitioner($appointment, $practitionerRecord);
     $unrelated = Patient::factory()->create();
 
     expect(Gate::forUser($admin)->allows('view', $patient))->toBeTrue()
@@ -48,7 +63,7 @@ it('enforces appointment scope and mutation permissions', function (): void {
     $other = makeAuthorizedStaff('practitioner');
     $practitionerRecord = Practitioner::factory()->create(['staff_user_id' => $practitioner->id]);
     $appointment = Appointment::factory()->create();
-    $appointment->practitioners()->attach($practitionerRecord->id);
+    assignPractitioner($appointment, $practitionerRecord);
 
     expect(Gate::forUser($admin)->allows('update', $appointment))->toBeTrue()
         ->and(Gate::forUser($reception)->allows('update', $appointment))->toBeTrue()
@@ -84,13 +99,17 @@ it('denies sensitive resources and configuration to non-admin roles', function (
 it('denies a direct protected endpoint to reception', function (): void {
     $reception = makeAuthorizedStaff('reception');
 
+    $this->withoutMiddleware('staff.session.fresh');
+
     $this->actingAs($reception, 'staff')
-        ->get('/staff/admin/audit')
+        ->get('/staff/admin/audit');
         ->assertForbidden();
 });
 
 it('allows the protected audit endpoint only to administrators', function (): void {
     $admin = makeAuthorizedStaff('admin');
+
+    $this->withoutMiddleware('staff.session.fresh');
 
     $this->actingAs($admin, 'staff')
         ->get('/staff/admin/audit')

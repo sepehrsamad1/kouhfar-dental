@@ -102,7 +102,7 @@ it('denies a direct protected endpoint to reception', function (): void {
     $this->withoutMiddleware('staff.session.fresh');
 
     $this->actingAs($reception, 'staff')
-        ->get('/staff/admin/audit');
+        ->get('/staff/admin/audit')
         ->assertForbidden();
 });
 

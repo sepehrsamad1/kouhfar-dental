@@ -79,7 +79,7 @@ final class ClinicConfigurationController
             || (int) $data['buffer_before_minutes'] !== $service->buffer_before_minutes
             || (int) $data['buffer_after_minutes'] !== $service->buffer_after_minutes;
         if ($configurationChanged) {
-            $impacted = \\App\\Appointment::query()
+            $impacted = \App\Appointment::query()
                 ->where('service_id', $service->id)
                 ->where('status', 'confirmed')
                 ->where('start_at', '>=', now('UTC'))

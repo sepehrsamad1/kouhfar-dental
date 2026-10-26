@@ -47,7 +47,7 @@ final class AuditLogger
             'target_type' => $target === null ? null : Str::afterLast($target::class, '\\'),
             'target_id' => $target?->getKey(),
             'occurred_at' => now('UTC'),
-            'request_id' => request()?->attributes->get('request_id'),
+            'request_id' => request()->attributes->get('request_id'),
             'meta' => $meta === [] ? null : $meta,
         ]);
     }

@@ -75,6 +75,23 @@ final class ClinicConfigurationController
             'is_active' => ['required', 'boolean'],
         ]);
 
+        $configurationChanged = (int) $data['duration_minutes'] !== $service->duration_minutes
+            || (int) $data['buffer_before_minutes'] !== $service->buffer_before_minutes
+            || (int) $data['buffer_after_minutes'] !== $service->buffer_after_minutes;
+        if ($configurationChanged) {
+            $impacted = \\App\\Appointment::query()
+                ->where('service_id', $service->id)
+                ->where('status', 'confirmed')
+                ->where('start_at', '>=', now('UTC'))
+                ->orderBy('start_at')
+                ->get(['id', 'start_at']);
+            if ($impacted->isNotEmpty()) {
+                throw ValidationException::withMessages([
+                    'service' => 'تغییر مدت یا زمان حائل می‌تواند بر نوبت‌های تأییدشده اثر بگذارد. تغییر ذخیره نشد. شناسه نوبت‌ها: '.$impacted->pluck('id')->implode(', '),
+                ]);
+            }
+        }
+
         $updated = DB::transaction(function () use ($request, $service, $data): bool {
             $version = (int) $data['version'];
             unset($data['version']);

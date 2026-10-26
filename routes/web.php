@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\PatientController;
 use App\Http\Controllers\StaffAuthController;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
@@ -21,4 +22,10 @@ Route::middleware(['auth:staff', 'staff.session.fresh'])->group(function (): voi
 
         return response()->noContent();
     })->name('staff.admin.audit');
+
+    Route::get('/staff/patients', [PatientController::class, 'index'])->name('staff.patients.index');
+    Route::post('/staff/patients', [PatientController::class, 'store'])->name('staff.patients.store');
+    Route::patch('/staff/patients/{patient}', [PatientController::class, 'update'])->name('staff.patients.update');
+    Route::post('/staff/patients/{patient}/archive', [PatientController::class, 'archive'])->name('staff.patients.archive');
+    Route::post('/staff/patients/{patient}/reveal-mobile', [PatientController::class, 'revealMobile'])->name('staff.patients.reveal-mobile');
 });

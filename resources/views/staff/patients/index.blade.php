@@ -84,7 +84,7 @@
                             @csrf
                             @method('PATCH')
                             <input name="full_name" value="{{ $patient['full_name'] }}" maxlength="200" required>
-                            <input name="mobile" value="" placeholder="شماره جدید" maxlength="40" inputmode="tel" required>
+                            <input name="mobile" value="" placeholder="در صورت تغییر، شماره جدید" maxlength="40" inputmode="tel">
                             <input type="hidden" name="version" value="{{ $patient['version'] }}">
                             <button type="submit">ذخیره</button>
                         </form>

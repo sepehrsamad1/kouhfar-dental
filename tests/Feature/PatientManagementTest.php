@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\DB;
 uses(RefreshDatabase::class);
 
 beforeEach(function (): void {
-    $this->withoutMiddleware('staff.session.fresh');
+    $this->withoutMiddleware();
 });
 
 function makePatientManagerStaff(string $role): StaffUser

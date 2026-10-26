@@ -49,7 +49,7 @@ it('prevents overlapping active practitioner occupancy at database level', funct
         'active' => true,
         'occupied' => DB::raw("tstzrange('".$first->start_at->toIso8601String()."', '".$first->end_at->toIso8601String()."', '[)')"),
     ]);
-    $second = Appointment::factory()->create(['patient_id' => \App\Patient::factory(), 'service_id' => $service->id, 'start_at' => $first->start_at->addMinutes(15), 'end_at' => $first->end_at->addMinutes(15)]);
+    $second = Appointment::factory()->create(['patient_id' => Patient::factory(), 'service_id' => $service->id, 'start_at' => $first->start_at->addMinutes(15), 'end_at' => $first->end_at->addMinutes(15)]);
     expect(fn () => DB::table('appointment_practitioners')->insert([
         'appointment_id' => $second->id,
         'practitioner_id' => $practitioner->id,
@@ -62,8 +62,8 @@ it('allows adjacent and inactive occupancy', function () {
     $practitioner = Practitioner::factory()->create();
     $service = Service::factory()->create();
     $base = now()->addDay()->startOfHour();
-    $a = Appointment::factory()->create(['patient_id' => \App\Patient::factory(), 'service_id' => $service->id, 'start_at' => $base, 'end_at' => $base->addMinutes(30)]);
-    $b = Appointment::factory()->create(['patient_id' => \App\Patient::factory(), 'service_id' => $service->id, 'start_at' => $base->addMinutes(30), 'end_at' => $base->addHour()]);
+    $a = Appointment::factory()->create(['patient_id' => Patient::factory(), 'service_id' => $service->id, 'start_at' => $base, 'end_at' => $base->addMinutes(30)]);
+    $b = Appointment::factory()->create(['patient_id' => Patient::factory(), 'service_id' => $service->id, 'start_at' => $base->addMinutes(30), 'end_at' => $base->addHour()]);
     DB::table('appointment_practitioners')->insert([
         [
             'appointment_id' => $a->id,

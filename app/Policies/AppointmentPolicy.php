@@ -11,7 +11,7 @@ class AppointmentPolicy
 {
     public function view(StaffUser $user, Appointment $appointment): bool
     {
-        return $this->isAdmin($user)
+        return $user->role === 'admin'
             || $user->role === 'reception'
             || ($user->role === 'practitioner' && $this->ownsAppointment($user, $appointment));
     }
@@ -33,18 +33,15 @@ class AppointmentPolicy
 
     public function complete(StaffUser $user, Appointment $appointment): bool
     {
-        return $this->isAdmin($user)
+        return $user->role === 'admin'
             || $user->role === 'reception'
             || ($user->role === 'practitioner' && $this->ownsAppointment($user, $appointment));
     }
 
-    private function isAdmin(StaffUser $user): bool
-    {
-        return $user->role === 'admin';
-    }
-
     private function ownsAppointment(StaffUser $user, Appointment $appointment): bool
     {
-        return $appointment->practitioners()->whereKey($user->id)->exists();
+        return $appointment->practitioners()
+            ->whereHas('staffUser', fn ($query) => $query->whereKey($user->id))
+            ->exists();
     }
 }

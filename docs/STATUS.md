@@ -12,6 +12,7 @@ Last updated: 2026-10-26.
 | 6 CI, testing, and developer tooling | VERIFIED | PR #1 merged into main; GitHub Actions passed 1/1 checks. Local PostgreSQL integration test was skipped; CI uses PostgreSQL. |
 | 7 Core Eloquent data model | Complete for approved scope (OTP deferred) | Model classes, factories, and configuration tests are merged into main. OTP and VerificationChallenge are deferred. Migrations and database-backed checks belong to Task 08. |
 | 8 Database migrations, seeders, and constraints | VERIFIED | PostgreSQL schema, DB-level booking overlap protection, synthetic guarded seeding, factories, and Task 8 tests are implemented. GitHub Actions CI run #40 passed on commit `8b971a181d45bf9de05c9ecb9a26ee3221311060`, including PostgreSQL migrations/tests and browser smoke tests. |
+| 9 Staff authentication | IN PROGRESS | Laravel staff session authentication, Argon2id password hashing, login throttling, disabled-account handling, logout/session invalidation, and configurable timeout enforcement are implemented on the task branch. CI verification is pending. |
 
 ## Blocking owner decisions
 

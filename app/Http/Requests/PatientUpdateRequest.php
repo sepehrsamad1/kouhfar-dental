@@ -4,14 +4,19 @@ declare(strict_types=1);
 
 namespace App\Http\Requests;
 
+use App\Patient;
 use App\Support\IranianPhoneNumber;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Http\FormRequest;
 
 class PatientUpdateRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user('staff') !== null;
+        $patient = $this->route('patient');
+
+        return $patient instanceof Patient
+            && Gate::forUser($this->user('staff'))->allows('update', $patient);
     }
 
     public function rules(): array

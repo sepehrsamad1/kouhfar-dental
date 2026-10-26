@@ -19,6 +19,7 @@ class ScheduleException extends Model
         'starts_at',
         'ends_at',
         'kind',
+        'version',
     ];
 
     protected function casts(): array
@@ -26,6 +27,7 @@ class ScheduleException extends Model
         return [
             'starts_at' => 'immutable_datetime',
             'ends_at' => 'immutable_datetime',
+            'version' => 'integer',
         ];
     }
 

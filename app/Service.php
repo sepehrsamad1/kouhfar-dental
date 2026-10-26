@@ -22,6 +22,7 @@ class Service extends Model
         'buffer_after_minutes',
         'is_active',
         'is_public_bookable',
+        'version',
     ];
 
     protected function casts(): array
@@ -32,6 +33,7 @@ class Service extends Model
             'buffer_after_minutes' => 'integer',
             'is_active' => 'boolean',
             'is_public_bookable' => 'boolean',
+            'version' => 'integer',
         ];
     }
 

@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use App\Appointment;
-use App\Http\Middleware\EnsureStaffSessionIsFresh;
 use App\AuditLog;
+use App\Http\Middleware\EnsureStaffSessionIsFresh;
 use App\Patient;
 use App\Practitioner;
 use App\StaffUser;

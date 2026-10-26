@@ -6,7 +6,6 @@ namespace App\Http\Requests;
 
 use App\Support\IranianPhoneNumber;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class PatientStoreRequest extends FormRequest
 {

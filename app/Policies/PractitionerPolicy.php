@@ -14,7 +14,18 @@ class PractitionerPolicy
         return in_array($user->role, ['admin', 'reception', 'practitioner'], true);
     }
 
-    public function create(StaffUser $user): bool { return $user->role === 'admin'; }
-    public function update(StaffUser $user, Practitioner $practitioner): bool { return $user->role === 'admin'; }
-    public function delete(StaffUser $user, Practitioner $practitioner): bool { return $user->role === 'admin'; }
+    public function create(StaffUser $user): bool
+    {
+        return $user->role === 'admin';
+    }
+
+    public function update(StaffUser $user, Practitioner $practitioner): bool
+    {
+        return $user->role === 'admin';
+    }
+
+    public function delete(StaffUser $user, Practitioner $practitioner): bool
+    {
+        return $user->role === 'admin';
+    }
 }

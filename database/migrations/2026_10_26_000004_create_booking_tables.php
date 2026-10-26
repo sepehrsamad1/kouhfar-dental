@@ -29,9 +29,9 @@ return new class extends Migration {
             $table->index(['patient_id', 'start_at']);
         });
 
-        DB::statement("ALTER TABLE appointments ADD CONSTRAINT appointments_time_order CHECK (end_at > start_at)");
-        DB::statement("ALTER TABLE appointments ADD CONSTRAINT appointments_status_check CHECK (status IN ('pending','confirmed','completed','cancelled','no_show','expired'))");
-        DB::statement("ALTER TABLE appointments ADD CONSTRAINT appointments_source_check CHECK (source IN ('public','staff','system'))");
+        DB::statement('ALTER TABLE appointments ADD CONSTRAINT appointments_time_order CHECK (end_at > start_at)');
+        DB::statement('ALTER TABLE appointments ADD CONSTRAINT appointments_status_check CHECK (status IN (\'pending\',\'confirmed\',\'completed\',\'cancelled\',\'no_show\',\'expired\'))');
+        DB::statement('ALTER TABLE appointments ADD CONSTRAINT appointments_source_check CHECK (source IN (\'public\',\'staff\',\'system\'))');
 
         Schema::create('appointment_practitioners', function (Blueprint $table) {
             $table->uuid('appointment_id');
@@ -44,7 +44,7 @@ return new class extends Migration {
         DB::statement("ALTER TABLE appointment_practitioners ADD COLUMN occupied tstzrange");
         DB::statement("UPDATE appointment_practitioners ap SET occupied = tstzrange(a.start_at, a.end_at, '[)') FROM appointments a WHERE a.id = ap.appointment_id");
         DB::statement("ALTER TABLE appointment_practitioners ALTER COLUMN occupied SET NOT NULL");
-        DB::statement("ALTER TABLE appointment_practitioners ADD CONSTRAINT appointment_practitioners_no_overlap EXCLUDE USING gist (practitioner_id WITH =, occupied WITH &&) WHERE (active)");
+        DB::statement('ALTER TABLE appointment_practitioners ADD CONSTRAINT appointment_practitioners_no_overlap EXCLUDE USING gist (practitioner_id WITH =, occupied WITH &&) WHERE (active)');
 
         Schema::create('appointment_resources', function (Blueprint $table) {
             $table->uuid('appointment_id');
@@ -57,7 +57,7 @@ return new class extends Migration {
         DB::statement("ALTER TABLE appointment_resources ADD COLUMN occupied tstzrange");
         DB::statement("UPDATE appointment_resources ar SET occupied = tstzrange(a.start_at, a.end_at, '[)') FROM appointments a WHERE a.id = ar.appointment_id");
         DB::statement("ALTER TABLE appointment_resources ALTER COLUMN occupied SET NOT NULL");
-        DB::statement("ALTER TABLE appointment_resources ADD CONSTRAINT appointment_resources_no_overlap EXCLUDE USING gist (resource_id WITH =, occupied WITH &&) WHERE (active)");
+        DB::statement('ALTER TABLE appointment_resources ADD CONSTRAINT appointment_resources_no_overlap EXCLUDE USING gist (resource_id WITH =, occupied WITH &&) WHERE (active)');
 
         Schema::create('appointment_events', function (Blueprint $table) {
             $table->uuid('id')->primary();

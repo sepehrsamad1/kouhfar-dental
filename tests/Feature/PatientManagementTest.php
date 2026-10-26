@@ -14,6 +14,10 @@ use Illuminate\Support\Facades\DB;
 
 uses(RefreshDatabase::class);
 
+beforeEach(function (): void {
+    $this->withoutMiddleware('staff.session.fresh');
+});
+
 function makePatientManagerStaff(string $role): StaffUser
 {
     return StaffUser::factory()->active()->create(['role' => $role]);

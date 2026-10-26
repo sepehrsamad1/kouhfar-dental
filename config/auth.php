@@ -14,7 +14,7 @@ return [
     'providers' => [
         'staff' => [
             'driver' => 'eloquent',
-            'model' => App\StaffUser::class,
+            'model' => \App\StaffUser::class,
         ],
     ],
     'passwords' => [

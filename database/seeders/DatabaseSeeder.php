@@ -34,29 +34,9 @@ class DatabaseSeeder extends Seeder
         $resourceId = '77777777-7777-4777-8777-777777777777';
         $appointmentId = '88888888-8888-4888-8888-888888888888';
 
-        StaffUser::query()->updateOrCreate(['id' => $adminId], [
-            'email' => 'seed-admin@example.invalid',
-            'display_name' => 'Synthetic Admin',
-            'password_hash' => Hash::make(Str::random(32)),
-            'role' => 'admin',
-            'is_active' => true,
-        ]);
-
-        StaffUser::query()->updateOrCreate(['id' => $receptionId], [
-            'email' => 'seed-reception@example.invalid',
-            'display_name' => 'Synthetic Reception',
-            'password_hash' => Hash::make(Str::random(32)),
-            'role' => 'reception',
-            'is_active' => true,
-        ]);
-
-        StaffUser::query()->updateOrCreate(['id' => $practitionerUserId], [
-            'email' => 'seed-practitioner@example.invalid',
-            'display_name' => 'Synthetic Practitioner User',
-            'password_hash' => Hash::make(Str::random(32)),
-            'role' => 'practitioner',
-            'is_active' => true,
-        ]);
+        $this->upsertStaff($adminId, 'seed-admin@example.invalid', 'Synthetic Admin', 'admin');
+        $this->upsertStaff($receptionId, 'seed-reception@example.invalid', 'Synthetic Reception', 'reception');
+        $this->upsertStaff($practitionerUserId, 'seed-practitioner@example.invalid', 'Synthetic Practitioner User', 'practitioner');
 
         Patient::query()->updateOrCreate(['id' => $patientId], [
             'full_name' => 'Synthetic Test Patient',
@@ -121,5 +101,17 @@ class DatabaseSeeder extends Seeder
             ['appointment_id' => $appointment->id, 'resource_id' => $resourceId],
             ['active' => true, 'occupied' => DB::raw("tstzrange('".$start->toIso8601String()."', '".$start->copy()->addMinutes(30)->toIso8601String()."', '[)')")]
         );
+    }
+
+    private function upsertStaff(string $id, string $email, string $displayName, string $role): void
+    {
+        $staff = StaffUser::query()->firstOrNew(['id' => $id]);
+        $staff->forceFill([
+            'email' => $email,
+            'display_name' => $displayName,
+            'password_hash' => Hash::make(Str::random(32)),
+            'role' => $role,
+            'is_active' => true,
+        ])->save();
     }
 }

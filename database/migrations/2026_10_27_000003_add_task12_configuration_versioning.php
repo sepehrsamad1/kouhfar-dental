@@ -17,6 +17,11 @@ return new class extends Migration
             });
         }
 
+        DB::statement('ALTER TABLE working_hours ADD CONSTRAINT working_hours_weekday_check CHECK (weekday BETWEEN 1 AND 7 AND weekday <> 5)');
+        DB::statement('ALTER TABLE working_hours ADD CONSTRAINT working_hours_time_order CHECK (start_local < end_local)');
+        DB::statement('ALTER TABLE schedule_exceptions ADD CONSTRAINT schedule_exceptions_time_order CHECK (ends_at > starts_at)');
+        DB::statement('ALTER TABLE services ADD CONSTRAINT services_duration_positive_check CHECK (duration_minutes > 0)');
+
         Schema::table('schedule_exceptions', function (Blueprint $table): void {
             $table->uuid('practitioner_id')->nullable()->change();
         });
@@ -56,6 +61,15 @@ return new class extends Migration
     {
         Schema::dropIfExists('schedule_breaks');
         Schema::dropIfExists('clinic_working_hours');
+
+        if (DB::table('schedule_exceptions')->whereNull('practitioner_id')->exists()) {
+            throw new RuntimeException('Cannot roll back Task 12 while clinic-wide schedule exceptions exist; resolve them explicitly first.');
+        }
+
+        DB::statement('ALTER TABLE services DROP CONSTRAINT IF EXISTS services_duration_positive_check');
+        DB::statement('ALTER TABLE schedule_exceptions DROP CONSTRAINT IF EXISTS schedule_exceptions_time_order');
+        DB::statement('ALTER TABLE working_hours DROP CONSTRAINT IF EXISTS working_hours_time_order');
+        DB::statement('ALTER TABLE working_hours DROP CONSTRAINT IF EXISTS working_hours_weekday_check');
 
         Schema::table('schedule_exceptions', function (Blueprint $table): void {
             $table->uuid('practitioner_id')->nullable(false)->change();

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Appointment;
+use App\Http\Middleware\EnsureStaffSessionIsFresh;
 use App\AuditLog;
 use App\Patient;
 use App\Practitioner;
@@ -11,7 +12,6 @@ use App\Support\IranianPhoneNumber;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
-use App\Http\Middleware\EnsureStaffSessionIsFresh;
 
 uses(RefreshDatabase::class);
 

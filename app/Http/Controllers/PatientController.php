@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\DB;
 
 class PatientController
 {
-    public function index(PatientLookupRequest $request): JsonResponse
+    public function index(PatientLookupRequest $request): View|JsonResponse
     {
         $user = $request->user('staff');
         $query = Patient::query()
@@ -55,12 +55,19 @@ class PatientController
             ->paginate((int) ($request->input('per_page') ?? 20))
             ->withQueryString();
 
-        $patients->through(fn (Patient $patient): array => $this->presentPatient($patient, false));
+        $patients->through(fn (Patient $patient): array => $this->presentPatient($patient));
 
-        return response()->json($patients);
+        if ($request->expectsJson()) {
+            return response()->json($patients);
+        }
+
+        return view('staff.patients.index', [
+            'patients' => $patients,
+            'canCreate' => in_array($user->role, ['admin', 'reception'], true),
+        ]);
     }
 
-    public function store(PatientStoreRequest $request): JsonResponse
+    public function store(PatientStoreRequest $request): JsonResponse|RedirectResponse
     {
         $normalized = $request->string('mobile_normalized')->toString();
 
@@ -69,11 +76,11 @@ class PatientController
             ->count();
 
         if ($duplicateCount > 0 && ! $request->boolean('confirm_duplicate')) {
-            return response()->json([
-                'message' => 'یک بیمار با این شماره موبایل از قبل وجود دارد. بررسی و تأیید صریح برای ثبت بیمار جدید لازم است.',
-                'duplicate_warning' => true,
-                'duplicate_count' => $duplicateCount,
-            ], 422);
+            return $this->duplicateResponse(
+                $request,
+                'برای این شماره موبایل بیمار قبلی وجود دارد. ثبت بیمار جدید فقط پس از تأیید صریح انجام می‌شود.',
+                $duplicateCount
+            );
         }
 
         $staff = $request->user('staff');
@@ -91,16 +98,35 @@ class PatientController
             return $patient;
         });
 
-        return response()->json($this->presentPatient($patient, false), 201);
+        if ($request->expectsJson()) {
+            return response()->json($this->presentPatient($patient), 201);
+        }
+
+        return redirect()
+            ->route('staff.patients.index')
+            ->with('success', 'بیمار با موفقیت ثبت شد.');
     }
 
-    public function update(PatientUpdateRequest $request, Patient $patient): JsonResponse
+    public function update(PatientUpdateRequest $request, Patient $patient): JsonResponse|RedirectResponse
     {
         $this->authorize('update', $patient);
 
         $expectedVersion = $request->integer('version');
         $normalized = $request->string('mobile_normalized')->toString();
         $staff = $request->user('staff');
+
+        $duplicateCount = Patient::query()
+            ->where('mobile_normalized', $normalized)
+            ->whereKeyNot($patient->getKey())
+            ->count();
+
+        if ($duplicateCount > 0 && ! $request->boolean('confirm_duplicate')) {
+            return $this->duplicateResponse(
+                $request,
+                'شماره موبایل واردشده برای بیمار دیگری ثبت شده است. تأیید صریح برای استفاده از شماره تکراری لازم است.',
+                $duplicateCount
+            );
+        }
 
         $updated = DB::transaction(function () use ($request, $patient, $expectedVersion, $normalized, $staff): bool {
             $affected = Patient::query()
@@ -132,16 +158,26 @@ class PatientController
 
         $patient->refresh();
 
-        return response()->json($this->presentPatient($patient, false));
+        if ($request->expectsJson()) {
+            return response()->json($this->presentPatient($patient));
+        }
+
+        return redirect()
+            ->route('staff.patients.index')
+            ->with('success', 'اطلاعات بیمار به‌روزرسانی شد.');
     }
 
-    public function archive(Request $request, Patient $patient): JsonResponse
+    public function archive(Request $request, Patient $patient): JsonResponse|RedirectResponse
     {
         $this->authorize('archive', $patient);
 
         $staff = $request->user('staff');
 
         DB::transaction(function () use ($patient, $staff): void {
+            if ($patient->archived_at !== null) {
+                return;
+            }
+
             $patient->forceFill(['archived_at' => now('UTC')])->save();
 
             AuditLogger::record($staff, 'patient.archived', $patient, null, [
@@ -149,12 +185,16 @@ class PatientController
             ]);
         });
 
-        return response()->json([
-            'message' => 'بیمار بایگانی شد.',
-        ]);
+        if ($request->expectsJson()) {
+            return response()->json(['message' => 'بیمار بایگانی شد.']);
+        }
+
+        return redirect()
+            ->route('staff.patients.index')
+            ->with('success', 'بیمار بایگانی شد.');
     }
 
-    public function revealMobile(Request $request, Patient $patient): JsonResponse
+    public function revealMobile(Request $request, Patient $patient): View
     {
         $this->authorize('revealMobile', $patient);
 
@@ -162,19 +202,35 @@ class PatientController
             'reason_code' => 'authorized_mobile_reveal',
         ]);
 
-        return response()->json([
+        return view('staff.patients.mobile', [
+            'patient' => $patient,
             'mobile' => $patient->mobile_normalized,
         ]);
     }
 
-    private function presentPatient(Patient $patient, bool $revealMobile): array
+    private function duplicateResponse(Request $request, string $message, int $count): JsonResponse|RedirectResponse
+    {
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => $message,
+                'duplicate_warning' => true,
+                'duplicate_count' => $count,
+            ], 422);
+        }
+
+        return back()
+            ->withInput()
+            ->withErrors(['mobile' => $message])
+            ->with('duplicate_warning', true)
+            ->with('duplicate_count', $count);
+    }
+
+    private function presentPatient(Patient $patient): array
     {
         return [
             'id' => $patient->id,
             'full_name' => $patient->full_name,
-            'mobile' => $revealMobile
-                ? $patient->mobile_normalized
-                : IranianPhoneNumber::mask($patient->mobile_normalized),
+            'mobile' => IranianPhoneNumber::mask($patient->mobile_normalized),
             'archived_at' => $patient->archived_at?->toISOString(),
             'version' => $patient->version,
         ];

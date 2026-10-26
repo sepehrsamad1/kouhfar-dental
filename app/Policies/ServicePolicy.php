@@ -14,7 +14,18 @@ class ServicePolicy
         return in_array($user->role, ['admin', 'reception', 'practitioner'], true);
     }
 
-    public function create(StaffUser $user): bool { return $user->role === 'admin'; }
-    public function update(StaffUser $user, Service $service): bool { return $user->role === 'admin'; }
-    public function delete(StaffUser $user, Service $service): bool { return $user->role === 'admin'; }
+    public function create(StaffUser $user): bool
+    {
+        return $user->role === 'admin';
+    }
+
+    public function update(StaffUser $user, Service $service): bool
+    {
+        return $user->role === 'admin';
+    }
+
+    public function delete(StaffUser $user, Service $service): bool
+    {
+        return $user->role === 'admin';
+    }
 }

@@ -20,6 +20,7 @@ class PatientUpdateRequest extends FormRequest
             'full_name' => ['required', 'string', 'min:2', 'max:200'],
             'mobile' => ['required', 'string', 'max:40'],
             'version' => ['required', 'integer', 'min:1'],
+            'confirm_duplicate' => ['nullable', 'boolean'],
         ];
     }
 

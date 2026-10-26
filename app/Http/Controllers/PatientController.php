@@ -15,6 +15,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
+use Carbon\CarbonImmutable;
 
 class PatientController
 {
@@ -109,7 +111,7 @@ class PatientController
 
     public function update(PatientUpdateRequest $request, Patient $patient): JsonResponse|RedirectResponse
     {
-        $this->authorize('update', $patient);
+        Gate::forUser($request->user('staff'))->authorize('update', $patient);
 
         $expectedVersion = $request->integer('version');
         $normalized = $request->filled('mobile')
@@ -171,7 +173,7 @@ class PatientController
 
     public function archive(Request $request, Patient $patient): JsonResponse|RedirectResponse
     {
-        $this->authorize('archive', $patient);
+        Gate::forUser($request->user('staff'))->authorize('archive', $patient);
 
         $staff = $request->user('staff');
 
@@ -198,7 +200,7 @@ class PatientController
 
     public function revealMobile(Request $request, Patient $patient): View
     {
-        $this->authorize('revealMobile', $patient);
+        Gate::forUser($request->user('staff'))->authorize('revealMobile', $patient);
 
         AuditLogger::record($request->user('staff'), 'patient.mobile_revealed', $patient, null, [
             'reason_code' => 'authorized_mobile_reveal',
@@ -233,7 +235,9 @@ class PatientController
             'id' => $patient->id,
             'full_name' => $patient->full_name,
             'mobile' => IranianPhoneNumber::mask($patient->mobile_normalized),
-            'archived_at' => $patient->archived_at?->toISOString(),
+            'archived_at' => ($archivedAt = $patient->getRawOriginal('archived_at')) === null
+                ? null
+                : CarbonImmutable::parse($archivedAt)->toISOString(),
             'version' => $patient->version,
         ];
     }

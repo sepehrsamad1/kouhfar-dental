@@ -21,7 +21,7 @@ class StaffUserFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             'display_name' => fake()->name(),
             'role' => 'synthetic-test-only',
-            'is_active' => true,
+            'is_active' => false,
         ];
     }
 
@@ -34,8 +34,8 @@ class StaffUserFactory extends Factory
         });
     }
 
-    public function inactive(): static
+    public function active(): static
     {
-        return $this->state(fn (): array => ['is_active' => false]);
+        return $this->state(fn (): array => ['is_active' => true]);
     }
 }

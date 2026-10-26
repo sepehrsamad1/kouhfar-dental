@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Http\Middleware;
 
 use App\Session as StaffSession;
+use Carbon\CarbonImmutable;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Carbon\CarbonImmutable;
 use Symfony\Component\HttpFoundation\Response;
 
 class EnsureStaffSessionIsFresh

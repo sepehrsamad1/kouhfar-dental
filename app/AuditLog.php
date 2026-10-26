@@ -22,6 +22,7 @@ class AuditLog extends Model
         'target_id',
         'occurred_at',
         'request_id',
+        'meta',
     ];
 
     protected function casts(): array

@@ -11,11 +11,12 @@ use App\Support\IranianPhoneNumber;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use App\Http\Middleware\EnsureStaffSessionIsFresh;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function (): void {
-    $this->withoutMiddleware();
+    $this->withoutMiddleware(EnsureStaffSessionIsFresh::class);
 });
 
 function makePatientManagerStaff(string $role): StaffUser

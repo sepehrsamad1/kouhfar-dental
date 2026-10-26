@@ -11,24 +11,17 @@ class PatientPolicy
 {
     public function view(StaffUser $user, Patient $patient): bool
     {
-        return $this->isAdmin($user)
+        return $user->role === 'admin'
             || $user->role === 'reception'
             || ($user->role === 'practitioner' && $this->ownsPatient($user, $patient));
     }
 
     public function update(StaffUser $user, Patient $patient): bool
     {
-        return $this->isAdmin($user)
-            || $user->role === 'reception'
-            || ($user->role === 'practitioner' && $this->ownsPatient($user, $patient));
+        return $this->view($user, $patient);
     }
 
     public function archive(StaffUser $user, Patient $patient): bool
-    {
-        return $this->isAdmin($user);
-    }
-
-    private function isAdmin(StaffUser $user): bool
     {
         return $user->role === 'admin';
     }
@@ -36,7 +29,7 @@ class PatientPolicy
     private function ownsPatient(StaffUser $user, Patient $patient): bool
     {
         return $patient->appointments()
-            ->whereHas('practitioners', fn ($query) => $query->whereKey($user->id))
+            ->whereHas('practitioners.staffUser', fn ($query) => $query->whereKey($user->id))
             ->exists();
     }
 }

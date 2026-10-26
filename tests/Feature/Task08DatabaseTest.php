@@ -1,6 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Appointment;
+use App\Patient;
 use App\Practitioner;
 use App\Resource;
 use App\Service;
@@ -39,7 +42,7 @@ it('has the Task 8 PostgreSQL schema', function () {
 it('prevents overlapping active practitioner occupancy at database level', function () {
     $practitioner = Practitioner::factory()->create();
     $service = Service::factory()->create();
-    $first = Appointment::factory()->create(['patient_id' => \App\Patient::factory(), 'service_id' => $service->id, 'start_at' => now()->addDay()->startOfHour(), 'end_at' => now()->addDay()->startOfHour()->addMinutes(30)]);
+    $first = Appointment::factory()->create(['patient_id' => Patient::factory(), 'service_id' => $service->id, 'start_at' => now()->addDay()->startOfHour(), 'end_at' => now()->addDay()->startOfHour()->addMinutes(30)]);
     DB::table('appointment_practitioners')->insert([
         'appointment_id' => $first->id,
         'practitioner_id' => $practitioner->id,

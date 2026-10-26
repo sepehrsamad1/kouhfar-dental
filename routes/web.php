@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\ClinicConfigurationController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\StaffAuthController;
 use Illuminate\Support\Facades\Gate;

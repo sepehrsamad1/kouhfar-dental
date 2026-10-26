@@ -10,6 +10,7 @@ it('allows only the planned audit log fields', function () {
         'target_id',
         'occurred_at',
         'request_id',
+        'meta',
     ]);
 });
 

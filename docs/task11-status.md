@@ -1,6 +1,8 @@
 # Task 11 - Staff patient management
 
-Status: IN PROGRESS pending CI verification.
+Status: VERIFIED.
+
+GitHub Actions CI run #78 (run ID 40408943246) passed all checks, including PHP formatting, PHPStan, PostgreSQL migrations, 119 Laravel tests / 548 assertions, and browser smoke tests.
 
 ## Scope
 

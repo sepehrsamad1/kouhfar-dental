@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use Carbon\CarbonImmutable;
-
 use App\Http\Requests\PatientLookupRequest;
 use App\Http\Requests\PatientStoreRequest;
 use App\Http\Requests\PatientUpdateRequest;
 use App\Patient;
 use App\Support\AuditLogger;
 use App\Support\IranianPhoneNumber;
+use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;

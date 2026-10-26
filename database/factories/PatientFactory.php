@@ -19,6 +19,7 @@ class PatientFactory extends Factory
         return [
             'full_name' => fake()->name(),
             'mobile_normalized' => fake()->unique()->numerify('09#########'),
+            'version' => 1,
         ];
     }
 }

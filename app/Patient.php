@@ -23,6 +23,7 @@ class Patient extends Model
     {
         return [
             'archived_at' => 'immutable_datetime',
+            'version' => 'integer',
         ];
     }
 

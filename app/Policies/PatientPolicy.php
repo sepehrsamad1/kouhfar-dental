@@ -16,6 +16,11 @@ class PatientPolicy
             || ($user->role === 'practitioner' && $this->ownsPatient($user, $patient));
     }
 
+    public function create(StaffUser $user): bool
+    {
+        return in_array($user->role, ['admin', 'reception'], true);
+    }
+
     public function update(StaffUser $user, Patient $patient): bool
     {
         return $this->view($user, $patient);
@@ -24,6 +29,11 @@ class PatientPolicy
     public function archive(StaffUser $user, Patient $patient): bool
     {
         return $user->role === 'admin';
+    }
+
+    public function revealMobile(StaffUser $user, Patient $patient): bool
+    {
+        return $this->view($user, $patient);
     }
 
     private function ownsPatient(StaffUser $user, Patient $patient): bool

@@ -42,7 +42,7 @@ return new class extends Migration {
             $table->foreign('practitioner_id')->references('id')->on('practitioners')->restrictOnDelete();
         });
         DB::statement('ALTER TABLE appointment_practitioners ADD COLUMN occupied tstzrange');
-        DB::statement('UPDATE appointment_practitioners ap SET occupied = tstzrange(a.start_at, a.end_at, \\'[)\\') FROM appointments a WHERE a.id = ap.appointment_id');
+        DB::statement('UPDATE appointment_practitioners ap SET occupied = tstzrange(a.start_at, a.end_at, \'[)\') FROM appointments a WHERE a.id = ap.appointment_id');
         DB::statement('ALTER TABLE appointment_practitioners ALTER COLUMN occupied SET NOT NULL');
         DB::statement('ALTER TABLE appointment_practitioners ADD CONSTRAINT appointment_practitioners_no_overlap EXCLUDE USING gist (practitioner_id WITH =, occupied WITH &&) WHERE (active)');
 
@@ -55,7 +55,7 @@ return new class extends Migration {
             $table->foreign('resource_id')->references('id')->on('resources')->restrictOnDelete();
         });
         DB::statement('ALTER TABLE appointment_resources ADD COLUMN occupied tstzrange');
-        DB::statement('UPDATE appointment_resources ar SET occupied = tstzrange(a.start_at, a.end_at, \\'[)\\') FROM appointments a WHERE a.id = ar.appointment_id');
+        DB::statement('UPDATE appointment_resources ar SET occupied = tstzrange(a.start_at, a.end_at, \'[)\') FROM appointments a WHERE a.id = ar.appointment_id');
         DB::statement('ALTER TABLE appointment_resources ALTER COLUMN occupied SET NOT NULL');
         DB::statement('ALTER TABLE appointment_resources ADD CONSTRAINT appointment_resources_no_overlap EXCLUDE USING gist (resource_id WITH =, occupied WITH &&) WHERE (active)');
 

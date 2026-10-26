@@ -86,6 +86,10 @@
                             <input name="full_name" value="{{ $patient['full_name'] }}" maxlength="200" required>
                             <input name="mobile" value="" placeholder="در صورت تغییر، شماره جدید" maxlength="40" inputmode="tel">
                             <input type="hidden" name="version" value="{{ $patient['version'] }}">
+                            <label>
+                                <input type="checkbox" name="confirm_duplicate" value="1">
+                                اگر شماره متعلق به بیمار دیگری است، استفاده از شماره تکراری را تأیید می‌کنم.
+                            </label>
                             <button type="submit">ذخیره</button>
                         </form>
                     @endcan

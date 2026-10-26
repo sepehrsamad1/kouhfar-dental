@@ -18,7 +18,7 @@ class PatientUpdateRequest extends FormRequest
     {
         return [
             'full_name' => ['required', 'string', 'min:2', 'max:200'],
-            'mobile' => ['required', 'string', 'max:40'],
+            'mobile' => ['nullable', 'string', 'max:40'],
             'version' => ['required', 'integer', 'min:1'],
             'confirm_duplicate' => ['nullable', 'boolean'],
         ];
@@ -28,7 +28,7 @@ class PatientUpdateRequest extends FormRequest
     {
         $mobile = $this->input('mobile');
 
-        if (is_string($mobile)) {
+        if (is_string($mobile) && trim($mobile) !== '') {
             try {
                 $this->merge(['mobile_normalized' => IranianPhoneNumber::normalize($mobile)]);
             } catch (\InvalidArgumentException) {
@@ -42,7 +42,7 @@ class PatientUpdateRequest extends FormRequest
         $validator->after(function ($validator): void {
             $normalized = $this->input('mobile_normalized');
 
-            if (! is_string($normalized) || $normalized === '') {
+            if ($this->filled('mobile') && (! is_string($normalized) || $normalized === '')) {
                 $validator->errors()->add('mobile', 'شماره موبایل معتبر ایران وارد کنید.');
             }
         });

@@ -13,7 +13,7 @@ uses(RefreshDatabase::class);
 
 function makeStaffUser(array $attributes = []): StaffUser
 {
-    $staff = StaffUser::factory()->make($attributes);
+    $staff = StaffUser::factory()->active()->create($attributes);
     $staff->forceFill([
         'password_hash' => Hash::make('correct-password'),
     ])->save();

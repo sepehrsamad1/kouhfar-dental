@@ -17,7 +17,7 @@ Status: VERIFIED.
 - Password reset and password-change flows are deliberately omitted because no approved recovery or verification channel exists.
 
 ## Verification evidence
-GitHub Actions CI run #45 (run ID 40393730736) completed successfully on the Task 9 branch.
+GitHub Actions CI run #58 (run ID 40394941109) completed successfully on the Task 9 branch.
 - JavaScript lint: passed
 - JavaScript typecheck: passed
 - Frontend build: passed

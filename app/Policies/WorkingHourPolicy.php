@@ -14,7 +14,18 @@ class WorkingHourPolicy
         return in_array($user->role, ['admin', 'reception', 'practitioner'], true);
     }
 
-    public function create(StaffUser $user): bool { return $user->role === 'admin'; }
-    public function update(StaffUser $user, WorkingHour $workingHour): bool { return $user->role === 'admin'; }
-    public function delete(StaffUser $user, WorkingHour $workingHour): bool { return $user->role === 'admin'; }
+    public function create(StaffUser $user): bool
+    {
+        return $user->role === 'admin';
+    }
+
+    public function update(StaffUser $user, WorkingHour $workingHour): bool
+    {
+        return $user->role === 'admin';
+    }
+
+    public function delete(StaffUser $user, WorkingHour $workingHour): bool
+    {
+        return $user->role === 'admin';
+    }
 }

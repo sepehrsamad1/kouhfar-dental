@@ -8,6 +8,7 @@ use App\Session as StaffSession;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Carbon\CarbonImmutable;
 use Symfony\Component\HttpFoundation\Response;
 
 class EnsureStaffSessionIsFresh
@@ -35,7 +36,7 @@ class EnsureStaffSessionIsFresh
 
         if (($idleMinutes !== null && $now->timestamp > $lastActivityAt + ((int) $idleMinutes * 60))
             || ($absoluteMinutes !== null && $now->timestamp > $authenticatedAt + ((int) $absoluteMinutes * 60))
-            || $registry->expires_at->isPast()) {
+            || CarbonImmutable::parse((string) $registry->expires_at)->isPast()) {
             return $this->expire($request, $registry);
         }
 

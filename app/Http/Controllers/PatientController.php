@@ -112,7 +112,9 @@ class PatientController
         $this->authorize('update', $patient);
 
         $expectedVersion = $request->integer('version');
-        $normalized = $request->string('mobile_normalized')->toString();
+        $normalized = $request->filled('mobile')
+            ? $request->string('mobile_normalized')->toString()
+            : $patient->mobile_normalized;
         $staff = $request->user('staff');
 
         $duplicateCount = Patient::query()

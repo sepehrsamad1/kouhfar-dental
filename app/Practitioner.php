@@ -7,6 +7,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -25,6 +26,11 @@ class Practitioner extends Model
         return [
             'is_active' => 'boolean',
         ];
+    }
+
+    public function staffUser(): BelongsTo
+    {
+        return $this->belongsTo(StaffUser::class);
     }
 
     public function services(): BelongsToMany

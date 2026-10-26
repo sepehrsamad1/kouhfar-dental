@@ -99,20 +99,24 @@ it('denies sensitive resources and configuration to non-admin roles', function (
 it('denies a direct protected endpoint to reception', function (): void {
     $reception = makeAuthorizedStaff('reception');
 
-    $this->withoutMiddleware('staff.session.fresh');
+    $this->post(route('staff.login.store'), [
+        'email' => $reception->email,
+        'password' => 'test-password',
+    ])->assertRedirect();
 
-    $this->actingAs($reception, 'staff')
-        ->get('/staff/admin/audit')
+    $this->get('/staff/admin/audit')
         ->assertForbidden();
 });
 
 it('allows the protected audit endpoint only to administrators', function (): void {
     $admin = makeAuthorizedStaff('admin');
 
-    $this->withoutMiddleware('staff.session.fresh');
+    $this->post(route('staff.login.store'), [
+        'email' => $admin->email,
+        'password' => 'test-password',
+    ])->assertRedirect();
 
-    $this->actingAs($admin, 'staff')
-        ->get('/staff/admin/audit')
+    $this->get('/staff/admin/audit')
         ->assertNoContent();
 });
 

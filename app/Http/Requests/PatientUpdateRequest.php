@@ -6,8 +6,8 @@ namespace App\Http\Requests;
 
 use App\Patient;
 use App\Support\IranianPhoneNumber;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 
 class PatientUpdateRequest extends FormRequest
 {
@@ -47,8 +47,10 @@ class PatientUpdateRequest extends FormRequest
         $validator->after(function ($validator): void {
             $normalized = $this->input('mobile_normalized');
 
-            if ($this->filled('mobile') && (! is_string($normalized) || $normalized === '')) {
-                $validator->errors()->add('mobile', 'شماره موبایل معتبر ایران وارد کنید.');
+            if ($this->filled('mobile')) {
+                if (! is_string($normalized) || $normalized === '') {
+                    $validator->errors()->add('mobile', 'شماره موبایل معتبر ایران وارد کنید.');
+                }
             }
         });
     }

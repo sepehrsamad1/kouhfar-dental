@@ -19,5 +19,5 @@ it('creates synthetic patient data without saving to the database', function () 
 
     expect($patient->exists)->toBeFalse()
         ->and($patient->full_name)->not->toBeEmpty()
-        ->and($patient->mobile_normalized)->toBe('09000000000');
+        ->and($patient->mobile_normalized)->toMatch('/^09\\d{9}$/');
 });

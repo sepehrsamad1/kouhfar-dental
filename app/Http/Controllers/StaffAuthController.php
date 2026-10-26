@@ -50,7 +50,6 @@ class StaffAuthController
         RateLimiter::clear($throttleKey);
         $request->session()->regenerate();
 
-        $sessionId = (string) Str::uuid();
         $now = now('UTC');
         $absoluteMinutes = config('staff_auth.absolute_timeout_minutes');
 

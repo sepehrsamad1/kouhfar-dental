@@ -29,4 +29,4 @@ AuditLogger records actor, action, target, UTC timestamp, request ID, and only a
 
 ## Verification
 
-Task 10 verification is pending CI. The feature test suite covers administrator/reception/practitioner allow/deny combinations, practitioner patient and appointment scope, direct endpoint IDOR-style denial, protected sensitive resources, and minimal audit metadata.
+Task 10 verification is complete. GitHub Actions CI run #73 (run ID 40401175212) passed all checks. The feature test suite covers administrator/reception/practitioner allow/deny combinations, practitioner patient and appointment scope, direct endpoint IDOR-style denial, protected sensitive resources, and minimal audit metadata.

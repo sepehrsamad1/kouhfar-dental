@@ -122,7 +122,7 @@ final class ClinicConfigurationController
 
     public function storeClinicHour(Request $request): RedirectResponse
     {
-        Gate::authorize('create', ClinicWorkingHour::class);
+        Gate::authorize('manage-configuration');
         $data = $request->validate([
             'weekday' => ['required', 'integer', Rule::in([1, 2, 3, 4, 6, 7])],
             'start_local' => ['required', 'date_format:H:i'],
@@ -154,7 +154,7 @@ final class ClinicConfigurationController
 
     public function storeBreak(Request $request): RedirectResponse
     {
-        Gate::authorize('create', ScheduleBreak::class);
+        Gate::authorize('manage-configuration');
         $data = $request->validate([
             'practitioner_id' => ['nullable', 'uuid', 'exists:practitioners,id'],
             'weekday' => ['required', 'integer', Rule::in([1, 2, 3, 4, 6, 7])],
@@ -193,9 +193,9 @@ final class ClinicConfigurationController
         $query = \App\Appointment::query()->where('status', 'confirmed')
             ->where('start_at', '<', $endAt)->where('end_at', '>', $startAt);
         if ($practitionerId !== null) {
-            $query->whereHas('practitioners', fn ($builder) => $builder->whereKey($practitionerId)->wherePivot('active', true));
+            $query->whereHas('practitioners', fn ($builder) => $builder->whereKey($practitionerId));
         }
-        $impacted = $query->limit(50)->get(['id', 'start_at', 'end_at']);
+        $impacted = $query->orderBy('start_at')->get(['id', 'start_at', 'end_at']);
         if ($impacted->isNotEmpty()) {
             throw ValidationException::withMessages([
                 'schedule' => 'این تغییر ممکن است بر نوبت‌های تأییدشده اثر بگذارد. ابتدا فهرست اثر را بررسی کنید؛ هیچ نوبتی تغییر نکرده است. شناسه‌های نوبت: '.$impacted->pluck('id')->implode(', '),

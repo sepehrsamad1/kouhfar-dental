@@ -54,8 +54,7 @@ class StaffAuthController
         $now = now('UTC');
         $absoluteMinutes = config('staff_auth.absolute_timeout_minutes');
 
-        StaffSession::query()->create([
-            'id' => $sessionId,
+        $registry = StaffSession::query()->create([
             'user_id' => Auth::guard('staff')->id(),
             'token_hash' => hash('sha256', Str::random(64)),
             'created_at' => $now,
@@ -63,7 +62,7 @@ class StaffAuthController
             'last_seen_at' => $now,
         ]);
 
-        $request->session()->put('staff_registry_session_id', $sessionId);
+        $request->session()->put('staff_registry_session_id', $registry->getKey());
         $request->session()->put('staff_authenticated_at', $now->timestamp);
         $request->session()->put('staff_last_activity_at', $now->timestamp);
         $this->recordAttempt($email, $request, true);

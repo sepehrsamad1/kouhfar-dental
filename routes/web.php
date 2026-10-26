@@ -27,5 +27,5 @@ Route::middleware(['auth:staff', 'staff.session.fresh'])->group(function (): voi
     Route::post('/staff/patients', [PatientController::class, 'store'])->name('staff.patients.store');
     Route::patch('/staff/patients/{patient}', [PatientController::class, 'update'])->name('staff.patients.update');
     Route::post('/staff/patients/{patient}/archive', [PatientController::class, 'archive'])->name('staff.patients.archive');
-    Route::post('/staff/patients/{patient}/reveal-mobile', [PatientController::class, 'revealMobile'])->name('staff.patients.reveal-mobile');
+    Route::get('/staff/patients/{patient}/mobile', [PatientController::class, 'revealMobile'])->name('staff.patients.reveal-mobile');
 });

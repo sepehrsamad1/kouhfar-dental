@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use Carbon\CarbonImmutable;
+
 use App\Http\Requests\PatientLookupRequest;
 use App\Http\Requests\PatientStoreRequest;
 use App\Http\Requests\PatientUpdateRequest;
@@ -16,7 +18,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-use Carbon\CarbonImmutable;
 
 class PatientController
 {
@@ -26,7 +27,7 @@ class PatientController
         $query = Patient::query()
             ->select(['id', 'full_name', 'mobile_normalized', 'archived_at', 'version'])
             ->when(
-                !$request->boolean('include_archived'),
+                ! $request->boolean('include_archived'),
                 fn ($builder) => $builder->whereNull('archived_at')
             )
             ->when(
@@ -77,7 +78,7 @@ class PatientController
             ->where('mobile_normalized', $normalized)
             ->count();
 
-        if ($duplicateCount > 0 && !$request->boolean('confirm_duplicate')) {
+        if ($duplicateCount > 0 && ! $request->boolean('confirm_duplicate')) {
             return $this->duplicateResponse(
                 $request,
                 'برای این شماره موبایل بیمار قبلی وجود دارد. ثبت بیمار جدید فقط پس از تأیید صریح انجام می‌شود.',
@@ -124,7 +125,7 @@ class PatientController
             ->where($patient->getKeyName(), '!=', $patient->getKey())
             ->count();
 
-        if ($duplicateCount > 0 && !$request->boolean('confirm_duplicate')) {
+        if ($duplicateCount > 0 && ! $request->boolean('confirm_duplicate')) {
             return $this->duplicateResponse(
                 $request,
                 'شماره موبایل واردشده برای بیمار دیگری ثبت شده است. تأیید صریح برای استفاده از شماره تکراری لازم است.',
@@ -154,7 +155,7 @@ class PatientController
             return true;
         });
 
-        if (!$updated) {
+        if (! $updated) {
             return response()->json([
                 'message' => 'اطلاعات بیمار تغییر کرده است. صفحه را دوباره بارگذاری کنید و تغییرات خود را بررسی کنید.',
             ], 409);

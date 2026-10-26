@@ -5,13 +5,32 @@ use App\Practitioner;
 use App\Resource;
 use App\Service;
 use Illuminate\Database\QueryException;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 
-uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 it('has the Task 8 PostgreSQL schema', function () {
     expect(DB::getDriverName())->toBe('pgsql');
-    foreach (['staff_users','patients','services','practitioners','resources','working_hours','appointments','appointment_practitioners','appointment_resources','content_items','media_assets','ai_requests','ai_usage','jobs','notification_outbox','idempotency_records','deletion_requests'] as $table) {
+    foreach ([
+        'staff_users',
+        'patients',
+        'services',
+        'practitioners',
+        'resources',
+        'working_hours',
+        'appointments',
+        'appointment_practitioners',
+        'appointment_resources',
+        'content_items',
+        'media_assets',
+        'ai_requests',
+        'ai_usage',
+        'jobs',
+        'notification_outbox',
+        'idempotency_records',
+        'deletion_requests',
+    ] as $table) {
         expect(DB::getSchemaBuilder()->hasTable($table))->toBeTrue($table);
     }
     expect((int) DB::selectOne("select count(*) from pg_extension where extname in ('citext','btree_gist')")->count)->toBe(2);
@@ -43,8 +62,18 @@ it('allows adjacent and inactive occupancy', function () {
     $a = Appointment::factory()->create(['patient_id' => \App\Patient::factory(), 'service_id' => $service->id, 'start_at' => $base, 'end_at' => $base->addMinutes(30)]);
     $b = Appointment::factory()->create(['patient_id' => \App\Patient::factory(), 'service_id' => $service->id, 'start_at' => $base->addMinutes(30), 'end_at' => $base->addHour()]);
     DB::table('appointment_practitioners')->insert([
-        ['appointment_id'=>$a->id,'practitioner_id'=>$practitioner->id,'active'=>true,'occupied'=>DB::raw("tstzrange('".$a->start_at->toIso8601String()."', '".$a->end_at->toIso8601String()."', '[)')")],
-        ['appointment_id'=>$b->id,'practitioner_id'=>$practitioner->id,'active'=>true,'occupied'=>DB::raw("tstzrange('".$b->start_at->toIso8601String()."', '".$b->end_at->toIso8601String()."', '[)')")],
+        [
+            'appointment_id' => $a->id,
+            'practitioner_id' => $practitioner->id,
+            'active' => true,
+            'occupied' => DB::raw("tstzrange('".$a->start_at->toIso8601String()."', '".$a->end_at->toIso8601String()."', '[)')"),
+        ],
+        [
+            'appointment_id' => $b->id,
+            'practitioner_id' => $practitioner->id,
+            'active' => true,
+            'occupied' => DB::raw("tstzrange('".$b->start_at->toIso8601String()."', '".$b->end_at->toIso8601String()."', '[)')"),
+        ],
     ]);
     expect(DB::table('appointment_practitioners')->count())->toBe(2);
 });

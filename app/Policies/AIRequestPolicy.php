@@ -9,6 +9,13 @@ use App\StaffUser;
 
 class AIRequestPolicy
 {
-    public function view(StaffUser $user, AIRequest $request): bool { return $user->role === 'admin'; }
-    public function create(StaffUser $user): bool { return $user->role === 'admin'; }
+    public function view(StaffUser $user, AIRequest $request): bool
+    {
+        return $user->role === 'admin';
+    }
+
+    public function create(StaffUser $user): bool
+    {
+        return $user->role === 'admin';
+    }
 }

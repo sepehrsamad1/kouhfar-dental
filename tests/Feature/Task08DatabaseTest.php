@@ -60,7 +60,7 @@ it('prevents overlapping active practitioner occupancy at database level', funct
 it('allows adjacent and inactive occupancy', function () {
     $practitioner = Practitioner::factory()->create();
     $service = Service::factory()->create();
-    $base = now()->addDay()->startOfHour();
+    $base = now('UTC')->toImmutable()->addDay()->startOfHour();
     $a = Appointment::factory()->create(['patient_id' => Patient::factory(), 'service_id' => $service->id, 'start_at' => $base, 'end_at' => $base->addMinutes(30)]);
     $b = Appointment::factory()->create(['patient_id' => Patient::factory(), 'service_id' => $service->id, 'start_at' => $base->addMinutes(30), 'end_at' => $base->addHour()]);
     DB::table('appointment_practitioners')->insert([

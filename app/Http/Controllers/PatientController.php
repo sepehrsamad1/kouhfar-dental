@@ -117,7 +117,7 @@ class PatientController
 
         $duplicateCount = Patient::query()
             ->where('mobile_normalized', $normalized)
-            ->whereKeyNot($patient->getKey())
+            ->where($patient->getKeyName(), '!=', $patient->getKey())
             ->count();
 
         if ($duplicateCount > 0 && ! $request->boolean('confirm_duplicate')) {

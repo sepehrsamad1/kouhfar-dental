@@ -34,11 +34,13 @@ final class AvailabilityRepository
 
         $clinicHours = ClinicWorkingHour::query()->get()->groupBy('weekday');
         $practitioners = $service->practitioners()->where('practitioners.is_active', true)->get();
-        $compatibleResources = Resource::query()
+        $resourceQuery = Resource::query()
             ->where('is_active', true)
-            ->where('kind', $service->required_resource_kind)
-            ->whereHas('services', fn ($query) => $query->whereKey($service->getKey()))
-            ->get();
+            ->whereHas('services', fn ($query) => $query->whereKey($service->getKey()));
+        if ($service->required_resource_kind !== null) {
+            $resourceQuery->where('kind', $service->required_resource_kind);
+        }
+        $compatibleResources = $resourceQuery->get();
 
         // Include appointments whose service buffers overlap the requested window,
         // even when their actual appointment interval sits just outside it.

@@ -507,8 +507,8 @@ final class ClinicConfigurationController
         AuditLogger::record($request->user('staff'), 'configuration.schedule_exception_created', $exception, null, [
             'status' => $exception->kind,
             'practitioner_id' => $exception->practitioner_id,
-            'starts_at' => $exception->starts_at->toIso8601String(),
-            'ends_at' => $exception->ends_at->toIso8601String(),
+            'starts_at' => Carbon::parse((string) $exception->getRawOriginal('starts_at'), 'UTC')->toIso8601String(),
+            'ends_at' => Carbon::parse((string) $exception->getRawOriginal('ends_at'), 'UTC')->toIso8601String(),
         ]);
 
         return back()->with('success', 'استثنای برنامه ثبت شد. بررسی تعارض با سیاست تخصیص منابع هنوز در دسترس نیست.');
@@ -552,8 +552,8 @@ final class ClinicConfigurationController
         AuditLogger::record($request->user('staff'), 'configuration.schedule_exception_updated', $exception, [
             'status' => $exception->kind,
             'practitioner_id' => $exception->practitioner_id,
-            'starts_at' => $exception->starts_at->toIso8601String(),
-            'ends_at' => $exception->ends_at->toIso8601String(),
+            'starts_at' => Carbon::parse((string) $exception->getRawOriginal('starts_at'), 'UTC')->toIso8601String(),
+            'ends_at' => Carbon::parse((string) $exception->getRawOriginal('ends_at'), 'UTC')->toIso8601String(),
         ], [
             'status' => $data['kind'],
             'practitioner_id' => $scope,
@@ -575,8 +575,8 @@ final class ClinicConfigurationController
         AuditLogger::record($request->user('staff'), 'configuration.schedule_exception_deleted', $exception, [
             'status' => $exception->kind,
             'practitioner_id' => $exception->practitioner_id,
-            'starts_at' => $exception->starts_at->toIso8601String(),
-            'ends_at' => $exception->ends_at->toIso8601String(),
+            'starts_at' => Carbon::parse((string) $exception->getRawOriginal('starts_at'), 'UTC')->toIso8601String(),
+            'ends_at' => Carbon::parse((string) $exception->getRawOriginal('ends_at'), 'UTC')->toIso8601String(),
         ], ['status' => 'deleted']);
 
         return back()->with('success', 'استثنای برنامه حذف شد.');

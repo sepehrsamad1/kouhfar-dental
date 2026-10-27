@@ -17,7 +17,7 @@ Prompt source of truth: the Laravel 13, 32-task prompt pack.
 
 ## Next step
 
-Tasks 07 through 11 are implemented in the current `main` history; Task 11 is supported by CI run #90. OTP and `VerificationChallenge` remain deferred pending an owner decision. Task 12 is being developed on `task/12-clinic-configuration`; do not mark it verified until its tests and CI pass.
+Tasks 07 through 11 are implemented in the current `main` history; Task 11 is supported by CI run #90. OTP and `VerificationChallenge` remain deferred pending an owner decision. Task 12 code passed CI run `40425347718` on commit `42ad11761afeaae56965dca3749b6acbcb100419` (129 Laravel tests, 604 assertions, 4 browser smoke tests). It remains in progress because resource-allocation policy is an owner decision and responsive visual checks have not been captured.
 
 ## Rules for resuming
 

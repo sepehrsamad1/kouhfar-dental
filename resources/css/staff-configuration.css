@@ -1,0 +1,193 @@
+.staff-config-page {
+    min-width: 320px;
+    background: #f4f6f9;
+    color: #172033;
+}
+
+.staff-config-page .staff-config {
+    box-sizing: border-box;
+    width: min(100% - 2rem, 1180px);
+    margin: 0 auto;
+    padding: clamp(1rem, 2.5vw, 2rem) 0 3rem;
+    direction: rtl;
+    font-family: inherit;
+    letter-spacing: normal;
+}
+
+.staff-config h1 {
+    margin: 0 0 .65rem;
+    font-size: clamp(1.55rem, 2.5vw, 2rem);
+    line-height: 1.5;
+}
+
+.staff-config p {
+    margin: .5rem 0 1rem;
+    line-height: 1.9;
+    overflow-wrap: anywhere;
+}
+
+.staff-config section {
+    box-sizing: border-box;
+    min-width: 0;
+    margin: 1rem 0;
+    padding: clamp(.85rem, 2vw, 1.4rem);
+    border: 1px solid #dce2ea;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 2px 8px rgb(20 30 50 / 4%);
+}
+
+.staff-config h2 {
+    margin: 0 0 1rem;
+    font-size: 1.25rem;
+    line-height: 1.6;
+}
+
+.staff-config section > form,
+.staff-config li > form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+    align-items: end;
+    gap: .85rem;
+    min-width: 0;
+    margin: .75rem 0;
+    padding: .9rem 0;
+    border-bottom: 1px solid #edf0f4;
+}
+
+.staff-config label {
+    display: flex;
+    flex-direction: column;
+    gap: .35rem;
+    min-width: 0;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.staff-config label:has(> input[type="checkbox"]) {
+    flex-direction: row;
+    align-items: center;
+    gap: .5rem;
+}
+
+.staff-config input:not([type="checkbox"]):not([type="hidden"]),
+.staff-config select {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    min-height: 42px;
+    padding: .5rem .6rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #fff;
+    color: inherit;
+    font: inherit;
+}
+
+.staff-config input[type="checkbox"] {
+    flex: 0 0 auto;
+    width: 1rem;
+    height: 1rem;
+    margin: 0;
+}
+
+.staff-config button {
+    grid-column: 1 / -1;
+    justify-self: start;
+    min-height: 42px;
+    padding: .6rem 1rem;
+    border: 0;
+    border-radius: 8px;
+    background: #155e75;
+    color: #fff;
+    font: inherit;
+    cursor: pointer;
+}
+
+.staff-config button:disabled,
+.staff-config input:disabled,
+.staff-config select:disabled {
+    cursor: not-allowed;
+    opacity: .65;
+}
+
+.staff-config ul {
+    display: grid;
+    gap: .85rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.staff-config li {
+    box-sizing: border-box;
+    min-width: 0;
+    padding: 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    overflow-wrap: anywhere;
+}
+
+.staff-config fieldset {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+    gap: .65rem;
+    box-sizing: border-box;
+    min-width: 0;
+    padding: .9rem;
+    border: 1px solid #dce2ea;
+    border-radius: 10px;
+}
+
+.staff-config fieldset label {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: .5rem;
+    white-space: normal;
+}
+
+.staff-config legend {
+    padding: 0 .35rem;
+    line-height: 1.7;
+}
+
+.staff-config [role="alert"],
+.staff-config [role="status"] {
+    padding: .75rem 1rem;
+    border-radius: 8px;
+    line-height: 1.8;
+    overflow-wrap: anywhere;
+}
+
+.staff-config [role="alert"] {
+    border: 1px solid #fecdd3;
+    background: #fff1f2;
+}
+
+.staff-config [role="status"] {
+    border: 1px solid #a7f3d0;
+    background: #ecfdf5;
+}
+
+@media (max-width: 480px) {
+    .staff-config-page .staff-config {
+        width: min(100% - 1rem, 1180px);
+    }
+
+    .staff-config section {
+        padding: .75rem;
+        border-radius: 10px;
+    }
+
+    .staff-config li {
+        padding: .75rem;
+    }
+
+    .staff-config fieldset {
+        grid-template-columns: minmax(0, 1fr);
+        padding: .65rem;
+    }
+}

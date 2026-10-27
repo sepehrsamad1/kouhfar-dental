@@ -19,12 +19,14 @@ class WorkingHour extends Model
         'weekday',
         'start_local',
         'end_local',
+        'version',
     ];
 
     protected function casts(): array
     {
         return [
             'weekday' => 'integer',
+            'version' => 'integer',
         ];
     }
 

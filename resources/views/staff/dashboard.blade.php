@@ -10,6 +10,7 @@
     <main>
         <h1>پنل کارکنان</h1>
         <p>{{ auth('staff')->user()->display_name }}</p>
+        <p><a href="{{ route('staff.configuration.index') }}">تنظیمات کلینیک</a></p>
         <form method="post" action="{{ route('staff.logout') }}">
             @csrf
             <button type="submit">خروج</button>

@@ -22,12 +22,14 @@ Mobile normalization: Persian and Arabic digits to Latin, strip separators, stor
 ## Catalog and calendar
 | Table | Key columns | Constraints and notes |
 |---|---|---|
-| Service | id, name_fa, duration_minutes, buffer_before_minutes, buffer_after_minutes, is_active, is_public_bookable | CHECK duration > 0, buffers >= 0. Deactivate, never delete if referenced. |
+| Service | id, name_fa, duration_minutes, buffer_before_minutes, buffer_after_minutes, required_resource_kind (nullable), is_active, is_public_bookable, version | CHECK duration > 0, buffers >= 0. Resource kind is `dental_unit` or `consultation_room`; this is a type requirement, not a dedicated unit assignment. Deactivate, never delete if referenced. |
 | Practitioner | id, display_name_fa, is_active, user_id (nullable) | user_id links practitioner role. |
 | PractitionerService | practitioner_id, service_id | PK(practitioner_id, service_id). |
-| Resource | id, name_fa, kind, is_active | Chair or room. |
+| Resource | id, name_fa, kind, is_active, version | Shared pool inventory; starter configuration contains two dental units and one consultation space, initially inactive. |
 | ServiceResource | service_id, resource_id, quantity | PK(service_id, resource_id). |
-| WorkingHours | id, practitioner_id (nullable = clinic), weekday, start_local, end_local | CHECK end > start. Local times in clinic timezone (D15). |
+| ClinicWorkingHour | id, weekday, start_local, end_local, timezone, version | Clinic-wide local wall-clock hours; current confirmed default is Saturday-Thursday, 12:00-20:00, `Asia/Tehran`. |
+| WorkingHours | id, practitioner_id, weekday, start_local, end_local, version | Practitioner-specific local wall-clock schedule. CHECK end > start. Local times in clinic timezone (D15). |
+| ScheduleBreak | id, practitioner_id (nullable = clinic), weekday, start_local, end_local, version | Recurring local-time break; exact break schedule remains clinic-configured. |
 | ScheduleException | id, practitioner_id (nullable), starts_at, ends_at, kind (holiday, leave, closed), reason | Conflicts with appointments are reported, not auto-moved. |
 
 ## Bookings

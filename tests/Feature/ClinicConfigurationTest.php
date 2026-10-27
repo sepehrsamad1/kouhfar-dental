@@ -1,0 +1,536 @@
+<?php
+
+declare(strict_types=1);
+
+use App\Appointment;
+use App\AuditLog;
+use App\ClinicWorkingHour;
+use App\Enums\AppointmentStatus;
+use App\Http\Middleware\EnsureStaffSessionIsFresh;
+use App\Patient;
+use App\Practitioner;
+use App\ScheduleBreak;
+use App\ScheduleException;
+use App\Service;
+use App\StaffUser;
+use App\WorkingHour;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
+
+uses(RefreshDatabase::class);
+
+beforeEach(function (): void {
+    $this->withoutMiddleware(EnsureStaffSessionIsFresh::class);
+});
+
+function configurationStaff(string $role): StaffUser
+{
+    return StaffUser::factory()->active()->create(['role' => $role]);
+}
+
+it('allows authorized staff to view configuration but only admin to change it', function (): void {
+    $reception = configurationStaff('reception');
+
+    $this->actingAs($reception, 'staff')
+        ->get(route('staff.configuration.index'))
+        ->assertOk();
+
+    $this->actingAs($reception, 'staff')
+        ->post(route('staff.configuration.services.store'), [
+            'name_fa' => 'خدمت آزمایشی',
+            'duration_minutes' => 30,
+            'buffer_before_minutes' => 0,
+            'buffer_after_minutes' => 0,
+        ])
+        ->assertForbidden();
+
+    $admin = configurationStaff('admin');
+    $this->actingAs($admin, 'staff')
+        ->post(route('staff.configuration.services.store'), [
+            'name_fa' => 'خدمت آزمایشی',
+            'duration_minutes' => 30,
+            'buffer_before_minutes' => 0,
+            'buffer_after_minutes' => 0,
+        ])
+        ->assertRedirect();
+
+    expect(Service::query()->where('name_fa', 'خدمت آزمایشی')->firstOrFail()->is_active)->toBeFalse();
+});
+
+it('rejects cross-midnight clinic schedule periods', function (): void {
+    $admin = configurationStaff('admin');
+
+    $this->actingAs($admin, 'staff')
+        ->from(route('staff.configuration.index'))
+        ->post(route('staff.configuration.clinic-hours.store'), [
+            'weekday' => 6,
+            'start_local' => '20:00',
+            'end_local' => '12:00',
+            'timezone' => 'Asia/Tehran',
+        ])
+        ->assertSessionHasErrors(['end_local']);
+
+    expect(ClinicWorkingHour::query()->count())->toBe(0);
+});
+
+it('rejects stale service configuration versions', function (): void {
+    $admin = configurationStaff('admin');
+    $service = Service::factory()->create([
+        'name_fa' => 'خدمت قدیمی',
+        'duration_minutes' => 30,
+        'buffer_before_minutes' => 0,
+        'buffer_after_minutes' => 0,
+        'is_active' => false,
+    ]);
+
+    $this->actingAs($admin, 'staff')
+        ->from(route('staff.configuration.index'))
+        ->patch(route('staff.configuration.services.update', $service), [
+            'version' => 999,
+            'name_fa' => 'تغییر قدیمی',
+            'duration_minutes' => 30,
+            'buffer_before_minutes' => 0,
+            'buffer_after_minutes' => 0,
+            'is_active' => 0,
+        ])
+        ->assertSessionHasErrors(['version']);
+
+    expect($service->refresh()->name_fa)->toBe('خدمت قدیمی')
+        ->and($service->version)->toBe(1);
+});
+
+it('blocks service duration changes that could affect confirmed appointments and preserves history on deactivation', function (): void {
+    $admin = configurationStaff('admin');
+    $service = Service::factory()->create([
+        'duration_minutes' => 30,
+        'buffer_before_minutes' => 0,
+        'buffer_after_minutes' => 0,
+        'is_active' => true,
+    ]);
+    $appointment = Appointment::factory()->create([
+        'service_id' => $service->id,
+        'status' => AppointmentStatus::Confirmed,
+        'start_at' => now('UTC')->addDays(30),
+        'end_at' => now('UTC')->addDays(30)->addMinutes(30),
+    ]);
+
+    $this->actingAs($admin, 'staff')
+        ->from(route('staff.configuration.index'))
+        ->patch(route('staff.configuration.services.update', $service), [
+            'version' => $service->refresh()->version,
+            'name_fa' => $service->name_fa,
+            'duration_minutes' => 45,
+            'buffer_before_minutes' => 0,
+            'buffer_after_minutes' => 0,
+            'is_active' => 1,
+        ])
+        ->assertSessionHasErrors(['service']);
+
+    expect($service->refresh()->duration_minutes)->toBe(30)
+        ->and(Appointment::query()->whereKey($appointment->id)->exists())->toBeTrue();
+
+    $this->actingAs($admin, 'staff')
+        ->from(route('staff.configuration.index'))
+        ->patch(route('staff.configuration.services.update', $service), [
+            'version' => $service->version,
+            'name_fa' => $service->name_fa,
+            'duration_minutes' => 30,
+            'buffer_before_minutes' => 0,
+            'buffer_after_minutes' => 0,
+            'is_active' => 0,
+        ])
+        ->assertRedirect();
+
+    expect($service->refresh()->is_active)->toBeFalse()
+        ->and(Appointment::query()->whereKey($appointment->id)->exists())->toBeTrue();
+});
+
+it('blocks a closure that overlaps a confirmed appointment without changing the appointment', function (): void {
+    $admin = configurationStaff('admin');
+    $service = Service::factory()->create();
+    $patient = Patient::factory()->create();
+    $start = Carbon::parse('2026-11-28 10:30', 'Asia/Tehran')->utc();
+    $appointment = Appointment::factory()->create([
+        'patient_id' => $patient->id,
+        'service_id' => $service->id,
+        'status' => AppointmentStatus::Confirmed,
+        'start_at' => $start,
+        'end_at' => $start->copy()->addHour(),
+    ]);
+
+    $this->actingAs($admin, 'staff')
+        ->from(route('staff.configuration.index'))
+        ->post(route('staff.configuration.exceptions.store'), [
+            'starts_at' => '2026-11-28T10:00',
+            'ends_at' => '2026-11-28T12:00',
+            'kind' => 'holiday',
+        ])
+        ->assertSessionHasErrors(['schedule']);
+
+    expect(ScheduleException::query()->count())->toBe(0)
+        ->and($appointment->refresh()->status)->toBe(AppointmentStatus::Confirmed);
+});
+
+it('stores schedule exception instants in UTC from Tehran local time', function (): void {
+    $admin = configurationStaff('admin');
+
+    $this->actingAs($admin, 'staff')
+        ->post(route('staff.configuration.exceptions.store'), [
+            'starts_at' => '2026-11-28T10:00',
+            'ends_at' => '2026-11-28T11:00',
+            'kind' => 'special_opening',
+        ])
+        ->assertRedirect();
+
+    $exception = ScheduleException::query()->firstOrFail();
+    expect($exception->starts_at->toIso8601String())
+        ->toBe(Carbon::parse('2026-11-28 10:00', 'Asia/Tehran')->utc()->toIso8601String());
+});
+
+it('supports versioned clinic-hour update and delete', function (): void {
+    $admin = configurationStaff('admin');
+    $this->actingAs($admin, 'staff')
+        ->post(route('staff.configuration.clinic-hours.store'), [
+            'weekday' => 6,
+            'start_local' => '12:00',
+            'end_local' => '20:00',
+            'timezone' => 'Asia/Tehran',
+        ])
+        ->assertRedirect();
+
+    $hour = ClinicWorkingHour::query()->firstOrFail();
+    $this->actingAs($admin, 'staff')
+        ->patch(route('staff.configuration.clinic-hours.update', $hour), [
+            'version' => $hour->version,
+            'weekday' => 6,
+            'start_local' => '13:00',
+            'end_local' => '20:00',
+            'timezone' => 'Asia/Tehran',
+        ])
+        ->assertRedirect();
+
+    $hour->refresh();
+    expect(substr($hour->start_local, 0, 5))->toBe('13:00')
+        ->and($hour->version)->toBe(2);
+
+    $this->actingAs($admin, 'staff')
+        ->delete(route('staff.configuration.clinic-hours.delete', $hour), ['version' => $hour->version])
+        ->assertRedirect();
+
+    expect(ClinicWorkingHour::query()->count())->toBe(0);
+});
+
+it('blocks recurring breaks that overlap future confirmed appointments', function (): void {
+    $admin = configurationStaff('admin');
+    $service = Service::factory()->create();
+    $start = Carbon::parse('2026-11-28 10:30', 'Asia/Tehran')->utc();
+    Appointment::factory()->create([
+        'service_id' => $service->id,
+        'status' => AppointmentStatus::Confirmed,
+        'start_at' => $start,
+        'end_at' => $start->copy()->addHour(),
+    ]);
+
+    $this->actingAs($admin, 'staff')
+        ->from(route('staff.configuration.index'))
+        ->post(route('staff.configuration.breaks.store'), [
+            'practitioner_id' => '',
+            'weekday' => 6,
+            'start_local' => '10:00',
+            'end_local' => '11:00',
+        ])
+        ->assertSessionHasErrors(['schedule']);
+
+    expect(ScheduleBreak::query()->count())->toBe(0);
+});
+
+it('audits service configuration changes with allowlisted before and after values', function (): void {
+    $admin = configurationStaff('admin');
+    $service = Service::factory()->create([
+        'duration_minutes' => 30,
+        'buffer_before_minutes' => 0,
+        'buffer_after_minutes' => 0,
+        'is_active' => false,
+    ]);
+    $service->refresh();
+
+    $this->actingAs($admin, 'staff')
+        ->patch(route('staff.configuration.services.update', $service), [
+            'version' => $service->version,
+            'name_fa' => $service->name_fa,
+            'duration_minutes' => 45,
+            'buffer_before_minutes' => 5,
+            'buffer_after_minutes' => 10,
+            'is_active' => 0,
+        ])
+        ->assertRedirect();
+
+    $audit = AuditLog::query()->where('action', 'configuration.service_updated')->firstOrFail();
+    expect($audit->meta['before']['duration_minutes'])->toBe(30)
+        ->and($audit->meta['after']['duration_minutes'])->toBe(45)
+        ->and($audit->meta['after']['buffer_before_minutes'])->toBe(5)
+        ->and($audit->meta['after']['buffer_after_minutes'])->toBe(10);
+});
+
+it('rejects invalid service durations and buffer values', function (): void {
+    $admin = configurationStaff('admin');
+
+    $this->actingAs($admin, 'staff')
+        ->from(route('staff.configuration.index'))
+        ->post(route('staff.configuration.services.store'), [
+            'name_fa' => 'خدمت نامعتبر',
+            'duration_minutes' => 0,
+            'buffer_before_minutes' => -1,
+            'buffer_after_minutes' => 1441,
+        ])
+        ->assertSessionHasErrors(['duration_minutes', 'buffer_before_minutes', 'buffer_after_minutes']);
+
+    expect(Service::query()->count())->toBe(0);
+});
+
+it('blocks a required resource type change when confirmed appointments reference the service', function (): void {
+    $admin = configurationStaff('admin');
+    $service = Service::factory()->create([
+        'required_resource_kind' => 'dental_unit',
+        'duration_minutes' => 30,
+        'buffer_before_minutes' => 0,
+        'buffer_after_minutes' => 0,
+        'is_active' => false,
+    ]);
+    $appointment = Appointment::factory()->create([
+        'service_id' => $service->id,
+        'status' => AppointmentStatus::Confirmed,
+        'start_at' => now('UTC')->addDays(30),
+        'end_at' => now('UTC')->addDays(30)->addMinutes(30),
+    ]);
+
+    $this->actingAs($admin, 'staff')
+        ->from(route('staff.configuration.index'))
+        ->patch(route('staff.configuration.services.update', $service), [
+            'version' => $service->refresh()->version,
+            'name_fa' => $service->name_fa,
+            'duration_minutes' => 30,
+            'buffer_before_minutes' => 0,
+            'buffer_after_minutes' => 0,
+            'required_resource_kind' => 'consultation_room',
+            'is_active' => 0,
+        ])
+        ->assertSessionHasErrors(['service']);
+
+    expect($service->refresh()->required_resource_kind)->toBe('dental_unit')
+        ->and(Appointment::query()->whereKey($appointment->id)->exists())->toBeTrue();
+});
+
+it('allows an administrator to configure practitioner service assignments with version checks', function (): void {
+    $admin = configurationStaff('admin');
+    $practitioner = Practitioner::factory()->create(['is_active' => false]);
+    $service = Service::factory()->create(['is_active' => false]);
+
+    $this->actingAs($admin, 'staff')
+        ->patch(route('staff.configuration.practitioners.services.update', $practitioner), [
+            'version' => $practitioner->refresh()->version,
+            'service_ids' => [$service->id],
+        ])
+        ->assertRedirect();
+
+    expect($practitioner->refresh()->services()->whereKey($service->id)->exists())->toBeTrue()
+        ->and($practitioner->version)->toBe(2);
+});
+
+it('blocks removing a practitioner service assignment used by a confirmed appointment', function (): void {
+    $admin = configurationStaff('admin');
+    $practitioner = Practitioner::factory()->create(['is_active' => true]);
+    $service = Service::factory()->create(['is_active' => true]);
+    $practitioner->services()->attach($service->id);
+
+    $start = now('UTC')->addDays(60)->startOfHour();
+    $end = $start->copy()->addMinutes(30);
+    $appointment = Appointment::factory()->create([
+        'service_id' => $service->id,
+        'status' => AppointmentStatus::Confirmed,
+        'start_at' => $start,
+        'end_at' => $end,
+    ]);
+    DB::table('appointment_practitioners')->insert([
+        'appointment_id' => $appointment->id,
+        'practitioner_id' => $practitioner->id,
+        'active' => true,
+        'occupied' => DB::raw("tstzrange('".$start->toIso8601String()."', '".$end->toIso8601String()."', '[)')"),
+    ]);
+
+    $this->actingAs($admin, 'staff')
+        ->from(route('staff.configuration.index'))
+        ->patch(route('staff.configuration.practitioners.services.update', $practitioner), [
+            'version' => $practitioner->refresh()->version,
+        ])
+        ->assertSessionHasErrors(['service_ids']);
+
+    expect($practitioner->refresh()->services()->whereKey($service->id)->exists())->toBeTrue()
+        ->and(Appointment::query()->whereKey($appointment->id)->exists())->toBeTrue();
+});
+
+it('blocks narrowing clinic hours when a confirmed appointment falls outside the new hours', function (): void {
+    $admin = configurationStaff('admin');
+    $service = Service::factory()->create();
+    $start = Carbon::parse('2026-11-28 13:00', 'Asia/Tehran')->utc();
+    $appointment = Appointment::factory()->create([
+        'service_id' => $service->id,
+        'status' => AppointmentStatus::Confirmed,
+        'start_at' => $start,
+        'end_at' => $start->copy()->addMinutes(30),
+    ]);
+    $hour = ClinicWorkingHour::query()->create([
+        'weekday' => 6,
+        'start_local' => '12:00',
+        'end_local' => '20:00',
+        'timezone' => 'Asia/Tehran',
+    ]);
+
+    $this->actingAs($admin, 'staff')
+        ->from(route('staff.configuration.index'))
+        ->patch(route('staff.configuration.clinic-hours.update', $hour), [
+            'version' => $hour->refresh()->version,
+            'weekday' => 6,
+            'start_local' => '14:00',
+            'end_local' => '20:00',
+            'timezone' => 'Asia/Tehran',
+        ])
+        ->assertSessionHasErrors(['schedule']);
+
+    expect(substr((string) $hour->refresh()->start_local, 0, 5))->toBe('12:00')
+        ->and(Appointment::query()->whereKey($appointment->id)->exists())->toBeTrue();
+});
+
+it('blocks deleting clinic hours when a confirmed appointment exists on that weekday', function (): void {
+    $admin = configurationStaff('admin');
+    $service = Service::factory()->create();
+    $start = Carbon::parse('2026-11-28 13:00', 'Asia/Tehran')->utc();
+    $appointment = Appointment::factory()->create([
+        'service_id' => $service->id,
+        'status' => AppointmentStatus::Confirmed,
+        'start_at' => $start,
+        'end_at' => $start->copy()->addMinutes(30),
+    ]);
+    $hour = ClinicWorkingHour::query()->create([
+        'weekday' => 6,
+        'start_local' => '12:00',
+        'end_local' => '20:00',
+        'timezone' => 'Asia/Tehran',
+    ]);
+
+    $this->actingAs($admin, 'staff')
+        ->from(route('staff.configuration.index'))
+        ->delete(route('staff.configuration.clinic-hours.delete', $hour), [
+            'version' => $hour->refresh()->version,
+        ])
+        ->assertSessionHasErrors(['schedule']);
+
+    expect(ClinicWorkingHour::query()->whereKey($hour->id)->exists())->toBeTrue()
+        ->and(Appointment::query()->whereKey($appointment->id)->exists())->toBeTrue();
+});
+
+it('blocks moving a recurring break onto a confirmed appointment', function (): void {
+    $admin = configurationStaff('admin');
+    $service = Service::factory()->create();
+    $start = Carbon::parse('2026-11-28 13:00', 'Asia/Tehran')->utc();
+    $appointment = Appointment::factory()->create([
+        'service_id' => $service->id,
+        'status' => AppointmentStatus::Confirmed,
+        'start_at' => $start,
+        'end_at' => $start->copy()->addMinutes(30),
+    ]);
+    $break = ScheduleBreak::query()->create([
+        'practitioner_id' => null,
+        'weekday' => 6,
+        'start_local' => '12:00',
+        'end_local' => '12:30',
+        'timezone' => 'Asia/Tehran',
+    ]);
+
+    $this->actingAs($admin, 'staff')
+        ->from(route('staff.configuration.index'))
+        ->patch(route('staff.configuration.breaks.update', $break), [
+            'version' => $break->refresh()->version,
+            'practitioner_id' => '',
+            'weekday' => 6,
+            'start_local' => '13:00',
+            'end_local' => '13:30',
+        ])
+        ->assertSessionHasErrors(['schedule']);
+
+    expect(substr((string) $break->refresh()->start_local, 0, 5))->toBe('12:00')
+        ->and(Appointment::query()->whereKey($appointment->id)->exists())->toBeTrue();
+});
+
+it('blocks updating a closure when the new closure range overlaps a confirmed appointment', function (): void {
+    $admin = configurationStaff('admin');
+    $service = Service::factory()->create();
+    $start = Carbon::parse('2026-11-28 13:00', 'Asia/Tehran')->utc();
+    $appointment = Appointment::factory()->create([
+        'service_id' => $service->id,
+        'status' => AppointmentStatus::Confirmed,
+        'start_at' => $start,
+        'end_at' => $start->copy()->addMinutes(30),
+    ]);
+    $exception = ScheduleException::query()->create([
+        'practitioner_id' => null,
+        'starts_at' => Carbon::parse('2026-11-28 10:00', 'Asia/Tehran')->utc(),
+        'ends_at' => Carbon::parse('2026-11-28 11:00', 'Asia/Tehran')->utc(),
+        'kind' => 'special_opening',
+    ]);
+
+    $this->actingAs($admin, 'staff')
+        ->from(route('staff.configuration.index'))
+        ->patch(route('staff.configuration.exceptions.update', $exception), [
+            'version' => $exception->refresh()->version,
+            'practitioner_id' => '',
+            'starts_at' => '2026-11-28T12:30',
+            'ends_at' => '2026-11-28T13:30',
+            'kind' => 'closed',
+        ])
+        ->assertSessionHasErrors(['schedule']);
+
+    expect($exception->refresh()->kind)->toBe('special_opening')
+        ->and(Appointment::query()->whereKey($appointment->id)->exists())->toBeTrue();
+});
+
+it('blocks narrowing practitioner hours when a confirmed appointment falls outside the new hours', function (): void {
+    $admin = configurationStaff('admin');
+    $practitioner = Practitioner::factory()->create(['is_active' => true]);
+    $service = Service::factory()->create();
+    $hour = WorkingHour::query()->create([
+        'practitioner_id' => $practitioner->id,
+        'weekday' => 6,
+        'start_local' => '12:00',
+        'end_local' => '20:00',
+    ]);
+    $start = Carbon::parse('2026-11-28 13:00', 'Asia/Tehran')->utc();
+    $end = $start->copy()->addMinutes(30);
+    $appointment = Appointment::factory()->create([
+        'service_id' => $service->id,
+        'status' => AppointmentStatus::Confirmed,
+        'start_at' => $start,
+        'end_at' => $end,
+    ]);
+    DB::table('appointment_practitioners')->insert([
+        'appointment_id' => $appointment->id,
+        'practitioner_id' => $practitioner->id,
+        'active' => true,
+        'occupied' => DB::raw("tstzrange('".$start->toIso8601String()."', '".$end->toIso8601String()."', '[)')"),
+    ]);
+
+    $this->actingAs($admin, 'staff')
+        ->from(route('staff.configuration.index'))
+        ->patch(route('staff.configuration.working-hours.update', $hour), [
+            'version' => $hour->refresh()->version,
+            'practitioner_id' => $practitioner->id,
+            'weekday' => 6,
+            'start_local' => '14:00',
+            'end_local' => '20:00',
+        ])
+        ->assertSessionHasErrors(['schedule']);
+
+    expect(substr((string) $hour->refresh()->start_local, 0, 5))->toBe('12:00')
+        ->and(Appointment::query()->whereKey($appointment->id)->exists())->toBeTrue();
+});

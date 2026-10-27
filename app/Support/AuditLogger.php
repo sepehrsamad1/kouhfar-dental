@@ -22,6 +22,17 @@ final class AuditLogger
         'content_id',
         'media_asset_id',
         'reason_code',
+        'duration_minutes',
+        'buffer_before_minutes',
+        'buffer_after_minutes',
+        'weekday',
+        'start_local',
+        'end_local',
+        'starts_at',
+        'ends_at',
+        'timezone',
+        'kind',
+        'version',
     ];
 
     public static function record(

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use App\Appointment;
+use App\ClinicWorkingHour;
 use App\Patient;
 use App\Practitioner;
 use App\Resource;
@@ -78,6 +79,17 @@ class DatabaseSeeder extends Seeder
             ['practitioner_id' => $practitionerId, 'weekday' => 1, 'start_local' => '09:00:00', 'end_local' => '17:00:00'],
             []
         );
+
+        foreach ([1, 2, 3, 4, 6, 7] as $weekday) {
+            ClinicWorkingHour::query()->firstOrCreate(
+                ['weekday' => $weekday],
+                [
+                    'start_local' => '12:00',
+                    'end_local' => '20:00',
+                    'timezone' => 'Asia/Tehran',
+                ]
+            );
+        }
 
         $start = now('UTC')->addDays(7)->startOfHour();
         $appointment = Appointment::query()->updateOrCreate(['id' => $appointmentId], [

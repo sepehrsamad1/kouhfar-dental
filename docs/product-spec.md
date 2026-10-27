@@ -1,6 +1,6 @@
 # Product Spec (Package 2)
 
-Status: DRAFT. FIXED = stated by owner or by the existing UI. ASSUMPTION = proposed default, not approved. OWNER DECISION = blocks implementation of that area.
+Status: DRAFT. FIXED = stated by owner or by the existing UI. ASSUMPTION = proposed default, not approved. OWNER DECISION = blocks implementation of that area. Later explicit owner decisions supersede earlier proposed defaults where noted.
 Sources: docs/ui-audit.md (Package 1), the source UI HTML, the Package 2 prompt.
 
 ## 1. Product areas
@@ -9,17 +9,17 @@ Sources: docs/ui-audit.md (Package 1), the source UI HTML, the Package 2 prompt.
 |---|---|---|
 | Public site | Hero, services, results, smile entry, doctor, FAQ, contact, booking entry | Static HTML/JS. Results and smile are demo content. |
 | Booking core | Availability, appointment request, confirmation, lifecycle | Booking UI is simulated. No backend. |
-| Staff panel | Login, patients, calendar, services, practitioners, settings, audit | Not started. |
+| Staff panel | Login, patients, calendar, services, practitioners, settings, audit | Authentication and patient management are implemented; Task 12 adds initial configuration management. Calendar/booking workflow remains future work. |
 | AI capabilities | Chat assistant, smile simulation | Chat is keyword matching (demo). Smile is canned (demo). Real AI is Phase 8. |
 
 ## 2. Required decisions
 
 | # | Decision | Status | Proposed default (ASSUMPTION unless noted) |
 |---|---|---|---|
-| D1 | Number of practitioners | OWNER DECISION | 1 practitioner (Dr. Arash Kouhfar); model supports N |
-| D2 | Chairs / bookable resources | OWNER DECISION | 1 chair; resources modeled but optional |
-| D3 | Services, durations, buffers | OWNER DECISION | Buffer 10 min default; durations not published |
-| D4 | Working hours and holidays | OWNER DECISION | Not assumed. Online booking stays closed until supplied |
+| D1 | Number of practitioners | PARTIALLY CONFIRMED | Expected range: 4-10 practitioners. Individual identities, active staff, and service qualifications must be entered by clinic management; no practitioners are invented by the starter seeder. |
+| D2 | Chairs / bookable resources | CONFIRMED | 2 dental units shared between practitioners plus 1 consultation space. Services specify a required resource type; Task 13 must implement conflict-safe selection from the shared pool. |
+| D3 | Services, durations, buffers | STARTER DEFAULTS PROPOSED | A researched starter catalog with configurable durations and post-service buffers is available via the explicit ClinicStarterConfigurationSeeder. All starter services are inactive and not public-bookable until reviewed. Values are planning estimates, not clinical rules. |
+| D4 | Working hours and holidays | HOURS CONFIRMED; HOLIDAY CALENDAR NOT SET | Clinic hours: Saturday through Thursday, 12:00-20:00, Asia/Tehran. Holidays and exceptions are configurable; no dates are auto-closed because the clinic's operating policy on public holidays is unknown. |
 | D5 | Request vs confirmed booking | ASSUMPTION | Public booking creates `pending`; staff confirms |
 | D6 | Expiry of unconfirmed requests | OWNER DECISION | Proposed 2 hours; owner to choose |
 | D7 | Phone bookings entered by staff | ASSUMPTION | Staff can create `confirmed` directly |
@@ -30,7 +30,7 @@ Sources: docs/ui-audit.md (Package 1), the source UI HTML, the Package 2 prompt.
 | D12 | Staff access to sensitive data | OWNER DECISION | Least privilege per section 5a (proposed) |
 | D13 | External service budget and terms | OWNER DECISION | None chosen (SMS, AI, hosting) |
 | D14 | Public display of prices or fees | OWNER DECISION | No fees shown until approved |
-| D15 | Clinic timezone | ASSUMPTION | Asia/Tehran (inferred from Persian UI; owner to confirm). Stored in UTC |
+| D15 | Clinic timezone | CONFIRMED | Local schedule rules use Asia/Tehran; appointment instants remain stored in UTC. |
 | D16 | Calendar display | ASSUMPTION | Jalali for display; ISO 8601 in API |
 
 ## 3. Booking states

@@ -18,12 +18,14 @@ class Resource extends Model
         'name_fa',
         'kind',
         'is_active',
+        'version',
     ];
 
     protected function casts(): array
     {
         return [
             'is_active' => 'boolean',
+            'version' => 'integer',
         ];
     }
 

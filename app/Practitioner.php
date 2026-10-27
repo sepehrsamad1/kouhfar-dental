@@ -19,12 +19,14 @@ class Practitioner extends Model
     protected $fillable = [
         'display_name_fa',
         'is_active',
+        'version',
     ];
 
     protected function casts(): array
     {
         return [
             'is_active' => 'boolean',
+            'version' => 'integer',
         ];
     }
 

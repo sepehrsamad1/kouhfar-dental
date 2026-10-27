@@ -10,6 +10,7 @@ it('allows the planned schedule exception fields', function () {
         'starts_at',
         'ends_at',
         'kind',
+        'version',
     ]);
 });
 
@@ -18,6 +19,7 @@ it('casts schedule exception timestamps as immutable', function () {
         ->toMatchArray([
             'starts_at' => 'immutable_datetime',
             'ends_at' => 'immutable_datetime',
+            'version' => 'integer',
         ]);
 });
 

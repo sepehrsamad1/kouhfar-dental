@@ -57,6 +57,18 @@
                         <label>فعال <input type="checkbox" name="is_active" value="1" @checked($practitioner->is_active)></label>
                         <button type="submit">ذخیره</button>
                     </form>
+                    <form method="post" action="{{ route('staff.configuration.practitioners.services.update', $practitioner) }}">@csrf @method('PATCH')
+                        <input type="hidden" name="version" value="{{ $practitioner->version }}">
+                        <fieldset>
+                            <legend>خدمات قابل ارائه (فقط طبق صلاحیت تأییدشده پزشک انتخاب شود)</legend>
+                            @forelse ($allServices as $service)
+                                <label><input type="checkbox" name="service_ids[]" value="{{ $service->id }}" @checked($practitioner->services->contains('id', $service->id))> {{ $service->name_fa }}{{ $service->is_active ? '' : ' (غیرفعال)' }}</label>
+                            @empty
+                                <p>ابتدا خدمات را تعریف کنید.</p>
+                            @endforelse
+                        </fieldset>
+                        <button type="submit">ذخیره خدمات پزشک</button>
+                    </form>
                 @endif
             </li>
         @endforeach</ul>

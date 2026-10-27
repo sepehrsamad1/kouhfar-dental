@@ -8,6 +8,7 @@ use App\ClinicWorkingHour;
 use App\Domain\Booking\AppointmentCreator;
 use App\Domain\Booking\AppointmentStateMachine;
 use App\Enums\AppointmentStatus;
+use App\Domain\Booking\AppointmentBookingException;
 use App\IdempotencyRecord;
 use App\Practitioner;
 use App\Resource;
@@ -15,6 +16,7 @@ use App\Service;
 use App\WorkingHour;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use LogicException;
 

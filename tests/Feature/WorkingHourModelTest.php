@@ -10,11 +10,12 @@ it('allows the planned working hour fields', function () {
         'weekday',
         'start_local',
         'end_local',
+        'version',
     ]);
 });
 
 it('casts weekday as an integer', function () {
-    expect((new WorkingHour)->getCasts()['weekday'])->toBe('integer');
+    expect((new WorkingHour)->getCasts())->toMatchArray(['weekday' => 'integer', 'version' => 'integer']);
 });
 
 it('defines the practitioner relationship', function () {

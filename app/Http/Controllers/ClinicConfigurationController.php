@@ -35,7 +35,8 @@ final class ClinicConfigurationController
 
         return view('staff.configuration.index', [
             'services' => Service::query()->orderBy('name_fa')->get(),
-            'practitioners' => Practitioner::query()->orderBy('display_name_fa')->get(),
+            'practitioners' => Practitioner::query()->with('services')->orderBy('display_name_fa')->get(),
+            'allServices' => Service::query()->orderBy('name_fa')->get(),
             'resources' => Resource::query()->orderBy('name_fa')->get(),
             'clinicHours' => ClinicWorkingHour::query()->orderBy('weekday')->get(),
             'workingHours' => WorkingHour::query()->with('practitioner')->orderBy('weekday')->get(),
@@ -173,6 +174,59 @@ final class ClinicConfigurationController
         ], ['is_active' => (bool) $data['is_active']]);
 
         return back()->with('success', 'تنظیمات پزشک ذخیره شد.');
+    }
+
+    public function updatePractitionerServices(Request $request, Practitioner $practitioner): RedirectResponse
+    {
+        Gate::authorize('update', $practitioner);
+        $data = $request->validate([
+            'version' => ['required', 'integer', 'min:1'],
+            'service_ids' => ['sometimes', 'array'],
+            'service_ids.*' => ['required', 'uuid', 'distinct', 'exists:services,id'],
+        ]);
+        $serviceIds = array_values(array_unique($data['service_ids'] ?? []));
+        $currentIds = $practitioner->services()->pluck('services.id')->map(fn ($id): string => (string) $id)->all();
+        $removedIds = array_values(array_diff($currentIds, $serviceIds));
+
+        if ($removedIds !== []) {
+            $impacted = Appointment::query()
+                ->where('status', 'confirmed')
+                ->where('start_at', '>=', now('UTC'))
+                ->whereIn('service_id', $removedIds)
+                ->whereHas('practitioners', fn ($builder) => $builder->whereKey($practitioner->id)->where('appointment_practitioners.active', true))
+                ->orderBy('start_at')
+                ->get(['id']);
+
+            if ($impacted->isNotEmpty()) {
+                throw ValidationException::withMessages([
+                    'service_ids' => 'حذف خدمت از فهرست این پزشک با نوبت‌های تأییدشده مرتبط است. تغییری ذخیره نشد. شناسه نوبت‌ها: '.$impacted->pluck('id')->implode(', '),
+                ]);
+            }
+        }
+
+        $updated = DB::transaction(function () use ($request, $practitioner, $data, $serviceIds, $currentIds): bool {
+            $updated = Practitioner::query()->whereKey($practitioner->id)->where('version', (int) $data['version'])
+                ->update(['version' => DB::raw('version + 1'), 'updated_at' => now('UTC')]);
+
+            if ($updated !== 1) {
+                return false;
+            }
+
+            $practitioner->services()->sync($serviceIds);
+            AuditLogger::record($request->user('staff'), 'configuration.practitioner_services_updated', $practitioner, [
+                'service_ids' => $currentIds,
+            ], [
+                'service_ids' => $serviceIds,
+            ]);
+
+            return true;
+        });
+
+        if (! $updated) {
+            throw ValidationException::withMessages(['version' => 'تنظیمات پزشک هم‌زمان تغییر کرده است. صفحه را تازه‌سازی کنید.']);
+        }
+
+        return back()->with('success', 'خدمات قابل ارائه برای پزشک ذخیره شد. این انتخاب باید با صلاحیت واقعی پزشک تطبیق داده شود.');
     }
 
     public function storeResource(Request $request): RedirectResponse

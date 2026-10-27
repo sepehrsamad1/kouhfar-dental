@@ -5,7 +5,7 @@ declare(strict_types=1);
 use App\Domain\Availability\AvailabilityEngine;
 
 it('generates five-minute aligned slots inside working hours and the booking horizon', function (): void {
-    $engine = new AvailabilityEngine();
+    $engine = new AvailabilityEngine;
     $slots = $engine->slots([
         'timezone' => 'Asia/Tehran',
         'now' => new DateTimeImmutable('2026-10-27T06:00:00Z'),
@@ -35,7 +35,7 @@ it('generates five-minute aligned slots inside working hours and the booking hor
 });
 
 it('ignores expired pending holds but respects active pending and confirmed conflicts', function (): void {
-    $engine = new AvailabilityEngine();
+    $engine = new AvailabilityEngine;
     $base = [
         'timezone' => 'Asia/Tehran',
         'now' => new DateTimeImmutable('2026-10-27T06:00:00Z'),
@@ -75,7 +75,7 @@ it('ignores expired pending holds but respects active pending and confirmed conf
 });
 
 it('does not offer slots on configured closure dates or when the full buffered interval does not fit', function (): void {
-    $engine = new AvailabilityEngine();
+    $engine = new AvailabilityEngine;
     $input = [
         'timezone' => 'Asia/Tehran',
         'now' => new DateTimeImmutable('2026-10-27T06:00:00Z'),
@@ -102,7 +102,7 @@ it('does not offer slots on configured closure dates or when the full buffered i
 });
 
 it('preserves slot invariants across multiple durations and buffer combinations', function (): void {
-    $engine = new AvailabilityEngine();
+    $engine = new AvailabilityEngine;
     foreach ([[15, 0, 0], [25, 5, 10], [40, 10, 5], [60, 0, 15]] as [$duration, $before, $after]) {
         $periodStart = new DateTimeImmutable('2026-10-28T08:30:00Z');
         $periodEnd = new DateTimeImmutable('2026-10-28T12:30:00Z');
@@ -139,7 +139,7 @@ it('preserves slot invariants across multiple durations and buffer combinations'
 });
 
 it('enforces the exact minimum notice and excludes dates beyond the booking horizon', function (): void {
-    $engine = new AvailabilityEngine();
+    $engine = new AvailabilityEngine;
     $now = new DateTimeImmutable('2026-10-27T06:00:00Z');
     $base = [
         'timezone' => 'Asia/Tehran',

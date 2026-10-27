@@ -19,7 +19,7 @@ Status: IN PROGRESS — initial pure core, database adapter, route/controller an
 
 ## Files added
 - `app/Domain/Availability/AvailabilityEngine.php`: database-independent initial slot calculator.
-- `app/Domain/Availability/AvailabilityRepository.php`: initial adapter reading service eligibility, clinic/practitioner hours, breaks, configured closures, practitioners, compatible resources and appointment occupancy.
+- `app/Domain/Availability/AvailabilityRepository.php`: initial adapter reading service eligibility, clinic/practitioner hours, breaks, configured closures, practitioners, compatible resources and appointment occupancy. The appointment lookup now widens its range by the maximum configured service buffers so buffered conflicts just outside the requested window are not missed.
 - `app/Http/Controllers/AvailabilityController.php`: public JSON endpoint with `Cache-Control: no-store, private`.
 - `routes/web.php`: `GET /booking/availability/{service}` named `booking.availability`.
 - `tests/Unit/AvailabilityEngineTest.php`: baseline tests for five-minute grid, buffered fit, configured closures, and pending expiry.
@@ -30,7 +30,7 @@ Status: IN PROGRESS — initial pure core, database adapter, route/controller an
 - Review date/time semantics and configured exception behavior, especially special-opening exceptions. Public holidays are not inferred automatically.
 - Pending holds must be assigned `expires_at = server_now + 1 hour` by the eventual request-creation workflow. That workflow is not part of this endpoint.
 - Availability reads do not themselves make booking creation race-safe. The eventual write path must use transactions and database-backed conflict protection. Existing database exclusion ranges currently represent appointment intervals; verify how service buffers should be protected at booking-write time before claiming race-safe buffer enforcement.
-- Add property/invariant tests for hours, notice, horizon, occupancy, practitioner/resource conflicts and timezone behavior; add tricky-date fixtures.
+- Baseline invariant coverage includes buffered working-period fit, five-minute alignment, pending expiry, exact minimum-notice boundary, and booking-horizon exclusion. Still add adapter-level fixtures for schedule exceptions, timezone boundaries, and practitioner/resource conflict cases.
 - Benchmark the representative workload above and record actual timing.
 - Confirm endpoint authorization/rate limiting policy before connecting it to public UI; it currently returns opaque practitioner/resource identifiers as part of each slot.
 - No production migrations, seeding, deployment or merge to `main` has been performed.

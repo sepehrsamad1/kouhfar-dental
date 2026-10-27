@@ -10,11 +10,11 @@ Status: VERIFIED ON DRAFT BRANCH — merge pending owner approval.
 - PostgreSQL is authoritative for capacity reservation and appointment state invariants.
 
 ## Booking contract
-- Request requires patient full name, Iranian mobile number, service, practitioner, resource, start instant and an `Idempotency-Key` header.
+- Request requires full name, Iranian mobile number, service, start instant and an `Idempotency-Key` header. Practitioner and resource are selected server-side from Task 13 availability.
 - Appointment creation is one database transaction.
 - The request is normalized before hashing; the hash is SHA-256 over canonical JSON.
 - Idempotency records use scope `public:appointment:create:v1` and expire after 24 hours. This is a technical replay-retention window, not a clinic policy.
-- Same key plus same normalized body replays the stored status/body.
+- Same key plus same normalized body replays the stored status/body within the 24-hour replay window.
 - Same key plus a different normalized body returns `409 IDEMPOTENCY_CONFLICT`.
 - A successful public booking starts as `pending` with a 1-hour hold, using the owner-approved Task 13 hold policy.
 - Expired pending holds are conditionally changed to `expired` only while their status is still `pending`; practitioner/resource capacity rows are then deactivated.
@@ -37,7 +37,8 @@ Allowed transitions:
 Creation and state changes write AppointmentEvent records. Sensitive booking mutations also write minimal audit metadata without patient name/mobile values.
 
 ## Deliberate omissions
-- No payment, insurance, clinical-record, diagnosis, notification-provider or messaging-provider integration.
+- Public booking does not merge patients by mobile number; each distinct booking request creates its own patient record, while idempotency prevents duplicate retries.
 - No automatic Iranian holiday policy.
+- The existing UI remains simulated; API integration is outside this task.
 - No production migration/seeding/deployment.
 - No public appointment mutation/cancellation flow in this task.

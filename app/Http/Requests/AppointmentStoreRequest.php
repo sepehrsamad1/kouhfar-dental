@@ -39,7 +39,7 @@ class AppointmentStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'patient_name' => ['required', 'string', 'max:200'],
+            'full_name' => ['required', 'string', 'min:3', 'max:200'],
             'mobile' => ['required', 'string', 'regex:/^09\d{9}$/'],
             'service_id' => [
                 'required',
@@ -48,8 +48,6 @@ class AppointmentStoreRequest extends FormRequest
                     ->where('is_active', true)
                     ->where('is_public_bookable', true)),
             ],
-            'practitioner_id' => ['required', 'uuid', 'exists:practitioners,id'],
-            'resource_id' => ['required', 'uuid', 'exists:resources,id'],
             'start_at' => ['required', 'string', 'max:64'],
             'idempotency_key' => [
                 'required',

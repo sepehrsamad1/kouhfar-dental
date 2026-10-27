@@ -27,7 +27,8 @@ Status: IN PROGRESS — initial pure core, database adapter, route/controller an
 
 ## Important limitations still being addressed
 - This is not yet approved as production-ready. Run formatter, static analysis and tests; fix all failures.
-- Review date/time semantics and configured exception behavior, especially special-opening exceptions. Public holidays are not inferred automatically.
+- A follow-up migration now makes `schedule_exceptions.practitioner_id` nullable so clinic-wide exceptions accepted by the configuration controller can be persisted. Validate it through PostgreSQL migration tests.
+- Review date/time semantics and configured exception behavior, especially `special_opening` exceptions. The current adapter subtracts `closed` and `holiday` ranges but does not yet implement `special_opening`; do not treat this as complete. Public holidays are not inferred automatically.
 - Pending holds must be assigned `expires_at = server_now + 1 hour` by the eventual request-creation workflow. That workflow is not part of this endpoint.
 - Availability reads do not themselves make booking creation race-safe. The eventual write path must use transactions and database-backed conflict protection. Existing database exclusion ranges currently represent appointment intervals; verify how service buffers should be protected at booking-write time before claiming race-safe buffer enforcement.
 - Baseline invariant coverage includes buffered working-period fit, five-minute alignment, pending expiry, exact minimum-notice boundary, and booking-horizon exclusion. Still add adapter-level fixtures for schedule exceptions, timezone boundaries, and practitioner/resource conflict cases.

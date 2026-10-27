@@ -23,7 +23,7 @@ final class AvailabilityRepository
 
     public function forPublicService(Service $service, DateTimeImmutable $now): array
     {
-        if (!$service->is_active || !$service->is_public_bookable) {
+        if (! $service->is_active || ! $service->is_public_bookable) {
             return [];
         }
 

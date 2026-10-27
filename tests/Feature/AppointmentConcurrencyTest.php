@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use App\ClinicWorkingHour;
-use App\Domain\Booking\AppointmentCreator;
 use App\Enums\AppointmentStatus;
 use App\Practitioner;
 use App\Resource;
@@ -51,7 +50,7 @@ function concurrencyFixture(): array
 }
 
 it('creates exactly one appointment across 50 simultaneous PostgreSQL attempts', function () {
-    if (!extension_loaded('pcntl')) {
+    if (extension_loaded('pcntl') === false) {
         $this->markTestSkipped('pcntl is required for the PostgreSQL concurrency proof.');
     }
 

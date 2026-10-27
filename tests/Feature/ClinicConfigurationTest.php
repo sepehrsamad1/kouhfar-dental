@@ -321,7 +321,6 @@ it('blocks a required resource type change when confirmed appointments reference
         ->and(Appointment::query()->whereKey($appointment->id)->exists())->toBeTrue();
 });
 
-
 it('allows an administrator to configure practitioner service assignments with version checks', function (): void {
     $admin = configurationStaff('admin');
     $practitioner = Practitioner::factory()->create(['is_active' => false]);

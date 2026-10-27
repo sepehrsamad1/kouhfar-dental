@@ -107,7 +107,7 @@ it('rejects the same idempotency key when the normalized request body differs', 
     expect(fn () => $creator->create(
         [...$payload, 'patient_name' => 'Different Synthetic Booker'],
         'idem-task14-000002',
-    ))->toThrow(\App\Domain\Booking\AppointmentBookingException::class);
+    ))->toThrow(AppointmentBookingException::class);
 
     expect(Appointment::query()->count())->toBe(1);
 });
@@ -197,7 +197,7 @@ it('rejects an invalid direct database status transition', function () {
     expect(fn () => DB::table('appointments')
         ->where('id', $appointment->id)
         ->update(['status' => AppointmentStatus::Completed->value]))
-        ->toThrow(\Illuminate\Database\QueryException::class);
+        ->toThrow(QueryException::class);
 });
 
 it('releases an expired pending hold before a later booking is checked', function () {

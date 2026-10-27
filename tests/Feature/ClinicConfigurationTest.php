@@ -184,7 +184,6 @@ it('stores schedule exception instants in UTC from Tehran local time', function 
         ->toBe(Carbon::parse('2026-11-28 10:00', 'Asia/Tehran')->utc()->toIso8601String());
 });
 
-
 it('supports versioned clinic-hour update and delete', function (): void {
     $admin = configurationStaff('admin');
     $this->actingAs($admin, 'staff')

@@ -19,7 +19,7 @@ Status: IN PROGRESS. Do not treat this task as verified until CI passes and the 
 - Service name, duration, buffer-before, buffer-after, active status, required resource type (`dental_unit` or `consultation_room`), and optimistic version check. Changing required resource type is blocked when future confirmed appointments reference the service. Practitioner and resource display/type/active settings also have optimistic version checks.
 - Newly created services, practitioners, and resources are initially inactive. `ClinicStarterConfigurationSeeder` is an explicit, idempotent seeder for 10 inactive starter services and the owner-confirmed resource inventory (2 shared dental units and 1 consultation space). It is not called automatically by `DatabaseSeeder`; do not run it in production without explicit owner approval. It creates no practitioners and no practitioner-to-service assignments.
 - Configuration changes write allowlisted before/after audit metadata without patient information. Closure/holiday exceptions and recurring breaks are blocked when they overlap confirmed appointments. Service duration/buffer changes and practitioner/resource deactivation are blocked when future confirmed appointments reference them. No appointments are automatically modified.
-- Feature tests cover role authorization, invalid cross-midnight periods, stale service version, appointment preservation, closure impact, and timezone conversion. Add/extend tests for every schedule edit/delete impact path before final verification.
+- Feature tests cover role authorization, invalid cross-midnight periods, stale service version, appointment preservation, clinic-hours update/delete impact, practitioner-hours update impact, recurring-break update impact, closure update impact, practitioner-service assignment removal impact, and timezone conversion.
 
 ## Researched starter catalog
 
@@ -82,7 +82,6 @@ Migration `2026_10_27_000003_add_task12_configuration_versioning.php` adds versi
 
 ## Next step
 
-1. Perform responsive visual checks at 375px, 768px, and 1440px, including the existing homepage hero-stat icons and Persian typography.
-2. Keep practitioner/service assignments empty until clinic management enters real practitioner identities and confirms qualifications.
-3. Do not run `ClinicStarterConfigurationSeeder` in production without explicit approval; review its inactive values first.
-4. Keep the PR draft until responsive checks and connected-account review are complete.
+1. Keep actual practitioner/service assignments empty until clinic management enters real practitioner identities and confirms qualifications.
+2. Do not run `ClinicStarterConfigurationSeeder` in production without explicit approval; review its inactive values first.
+3. Keep the PR draft until the connected-account identity is reviewed and the owner is ready to merge.

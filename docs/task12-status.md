@@ -40,10 +40,13 @@ These are configurable planning estimates, not clinical instructions or promises
 
 Duration ranges were compared against public dental clinic guidance: routine check-ups about 10-20 minutes, cleaning about 20-45 minutes, fillings about 20-60 minutes, simple extraction about 20-40 minutes, surgical extraction about 45-90 minutes, crown preparation about 60-90 minutes, and root canal appointments commonly 60-120 minutes. Individual cases and local practice differ.
 
-Sources:
-- https://www.tandhuis.nl/tandartsbehandeling
-- https://zeeburgtandartsen.nl/kennisbank/hoe-lang-duurt-een-tandheelkundige-behandeling/
-- https://www.nhs.uk/tests-and-treatments/root-canal-treatment/
+Sources consulted, including Persian-language clinic guidance and NHS patient information:
+- Check-up estimate (15-30 minutes): https://salamatishoma.ir/articles/dental-checkup-routine/
+- Root canal estimate (30-90 minutes per session): https://adenisdental.com/dental-services/teeth-denervation/
+- Scaling estimate (30-60 minutes): https://adenisdental.com/dental-services/teeth-scaling/
+- Extraction estimate (20-45 minutes): https://kakh-labkhand.net/blog/%D8%AA%D8%B1%D9%85%DB%8C%D9%85-%D9%88-%DA%A9%D8%B4%DB%8C%D8%AF%D9%86-%D8%AF%D9%86%D8%AF%D8%A7%D9%86-%D8%AF%D8%B1-%D8%AA%D9%87%D8%B1%D8%A7%D9%86/
+- Crown treatment example: https://healifa.com/service/tooth-crown
+- NHS root canal information noting appointments can last 1-2 hours or longer: https://www.nhs.uk/tests-and-treatments/root-canal-treatment/
 
 The seeder creates two shared dental units and one consultation space as inactive resources. Service requirements refer to a resource type, not one dedicated physical unit. The actual conflict-safe selection of one available resource from the shared pool belongs to Task 13.
 

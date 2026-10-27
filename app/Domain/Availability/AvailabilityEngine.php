@@ -143,7 +143,16 @@ final class AvailabilityEngine
         foreach (['practitioners', 'resources'] as $kind) {
             foreach ($index[$kind] as $key => $intervals) {
                 usort($intervals, static fn (array $a, array $b): int => $a['start'] <=> $b['start']);
-                $index[$kind][$key] = $intervals;
+                $merged = [];
+                foreach ($intervals as $interval) {
+                    $last = array_key_last($merged);
+                    if ($last === null || $interval['start'] > $merged[$last]['end']) {
+                        $merged[] = $interval;
+                    } elseif ($interval['end'] > $merged[$last]['end']) {
+                        $merged[$last]['end'] = $interval['end'];
+                    }
+                }
+                $index[$kind][$key] = $merged;
             }
         }
 
@@ -152,16 +161,19 @@ final class AvailabilityEngine
 
     private function hasConflict(DateTimeImmutable $start, DateTimeImmutable $end, array $intervals): bool
     {
-        foreach ($intervals as $interval) {
-            if ($interval['start'] >= $end) {
-                break;
-            }
-            if ($interval['end'] > $start) {
-                return true;
+        $low = 0;
+        $high = count($intervals) - 1;
+
+        while ($low <= $high) {
+            $middle = intdiv($low + $high, 2);
+            if ($intervals[$middle]['end'] <= $start) {
+                $low = $middle + 1;
+            } else {
+                $high = $middle - 1;
             }
         }
 
-        return false;
+        return isset($intervals[$low]) && $intervals[$low]['start'] < $end;
     }
 
     private function asUtc(mixed $value): DateTimeImmutable

@@ -97,7 +97,7 @@ it('creates one pending appointment transactionally and replays the same idempot
 
 it('creates and replays through the versioned public booking endpoint', function () {
     [$service, $practitioner, $resource] = bookingFixture();
-    $payload = bookingPayload($service, $practitioner, $resource);
+    $payload = bookingPayload($service);
 
     $first = $this
         ->withHeader('Idempotency-Key', 'idem-task14-http-000001')
@@ -115,7 +115,7 @@ it('creates and replays through the versioned public booking endpoint', function
 
 it('rejects the same idempotency key when the normalized request body differs', function () {
     [$service, $practitioner, $resource] = bookingFixture();
-    $payload = bookingPayload($service, $practitioner, $resource);
+    $payload = bookingPayload($service);
     $creator = app(AppointmentCreator::class);
 
     $creator->create($payload, 'idem-task14-000002');
@@ -131,7 +131,7 @@ it('rejects the same idempotency key when the normalized request body differs', 
 it('returns SLOT_UNAVAILABLE when the selected slot is no longer available', function () {
     [$service, $practitioner, $resource] = bookingFixture();
     $creator = app(AppointmentCreator::class);
-    $payload = bookingPayload($service, $practitioner, $resource);
+    $payload = bookingPayload($service);
 
     $first = $creator->create($payload, 'idem-task14-000003');
     $second = $creator->create([...$payload, 'mobile' => '09120000002'], 'idem-task14-000004');
@@ -148,7 +148,7 @@ it('returns SLOT_UNAVAILABLE when the selected slot is no longer available', fun
 it('expires pending holds conditionally and releases capacity', function () {
     [$service, $practitioner, $resource] = bookingFixture();
     $creator = app(AppointmentCreator::class);
-    $payload = bookingPayload($service, $practitioner, $resource);
+    $payload = bookingPayload($service);
 
     $created = $creator->create($payload, 'idem-task14-000005');
     $appointment = Appointment::query()->findOrFail($created['body']['appointment_id']);
@@ -182,7 +182,7 @@ it('expires pending holds conditionally and releases capacity', function () {
 it('allows only the defined appointment state transitions', function () {
     [$service, $practitioner, $resource] = bookingFixture();
     $creator = app(AppointmentCreator::class);
-    $created = $creator->create(bookingPayload($service, $practitioner, $resource), 'idem-task14-000007');
+    $created = $creator->create(bookingPayload($service), 'idem-task14-000007');
     $appointment = Appointment::query()->findOrFail($created['body']['appointment_id']);
 
     app(AppointmentStateMachine::class)->transition(
@@ -207,7 +207,7 @@ it('allows only the defined appointment state transitions', function () {
 it('rejects an invalid direct database status transition', function () {
     [$service, $practitioner, $resource] = bookingFixture();
     $creator = app(AppointmentCreator::class);
-    $created = $creator->create(bookingPayload($service, $practitioner, $resource), 'idem-task14-000008');
+    $created = $creator->create(bookingPayload($service), 'idem-task14-000008');
     $appointment = Appointment::query()->findOrFail($created['body']['appointment_id']);
 
     expect(fn () => DB::table('appointments')
@@ -215,7 +215,6 @@ it('rejects an invalid direct database status transition', function () {
         ->update(['status' => AppointmentStatus::Completed->value]))
         ->toThrow(QueryException::class);
 });
-
 
 it('does not merge patients by shared mobile number', function () {
     [$service] = bookingFixture();
@@ -246,7 +245,7 @@ it('server-selects practitioner and resource and rejects client capacity fields'
 it('releases an expired pending hold before a later booking is checked', function () {
     [$service, $practitioner, $resource] = bookingFixture();
     $creator = app(AppointmentCreator::class);
-    $payload = bookingPayload($service, $practitioner, $resource);
+    $payload = bookingPayload($service);
 
     $creator->create($payload, 'idem-task14-000009');
     Carbon::setTestNow('2026-10-27T09:00:01Z');

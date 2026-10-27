@@ -15,6 +15,7 @@ use App\WorkingHour;
 use Carbon\CarbonImmutable;
 use DateTimeImmutable;
 use DateTimeZone;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 
 final class AvailabilityRepository
@@ -33,7 +34,10 @@ final class AvailabilityRepository
         $rangeStart = $localNow->startOfDay()->utc();
         $rangeEnd = $localNow->startOfDay()->addDays(15)->utc();
 
-        $clinicHours = ClinicWorkingHour::query()->get()->groupBy('weekday');
+        /** @var EloquentCollection<int, ClinicWorkingHour> $clinicHourModels */
+        $clinicHourModels = ClinicWorkingHour::query()->get();
+        $clinicHours = $clinicHourModels->groupBy('weekday');
+        /** @var EloquentCollection<int, Practitioner> $practitioners */
         $practitioners = $service->practitioners()->where('practitioners.is_active', true)->get();
         $resourceQuery = Resource::query()
             ->where('is_active', true)
@@ -48,13 +52,15 @@ final class AvailabilityRepository
         $maxBufferBefore = (int) (Service::query()->max('buffer_before_minutes') ?? 0);
         $maxBufferAfter = (int) (Service::query()->max('buffer_after_minutes') ?? 0);
 
-        $appointments = Appointment::query()
+        /** @var EloquentCollection<int, Appointment> $appointmentModels */
+        $appointmentModels = Appointment::query()
             ->whereIn('status', ['pending', 'confirmed'])
             ->where('start_at', '<', $rangeEnd->addMinutes($maxBufferBefore))
             ->where('end_at', '>', $rangeStart->subMinutes($maxBufferAfter))
             ->with(['practitioners', 'resources', 'service'])
-            ->get()
-            ->map(static function (Appointment $appointment): array {
+            ->get();
+
+        $appointments = $appointmentModels->map(static function (Appointment $appointment): array {
 
                 return [
                     'start' => $appointment->start_at->subMinutes($appointment->service->buffer_before_minutes)->toDateTimeImmutable(),
@@ -112,10 +118,15 @@ final class AvailabilityRepository
         CarbonImmutable $rangeEnd
     ): array {
         $periods = [];
-        $practitionerHours = WorkingHour::query()->where('practitioner_id', $practitioner->id)->get()->groupBy('weekday');
-        $breaks = ScheduleBreak::query()
+        /** @var EloquentCollection<int, WorkingHour> $workingHourModels */
+        $workingHourModels = WorkingHour::query()->where('practitioner_id', $practitioner->id)->get();
+        $practitionerHours = $workingHourModels->groupBy('weekday');
+        /** @var EloquentCollection<int, ScheduleBreak> $breakModels */
+        $breakModels = ScheduleBreak::query()
             ->where(fn ($query) => $query->whereNull('practitioner_id')->orWhere('practitioner_id', $practitioner->id))
-            ->get()->groupBy('weekday');
+            ->get();
+        $breaks = $breakModels->groupBy('weekday');
+        /** @var EloquentCollection<int, ScheduleException> $exceptions */
         $exceptions = ScheduleException::query()
             ->where(fn ($query) => $query->whereNull('practitioner_id')->orWhere('practitioner_id', $practitioner->id))
             ->where('starts_at', '<', $rangeEnd)

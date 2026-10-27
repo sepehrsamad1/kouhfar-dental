@@ -269,3 +269,19 @@ it('audits service configuration changes with allowlisted before and after value
         ->and($audit->meta['after']['buffer_before_minutes'])->toBe(5)
         ->and($audit->meta['after']['buffer_after_minutes'])->toBe(10);
 });
+
+it('rejects invalid service durations and buffer values', function (): void {
+    $admin = configurationStaff('admin');
+
+    $this->actingAs($admin, 'staff')
+        ->from(route('staff.configuration.index'))
+        ->post(route('staff.configuration.services.store'), [
+            'name_fa' => 'خدمت نامعتبر',
+            'duration_minutes' => 0,
+            'buffer_before_minutes' => -1,
+            'buffer_after_minutes' => 1441,
+        ])
+        ->assertSessionHasErrors(['duration_minutes', 'buffer_before_minutes', 'buffer_after_minutes']);
+
+    expect(Service::query()->count())->toBe(0);
+});

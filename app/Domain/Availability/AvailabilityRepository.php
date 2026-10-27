@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Availability;
 
 use App\Appointment;
+use App\Enums\AppointmentStatus;
 use App\ClinicWorkingHour;
 use App\Practitioner;
 use App\Resource;
@@ -80,7 +81,7 @@ final class AvailabilityRepository
                 }
             }
             $status = $appointment->status;
-            $statusValue = $status instanceof \App\Enums\AppointmentStatus ? $status->value : (string) $status;
+            $statusValue = $status instanceof AppointmentStatus ? $status->value : (string) $status;
             $startAt = CarbonImmutable::parse((string) $appointment->start_at);
             $endAt = CarbonImmutable::parse((string) $appointment->end_at);
             $expiresAt = $appointment->expires_at === null

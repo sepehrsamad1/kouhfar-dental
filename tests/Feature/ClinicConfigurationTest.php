@@ -142,7 +142,7 @@ it('blocks a closure that overlaps a confirmed appointment without changing the 
     $admin = configurationStaff('admin');
     $service = Service::factory()->create();
     $patient = \App\Patient::factory()->create();
-    $start = \Illuminate\Support\\Carbon::parse('2026-11-28 10:30', 'Asia/Tehran')->utc();
+    $start = \Illuminate\Support\Carbon::parse('2026-11-28 10:30', 'Asia/Tehran')->utc();
     $appointment = Appointment::factory()->create([
         'patient_id' => $patient->id,
         'service_id' => $service->id,
@@ -177,5 +177,5 @@ it('stores schedule exception instants in UTC from Tehran local time', function 
 
     $exception = \App\ScheduleException::query()->firstOrFail();
     expect($exception->starts_at->toIso8601String())
-        ->toBe(\Illuminate\Support\\Carbon::parse('2026-11-28 10:00', 'Asia/Tehran')->utc()->toIso8601String());
+        ->toBe(\Illuminate\Support\Carbon::parse('2026-11-28 10:00', 'Asia/Tehran')->utc()->toIso8601String());
 });

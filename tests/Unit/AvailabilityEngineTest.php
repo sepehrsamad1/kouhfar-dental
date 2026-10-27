@@ -138,7 +138,6 @@ it('preserves slot invariants across multiple durations and buffer combinations'
     }
 });
 
-
 it('enforces the exact minimum notice and excludes dates beyond the booking horizon', function (): void {
     $engine = new AvailabilityEngine();
     $now = new DateTimeImmutable('2026-10-27T06:00:00Z');

@@ -48,9 +48,9 @@ final class AvailabilityRepository
         }
         $compatibleResources = $resourceQuery->get();
 
-        $practitionerIds = $practitioners->modelKeys();
+        $eligiblePractitionerIds = $practitioners->modelKeys();
         $resourceIds = $compatibleResources->modelKeys();
-        if ($practitionerIds === [] || $resourceIds === []) {
+        if ($eligiblePractitionerIds === [] || $resourceIds === []) {
 
             return [];
         }
@@ -63,9 +63,9 @@ final class AvailabilityRepository
         /** @var EloquentCollection<int, Appointment> $appointmentModels */
         $appointmentModels = Appointment::query()
             ->whereIn('status', ['pending', 'confirmed'])
-            ->where(function ($query) use ($practitionerIds, $resourceIds): void {
+            ->where(function ($query) use ($eligiblePractitionerIds, $resourceIds): void {
                 $query->whereHas('practitioners', function ($relation) use ($practitionerIds): void {
-                    $relation->whereIn('practitioners.id', $practitionerIds)
+                    $relation->whereIn('practitioners.id', $eligiblePractitionerIds)
                         ->where('appointment_practitioners.active', true);
                 })->orWhereHas('resources', function ($relation) use ($resourceIds): void {
                     $relation->whereIn('resources.id', $resourceIds)
@@ -74,7 +74,7 @@ final class AvailabilityRepository
             })
             ->where('start_at', '<', $rangeEnd->addMinutes($maxBufferBefore))
             ->where('end_at', '>', $rangeStart->subMinutes($maxBufferAfter))
-            ->with(['practitioners', 'resources', 'service'])
+            ->with('service')
             ->get();
 
         $appointmentIds = $appointmentModels->modelKeys();
@@ -93,7 +93,7 @@ final class AvailabilityRepository
         foreach ($appointmentModels as $appointment) {
             /** @var Service $serviceModel */
             $serviceModel = $appointment->service;
-            $practitionerIds = $practitionersByAppointment->get($appointment->getKey(), collect())
+            $appointmentPractitionerIds = $practitionersByAppointment->get($appointment->getKey(), collect())
                 ->pluck('practitioner_id')
                 ->map(static fn ($id): string => (string) $id)
                 ->all();
@@ -113,16 +113,40 @@ final class AvailabilityRepository
                 'end' => $endAt->addMinutes((int) $serviceModel->buffer_after_minutes)->toDateTimeImmutable(),
                 'status' => $statusValue,
                 'expires_at' => $expiresAt?->toDateTimeImmutable(),
-                'practitioner_ids' => $practitionerIds,
+                'practitioner_ids' => $appointmentPractitionerIds,
                 'resource_ids' => $resourceIds,
             ];
         }
 
+        /** @var EloquentCollection<int, WorkingHour> $workingHourModels */
+        $workingHourModels = WorkingHour::query()->whereIn('practitioner_id', $eligiblePractitionerIds)->get();
+        $workingHoursByPractitioner = $workingHourModels->groupBy('practitioner_id');
+        /** @var EloquentCollection<int, ScheduleBreak> $breakModels */
+        $breakModels = ScheduleBreak::query()
+            ->where(fn ($query) => $query->whereNull('practitioner_id')->orWhereIn('practitioner_id', $eligiblePractitionerIds))
+            ->get();
+        $breaks = $breakModels->groupBy('weekday');
+        /** @var EloquentCollection<int, ScheduleException> $exceptions */
+        $exceptions = ScheduleException::query()
+            ->where(fn ($query) => $query->whereNull('practitioner_id')->orWhereIn('practitioner_id', $eligiblePractitionerIds))
+            ->where('starts_at', '<', $rangeEnd)
+            ->where('ends_at', '>', $localNow->startOfDay()->utc())
+            ->get();
+
         $engine = new AvailabilityEngine;
+        $occupancyIndex = $engine->indexAppointments($appointments, $now);
         $slots = [];
 
         foreach ($practitioners as $practitioner) {
-            $periods = $this->workingPeriods($practitioner, $clinicHours, $localNow, $rangeEnd);
+            $periods = $this->workingPeriods(
+                $practitioner,
+                $clinicHours,
+                $workingHoursByPractitioner,
+                $breaks,
+                $exceptions,
+                $localNow,
+                $rangeEnd
+            );
             if ($periods === []) {
 
                 continue;
@@ -147,7 +171,7 @@ final class AvailabilityRepository
                 'working_periods' => $periods,
                 'closed_dates' => [],
                 'appointments' => $appointments,
-            ]));
+            ], $occupancyIndex));
         }
 
         return $slots;
@@ -156,24 +180,15 @@ final class AvailabilityRepository
     private function workingPeriods(
         Practitioner $practitioner,
         Collection $clinicHours,
+        Collection $workingHoursByPractitioner,
+        Collection $breaks,
+        Collection $exceptions,
         CarbonImmutable $localNow,
         CarbonImmutable $rangeEnd
     ): array {
         $periods = [];
-        /** @var EloquentCollection<int, WorkingHour> $workingHourModels */
-        $workingHourModels = WorkingHour::query()->where('practitioner_id', $practitioner->id)->get();
+        $workingHourModels = $workingHoursByPractitioner->get($practitioner->id, collect());
         $practitionerHours = $workingHourModels->groupBy('weekday');
-        /** @var EloquentCollection<int, ScheduleBreak> $breakModels */
-        $breakModels = ScheduleBreak::query()
-            ->where(fn ($query) => $query->whereNull('practitioner_id')->orWhere('practitioner_id', $practitioner->id))
-            ->get();
-        $breaks = $breakModels->groupBy('weekday');
-        /** @var EloquentCollection<int, ScheduleException> $exceptions */
-        $exceptions = ScheduleException::query()
-            ->where(fn ($query) => $query->whereNull('practitioner_id')->orWhere('practitioner_id', $practitioner->id))
-            ->where('starts_at', '<', $rangeEnd)
-            ->where('ends_at', '>', $localNow->startOfDay()->utc())
-            ->get();
 
         for ($date = $localNow->startOfDay(); $date->utc() < $rangeEnd; $date = $date->addDay()) {
             $weekday = $date->dayOfWeekIso;

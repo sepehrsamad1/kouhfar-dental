@@ -12,6 +12,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AppointmentEvent extends Model
 {
+    public $timestamps = false;
+
     use HasFactory;
     use HasUuids;
 

@@ -431,6 +431,93 @@ final class ClinicConfigurationController
         return back()->with('success', 'استثنای برنامه ثبت شد. بررسی تعارض با سیاست تخصیص منابع هنوز در دسترس نیست.');
     }
 
+    public function updateException(Request $request, ScheduleException $exception): RedirectResponse
+    {
+        Gate::authorize('update', $exception);
+        $data = $request->validate([
+            'version' => ['required', 'integer', 'min:1'],
+            'practitioner_id' => ['nullable', 'uuid', 'exists:practitioners,id'],
+            'starts_at' => ['required', 'date'],
+            'ends_at' => ['required', 'date', 'after:starts_at'],
+            'kind' => ['required', Rule::in(['closed', 'holiday', 'special_opening'])],
+        ]);
+        $data['starts_at'] = Carbon::parse($data['starts_at'], 'Asia/Tehran')->utc();
+        $data['ends_at'] = Carbon::parse($data['ends_at'], 'Asia/Tehran')->utc();
+        $scope = $data['practitioner_id'] ?? null;
+        $overlapQuery = ScheduleException::query()->where('id', '!=', $exception->id)
+            ->where('starts_at', '<', $data['ends_at'])->where('ends_at', '>', $data['starts_at']);
+        if ($scope === null) {
+            $overlapQuery->whereNull('practitioner_id');
+        } else {
+            $overlapQuery->where('practitioner_id', $scope);
+        }
+        if ($overlapQuery->exists()) {
+            throw ValidationException::withMessages(['starts_at' => 'این بازه با استثنای دیگری در همین محدوده تداخل دارد.']);
+        }
+        if (in_array($data['kind'], ['closed', 'holiday'], true)) {
+            $this->assertNoConfirmedAppointmentImpactForRange($data['starts_at'], $data['ends_at'], $scope);
+        }
+        $version = (int) $data['version'];
+        unset($data['version']);
+        $updated = ScheduleException::query()->whereKey($exception->id)->where('version', $version)
+            ->update($data + ['version' => DB::raw('version + 1'), 'updated_at' => now('UTC')]);
+        if ($updated !== 1) {
+            throw ValidationException::withMessages(['version' => 'استثنای برنامه هم‌زمان تغییر کرده است. صفحه را تازه‌سازی کنید.']);
+        }
+        AuditLogger::record($request->user('staff'), 'configuration.schedule_exception_updated', $exception, null, ['status' => $data['kind'], 'practitioner_id' => $scope]);
+
+        return back()->with('success', 'استثنای برنامه ذخیره شد.');
+    }
+
+    public function deleteException(Request $request, ScheduleException $exception): RedirectResponse
+    {
+        Gate::authorize('delete', $exception);
+        $data = $request->validate(['version' => ['required', 'integer', 'min:1']]);
+        $deleted = ScheduleException::query()->whereKey($exception->id)->where('version', (int) $data['version'])->delete();
+        if ($deleted !== 1) {
+            throw ValidationException::withMessages(['version' => 'استثنای برنامه هم‌زمان تغییر کرده است. صفحه را تازه‌سازی کنید.']);
+        }
+        AuditLogger::record($request->user('staff'), 'configuration.schedule_exception_deleted', $exception, null, ['status' => 'deleted', 'practitioner_id' => $exception->practitioner_id]);
+
+        return back()->with('success', 'استثنای برنامه حذف شد.');
+    }
+
+    private function assertNoConfirmedAppointmentsOutsidePeriod(int $weekday, string $start, string $end, ?string $practitionerId = null): void
+    {
+        $query = Appointment::query()->where('status', 'confirmed')
+            ->where('start_at', '>=', now('UTC'))
+            ->whereRaw("EXTRACT(ISODOW FROM start_at AT TIME ZONE 'Asia/Tehran') = ?", [$weekday])
+            ->where(function ($builder) use ($start, $end): void {
+                $builder->whereRaw("CAST(start_at AT TIME ZONE 'Asia/Tehran' AS time) < ?", [$start])
+                    ->orWhereRaw("CAST(end_at AT TIME ZONE 'Asia/Tehran' AS time) > ?", [$end]);
+            });
+        if ($practitionerId !== null) {
+            $query->whereHas('practitioners', fn ($builder) => $builder->whereKey($practitionerId));
+        }
+        $impacted = $query->orderBy('start_at')->get(['id']);
+        if ($impacted->isNotEmpty()) {
+            throw ValidationException::withMessages([
+                'schedule' => 'تغییر ساعات، نوبت‌های تأییدشده خارج از بازه جدید دارد. تغییری ذخیره نشد. شناسه نوبت‌ها: '.$impacted->pluck('id')->implode(', '),
+            ]);
+        }
+    }
+
+    private function assertNoConfirmedAppointmentsOnWeekday(int $weekday, ?string $practitionerId = null): void
+    {
+        $query = Appointment::query()->where('status', 'confirmed')
+            ->where('start_at', '>=', now('UTC'))
+            ->whereRaw("EXTRACT(ISODOW FROM start_at AT TIME ZONE 'Asia/Tehran') = ?", [$weekday]);
+        if ($practitionerId !== null) {
+            $query->whereHas('practitioners', fn ($builder) => $builder->whereKey($practitionerId));
+        }
+        $impacted = $query->orderBy('start_at')->get(['id']);
+        if ($impacted->isNotEmpty()) {
+            throw ValidationException::withMessages([
+                'schedule' => 'حذف این برنامه با نوبت‌های تأییدشده در آن روز تداخل دارد. برنامه حذف نشد. شناسه نوبت‌ها: '.$impacted->pluck('id')->implode(', '),
+            ]);
+        }
+    }
+
     private function assertNoConfirmedAppointmentImpactForRecurringPeriod(int $weekday, string $start, string $end, ?string $practitionerId): void
     {
         $query = Appointment::query()

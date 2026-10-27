@@ -32,7 +32,7 @@ Status: IN PROGRESS — initial pure core, database adapter, route/controller an
 - Pending holds must be assigned `expires_at = server_now + 1 hour` by the eventual request-creation workflow. That workflow is not part of this endpoint.
 - Availability reads do not themselves make booking creation race-safe. The eventual write path must use transactions and database-backed conflict protection. Existing database exclusion ranges currently represent appointment intervals; verify how service buffers should be protected at booking-write time before claiming race-safe buffer enforcement.
 - Unit coverage includes buffered working-period fit, five-minute alignment, pending expiry, exact minimum-notice boundary, booking-horizon exclusion, and independent practitioner/resource conflict checks. Adapter-level tests now cover configured special openings and closure precedence; CI must confirm them.
-- Benchmark the representative workload above and record actual timing.
+- Engine-core benchmark (CI runner, 10 samples, 1,000 appointments, 10 practitioners, 3 resources, 14 days): p95 187.25 ms / p99 187.25 ms on the latest successful run. This measures the pure calculator only; it excludes database/repository overhead, so the end-to-end p95/p99 target is not yet verified.
 - Confirm endpoint authorization/rate limiting policy before connecting it to public UI; it currently returns opaque practitioner/resource identifiers as part of each slot.
 - No production migrations, seeding, deployment or merge to `main` has been performed.
 

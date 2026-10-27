@@ -286,7 +286,6 @@ it('rejects invalid service durations and buffer values', function (): void {
     expect(Service::query()->count())->toBe(0);
 });
 
-
 it('blocks a required resource type change when confirmed appointments reference the service', function (): void {
     $admin = configurationStaff('admin');
     $service = Service::factory()->create([

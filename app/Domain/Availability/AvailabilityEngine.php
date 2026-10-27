@@ -146,10 +146,10 @@ final class AvailabilityEngine
         }
 
         foreach (['practitioners', 'resources'] as $kind) {
-            foreach ($index[$kind] as &$intervals) {
+            foreach ($index[$kind] as $key => $intervals) {
                 usort($intervals, static fn (array $a, array $b): int => $a['start'] <=> $b['start']);
+                $index[$kind][$key] = $intervals;
             }
-            unset($intervals);
         }
 
         return $index;

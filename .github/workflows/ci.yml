@@ -93,8 +93,22 @@ jobs:
       - name: Run Laravel tests
         run: php artisan test
 
+      - name: Seed guarded browser-only fixtures
+        run: php artisan db:seed --class=BrowserTestSeeder
+
+      - name: Enable persistent browser test sessions
+        run: echo "SESSION_DRIVER=file" >> "$GITHUB_ENV"
+
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
 
       - name: Run browser smoke tests
         run: npm run test:browser
+
+      - name: Upload Task 12 responsive screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: task12-responsive-screenshots
+          path: test-results/task12-configuration-*.png
+          if-no-files-found: ignore

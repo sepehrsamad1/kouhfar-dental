@@ -55,14 +55,12 @@ function bookingFixture(): array
     return [$service, $practitioner, $resource];
 }
 
-function bookingPayload(Service $service, Practitioner $practitioner, Resource $resource, string $name = 'Synthetic Booker'): array
+function bookingPayload(Service $service, string $name = 'Synthetic Booker'): array
 {
     return [
-        'patient_name' => $name,
+        'full_name' => $name,
         'mobile' => '09120000001',
         'service_id' => $service->getKey(),
-        'practitioner_id' => $practitioner->getKey(),
-        'resource_id' => $resource->getKey(),
         'start_at' => '2026-10-29T09:30:00Z',
     ];
 }
@@ -77,7 +75,7 @@ afterEach(function (): void {
 
 it('creates one pending appointment transactionally and replays the same idempotency key', function () {
     [$service, $practitioner, $resource] = bookingFixture();
-    $payload = bookingPayload($service, $practitioner, $resource);
+    $payload = bookingPayload($service);
     $creator = app(AppointmentCreator::class);
 
     $first = $creator->create($payload, 'idem-task14-000001');
@@ -123,7 +121,7 @@ it('rejects the same idempotency key when the normalized request body differs', 
     $creator->create($payload, 'idem-task14-000002');
 
     expect(fn () => $creator->create(
-        [...$payload, 'patient_name' => 'Different Synthetic Booker'],
+        [...$payload, 'full_name' => 'Different Synthetic Booker'],
         'idem-task14-000002',
     ))->toThrow(AppointmentBookingException::class);
 
@@ -216,6 +214,34 @@ it('rejects an invalid direct database status transition', function () {
         ->where('id', $appointment->id)
         ->update(['status' => AppointmentStatus::Completed->value]))
         ->toThrow(QueryException::class);
+});
+
+
+it('does not merge patients by shared mobile number', function () {
+    [$service] = bookingFixture();
+    $creator = app(AppointmentCreator::class);
+
+    $first = $creator->create($payload = bookingPayload($service, 'Synthetic Patient One'), 'idem-task14-shared-mobile-1');
+    $second = $creator->create([...$payload, 'full_name' => 'Synthetic Patient Two'], 'idem-task14-shared-mobile-2');
+
+    expect($first['status'])->toBe(201)
+        ->and($second['status'])->toBe(201)
+        ->and(Appointment::query()->count())->toBe(2)
+        ->and(DB::table('patients')->count())->toBe(2);
+});
+
+it('server-selects practitioner and resource and rejects client capacity fields', function () {
+    [$service, $practitioner, $resource] = bookingFixture();
+    $payload = bookingPayload($service);
+
+    $response = $this->withHeader('Idempotency-Key', 'idem-task14-capacity-fields')
+        ->postJson('/api/v1/appointments', [
+            ...$payload,
+            'practitioner_id' => $practitioner->getKey(),
+            'resource_id' => $resource->getKey(),
+        ]);
+
+    $response->assertUnprocessable();
 });
 
 it('releases an expired pending hold before a later booking is checked', function () {

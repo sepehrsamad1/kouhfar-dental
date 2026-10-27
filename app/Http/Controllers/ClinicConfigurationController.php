@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Appointment;
 use App\ClinicWorkingHour;
 use App\Practitioner;
 use App\Resource;
@@ -12,9 +13,11 @@ use App\ScheduleException;
 use App\Service;
 use App\Support\AuditLogger;
 use App\WorkingHour;
+use DateTimeInterface;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
@@ -79,7 +82,7 @@ final class ClinicConfigurationController
             || (int) $data['buffer_before_minutes'] !== $service->buffer_before_minutes
             || (int) $data['buffer_after_minutes'] !== $service->buffer_after_minutes;
         if ($configurationChanged) {
-            $impacted = \App\Appointment::query()
+            $impacted = Appointment::query()
                 ->where('service_id', $service->id)
                 ->where('status', 'confirmed')
                 ->where('start_at', '>=', now('UTC'))
@@ -133,7 +136,7 @@ final class ClinicConfigurationController
             'is_active' => ['required', 'boolean'],
         ]);
         if (! (bool) $data['is_active'] && $practitioner->is_active) {
-            $impacted = \App\Appointment::query()
+            $impacted = Appointment::query()
                 ->where('status', 'confirmed')->where('start_at', '>=', now('UTC'))
                 ->whereHas('practitioners', fn ($builder) => $builder->whereKey($practitioner->id)->where('appointment_practitioners.active', true))
                 ->orderBy('start_at')->get(['id']);
@@ -176,7 +179,7 @@ final class ClinicConfigurationController
             'is_active' => ['required', 'boolean'],
         ]);
         if (! (bool) $data['is_active'] && $resource->is_active) {
-            $impacted = \App\Appointment::query()
+            $impacted = Appointment::query()
                 ->where('status', 'confirmed')->where('start_at', '>=', now('UTC'))
                 ->whereHas('resources', fn ($builder) => $builder->whereKey($resource->id)->where('appointment_resources.active', true))
                 ->orderBy('start_at')->get(['id']);
@@ -251,8 +254,8 @@ final class ClinicConfigurationController
             'ends_at' => ['required', 'date', 'after:starts_at'],
             'kind' => ['required', Rule::in(['closed', 'holiday', 'special_opening'])],
         ]);
-        $data['starts_at'] = \Illuminate\Support\Carbon::parse($data['starts_at'], 'Asia/Tehran')->utc();
-        $data['ends_at'] = \Illuminate\Support\Carbon::parse($data['ends_at'], 'Asia/Tehran')->utc();
+        $data['starts_at'] = Carbon::parse($data['starts_at'], 'Asia/Tehran')->utc();
+        $data['ends_at'] = Carbon::parse($data['ends_at'], 'Asia/Tehran')->utc();
         if (in_array($data['kind'], ['closed', 'holiday'], true)) {
             $this->assertNoConfirmedAppointmentImpactForRange($data['starts_at'], $data['ends_at'], $data['practitioner_id'] ?? null);
         }
@@ -262,9 +265,9 @@ final class ClinicConfigurationController
         return back()->with('success', 'استثنای برنامه ثبت شد. بررسی تعارض با سیاست تخصیص منابع هنوز در دسترس نیست.');
     }
 
-    private function assertNoConfirmedAppointmentImpactForRange(\DateTimeInterface $startAt, \DateTimeInterface $endAt, ?string $practitionerId): void
+    private function assertNoConfirmedAppointmentImpactForRange(DateTimeInterface $startAt, DateTimeInterface $endAt, ?string $practitionerId): void
     {
-        $query = \App\Appointment::query()
+        $query = Appointment::query()
             ->where('status', 'confirmed')
             ->where('start_at', '<', $endAt)
             ->where('end_at', '>', $startAt);

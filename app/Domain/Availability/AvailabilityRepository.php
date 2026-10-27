@@ -66,7 +66,7 @@ final class AvailabilityRepository
                 ];
             })->all();
 
-        $engine = new AvailabilityEngine();
+        $engine = new AvailabilityEngine;
         $slots = [];
 
         foreach ($practitioners as $practitioner) {

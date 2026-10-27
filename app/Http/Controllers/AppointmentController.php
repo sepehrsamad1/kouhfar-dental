@@ -14,9 +14,11 @@ final class AppointmentController
     public function store(AppointmentStoreRequest $request, AppointmentCreator $creator): JsonResponse
     {
         try {
+            $scope = 'public:'.hash('sha256', $request->ip().'|'.$request->userAgent());
             $result = $creator->create(
                 $request->validated(),
                 (string) $request->validated('idempotency_key'),
+                $scope,
             );
         } catch (AppointmentBookingException $exception) {
             return response()->json([

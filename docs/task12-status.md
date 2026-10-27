@@ -19,7 +19,7 @@ Status: IN PROGRESS. Do not treat this task as verified until CI passes and the 
 - Service name, duration, buffer-before, buffer-after, active status, and optimistic version check. Practitioner and resource display/type/active settings also have optimistic version checks.
 - New services, practitioners, and resources are initially inactive. No fictional catalog, practitioner, resource inventory, or practitioner-to-service assignment is seeded.
 - Closure/holiday exceptions and recurring breaks are blocked when they overlap confirmed appointments. Service duration/buffer changes and practitioner/resource deactivation are blocked when future confirmed appointments reference them. No appointments are automatically modified.
-- Initial feature tests cover role authorization, invalid cross-midnight periods, stale service version, and appointment preservation.
+- Feature tests cover role authorization, invalid cross-midnight periods, stale service version, appointment preservation, closure impact, and timezone conversion. Add/extend tests for every schedule edit/delete impact path before final verification.
 
 ## Owner-confirmed values
 
@@ -39,7 +39,7 @@ Status: IN PROGRESS. Do not treat this task as verified until CI passes and the 
 
 ## Known incomplete acceptance criteria
 
-- Full edit/deactivate workflows for recurring clinic/practitioner hours, breaks, and exceptions remain to be completed; these currently support creation and listing only.
+- Versioned edit/delete controls now exist for clinic hours, practitioner hours, breaks, and exceptions. Review the implementation and CI before marking acceptance criteria verified.
 - Schedule impact handling and conflict validation need broader automated coverage, including recurring breaks, exception overlaps, and all relevant appointment states.
 - No visual browser checks at 375px, 768px, and 1440px have been run for this new staff screen.
 - Tests and CI have not yet been executed for this branch.

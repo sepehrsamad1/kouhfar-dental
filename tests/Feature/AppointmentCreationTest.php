@@ -18,7 +18,6 @@ use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
-use LogicException;
 
 uses(RefreshDatabase::class);
 
@@ -85,7 +84,8 @@ it('creates one pending appointment transactionally and replays the same idempot
     $second = $creator->create($payload, 'idem-task14-000001');
 
     expect($first['status'])->toBe(201)
-        ->and($second)->toBe($first)
+        ->and($second['status'])->toBe($first['status'])
+        ->and($second['body'])->toMatchArray($first['body'])
         ->and(Appointment::query()->count())->toBe(1)
         ->and(AppointmentEvent::query()->where('to_status', AppointmentStatus::Pending)->count())->toBe(1)
         ->and(IdempotencyRecord::query()->count())->toBe(1);

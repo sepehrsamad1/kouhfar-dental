@@ -51,4 +51,7 @@ Migration `2026_10_27_000003_add_task12_configuration_versioning.php` adds versi
 
 ## Next step
 
-Complete the remaining configuration edit/deactivation and impact-check paths, then run `composer install`, `php artisan migrate --force` against the CI PostgreSQL service, `php artisan test`, `vendor/bin/pint --test`, `vendor/bin/phpstan analyse`, `npm run lint`, `npm run typecheck`, `npm run build`, and `npm run test:browser` through CI. Update this file with actual evidence only.
+1. Ask the owner to confirm the resource allocation policy before implementing service-resource assignments or allocation enforcement.
+2. Perform responsive visual checks at 375px, 768px, and 1440px, including the existing homepage hero-stat icons and Persian typography.
+3. Add broader tests for every schedule edit/delete impact path if the owner wants the task to be fully verified beyond the current CI coverage.
+4. Keep the PR draft until the resource-policy boundary and connected GitHub identity are confirmed.

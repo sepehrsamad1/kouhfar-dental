@@ -33,7 +33,10 @@ final class ClinicStarterConfigurationSeeder extends Seeder
         ];
 
         foreach ($resources as $id => $attributes) {
-            Resource::query()->firstOrCreate(['id' => $id], $attributes + ['is_active' => false]);
+            $resource = Resource::query()->firstOrNew(['id' => $id]);
+            if (! $resource->exists) {
+                $resource->forceFill(['id' => $id] + $attributes + ['is_active' => false])->save();
+            }
         }
 
         $services = [
@@ -50,15 +53,19 @@ final class ClinicStarterConfigurationSeeder extends Seeder
         ];
 
         foreach ($services as $id => [$name, $duration, $before, $after, $resourceKind]) {
-            Service::query()->firstOrCreate(['id' => $id], [
-                'name_fa' => $name,
-                'duration_minutes' => $duration,
-                'buffer_before_minutes' => $before,
-                'buffer_after_minutes' => $after,
-                'required_resource_kind' => $resourceKind,
-                'is_active' => false,
-                'is_public_bookable' => false,
-            ]);
+            $service = Service::query()->firstOrNew(['id' => $id]);
+            if (! $service->exists) {
+                $service->forceFill([
+                    'id' => $id,
+                    'name_fa' => $name,
+                    'duration_minutes' => $duration,
+                    'buffer_before_minutes' => $before,
+                    'buffer_after_minutes' => $after,
+                    'required_resource_kind' => $resourceKind,
+                    'is_active' => false,
+                    'is_public_bookable' => false,
+                ])->save();
+            }
         }
     }
 }

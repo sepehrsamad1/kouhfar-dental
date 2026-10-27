@@ -51,7 +51,7 @@ function concurrencyFixture(): array
 }
 
 it('creates exactly one appointment across 50 simultaneous PostgreSQL attempts', function () {
-    if (! extension_loaded('pcntl')) {
+    if (!extension_loaded('pcntl')) {
         $this->markTestSkipped('pcntl is required for the PostgreSQL concurrency proof.');
     }
 

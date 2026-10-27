@@ -57,7 +57,7 @@ it('ignores expired pending holds but respects active pending and confirmed conf
         'start' => new DateTimeImmutable('2026-10-28T08:30:00Z'),
         'end' => new DateTimeImmutable('2026-10-28T09:00:00Z'),
         'status' => 'pending',
-        'expires_at' => new DateTimeImmutable('2026-10-27T06:59:59Z'),
+        'expires_at' => new DateTimeImmutable('2026-10-27T05:59:59Z'),
         'practitioner_ids' => ['p1'],
         'resource_ids' => ['chair-1'],
     ]]]);
@@ -156,8 +156,8 @@ it('enforces the exact minimum notice and excludes dates beyond the booking hori
     ];
 
     $beforeNotice = $engine->slots($base + ['working_periods' => [[
-        'start' => new DateTimeImmutable('2026-10-28T05:55:00Z'),
-        'end' => new DateTimeImmutable('2026-10-28T06:30:00Z'),
+        'start' => new DateTimeImmutable('2026-10-28T05:50:00Z'),
+        'end' => new DateTimeImmutable('2026-10-28T05:55:00Z'),
     ]]]);
     $atNotice = $engine->slots($base + ['working_periods' => [[
         'start' => new DateTimeImmutable('2026-10-28T06:00:00Z'),

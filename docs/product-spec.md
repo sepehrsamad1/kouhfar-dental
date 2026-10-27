@@ -1,6 +1,6 @@
 # Product Spec (Package 2)
 
-Status: DRAFT. FIXED = stated by owner or by the existing UI. ASSUMPTION = proposed default, not approved. OWNER DECISION = blocks implementation of that area.
+Status: DRAFT. FIXED = stated by owner or by the existing UI. ASSUMPTION = proposed default, not approved. OWNER DECISION = blocks implementation of that area. Later explicit owner decisions supersede earlier proposed defaults where noted.
 Sources: docs/ui-audit.md (Package 1), the source UI HTML, the Package 2 prompt.
 
 ## 1. Product areas

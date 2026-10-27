@@ -305,7 +305,7 @@ it('blocks a required resource type change when confirmed appointments reference
     $this->actingAs($admin, 'staff')
         ->from(route('staff.configuration.index'))
         ->patch(route('staff.configuration.services.update', $service), [
-            'version' => $service->version,
+            'version' => $service->refresh()->version,
             'name_fa' => $service->name_fa,
             'duration_minutes' => 30,
             'buffer_before_minutes' => 0,

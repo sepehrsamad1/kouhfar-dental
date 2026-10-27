@@ -7,11 +7,12 @@ it('allows the approved resource fields for mass assignment', function () {
         'name_fa',
         'kind',
         'is_active',
+        'version',
     ]);
 });
 
 it('casts the active flag to boolean', function () {
-    expect((new Resource)->getCasts()['is_active'])->toBe('boolean');
+    expect((new Resource)->getCasts())->toMatchArray(['is_active' => 'boolean', 'version' => 'integer']);
 });
 
 it('makes synthetic inactive resource data without saving it', function () {

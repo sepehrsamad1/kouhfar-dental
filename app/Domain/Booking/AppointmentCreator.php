@@ -30,7 +30,8 @@ final class AppointmentCreator
     public function __construct(
         private readonly AppointmentStateMachine $states,
         private readonly AvailabilityRepository $availability,
-    ) {}
+    ) {
+    }
 
     /**
      * @param array{patient_name:string,mobile:string,service_id:string,practitioner_id:string,resource_id:string,start_at:string} $input

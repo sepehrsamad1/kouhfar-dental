@@ -5,6 +5,22 @@ info:
   description: Package 3 contract. Drafted, not implemented. Frontend and backend build against this file.
 servers:
   - url: /
+x-task-12-staff-web-routes:
+  description: >
+    Task 12 configuration management is implemented as authenticated Laravel web routes,
+    not as a new public or versioned JSON API. All routes require auth:staff and
+    staff.session.fresh. Mutations use existing Laravel Policies/Gates and remain
+    administrator-only under the approved Task 10 role matrix.
+  routes:
+    - { method: GET, path: /staff/configuration, access: staff-read }
+    - { method: POST, path: /staff/configuration/services, access: admin }
+    - { method: PATCH, path: /staff/configuration/services/{service}, access: admin }
+    - { method: POST, path: /staff/configuration/practitioners, access: admin }
+    - { method: POST, path: /staff/configuration/resources, access: admin }
+    - { method: POST, path: /staff/configuration/clinic-hours, access: admin }
+    - { method: POST, path: /staff/configuration/working-hours, access: admin }
+    - { method: POST, path: /staff/configuration/breaks, access: admin }
+    - { method: POST, path: /staff/configuration/exceptions, access: admin }
 tags:
   - { name: public }
   - { name: staff }

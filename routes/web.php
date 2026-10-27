@@ -32,9 +32,17 @@ Route::middleware(['auth:staff', 'staff.session.fresh'])->group(function (): voi
     Route::post('/staff/configuration/resources', [ClinicConfigurationController::class, 'storeResource'])->name('staff.configuration.resources.store');
     Route::patch('/staff/configuration/resources/{resource}', [ClinicConfigurationController::class, 'updateResource'])->name('staff.configuration.resources.update');
     Route::post('/staff/configuration/clinic-hours', [ClinicConfigurationController::class, 'storeClinicHour'])->name('staff.configuration.clinic-hours.store');
+    Route::patch('/staff/configuration/clinic-hours/{hour}', [ClinicConfigurationController::class, 'updateClinicHour'])->name('staff.configuration.clinic-hours.update');
+    Route::delete('/staff/configuration/clinic-hours/{hour}', [ClinicConfigurationController::class, 'deleteClinicHour'])->name('staff.configuration.clinic-hours.delete');
     Route::post('/staff/configuration/working-hours', [ClinicConfigurationController::class, 'storeWorkingHour'])->name('staff.configuration.working-hours.store');
+    Route::patch('/staff/configuration/working-hours/{hour}', [ClinicConfigurationController::class, 'updateWorkingHour'])->name('staff.configuration.working-hours.update');
+    Route::delete('/staff/configuration/working-hours/{hour}', [ClinicConfigurationController::class, 'deleteWorkingHour'])->name('staff.configuration.working-hours.delete');
     Route::post('/staff/configuration/breaks', [ClinicConfigurationController::class, 'storeBreak'])->name('staff.configuration.breaks.store');
+    Route::patch('/staff/configuration/breaks/{break}', [ClinicConfigurationController::class, 'updateBreak'])->name('staff.configuration.breaks.update');
+    Route::delete('/staff/configuration/breaks/{break}', [ClinicConfigurationController::class, 'deleteBreak'])->name('staff.configuration.breaks.delete');
     Route::post('/staff/configuration/exceptions', [ClinicConfigurationController::class, 'storeException'])->name('staff.configuration.exceptions.store');
+    Route::patch('/staff/configuration/exceptions/{exception}', [ClinicConfigurationController::class, 'updateException'])->name('staff.configuration.exceptions.update');
+    Route::delete('/staff/configuration/exceptions/{exception}', [ClinicConfigurationController::class, 'deleteException'])->name('staff.configuration.exceptions.delete');
 
     Route::get('/staff/patients', [PatientController::class, 'index'])->name('staff.patients.index');
     Route::post('/staff/patients', [PatientController::class, 'store'])->name('staff.patients.store');

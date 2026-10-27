@@ -125,7 +125,7 @@ final class AvailabilityEngine
             $status = (string) ($appointment['status'] ?? '');
             if ($status === 'pending') {
                 $expiry = $appointment['expires_at'] ?? null;
-                if (! $expiry instanceof DateTimeImmutable || $expiry <= $now) {
+                if ($expiry instanceof DateTimeImmutable === false || $expiry <= $now) {
                     continue;
                 }
             } elseif ($status !== 'confirmed') {
@@ -174,7 +174,7 @@ final class AvailabilityEngine
 
     private function asUtc(mixed $value): DateTimeImmutable
     {
-        if (! $value instanceof DateTimeImmutable && ! is_string($value)) {
+        if ($value instanceof DateTimeImmutable === false && is_string($value) === false) {
             throw new InvalidArgumentException('Date/time values must be strings or DateTimeImmutable instances.');
         }
 

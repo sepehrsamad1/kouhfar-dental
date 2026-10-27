@@ -67,11 +67,11 @@ final class AvailabilityRepository
                 'status' => $appointment->status->value,
                 'expires_at' => $appointment->expires_at?->toDateTimeImmutable(),
                 'practitioner_ids' => $appointment->practitioners
-                        ->filter(fn ($practitioner) => (bool) $practitioner->pivot->active)
-                        ->pluck('id')->all(),
+                    ->filter(fn ($practitioner) => (bool) $practitioner->pivot->active)
+                    ->pluck('id')->all(),
                 'resource_ids' => $appointment->resources
-                        ->filter(fn ($resource) => (bool) $resource->pivot->active)
-                        ->pluck('id')->all(),
+                    ->filter(fn ($resource) => (bool) $resource->pivot->active)
+                    ->pluck('id')->all(),
             ];
         })->all();
 

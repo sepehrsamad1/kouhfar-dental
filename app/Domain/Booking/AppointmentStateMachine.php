@@ -8,6 +8,7 @@ use App\Appointment;
 use App\AppointmentEvent;
 use App\AuditLog;
 use App\Enums\AppointmentStatus;
+use App\StaffUser;
 use App\Support\AuditLogger;
 use Illuminate\Support\Facades\DB;
 use LogicException;
@@ -85,7 +86,7 @@ final class AppointmentStateMachine
         ]);
 
         if ($actorType === 'staff' && $actorId !== null) {
-            $staff = \App\StaffUser::query()->findOrFail($actorId);
+            $staff = StaffUser::query()->findOrFail($actorId);
             AuditLogger::record($staff, 'appointment.status_changed', $appointment, [
                 'status' => $from->value,
                 'appointment_id' => $appointment->getKey(),

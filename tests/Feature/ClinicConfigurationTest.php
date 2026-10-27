@@ -285,3 +285,37 @@ it('rejects invalid service durations and buffer values', function (): void {
 
     expect(Service::query()->count())->toBe(0);
 });
+
+
+it('blocks a required resource type change when confirmed appointments reference the service', function (): void {
+    $admin = configurationStaff('admin');
+    $service = Service::factory()->create([
+        'required_resource_kind' => 'dental_unit',
+        'duration_minutes' => 30,
+        'buffer_before_minutes' => 0,
+        'buffer_after_minutes' => 0,
+        'is_active' => false,
+    ]);
+    $appointment = Appointment::factory()->create([
+        'service_id' => $service->id,
+        'status' => AppointmentStatus::Confirmed,
+        'start_at' => now('UTC')->addDays(30),
+        'end_at' => now('UTC')->addDays(30)->addMinutes(30),
+    ]);
+
+    $this->actingAs($admin, 'staff')
+        ->from(route('staff.configuration.index'))
+        ->patch(route('staff.configuration.services.update', $service), [
+            'version' => $service->version,
+            'name_fa' => $service->name_fa,
+            'duration_minutes' => 30,
+            'buffer_before_minutes' => 0,
+            'buffer_after_minutes' => 0,
+            'required_resource_kind' => 'consultation_room',
+            'is_active' => 0,
+        ])
+        ->assertSessionHasErrors(['service']);
+
+    expect($service->refresh()->required_resource_kind)->toBe('dental_unit')
+        ->and(Appointment::query()->whereKey($appointment->id)->exists())->toBeTrue();
+});

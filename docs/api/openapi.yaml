@@ -16,7 +16,9 @@ x-task-12-staff-web-routes:
     - { method: POST, path: /staff/configuration/services, access: admin }
     - { method: PATCH, path: /staff/configuration/services/{service}, access: admin }
     - { method: POST, path: /staff/configuration/practitioners, access: admin }
+    - { method: PATCH, path: /staff/configuration/practitioners/{practitioner}, access: admin }
     - { method: POST, path: /staff/configuration/resources, access: admin }
+    - { method: PATCH, path: /staff/configuration/resources/{resource}, access: admin }
     - { method: POST, path: /staff/configuration/clinic-hours, access: admin }
     - { method: POST, path: /staff/configuration/working-hours, access: admin }
     - { method: POST, path: /staff/configuration/breaks, access: admin }

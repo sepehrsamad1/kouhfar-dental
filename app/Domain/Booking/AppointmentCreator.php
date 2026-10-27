@@ -129,6 +129,10 @@ final class AppointmentCreator
             $reserved = false;
             foreach ($matches as $match) {
                 try {
+                    DB::selectOne(
+                        'select pg_advisory_xact_lock(hashtextextended(?, 0))',
+                        [sprintf('booking-capacity:%s:%s:%s:%s', $match['practitioner_id'], $match['resource_id'], $occupiedStart->format('c'), $occupiedEnd->format('c'))],
+                    );
                     DB::transaction(function () use ($appointment, $match, $occupiedStart, $occupiedEnd): void {
                         $practitioner = Practitioner::query()
                             ->whereKey($match['practitioner_id'])
@@ -197,6 +201,9 @@ final class AppointmentCreator
             }
 
             if ($reserved === false) {
+                $appointment->delete();
+                $patient->delete();
+
                 return $this->storeResponse(
                     $record,
                     409,

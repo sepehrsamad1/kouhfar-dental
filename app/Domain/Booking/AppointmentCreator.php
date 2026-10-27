@@ -146,13 +146,13 @@ final class AppointmentCreator
                     $reserved = true;
                     break;
                 } catch (QueryException $exception) {
-                    if (! $this->isExclusionViolation($exception)) {
+                    if ($this->isExclusionViolation($exception) === false) {
                         throw $exception;
                     }
                 }
             }
 
-            if (! $reserved) {
+            if ($reserved === false) {
                 throw new AppointmentBookingException(
                     'SLOT_UNAVAILABLE',
                     'The selected slot is no longer available.',

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Appointment;
+use App\AuditLog;
 use App\ClinicWorkingHour;
 use App\Enums\AppointmentStatus;
 use App\Http\Middleware\EnsureStaffSessionIsFresh;
@@ -239,4 +240,32 @@ it('blocks recurring breaks that overlap future confirmed appointments', functio
         ->assertSessionHasErrors(['schedule']);
 
     expect(ScheduleBreak::query()->count())->toBe(0);
+});
+
+it('audits service configuration changes with allowlisted before and after values', function (): void {
+    $admin = configurationStaff('admin');
+    $service = Service::factory()->create([
+        'duration_minutes' => 30,
+        'buffer_before_minutes' => 0,
+        'buffer_after_minutes' => 0,
+        'is_active' => false,
+    ]);
+    $service->refresh();
+
+    $this->actingAs($admin, 'staff')
+        ->patch(route('staff.configuration.services.update', $service), [
+            'version' => $service->version,
+            'name_fa' => $service->name_fa,
+            'duration_minutes' => 45,
+            'buffer_before_minutes' => 5,
+            'buffer_after_minutes' => 10,
+            'is_active' => 0,
+        ])
+        ->assertRedirect();
+
+    $audit = AuditLog::query()->where('action', 'configuration.service_updated')->firstOrFail();
+    expect($audit->meta['before']['duration_minutes'])->toBe(30)
+        ->and($audit->meta['after']['duration_minutes'])->toBe(45)
+        ->and($audit->meta['after']['buffer_before_minutes'])->toBe(5)
+        ->and($audit->meta['after']['buffer_after_minutes'])->toBe(10);
 });

@@ -10,12 +10,12 @@ use App\Practitioner;
 use App\Resource;
 use App\Service;
 use App\WorkingHour;
+use Illuminate\Http\Request;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
-uses(RefreshDatabase::class);
+uses(DatabaseMigrations::class);
 
 function publicBookingFixture(): array
 {
@@ -54,7 +54,7 @@ it('creates a pending appointment atomically and records an event and idempotenc
     [$service, $practitioner, $resource] = publicBookingFixture();
     $start = new DateTimeImmutable('2026-10-28 10:00:00', new DateTimeZone('Asia/Tehran'));
 
-    $response = $this->postJson(route('booking.appointments.store'), [
+    $response = $this->postJson(route('api.v1.booking.appointments.store'), [
         'service_id' => $service->id,
         'start_at' => $start->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d\TH:i:s\Z'),
         'full_name' => 'بیمار آزمایشی',
@@ -87,9 +87,9 @@ it('replays the same idempotent request and rejects a changed body', function ()
         'mobile' => '09121234567',
     ];
 
-    $first = $this->postJson(route('booking.appointments.store'), $payload, ['Idempotency-Key' => 'same-key']);
-    $second = $this->postJson(route('booking.appointments.store'), $payload, ['Idempotency-Key' => 'same-key']);
-    $changed = $this->postJson(route('booking.appointments.store'), $payload + ['full_name' => 'بیمار دیگر'], ['Idempotency-Key' => 'same-key']);
+    $first = $this->postJson(route('api.v1.booking.appointments.store'), $payload, ['Idempotency-Key' => 'same-key']);
+    $second = $this->postJson(route('api.v1.booking.appointments.store'), $payload, ['Idempotency-Key' => 'same-key']);
+    $changed = $this->postJson(route('api.v1.booking.appointments.store'), $payload + ['full_name' => 'بیمار دیگر'], ['Idempotency-Key' => 'same-key']);
 
     $first->assertCreated();
     $second->assertCreated()->assertJson($first->json());
@@ -108,8 +108,8 @@ it('returns a generic 409 when the selected slot is unavailable', function (): v
         'mobile' => '09121234567',
     ];
 
-    $this->postJson(route('booking.appointments.store'), $payload, ['Idempotency-Key' => 'first'])->assertCreated();
-    $this->postJson(route('booking.appointments.store'), $payload, ['Idempotency-Key' => 'second'])
+    $this->postJson(route('api.v1.booking.appointments.store'), $payload, ['Idempotency-Key' => 'first'])->assertCreated();
+    $this->postJson(route('api.v1.booking.appointments.store'), $payload, ['Idempotency-Key' => 'second'])
         ->assertStatus(409)
         ->assertJson(['code' => 'SLOT_UNAVAILABLE'])
         ->assertJsonMissing(['exception', 'sqlstate']);
@@ -120,7 +120,7 @@ it('expires overdue pending holds before reserving a newly available slot', func
     [$service] = publicBookingFixture();
     $start = new DateTimeImmutable('2026-10-28 10:00:00', new DateTimeZone('Asia/Tehran'));
 
-    $first = $this->postJson(route('booking.appointments.store'), [
+    $first = $this->postJson(route('api.v1.booking.appointments.store'), [
         'service_id' => $service->id,
         'start_at' => $start->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d\TH:i:s\Z'),
         'full_name' => 'بیمار اول',
@@ -133,7 +133,7 @@ it('expires overdue pending holds before reserving a newly available slot', func
         'expires_at' => now('UTC')->subSecond(),
     ]);
 
-    $second = $this->postJson(route('booking.appointments.store'), [
+    $second = $this->postJson(route('api.v1.booking.appointments.store'), [
         'service_id' => $service->id,
         'start_at' => $start->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d\TH:i:s\Z'),
         'full_name' => 'بیمار دوم',
@@ -149,7 +149,7 @@ it('expires overdue pending holds before reserving a newly available slot', func
 it('controls appointment lifecycle transitions and rejects invalid transitions', function (): void {
     [$service] = publicBookingFixture();
     $start = new DateTimeImmutable('2026-10-28 10:00:00', new DateTimeZone('Asia/Tehran'));
-    $this->postJson(route('booking.appointments.store'), [
+    $this->postJson(route('api.v1.booking.appointments.store'), [
         'service_id' => $service->id,
         'start_at' => $start->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d\TH:i:s\Z'),
         'full_name' => 'بیمار آزمایشی',
@@ -166,7 +166,7 @@ it('controls appointment lifecycle transitions and rejects invalid transitions',
 
 it('rejects invalid idempotency keys before persistence', function (): void {
     [$service] = publicBookingFixture();
-    $this->postJson(route('booking.appointments.store'), [
+    $this->postJson(route('api.v1.booking.appointments.store'), [
         'service_id' => $service->id,
         'start_at' => 'not-a-date',
         'full_name' => 'بیمار آزمایشی',
@@ -181,14 +181,14 @@ it('enforces buffer occupancy at the database level', function (): void {
     $firstStart = new DateTimeImmutable('2026-10-28 10:00:00', new DateTimeZone('Asia/Tehran'));
     $secondStart = $firstStart->modify('+35 minutes');
 
-    $this->postJson(route('booking.appointments.store'), [
+    $this->postJson(route('api.v1.booking.appointments.store'), [
         'service_id' => $service->id,
         'start_at' => $firstStart->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d\TH:i:s\Z'),
         'full_name' => 'بیمار اول',
         'mobile' => '09121234567',
     ], ['Idempotency-Key' => 'buffer-1'])->assertCreated();
 
-    $response = $this->postJson(route('booking.appointments.store'), [
+    $response = $this->postJson(route('api.v1.booking.appointments.store'), [
         'service_id' => $service->id,
         'start_at' => $secondStart->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d\TH:i:s\Z'),
         'full_name' => 'بیمار دوم',

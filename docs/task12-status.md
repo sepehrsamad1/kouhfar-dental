@@ -16,8 +16,8 @@ Status: IN PROGRESS. Do not treat this task as verified until CI passes and the 
 - Nullable practitioner ownership for clinic-wide schedule exceptions.
 - Staff configuration page and authenticated staff routes for services, practitioners, resources, clinic hours, practitioner hours, breaks, and schedule exceptions.
 - Admin-only configuration writes based on the existing Task 10 role matrix; reception/practitioner can read the settings.
-- Service name, duration, buffer-before, buffer-after, active status, and optimistic version check. Practitioner and resource display/type/active settings also have optimistic version checks.
-- New services, practitioners, and resources are initially inactive. No fictional catalog, practitioner, resource inventory, or practitioner-to-service assignment is seeded. The existing non-production-only `DatabaseSeeder` now initializes the owner-confirmed clinic-wide 12:00-20:00 schedule for Saturday through Thursday using `firstOrCreate`, so rerunning it does not overwrite staff edits. Production seeding remains disabled.
+- Service name, duration, buffer-before, buffer-after, active status, required resource type (`dental_unit` or `consultation_room`), and optimistic version check. Changing required resource type is blocked when future confirmed appointments reference the service. Practitioner and resource display/type/active settings also have optimistic version checks.
+- Newly created services, practitioners, and resources are initially inactive. `ClinicStarterConfigurationSeeder` is an explicit, idempotent seeder for 10 inactive starter services and the owner-confirmed resource inventory (2 shared dental units and 1 consultation space). It is not called automatically by `DatabaseSeeder`; do not run it in production without explicit owner approval. It creates no practitioners and no practitioner-to-service assignments.
 - Configuration changes write allowlisted before/after audit metadata without patient information. Closure/holiday exceptions and recurring breaks are blocked when they overlap confirmed appointments. Service duration/buffer changes and practitioner/resource deactivation are blocked when future confirmed appointments reference them. No appointments are automatically modified.
 - Feature tests cover role authorization, invalid cross-midnight periods, stale service version, appointment preservation, closure impact, and timezone conversion. Add/extend tests for every schedule edit/delete impact path before final verification.
 
@@ -31,27 +31,28 @@ Status: IN PROGRESS. Do not treat this task as verified until CI passes and the 
 
 ## Owner decisions still open
 
-- Resource allocation rules: `placeholder — owner to confirm`.
-- Service catalog/default durations and buffers are not seeded.
-- Practitioner qualifications and service assignments are not assumed.
-- Exact recurring break times and holiday dates are not seeded.
+- Shared resource policy is confirmed: the two dental units are shared between practitioners; one consultation space exists. The new service `required_resource_kind` stores the needed resource type, but Task 13 must implement atomic allocation from the shared pool.
+- Starter service catalog and duration/buffer estimates are seeded only by explicitly running `php artisan db:seed --class=ClinicStarterConfigurationSeeder`; all services/resources remain inactive and not public-bookable until reviewed.
+- Practitioner identities, qualifications, and service assignments remain unconfigured because they are clinic-specific and cannot be inferred safely from generic research.
+- Exact recurring break times and holiday dates remain unconfigured. Public holidays are not automatically treated as clinic closures.
 - No resource conflict enforcement or booking availability engine is implemented.
 
 ## Known incomplete acceptance criteria
 
-- Versioned edit/delete controls now exist for clinic hours, practitioner hours, breaks, and exceptions. Review the implementation and CI before marking acceptance criteria verified.
+- Versioned edit/delete controls now exist for clinic hours, practitioner hours, breaks, and exceptions. CI must be rerun after the new resource-kind migration, seeder, and tests.
 - Schedule impact handling and conflict validation need broader automated coverage, including recurring breaks, exception overlaps, and all relevant appointment states.
 - No visual browser checks at 375px, 768px, and 1440px have been run for this new staff screen.
-- GitHub Actions run `40425347718` passed on code commit `42ad11761afeaae56965dca3749b6acbcb100419`: JavaScript lint/typecheck/build, Pint, PHPStan, PostgreSQL migrations, 129 Laravel tests (604 assertions), and 4 browser smoke tests all passed.
+- Previous GitHub Actions run `40425347718` passed on code commit `42ad11761afeaae56965dca3749b6acbcb100419`: JavaScript lint/typecheck/build, Pint, PHPStan, PostgreSQL migrations, 129 Laravel tests (604 assertions), and 4 browser smoke tests. New resource-kind and starter-catalog changes have not yet passed CI.
 - The current staff screen uses the existing simple Blade panel style; it does not redesign the public website.
 
 ## Rollback and migration notes
 
-Migration `2026_10_27_000003_add_task12_configuration_versioning.php` adds version columns and clinic schedule tables and makes schedule exceptions clinic-wide-capable. Rollback intentionally refuses to make `practitioner_id` non-null if clinic-wide exceptions have been saved. Resolve those records explicitly before rollback. No production migration has been run.
+Migration `2026_10_27_000003_add_task12_configuration_versioning.php` adds version columns and clinic schedule tables and makes schedule exceptions clinic-wide-capable. Migration `2026_10_27_000004_add_required_resource_kind_to_services.php` adds nullable resource-type requirements for services. Rollback intentionally refuses to make `practitioner_id` non-null if clinic-wide exceptions have been saved. Resolve those records explicitly before rollback. No production migration has been run.
 
 ## Next step
 
-1. Ask the owner to confirm the resource allocation policy before implementing service-resource assignments or allocation enforcement.
+1. Run the full GitHub Actions workflow after the resource-kind migration, starter seeder, and new tests; fix any failures.
 2. Perform responsive visual checks at 375px, 768px, and 1440px, including the existing homepage hero-stat icons and Persian typography.
-3. Add broader tests for every schedule edit/delete impact path if the owner wants the task to be fully verified beyond the current CI coverage.
-4. Keep the PR draft until the resource-policy boundary and connected GitHub identity are confirmed.
+3. Keep practitioner/service assignments empty until clinic management enters real practitioner identities and confirms qualifications.
+4. Do not run `ClinicStarterConfigurationSeeder` in production without explicit approval; review its inactive values first.
+5. Keep the PR draft until CI, responsive checks, and connected-account review are complete.

@@ -122,7 +122,7 @@ final class AvailabilityEngine
             $status = (string) ($appointment['status'] ?? '');
             if ($status === 'pending') {
                 $expiry = $appointment['expires_at'] ?? null;
-                if (!$expiry instanceof DateTimeImmutable || $expiry <= $now) {
+                if (! ($expiry instanceof DateTimeImmutable) || $expiry <= $now) {
                     continue;
                 }
             } elseif ($status !== 'confirmed') {

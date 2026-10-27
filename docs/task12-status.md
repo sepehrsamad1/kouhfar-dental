@@ -42,7 +42,7 @@ Status: IN PROGRESS. Do not treat this task as verified until CI passes and the 
 - Versioned edit/delete controls now exist for clinic hours, practitioner hours, breaks, and exceptions. Review the implementation and CI before marking acceptance criteria verified.
 - Schedule impact handling and conflict validation need broader automated coverage, including recurring breaks, exception overlaps, and all relevant appointment states.
 - No visual browser checks at 375px, 768px, and 1440px have been run for this new staff screen.
-- CI passed on commit `5b8ed2ae00a5d700026c40689ac239e0b641931b` (Pint, PHPStan, PostgreSQL migrations, Laravel tests, JavaScript lint/typecheck/build, and browser smoke tests). Later audit/seeder changes are pending a fresh CI run.
+- GitHub Actions run `40425347718` passed on code commit `42ad11761afeaae56965dca3749b6acbcb100419`: JavaScript lint/typecheck/build, Pint, PHPStan, PostgreSQL migrations, 129 Laravel tests (604 assertions), and 4 browser smoke tests all passed.
 - The current staff screen uses the existing simple Blade panel style; it does not redesign the public website.
 
 ## Rollback and migration notes

@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Domain\Availability\AvailabilityRepository;
 use App\ClinicWorkingHour;
+use App\Domain\Availability\AvailabilityRepository;
 use App\Practitioner;
 use App\Resource;
 use App\ScheduleException;

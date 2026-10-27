@@ -50,19 +50,13 @@ function concurrencyFixture(): array
 }
 
 it('creates exactly one appointment across 50 simultaneous PostgreSQL attempts', function () {
-    if (extension_loaded('pcntl') === false) {
-        $this->markTestSkipped('pcntl is required for the PostgreSQL concurrency proof.');
-    }
-
     Carbon::setTestNow('2026-10-27T08:00:00Z');
     [$service, $practitioner, $resource] = concurrencyFixture();
 
     $payload = [
-        'patient_name' => 'Synthetic Concurrent Booker',
+        'full_name' => 'Synthetic Concurrent Booker',
         'mobile' => '09120000001',
         'service_id' => $service->getKey(),
-        'practitioner_id' => $practitioner->getKey(),
-        'resource_id' => $resource->getKey(),
         'start_at' => '2026-10-29T09:30:00Z',
     ];
     $encoded = base64_encode(json_encode($payload, JSON_THROW_ON_ERROR));

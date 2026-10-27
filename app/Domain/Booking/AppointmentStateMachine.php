@@ -98,10 +98,10 @@ final class AppointmentStateMachine
             AuditLog::query()->create([
                 'actor_id' => $actorId,
                 'action' => 'appointment.status_changed',
-                'target_type' => Appointment::class,
+                'target_type' => 'Appointment',
                 'target_id' => $appointment->getKey(),
                 'occurred_at' => $now,
-                'request_id' => request()->attributes->get('request_id'),
+                'request_id' => $this->requestId(),
                 'meta' => [
                     'before' => ['status' => $from->value],
                     'after' => [
@@ -158,10 +158,10 @@ final class AppointmentStateMachine
             AuditLog::query()->create([
                 'actor_id' => null,
                 'action' => 'appointment.hold_expired',
-                'target_type' => Appointment::class,
+                'target_type' => 'Appointment',
                 'target_id' => $appointmentId,
                 'occurred_at' => $now,
-                'request_id' => request()->attributes->get('request_id'),
+                'request_id' => $this->requestId(),
                 'meta' => [
                     'before' => ['status' => AppointmentStatus::Pending->value],
                     'after' => [
@@ -173,5 +173,12 @@ final class AppointmentStateMachine
         }
 
         return count($appointmentIds);
+    }
+
+    private function requestId(): ?string
+    {
+        return app()->bound('request')
+            ? request()->attributes->get('request_id')
+            : null;
     }
 }

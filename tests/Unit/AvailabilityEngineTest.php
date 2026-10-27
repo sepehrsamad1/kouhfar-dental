@@ -217,3 +217,74 @@ it('blocks practitioner and shared-resource conflicts independently', function (
         ->and(array_column($resourceConflict, 'resource_id'))->not->toContain('chair-1')
         ->and($practitionerConflict)->toBeEmpty();
 });
+
+it('records an engine-core benchmark for a 14-day, 1000-appointment workload', function (): void {
+    $engine = new AvailabilityEngine;
+    $timezone = new DateTimeZone('Asia/Tehran');
+    $periods = [];
+    $firstDay = new DateTimeImmutable('2026-10-28 09:00:00', $timezone);
+
+    for ($day = 0; $day < 14; $day++) {
+        $start = $firstDay->modify(sprintf('+%d days', $day));
+        $periods[] = [
+            'start' => $start,
+            'end' => $start->setTime(17, 0),
+        ];
+    }
+
+    $appointments = [];
+    $appointmentBase = new DateTimeImmutable('2026-10-28T05:30:00Z');
+    for ($i = 0; $i < 1000; $i++) {
+        $start = $appointmentBase->modify(sprintf('+%d minutes', intdiv($i, 3) * 15));
+        $appointments[] = [
+            'start' => $start,
+            'end' => $start->modify('+15 minutes'),
+            'status' => 'confirmed',
+            'expires_at' => null,
+            'practitioner_ids' => ['p'.($i % 10)],
+            'resource_ids' => ['r'.($i % 3)],
+        ];
+    }
+
+    $input = [
+        'timezone' => 'Asia/Tehran',
+        'now' => new DateTimeImmutable('2026-10-27T06:00:00Z'),
+        'duration_minutes' => 30,
+        'buffer_before_minutes' => 0,
+        'buffer_after_minutes' => 0,
+        'minimum_notice_minutes' => 1440,
+        'horizon_days' => 14,
+        'grid_minutes' => 5,
+        'practitioner_ids' => array_map(static fn (int $i): string => 'p'.$i, range(0, 9)),
+        'resources' => array_map(static fn (int $i): array => [
+            'id' => 'r'.$i,
+            'kind' => 'dental_unit',
+            'active' => true,
+        ], range(0, 2)),
+        'required_resource_kind' => 'dental_unit',
+        'working_periods' => $periods,
+        'closed_dates' => [],
+        'appointments' => $appointments,
+    ];
+
+    $engine->slots($input);
+    $durationsMs = [];
+    $slots = [];
+    for ($sample = 0; $sample < 10; $sample++) {
+        $startedAt = hrtime(true);
+        $slots = $engine->slots($input);
+        $durationsMs[] = (hrtime(true) - $startedAt) / 1_000_000;
+    }
+    sort($durationsMs);
+    $p95 = $durationsMs[(int) ceil(count($durationsMs) * 0.95) - 1];
+    $p99 = $durationsMs[(int) ceil(count($durationsMs) * 0.99) - 1];
+
+    fwrite(STDERR, sprintf(
+        "Availability engine-core benchmark: 10 samples, 1000 appointments, 10 practitioners, 3 resources, 14 days; p95=%.2fms p99=%.2fms (CI runner; excludes database/repository overhead).%s",
+        $p95,
+        $p99,
+        PHP_EOL
+    ));
+
+    expect($slots)->not->toBeEmpty();
+});

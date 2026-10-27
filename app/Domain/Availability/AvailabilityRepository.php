@@ -139,7 +139,7 @@ final class AvailabilityRepository
                         if ($exception->practitioner_id !== null && $exception->practitioner_id !== $practitioner->id) {
                             continue;
                         }
-                        if ($exception->kind === 'closure') {
+                        if (in_array($exception->kind, ['closed', 'holiday'], true)) {
                             $segments = $this->subtract($segments, $exception->starts_at->toDateTimeImmutable(), $exception->ends_at->toDateTimeImmutable());
                         }
                     }

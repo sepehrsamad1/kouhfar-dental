@@ -21,7 +21,7 @@ Prompt source of truth: the Laravel 13, 32-task prompt pack.
 
 ## Next step
 
-Tasks 07 through 11 are implemented in the current `main` history; Task 11 is supported by CI run #90. OTP and `VerificationChallenge` remain deferred pending an owner decision. Task 12 code passed CI run `40425347718` on commit `42ad11761afeaae56965dca3749b6acbcb100419` (129 Laravel tests, 604 assertions, 4 browser smoke tests). It remains in progress because resource-allocation policy is an owner decision and responsive visual checks have not been captured.
+Tasks 07 through 11 are implemented in the current `main` history; Task 11 is supported by CI run #90. OTP and `VerificationChallenge` remain deferred pending an owner decision. Task 12 baseline code passed CI run `40425347718` on commit `42ad11761afeaae56965dca3749b6acbcb100419` (129 Laravel tests, 604 assertions, 4 browser smoke tests). The owner has since confirmed that two dental units are shared between practitioners and one consultation space exists. An inactive starter catalog, typed resource requirements, and new tests have been added on `task/12-clinic-configuration`; CI for these latest changes is pending. Practitioner identities/qualifications and service assignments remain intentionally unconfigured, and responsive visual checks have not been captured.
 
 ## Rules for resuming
 

@@ -28,8 +28,7 @@ final class AppointmentCreator
     public function __construct(
         private readonly AppointmentStateMachine $states,
         private readonly AvailabilityRepository $availability,
-    ) {
-    }
+    ) {}
 
     public function create(array $input, string $idempotencyKey, string $ownerScope = 'public:appointment:create:v1'): array
     {

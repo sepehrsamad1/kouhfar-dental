@@ -80,7 +80,7 @@ final class AvailabilityRepository
                 }
             }
             $status = $appointment->status;
-            $statusValue = $status instanceof \\App\\Enums\\AppointmentStatus ? $status->value : (string) $status;
+            $statusValue = $status instanceof \App\Enums\AppointmentStatus ? $status->value : (string) $status;
             $startAt = CarbonImmutable::parse((string) $appointment->start_at);
             $endAt = CarbonImmutable::parse((string) $appointment->end_at);
             $expiresAt = $appointment->expires_at === null

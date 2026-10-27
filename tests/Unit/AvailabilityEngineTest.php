@@ -101,7 +101,6 @@ it('does not offer slots on configured closure dates or when the full buffered i
     expect($engine->slots($input))->toBeEmpty();
 });
 
-
 it('preserves slot invariants across multiple durations and buffer combinations', function (): void {
     $engine = new AvailabilityEngine();
     foreach ([[15, 0, 0], [25, 5, 10], [40, 10, 5], [60, 0, 15]] as [$duration, $before, $after]) {
@@ -137,4 +136,40 @@ it('preserves slot invariants across multiple durations and buffer combinations'
                 ->and($end > $start)->toBeTrue();
         }
     }
+});
+
+
+it('enforces the exact minimum notice and excludes dates beyond the booking horizon', function (): void {
+    $engine = new AvailabilityEngine();
+    $now = new DateTimeImmutable('2026-10-27T06:00:00Z');
+    $base = [
+        'timezone' => 'Asia/Tehran',
+        'now' => $now,
+        'duration_minutes' => 30,
+        'minimum_notice_minutes' => 1440,
+        'horizon_days' => 14,
+        'grid_minutes' => 5,
+        'practitioner_ids' => ['p1'],
+        'resources' => [['id' => 'chair-1', 'kind' => 'dental_unit', 'active' => true]],
+        'required_resource_kind' => 'dental_unit',
+        'closed_dates' => [],
+        'appointments' => [],
+    ];
+
+    $beforeNotice = $engine->slots($base + ['working_periods' => [[
+        'start' => new DateTimeImmutable('2026-10-28T05:55:00Z'),
+        'end' => new DateTimeImmutable('2026-10-28T06:30:00Z'),
+    ]]]);
+    $atNotice = $engine->slots($base + ['working_periods' => [[
+        'start' => new DateTimeImmutable('2026-10-28T06:00:00Z'),
+        'end' => new DateTimeImmutable('2026-10-28T06:30:00Z'),
+    ]]]);
+    $beyondHorizon = $engine->slots($base + ['working_periods' => [[
+        'start' => new DateTimeImmutable('2026-11-11T08:30:00Z'),
+        'end' => new DateTimeImmutable('2026-11-11T09:30:00Z'),
+    ]]]);
+
+    expect($beforeNotice)->toBeEmpty()
+        ->and($atNotice)->not->toBeEmpty()
+        ->and($beyondHorizon)->toBeEmpty();
 });

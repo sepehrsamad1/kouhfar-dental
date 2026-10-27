@@ -44,7 +44,20 @@
 
     <section>
         <h2>پزشکان</h2>
-        <ul>@foreach ($practitioners as $practitioner)<li>{{ $practitioner->display_name_fa }} - {{ $practitioner->is_active ? 'فعال' : 'غیرفعال' }}</li>@endforeach</ul>
+        <ul>@foreach ($practitioners as $practitioner)
+            <li>
+                {{ $practitioner->display_name_fa }} - {{ $practitioner->is_active ? 'فعال' : 'غیرفعال' }}
+                @if ($canManage)
+                    <form method="post" action="{{ route('staff.configuration.practitioners.update', $practitioner) }}">@csrf @method('PATCH')
+                        <input type="hidden" name="version" value="{{ $practitioner->version }}">
+                        <label>نام نمایشی <input name="display_name_fa" value="{{ $practitioner->display_name_fa }}" maxlength="200" required></label>
+                        <input type="hidden" name="is_active" value="0">
+                        <label>فعال <input type="checkbox" name="is_active" value="1" @checked($practitioner->is_active)></label>
+                        <button type="submit">ذخیره</button>
+                    </form>
+                @endif
+            </li>
+        @endforeach</ul>
         @if ($canManage)
             <form method="post" action="{{ route('staff.configuration.practitioners.store') }}">@csrf
                 <label>نام نمایشی پزشک <input name="display_name_fa" maxlength="200" required></label>
@@ -55,7 +68,21 @@
 
     <section>
         <h2>منابع کلینیک</h2>
-        <ul>@foreach ($resources as $resource)<li>{{ $resource->name_fa }} ({{ $resource->kind }}) - {{ $resource->is_active ? 'فعال' : 'غیرفعال' }}</li>@endforeach</ul>
+        <ul>@foreach ($resources as $resource)
+            <li>
+                {{ $resource->name_fa }} ({{ $resource->kind }}) - {{ $resource->is_active ? 'فعال' : 'غیرفعال' }}
+                @if ($canManage)
+                    <form method="post" action="{{ route('staff.configuration.resources.update', $resource) }}">@csrf @method('PATCH')
+                        <input type="hidden" name="version" value="{{ $resource->version }}">
+                        <label>نام <input name="name_fa" value="{{ $resource->name_fa }}" maxlength="200" required></label>
+                        <label>نوع <input name="kind" value="{{ $resource->kind }}" maxlength="80" required></label>
+                        <input type="hidden" name="is_active" value="0">
+                        <label>فعال <input type="checkbox" name="is_active" value="1" @checked($resource->is_active)></label>
+                        <button type="submit">ذخیره</button>
+                    </form>
+                @endif
+            </li>
+        @endforeach</ul>
         @if ($canManage)
             <form method="post" action="{{ route('staff.configuration.resources.store') }}">@csrf
                 <label>نام منبع <input name="name_fa" maxlength="200" required></label>

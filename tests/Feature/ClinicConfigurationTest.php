@@ -3,11 +3,15 @@
 declare(strict_types=1);
 
 use App\Appointment;
+use App\ClinicWorkingHour;
 use App\Enums\AppointmentStatus;
 use App\Http\Middleware\EnsureStaffSessionIsFresh;
+use App\Patient;
+use App\ScheduleException;
 use App\Service;
 use App\StaffUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 
 uses(RefreshDatabase::class);
 
@@ -62,7 +66,7 @@ it('rejects cross-midnight clinic schedule periods', function (): void {
         ])
         ->assertSessionHasErrors(['end_local']);
 
-    expect(\App\ClinicWorkingHour::query()->count())->toBe(0);
+    expect(ClinicWorkingHour::query()->count())->toBe(0);
 });
 
 it('rejects stale service configuration versions', function (): void {
@@ -141,8 +145,8 @@ it('blocks service duration changes that could affect confirmed appointments and
 it('blocks a closure that overlaps a confirmed appointment without changing the appointment', function (): void {
     $admin = configurationStaff('admin');
     $service = Service::factory()->create();
-    $patient = \App\Patient::factory()->create();
-    $start = \Illuminate\Support\Carbon::parse('2026-11-28 10:30', 'Asia/Tehran')->utc();
+    $patient = Patient::factory()->create();
+    $start = Carbon::parse('2026-11-28 10:30', 'Asia/Tehran')->utc();
     $appointment = Appointment::factory()->create([
         'patient_id' => $patient->id,
         'service_id' => $service->id,
@@ -160,7 +164,7 @@ it('blocks a closure that overlaps a confirmed appointment without changing the 
         ])
         ->assertSessionHasErrors(['schedule']);
 
-    expect(\App\ScheduleException::query()->count())->toBe(0)
+    expect(ScheduleException::query()->count())->toBe(0)
         ->and($appointment->refresh()->status)->toBe(AppointmentStatus::Confirmed);
 });
 
@@ -175,7 +179,7 @@ it('stores schedule exception instants in UTC from Tehran local time', function 
         ])
         ->assertRedirect();
 
-    $exception = \App\ScheduleException::query()->firstOrFail();
+    $exception = ScheduleException::query()->firstOrFail();
     expect($exception->starts_at->toIso8601String())
-        ->toBe(\Illuminate\Support\Carbon::parse('2026-11-28 10:00', 'Asia/Tehran')->utc()->toIso8601String());
+        ->toBe(Carbon::parse('2026-11-28 10:00', 'Asia/Tehran')->utc()->toIso8601String());
 });

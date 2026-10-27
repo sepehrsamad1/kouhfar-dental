@@ -20,9 +20,17 @@ x-task-12-staff-web-routes:
     - { method: POST, path: /staff/configuration/resources, access: admin }
     - { method: PATCH, path: /staff/configuration/resources/{resource}, access: admin }
     - { method: POST, path: /staff/configuration/clinic-hours, access: admin }
+    - { method: PATCH, path: /staff/configuration/clinic-hours/{hour}, access: admin }
+    - { method: DELETE, path: /staff/configuration/clinic-hours/{hour}, access: admin }
     - { method: POST, path: /staff/configuration/working-hours, access: admin }
+    - { method: PATCH, path: /staff/configuration/working-hours/{hour}, access: admin }
+    - { method: DELETE, path: /staff/configuration/working-hours/{hour}, access: admin }
     - { method: POST, path: /staff/configuration/breaks, access: admin }
+    - { method: PATCH, path: /staff/configuration/breaks/{break}, access: admin }
+    - { method: DELETE, path: /staff/configuration/breaks/{break}, access: admin }
     - { method: POST, path: /staff/configuration/exceptions, access: admin }
+    - { method: PATCH, path: /staff/configuration/exceptions/{exception}, access: admin }
+    - { method: DELETE, path: /staff/configuration/exceptions/{exception}, access: admin }
 tags:
   - { name: public }
   - { name: staff }

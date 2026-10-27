@@ -76,11 +76,13 @@ final class AppointmentCreator
             $practitioner = $service?->practitioners()
                 ->whereKey($normalizedInput['practitioner_id'])
                 ->where('practitioners.is_active', true)
+                ->lockForUpdate()
                 ->first();
 
             $resource = $service?->resources()
                 ->whereKey($normalizedInput['resource_id'])
                 ->where('resources.is_active', true)
+                ->lockForUpdate()
                 ->first();
 
             if ($service === null || $practitioner === null || $resource === null) {

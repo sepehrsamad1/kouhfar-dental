@@ -8,7 +8,7 @@ servers:
 x-task-12-staff-web-routes:
   description: >
     Task 12 configuration management is implemented as authenticated Laravel web routes,
-    not as a new public or versioned JSON API. All routes require auth:staff and
+    not as a new public or versioned JSON API. Service configuration includes a nullable required resource type (`dental_unit` or `consultation_room`); practitioner-service assignments are managed explicitly and do not imply verified qualifications. All routes require auth:staff and
     staff.session.fresh. Mutations use existing Laravel Policies/Gates and remain
     administrator-only under the approved Task 10 role matrix.
   routes:
@@ -17,6 +17,7 @@ x-task-12-staff-web-routes:
     - { method: PATCH, path: /staff/configuration/services/{service}, access: admin }
     - { method: POST, path: /staff/configuration/practitioners, access: admin }
     - { method: PATCH, path: /staff/configuration/practitioners/{practitioner}, access: admin }
+    - { method: PATCH, path: /staff/configuration/practitioners/{practitioner}/services, access: admin }
     - { method: POST, path: /staff/configuration/resources, access: admin }
     - { method: PATCH, path: /staff/configuration/resources/{resource}, access: admin }
     - { method: POST, path: /staff/configuration/clinic-hours, access: admin }

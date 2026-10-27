@@ -16,8 +16,8 @@ Last updated: 2026-10-27.
 | 10 Authorization and audit controls | VERIFIED | See Task 10 status; CI passed. |
 | 11 Staff patient management | VERIFIED | CI run #90 passed on main. |
 | 12 Services, practitioners, resources, and working hours | MERGED; CI VERIFIED | PR #13 merged to `main` as `75f3b993ccba150ac4941407dcba4f1a84438d35`. CI run `40431587997` passed on code commit `9859a6a3ba7c03e5f9c9fa95a27a9ab77ad2acdd` (138 Laravel tests, 649 assertions, 5 Playwright tests). No production migration or seeding was run. |
-| 13 Availability engine and timezone-correct slot generation | VERIFIED ON DRAFT BRANCH; MERGE PENDING OWNER APPROVAL | Pure database-independent availability engine plus DB adapter, timezone-correct UTC/local output, expired-pending release, no-store endpoint, randomized invariants, tricky-date coverage, and performance measurements. CI run `40533190659` passed (152 Laravel tests, 23,475 assertions). Keep PR #14 Draft until owner approves merge. |
-
+| 13 Availability engine and timezone-correct slot generation | MERGED; CI VERIFIED | PR #14 merged to `main` as `89736b5a67ef6ddb2033ed806b90581cfdf4b993`; post-merge CI run `40534205011` passed through browser smoke and responsive screenshots. |
+| 14 Atomic appointment creation | IMPLEMENTED ON DRAFT BRANCH; MERGE PENDING OWNER APPROVAL | Transactional public booking core with 24h idempotency replay, 1h pending holds, PostgreSQL buffer occupancy exclusion, controlled lifecycle transitions, generic 409 conflict responses, and PostgreSQL concurrency tests. |
 ## Decisions still requiring owner confirmation
 
 - Practitioner identities, qualifications, and practitioner-to-service assignments.

@@ -45,7 +45,7 @@ final class AppointmentStateMachine
         ?string $actorId = null,
         ?string $reasonCode = null,
     ): Appointment {
-        $from = $appointment->status;
+        $from = AppointmentStatus::from((string) $appointment->getRawOriginal('status'));
 
         if ($from === $to) {
             return $appointment;

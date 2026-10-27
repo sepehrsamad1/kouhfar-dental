@@ -10,6 +10,7 @@ it('allows the approved service fields for mass assignment', function () {
         'buffer_after_minutes',
         'is_active',
         'is_public_bookable',
+        'version',
     ]);
 });
 
@@ -21,6 +22,7 @@ it('casts service configuration fields', function () {
             'buffer_after_minutes' => 'integer',
             'is_active' => 'boolean',
             'is_public_bookable' => 'boolean',
+            'version' => 'integer',
         ]);
 });
 

@@ -1,6 +1,6 @@
 # Task 13 — Availability engine and timezone-correct slot generation
 
-Status: IN PROGRESS — availability engine, repository adapter, endpoint, adapter-level exception tests, and CI verification are passing; full repository/database performance measurement and endpoint exposure review remain.
+Status: IN PROGRESS — availability engine, repository adapter, endpoint, adapter-level exception tests, and CI verification are passing; full repository/database performance measurement, endpoint exposure review, and booking-write concurrency remain.
 
 ## Branch and scope
 - Branch: `task/13-availability-engine`
@@ -18,17 +18,17 @@ Status: IN PROGRESS — availability engine, repository adapter, endpoint, adapt
 - Proposed pilot performance target: p95 <= 250 ms and p99 <= 500 ms for a 14-day query with up to 10 active practitioners, 3 shared resources, 30 configured services, and 1,000 relevant appointment records, measured on the CI runner with a warmed process and no external network calls. Record sample count and environment. This is an engineering target, not a production SLA.
 
 ## Files added
-- `app/Domain/Availability/AvailabilityEngine.php`: database-independent initial slot calculator.
-- `app/Domain/Availability/AvailabilityRepository.php`: initial adapter reading service eligibility, clinic/practitioner hours, breaks, configured closures, practitioners, compatible resources and appointment occupancy. The appointment lookup now widens its range by the maximum configured service buffers so buffered conflicts just outside the requested window are not missed.
+- `app/Domain/Availability/AvailabilityEngine.php`: database-independent slot calculator with per-capacity occupancy indexes, merged intervals, and binary-search conflict checks.
+- `app/Domain/Availability/AvailabilityRepository.php`: adapter reading service eligibility, clinic/practitioner hours, breaks, configured exceptions, practitioners, compatible resources and appointment occupancy. The appointment lookup widens its range by maximum configured service buffers and filters to appointments touching eligible practitioner/resource capacity.
 - `app/Http/Controllers/AvailabilityController.php`: public JSON endpoint with `Cache-Control: no-store, private`.
 - `routes/web.php`: `GET /booking/availability/{service}` named `booking.availability`.
-- `tests/Unit/AvailabilityEngineTest.php`: baseline tests for five-minute grid, buffered fit, configured closures, and pending expiry.
-- `tests/Feature/AvailabilityEndpointTest.php`: no-store response and inactive/unapproved service behavior.
+- `tests/Unit/AvailabilityEngineTest.php`: unit tests for five-minute grid, buffered fit, configured closures, pending expiry, minimum notice, horizon, capacity conflicts, plus an engine-core benchmark.
+- `tests/Feature/AvailabilityEndpointTest.php`: no-store response, inactive/unapproved service behavior, special-opening support, and closure precedence.
 
 ## Important limitations still being addressed
 - Latest CI run (2026-10-27, commit `222252d592a5ec4b1666ed113fa46bdf829e1f26`) passed: Pint, PHPStan, migrations, all Laravel tests, and browser smoke tests. 147 tests passed with 1,486 assertions. Keep the PR Draft until the remaining scope-specific review is complete.
-- A follow-up migration now makes `schedule_exceptions.practitioner_id` nullable so clinic-wide exceptions accepted by the configuration controller can be persisted. Validate it through PostgreSQL migration tests.
-- The adapter now adds manager-configured `special_opening` intervals (clinic-wide or practitioner-scoped), merges overlaps, subtracts breaks, and applies `closed`/`holiday` intervals last so a closure cannot be re-opened. Adapter-level PostgreSQL tests are being added to verify opening and closure precedence. Public holidays are not inferred automatically.
+- A follow-up migration makes `schedule_exceptions.practitioner_id` nullable so clinic-wide exceptions accepted by the configuration controller can be persisted; the PostgreSQL migration test passed in CI.
+- The adapter now adds manager-configured `special_opening` intervals (clinic-wide or practitioner-scoped), merges overlaps, subtracts breaks, and applies `closed`/`holiday` intervals last so a closure cannot be re-opened. The PostgreSQL feature test for special-opening support and closure precedence passed in CI. Public holidays are not inferred automatically.
 - Pending holds must be assigned `expires_at = server_now + 1 hour` by the eventual request-creation workflow. That workflow is not part of this endpoint.
 - Availability reads do not themselves make booking creation race-safe. The eventual write path must use transactions and database-backed conflict protection. Existing database exclusion ranges currently represent appointment intervals; verify how service buffers should be protected at booking-write time before claiming race-safe buffer enforcement.
 - Unit coverage includes buffered working-period fit, five-minute alignment, pending expiry, exact minimum-notice boundary, booking-horizon exclusion, and independent practitioner/resource conflict checks. Adapter-level tests now cover configured special openings and closure precedence; CI must confirm them.

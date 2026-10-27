@@ -243,7 +243,6 @@ it('server-selects practitioner and resource and rejects client capacity fields'
 
     $response->assertUnprocessable();
 });
-
 it('releases an expired pending hold before a later booking is checked', function () {
     [$service, $practitioner, $resource] = bookingFixture();
     $creator = app(AppointmentCreator::class);

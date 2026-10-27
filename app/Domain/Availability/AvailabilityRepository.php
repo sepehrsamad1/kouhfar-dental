@@ -138,6 +138,7 @@ final class AvailabilityRepository
                         if ($break->practitioner_id !== null && $break->practitioner_id !== $practitioner->id) {
                             continue;
                         }
+
                         $segments = $this->subtract($segments, $this->localTime($date, $break->start_local), $this->localTime($date, $break->end_local));
                     }
                     foreach ($exceptions as $exception) {

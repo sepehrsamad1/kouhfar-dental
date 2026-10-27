@@ -48,6 +48,13 @@ final class AvailabilityRepository
         }
         $compatibleResources = $resourceQuery->get();
 
+        $practitionerIds = $practitioners->modelKeys();
+        $resourceIds = $compatibleResources->modelKeys();
+        if ($practitionerIds === [] || $resourceIds === []) {
+
+            return [];
+        }
+
         // Include appointments whose service buffers overlap the requested window,
         // even when their actual appointment interval sits just outside it.
         $maxBufferBefore = (int) (Service::query()->max('buffer_before_minutes') ?? 0);
@@ -56,6 +63,15 @@ final class AvailabilityRepository
         /** @var EloquentCollection<int, Appointment> $appointmentModels */
         $appointmentModels = Appointment::query()
             ->whereIn('status', ['pending', 'confirmed'])
+            ->where(function ($query) use ($practitionerIds, $resourceIds): void {
+                $query->whereHas('practitioners', function ($relation) use ($practitionerIds): void {
+                    $relation->whereIn('practitioners.id', $practitionerIds)
+                        ->where('appointment_practitioners.active', true);
+                })->orWhereHas('resources', function ($relation) use ($resourceIds): void {
+                    $relation->whereIn('resources.id', $resourceIds)
+                        ->where('appointment_resources.active', true);
+                });
+            })
             ->where('start_at', '<', $rangeEnd->addMinutes($maxBufferBefore))
             ->where('end_at', '>', $rangeStart->subMinutes($maxBufferAfter))
             ->with(['practitioners', 'resources', 'service'])

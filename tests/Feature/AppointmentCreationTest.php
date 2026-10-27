@@ -221,7 +221,7 @@ it('does not merge patients by shared mobile number', function () {
     $creator = app(AppointmentCreator::class);
 
     $first = $creator->create($payload = bookingPayload($service, 'Synthetic Patient One'), 'idem-task14-shared-mobile-1');
-    $second = $creator->create([...$payload, 'full_name' => 'Synthetic Patient Two'], 'idem-task14-shared-mobile-2');
+    $second = $creator->create([...$payload, 'full_name' => 'Synthetic Patient Two', 'start_at' => '2026-10-29T10:30:00Z'], 'idem-task14-shared-mobile-2');
 
     expect($first['status'])->toBe(201)
         ->and($second['status'])->toBe(201)

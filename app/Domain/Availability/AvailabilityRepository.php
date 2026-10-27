@@ -24,6 +24,7 @@ final class AvailabilityRepository
     public function forPublicService(Service $service, DateTimeImmutable $now): array
     {
         if ($service->is_active === false || $service->is_public_bookable === false) {
+
             return [];
         }
 
@@ -54,6 +55,7 @@ final class AvailabilityRepository
             ->with(['practitioners', 'resources', 'service'])
             ->get()
             ->map(static function (Appointment $appointment): array {
+
                 return [
                     'start' => $appointment->start_at->subMinutes($appointment->service->buffer_before_minutes)->toDateTimeImmutable(),
                     'end' => $appointment->end_at->addMinutes($appointment->service->buffer_after_minutes)->toDateTimeImmutable(),
@@ -74,6 +76,7 @@ final class AvailabilityRepository
         foreach ($practitioners as $practitioner) {
             $periods = $this->workingPeriods($practitioner, $clinicHours, $localNow, $rangeEnd);
             if ($periods === []) {
+
                 continue;
             }
 
@@ -193,6 +196,7 @@ final class AvailabilityRepository
 
             foreach ($exceptions as $exception) {
                 if ($exception->practitioner_id !== null && $exception->practitioner_id !== $practitioner->id) {
+
                     continue;
                 }
                 if (in_array($exception->kind, ['closed', 'holiday'], true)) {
@@ -214,6 +218,7 @@ final class AvailabilityRepository
 
     private function localTime(CarbonImmutable $date, string $time): DateTimeImmutable
     {
+
         return new DateTimeImmutable($date->format('Y-m-d').' '.substr($time, 0, 8), new DateTimeZone(self::TIMEZONE));
     }
 
@@ -223,6 +228,7 @@ final class AvailabilityRepository
         foreach ($segments as [$start, $end]) {
             if ($cutEnd <= $start || $cutStart >= $end) {
                 $result[] = [$start, $end];
+
                 continue;
             }
             if ($cutStart > $start) {

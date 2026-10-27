@@ -11,6 +11,8 @@ use App\Domain\Availability\AvailabilityRepository;
 use App\Enums\AppointmentStatus;
 use App\IdempotencyRecord;
 use App\Patient;
+use App\Practitioner;
+use App\Resource;
 use App\Service;
 use App\Support\IranianPhoneNumber;
 use Carbon\CarbonImmutable;
@@ -20,6 +22,10 @@ use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use JsonException;
+
+final class AppointmentCapacityConflict extends \RuntimeException
+{
+}
 
 final class AppointmentCreator
 {
@@ -121,6 +127,37 @@ final class AppointmentCreator
             foreach ($matches as $match) {
                 try {
                     DB::transaction(function () use ($appointment, $match, $occupiedStart, $occupiedEnd): void {
+                        $practitioner = Practitioner::query()
+                            ->whereKey($match['practitioner_id'])
+                            ->lockForUpdate()
+                            ->firstOrFail();
+                        $resource = Resource::query()
+                            ->whereKey($match['resource_id'])
+                            ->lockForUpdate()
+                            ->firstOrFail();
+
+                        $conflictingPractitioner = DB::table('appointment_practitioners')
+                            ->where('practitioner_id', $practitioner->getKey())
+                            ->where('active', true)
+                            ->whereRaw(
+                                "occupied && tstzrange(?::timestamptz, ?::timestamptz, '[)')",
+                                [$occupiedStart->format('Y-m-d H:i:sP'), $occupiedEnd->format('Y-m-d H:i:sP')],
+                            )
+                            ->exists();
+
+                        $conflictingResource = DB::table('appointment_resources')
+                            ->where('resource_id', $resource->getKey())
+                            ->where('active', true)
+                            ->whereRaw(
+                                "occupied && tstzrange(?::timestamptz, ?::timestamptz, '[)')",
+                                [$occupiedStart->format('Y-m-d H:i:sP'), $occupiedEnd->format('Y-m-d H:i:sP')],
+                            )
+                            ->exists();
+
+                        if ($conflictingPractitioner || $conflictingResource) {
+                            throw new AppointmentCapacityConflict;
+                        }
+
                         $range = sprintf(
                             "tstzrange('%s'::timestamptz, '%s'::timestamptz, '[)')",
                             $occupiedStart->format('Y-m-d H:i:sP'),
@@ -129,14 +166,14 @@ final class AppointmentCreator
 
                         DB::table('appointment_practitioners')->insert([
                             'appointment_id' => $appointment->getKey(),
-                            'practitioner_id' => $match['practitioner_id'],
+                            'practitioner_id' => $practitioner->getKey(),
                             'active' => true,
                             'occupied' => DB::raw($range),
                         ]);
 
                         DB::table('appointment_resources')->insert([
                             'appointment_id' => $appointment->getKey(),
-                            'resource_id' => $match['resource_id'],
+                            'resource_id' => $resource->getKey(),
                             'active' => true,
                             'occupied' => DB::raw($range),
                         ]);
@@ -144,6 +181,8 @@ final class AppointmentCreator
 
                     $reserved = true;
                     break;
+                } catch (AppointmentCapacityConflict) {
+                    continue;
                 } catch (QueryException $exception) {
                     if ($this->isExclusionViolation($exception) === false) {
                         throw $exception;

@@ -97,6 +97,24 @@ it('creates one pending appointment transactionally and replays the same idempot
         ->and(DB::table('appointment_resources')->where('appointment_id', $appointment->id)->where('active', true)->exists())->toBeTrue();
 });
 
+it('creates and replays through the versioned public booking endpoint', function () {
+    [$service, $practitioner, $resource] = bookingFixture();
+    $payload = bookingPayload($service, $practitioner, $resource);
+
+    $first = $this
+        ->withHeader('Idempotency-Key', 'idem-task14-http-000001')
+        ->postJson('/api/v1/appointments', $payload);
+
+    $replay = $this
+        ->withHeader('Idempotency-Key', 'idem-task14-http-000001')
+        ->postJson('/api/v1/appointments', $payload);
+
+    $first->assertCreated();
+    $replay->assertCreated();
+    expect($replay->json())->toMatchArray($first->json())
+        ->and(Appointment::query()->count())->toBe(1);
+});
+
 it('rejects the same idempotency key when the normalized request body differs', function () {
     [$service, $practitioner, $resource] = bookingFixture();
     $payload = bookingPayload($service, $practitioner, $resource);

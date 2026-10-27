@@ -1,6 +1,6 @@
 # Task 13 — Availability engine and timezone-correct slot generation
 
-Status: IN PROGRESS — pure core and initial unit tests committed; database adapter, API integration, property tests and benchmark remain.
+Status: IN PROGRESS — initial pure core, database adapter, route/controller and baseline tests committed; full verification and correctness review remain.
 
 ## Branch and scope
 - Branch: `task/13-availability-engine`
@@ -17,27 +17,27 @@ Status: IN PROGRESS — pure core and initial unit tests committed; database ada
 - Slot-start granularity: 5 minutes, aligned to local wall-clock minutes.
 - Proposed pilot performance target: p95 <= 250 ms and p99 <= 500 ms for a 14-day query with up to 10 active practitioners, 3 shared resources, 30 configured services, and 1,000 relevant appointment records, measured on the CI runner with a warmed process and no external network calls. Record sample count and environment. This is an engineering target, not a production SLA.
 
-## Implementation record
-- Added `App\Domain\Availability\AvailabilityEngine` as a database-independent initial slot calculator.
-- Added initial deterministic unit tests for grid alignment, buffered fit, configured closures, and expired versus active pending holds.
-- The current engine is a core starting point, not yet the production availability feature. It still needs careful review against persisted schedule semantics and overlap ranges before being exposed to clients.
+## Files added
+- `app/Domain/Availability/AvailabilityEngine.php`: database-independent initial slot calculator.
+- `app/Domain/Availability/AvailabilityRepository.php`: initial adapter reading service eligibility, clinic/practitioner hours, breaks, configured closures, practitioners, compatible resources and appointment occupancy.
+- `app/Http/Controllers/AvailabilityController.php`: public JSON endpoint with `Cache-Control: no-store, private`.
+- `routes/web.php`: `GET /booking/availability/{service}` named `booking.availability`.
+- `tests/Unit/AvailabilityEngineTest.php`: baseline tests for five-minute grid, buffered fit, configured closures, and pending expiry.
+- `tests/Feature/AvailabilityEndpointTest.php`: no-store response and inactive/unapproved service behavior.
 
-## Remaining work
-1. Inspect and implement a database adapter for clinic/practitioner hours, breaks/exceptions, service eligibility, compatible active resources, appointment pivots and occupied intervals.
-2. Resolve whether clinic-wide and practitioner-specific hours/exceptions are combined by intersection/override, using the actual Task 12 configuration model; do not silently invent semantics.
-3. Add an availability endpoint matching the existing API/architecture contract, validate inputs, authorize appropriately, and set `Cache-Control: no-store`.
-4. Ensure a 1-hour pending expiry is assigned when pending holds are created, and expired pending appointments are excluded based on server clock even before any scheduled expiry job runs.
-5. Add property/invariant tests for hours, notice, horizon, occupancy, practitioner/resource conflicts and timezone behavior; add tricky-date fixtures.
-6. Benchmark the representative workload and record actual timing.
-7. Run Pint, PHPStan, PHPUnit/Pest and CI; fix any issues before reporting verification.
+## Important limitations still being addressed
+- This is not yet approved as production-ready. Run formatter, static analysis and tests; fix all failures.
+- Review date/time semantics and configured exception behavior, especially special-opening exceptions. Public holidays are not inferred automatically.
+- Pending holds must be assigned `expires_at = server_now + 1 hour` by the eventual request-creation workflow. That workflow is not part of this endpoint.
+- Availability reads do not themselves make booking creation race-safe. The eventual write path must use transactions and database-backed conflict protection. Existing database exclusion ranges currently represent appointment intervals; verify how service buffers should be protected at booking-write time before claiming race-safe buffer enforcement.
+- Add property/invariant tests for hours, notice, horizon, occupancy, practitioner/resource conflicts and timezone behavior; add tricky-date fixtures.
+- Benchmark the representative workload above and record actual timing.
+- Confirm endpoint authorization/rate limiting policy before connecting it to public UI; it currently returns opaque practitioner/resource identifiers as part of each slot.
+- No production migrations, seeding, deployment or merge to `main` has been performed.
 
 ## Algorithm contract
 - Core calculation remains database-independent; adapter owns all reads.
 - A slot must fit the complete service plus pre/post buffers inside valid working time and have a conflict-free practitioner and compatible shared resource.
 - Interpret schedules in `Asia/Tehran`; return UTC ISO instants and a separate local display value.
 - Confirmed appointments occupy capacity; pending holds occupy capacity only while their expiry is after the server clock. Cancelled, expired, completed and no-show appointments do not block future slots.
-- Availability reads alone do not make booking writes race-safe. Booking creation must keep database-backed transactional/exclusion protection.
 - Public holidays are ordinary working dates unless an explicit configured exception says otherwise.
-
-## Verification
-- No test run or benchmark result is claimed yet. No production migrations, seeding, deployment or merge to `main` has been performed.

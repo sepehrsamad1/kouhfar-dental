@@ -133,7 +133,7 @@ final class ClinicConfigurationController
             'is_active' => ['required', 'boolean'],
         ]);
         if (! (bool) $data['is_active'] && $practitioner->is_active) {
-            $impacted = \\App\\Appointment::query()
+            $impacted = \App\Appointment::query()
                 ->where('status', 'confirmed')->where('start_at', '>=', now('UTC'))
                 ->whereHas('practitioners', fn ($builder) => $builder->whereKey($practitioner->id)->where('appointment_practitioners.active', true))
                 ->orderBy('start_at')->get(['id']);
@@ -176,7 +176,7 @@ final class ClinicConfigurationController
             'is_active' => ['required', 'boolean'],
         ]);
         if (! (bool) $data['is_active'] && $resource->is_active) {
-            $impacted = \\App\\Appointment::query()
+            $impacted = \App\Appointment::query()
                 ->where('status', 'confirmed')->where('start_at', '>=', now('UTC'))
                 ->whereHas('resources', fn ($builder) => $builder->whereKey($resource->id)->where('appointment_resources.active', true))
                 ->orderBy('start_at')->get(['id']);

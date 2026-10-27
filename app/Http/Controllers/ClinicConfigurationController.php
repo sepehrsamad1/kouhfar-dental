@@ -146,7 +146,6 @@ final class ClinicConfigurationController
             'end_local' => ['required', 'date_format:H:i', 'after:start_local'],
             'timezone' => ['required', Rule::in(['Asia/Tehran'])],
         ]);
-        $this->assertNoConfirmedAppointmentImpact($data['weekday'], $data['start_local'], $data['end_local']);
         $hour = ClinicWorkingHour::query()->create($data);
         AuditLogger::record($request->user('staff'), 'configuration.clinic_hours_created', $hour, null, ['status' => 'configured']);
 
@@ -162,7 +161,6 @@ final class ClinicConfigurationController
             'start_local' => ['required', 'date_format:H:i'],
             'end_local' => ['required', 'date_format:H:i', 'after:start_local'],
         ]);
-        $this->assertNoConfirmedAppointmentImpact($data['weekday'], $data['start_local'], $data['end_local'], $data['practitioner_id']);
         $hour = WorkingHour::query()->create($data);
         AuditLogger::record($request->user('staff'), 'configuration.practitioner_hours_created', $hour, null, ['practitioner_id' => $hour->practitioner_id]);
 
@@ -196,26 +194,28 @@ final class ClinicConfigurationController
         ]);
         $data['starts_at'] = \Illuminate\Support\Carbon::parse($data['starts_at'], 'Asia/Tehran')->utc();
         $data['ends_at'] = \Illuminate\Support\Carbon::parse($data['ends_at'], 'Asia/Tehran')->utc();
+        if (in_array($data['kind'], ['closed', 'holiday'], true)) {
+            $this->assertNoConfirmedAppointmentImpactForRange($data['starts_at'], $data['ends_at'], $data['practitioner_id'] ?? null);
+        }
         $exception = ScheduleException::query()->create($data);
         AuditLogger::record($request->user('staff'), 'configuration.schedule_exception_created', $exception, null, ['status' => $exception->kind, 'practitioner_id' => $exception->practitioner_id]);
 
         return back()->with('success', 'استثنای برنامه ثبت شد. بررسی تعارض با سیاست تخصیص منابع هنوز در دسترس نیست.');
     }
 
-    private function assertNoConfirmedAppointmentImpact(int $weekday, string $start, string $end, ?string $practitionerId = null): void
+    private function assertNoConfirmedAppointmentImpactForRange(\DateTimeInterface $startAt, \DateTimeInterface $endAt, ?string $practitionerId): void
     {
-        $day = \Illuminate\Support\Carbon::now('Asia/Tehran')->next($weekday)->toDateString();
-        $startAt = \Illuminate\Support\Carbon::parse($day.' '.$start, 'Asia/Tehran')->utc();
-        $endAt = \Illuminate\Support\Carbon::parse($day.' '.$end, 'Asia/Tehran')->utc();
-        $query = \App\Appointment::query()->where('status', 'confirmed')
-            ->where('start_at', '<', $endAt)->where('end_at', '>', $startAt);
+        $query = \App\Appointment::query()
+            ->where('status', 'confirmed')
+            ->where('start_at', '<', $endAt)
+            ->where('end_at', '>', $startAt);
         if ($practitionerId !== null) {
             $query->whereHas('practitioners', fn ($builder) => $builder->whereKey($practitionerId));
         }
         $impacted = $query->orderBy('start_at')->get(['id', 'start_at', 'end_at']);
         if ($impacted->isNotEmpty()) {
             throw ValidationException::withMessages([
-                'schedule' => 'این تغییر ممکن است بر نوبت‌های تأییدشده اثر بگذارد. ابتدا فهرست اثر را بررسی کنید؛ هیچ نوبتی تغییر نکرده است. شناسه‌های نوبت: '.$impacted->pluck('id')->implode(', '),
+                'schedule' => 'تعطیلی با نوبت‌های تأییدشده تداخل دارد. تعطیلی ذخیره نشد و هیچ نوبتی تغییر نکرد. شناسه نوبت‌ها: '.$impacted->pluck('id')->implode(', '),
             ]);
         }
     }

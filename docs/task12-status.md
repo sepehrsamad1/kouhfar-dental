@@ -1,13 +1,13 @@
 # Task 12 - Services, practitioners, resources, and working hours
 
-Status: IN PROGRESS. Do not treat this task as verified until CI passes and the remaining acceptance criteria are closed.
+Status: MERGED; CI VERIFIED. PR #13 merged into main as commit `75f3b993ccba150ac4941407dcba4f1a84438d35` on 2026-10-27. Task code CI passed; clinic-specific practitioner data and production rollout remain outside this implementation.
 
 ## Repository review
 
 - Tasks 07-10 models, migrations, authentication, Policies/Gates, and audit logging were inspected on `main`.
 - Task 11 is merged to `main`; commit `ee82cb56bd7ed6b8f4422db3159f3a3a656b0e8d` and CI run #90 (40409553811) passed.
 - Existing models/tables were extended instead of recreated.
-- Implementation branch: `task/12-clinic-configuration`.
+- Implementation branch: `task/12-clinic-configuration`; PR #13 merged to `main`.
 
 ## Implemented so far
 
@@ -68,12 +68,12 @@ No practitioner records or service assignments are seeded because actual practit
 - Exact recurring break times and holiday dates remain unconfigured. Public holidays are not automatically treated as clinic closures.
 - No resource conflict enforcement or booking availability engine is implemented.
 
-## Known incomplete acceptance criteria
+## Remaining clinic-specific / rollout items
 
 - Versioned edit/delete controls exist for clinic hours, practitioner hours, breaks, and exceptions. Admins can explicitly assign services to practitioners; removals that affect future confirmed appointments are blocked.
 - Schedule impact handling and conflict validation need broader automated coverage, including recurring breaks, exception overlaps, and all relevant appointment states.
-- No visual browser checks at 375px, 768px, and 1440px have been run for this new staff screen.
-- GitHub Actions run `40430514875` passed on code commit `340ec1729d620a48d248a09e402ac999155f791b`: JavaScript lint/typecheck/build, Pint, PHPStan, PostgreSQL migrations, 133 Laravel tests (629 assertions), and 4 Playwright browser smoke tests.
+- Actual practitioner identities, qualifications, and practitioner-to-service assignments remain unset until clinic management supplies them.
+- Final CI run `40431587997` passed on code commit `9859a6a3ba7c03e5f9c9fa95a27a9ab77ad2acdd`: JavaScript lint/typecheck/build, Pint, PHPStan, PostgreSQL migrations, 138 Laravel tests (649 assertions), and 5 Playwright tests. Responsive checks passed at 375px, 768px, and 1440px with no horizontal overflow.
 - The current staff screen uses the existing simple Blade panel style; it does not redesign the public website.
 
 ## Rollback and migration notes
@@ -84,4 +84,4 @@ Migration `2026_10_27_000003_add_task12_configuration_versioning.php` adds versi
 
 1. Keep actual practitioner/service assignments empty until clinic management enters real practitioner identities and confirms qualifications.
 2. Do not run `ClinicStarterConfigurationSeeder` in production without explicit approval; review its inactive values first.
-3. Keep the PR draft until the connected-account identity is reviewed and the owner is ready to merge.
+3. Task 12 is merged. Do not run production migrations/seeding without explicit approval. Task 13 owns atomic allocation from shared resource pools and availability generation.

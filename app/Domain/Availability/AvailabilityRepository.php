@@ -6,7 +6,6 @@ namespace App\Domain\Availability;
 
 use App\Appointment;
 use App\ClinicWorkingHour;
-use App\Enums\AppointmentStatus;
 use App\Practitioner;
 use App\Resource;
 use App\ScheduleBreak;

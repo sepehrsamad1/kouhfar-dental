@@ -97,7 +97,7 @@ final class ClinicConfigurationController
                 ->get(['id', 'start_at']);
             if ($impacted->isNotEmpty()) {
                 throw ValidationException::withMessages([
-                    'service' => 'تغییر مدت یا زمان حائل می‌تواند بر نوبت‌های تأییدشده اثر بگذارد. تغییر ذخیره نشد. شناسه نوبت‌ها: '.$impacted->pluck('id')->implode(', '),
+                    'service' => 'تغییر مدت، زمان حائل یا نوع منبع موردنیاز می‌تواند بر نوبت‌های تأییدشده اثر بگذارد. تغییر ذخیره نشد. شناسه نوبت‌ها: '.$impacted->pluck('id')->implode(', '),
                 ]);
             }
         }

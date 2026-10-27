@@ -13,11 +13,11 @@ Prompt source of truth: the Laravel 13, 32-task prompt pack.
 | 05 Laravel migration and existing UI integration | Verified | See `docs/task05-visual-diff.md` and `docs/task05-status.md`. |
 | 06 CI, testing, and developer tooling | Verified | PR #1 merged into `main`; GitHub Actions passed 1/1 checks. Local PostgreSQL integration test was skipped; CI uses PostgreSQL. |
 | 07 Core Eloquent data model | Complete for approved scope (OTP deferred) | Model classes, factories, and configuration tests are merged into main. OTP and VerificationChallenge are deferred. Database-backed checks remain for Task 08. |
-| 08–32 | Not started | Follow the roadmap in order. |
+| 08 Database migrations, seeders, and constraints | Verified | See `docs/task08-status.md`. |\n| 09 Staff authentication | Verified | See `docs/task09-status.md`. |\n| 10 Authorization and audit controls | Verified | See `docs/task10-status.md`. |\n| 11 Staff patient management | Verified | See `docs/task11-status.md`; CI run #90 passed on `main`. |\n| 12 Services, practitioners, resources, and working hours | In progress | See `docs/task12-status.md`; use branch `task/12-clinic-configuration`. |
 
 ## Next step
 
-Task 07 is complete for the currently approved scope, and its model work is merged into `main`. OTP and `VerificationChallenge` are deliberately deferred until an owner decision. The generic `Job` model and factory are implemented; image processing is a job type, not a separate `ImageJob` model. Task 08 covers migrations, indexes, database constraints, PostgreSQL verification, and persisted relationship tests.
+Tasks 07 through 11 are implemented in the current `main` history; Task 11 is supported by CI run #90. OTP and `VerificationChallenge` remain deferred pending an owner decision. Task 12 is being developed on `task/12-clinic-configuration`; do not mark it verified until its tests and CI pass.
 
 ## Rules for resuming
 

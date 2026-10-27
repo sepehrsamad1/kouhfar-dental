@@ -223,6 +223,13 @@ final class ClinicConfigurationController
             'start_local' => ['required', 'date_format:H:i'],
             'end_local' => ['required', 'date_format:H:i', 'after:start_local'],
         ]);
+        $overlap = WorkingHour::query()->where('practitioner_id', $data['practitioner_id'])
+            ->where('weekday', $data['weekday'])
+            ->where('start_local', '<', $data['end_local'])
+            ->where('end_local', '>', $data['start_local'])->exists();
+        if ($overlap) {
+            throw ValidationException::withMessages(['start_local' => 'ساعات کاری این پزشک در این روز با بازه موجود هم‌پوشانی دارد.']);
+        }
         $hour = WorkingHour::query()->create($data);
         AuditLogger::record($request->user('staff'), 'configuration.practitioner_hours_created', $hour, null, ['practitioner_id' => $hour->practitioner_id]);
 
@@ -238,6 +245,23 @@ final class ClinicConfigurationController
             'start_local' => ['required', 'date_format:H:i'],
             'end_local' => ['required', 'date_format:H:i', 'after:start_local'],
         ]);
+        $overlapQuery = ScheduleBreak::query()->where('weekday', $data['weekday'])
+            ->where('start_local', '<', $data['end_local'])
+            ->where('end_local', '>', $data['start_local']);
+        if (($data['practitioner_id'] ?? null) === null) {
+            $overlapQuery->whereNull('practitioner_id');
+        } else {
+            $overlapQuery->where('practitioner_id', $data['practitioner_id']);
+        }
+        if ($overlapQuery->exists()) {
+            throw ValidationException::withMessages(['start_local' => 'وقفه با وقفه موجود در همین محدوده تداخل دارد.']);
+        }
+        $this->assertNoConfirmedAppointmentImpactForRecurringPeriod(
+            (int) $data['weekday'],
+            $data['start_local'],
+            $data['end_local'],
+            $data['practitioner_id'] ?? null
+        );
         $data['timezone'] = 'Asia/Tehran';
         $break = ScheduleBreak::query()->create($data);
         AuditLogger::record($request->user('staff'), 'configuration.schedule_break_created', $break, null, ['practitioner_id' => $break->practitioner_id]);
@@ -256,6 +280,17 @@ final class ClinicConfigurationController
         ]);
         $data['starts_at'] = Carbon::parse($data['starts_at'], 'Asia/Tehran')->utc();
         $data['ends_at'] = Carbon::parse($data['ends_at'], 'Asia/Tehran')->utc();
+        $overlapQuery = ScheduleException::query()
+            ->where('starts_at', '<', $data['ends_at'])
+            ->where('ends_at', '>', $data['starts_at']);
+        if (($data['practitioner_id'] ?? null) === null) {
+            $overlapQuery->whereNull('practitioner_id');
+        } else {
+            $overlapQuery->where('practitioner_id', $data['practitioner_id']);
+        }
+        if ($overlapQuery->exists()) {
+            throw ValidationException::withMessages(['starts_at' => 'این بازه با استثنای دیگری برای همین محدوده تداخل دارد.']);
+        }
         if (in_array($data['kind'], ['closed', 'holiday'], true)) {
             $this->assertNoConfirmedAppointmentImpactForRange($data['starts_at'], $data['ends_at'], $data['practitioner_id'] ?? null);
         }
@@ -263,6 +298,25 @@ final class ClinicConfigurationController
         AuditLogger::record($request->user('staff'), 'configuration.schedule_exception_created', $exception, null, ['status' => $exception->kind, 'practitioner_id' => $exception->practitioner_id]);
 
         return back()->with('success', 'استثنای برنامه ثبت شد. بررسی تعارض با سیاست تخصیص منابع هنوز در دسترس نیست.');
+    }
+
+    private function assertNoConfirmedAppointmentImpactForRecurringPeriod(int $weekday, string $start, string $end, ?string $practitionerId): void
+    {
+        $query = Appointment::query()
+            ->where('status', 'confirmed')
+            ->where('start_at', '>=', now('UTC'))
+            ->whereRaw("EXTRACT(ISODOW FROM start_at AT TIME ZONE 'Asia/Tehran') = ?", [$weekday])
+            ->whereRaw("CAST(start_at AT TIME ZONE 'Asia/Tehran' AS time) < ?", [$end])
+            ->whereRaw("CAST(end_at AT TIME ZONE 'Asia/Tehran' AS time) > ?", [$start]);
+        if ($practitionerId !== null) {
+            $query->whereHas('practitioners', fn ($builder) => $builder->whereKey($practitionerId));
+        }
+        $impacted = $query->orderBy('start_at')->get(['id', 'start_at', 'end_at']);
+        if ($impacted->isNotEmpty()) {
+            throw ValidationException::withMessages([
+                'schedule' => 'وقفه با نوبت‌های تأییدشده تداخل دارد. وقفه ذخیره نشد و هیچ نوبتی تغییر نکرد. شناسه نوبت‌ها: '.$impacted->pluck('id')->implode(', '),
+            ]);
+        }
     }
 
     private function assertNoConfirmedAppointmentImpactForRange(DateTimeInterface $startAt, DateTimeInterface $endAt, ?string $practitionerId): void

@@ -61,20 +61,19 @@ final class AvailabilityRepository
             ->get();
 
         $appointments = $appointmentModels->map(static function (Appointment $appointment): array {
-
-                return [
-                    'start' => $appointment->start_at->subMinutes($appointment->service->buffer_before_minutes)->toDateTimeImmutable(),
-                    'end' => $appointment->end_at->addMinutes($appointment->service->buffer_after_minutes)->toDateTimeImmutable(),
-                    'status' => $appointment->status->value,
-                    'expires_at' => $appointment->expires_at?->toDateTimeImmutable(),
-                    'practitioner_ids' => $appointment->practitioners
+            return [
+                'start' => $appointment->start_at->subMinutes($appointment->service->buffer_before_minutes)->toDateTimeImmutable(),
+                'end' => $appointment->end_at->addMinutes($appointment->service->buffer_after_minutes)->toDateTimeImmutable(),
+                'status' => $appointment->status->value,
+                'expires_at' => $appointment->expires_at?->toDateTimeImmutable(),
+                'practitioner_ids' => $appointment->practitioners
                         ->filter(fn ($practitioner) => (bool) $practitioner->pivot->active)
                         ->pluck('id')->all(),
-                    'resource_ids' => $appointment->resources
+                'resource_ids' => $appointment->resources
                         ->filter(fn ($resource) => (bool) $resource->pivot->active)
                         ->pluck('id')->all(),
-                ];
-            })->all();
+            ];
+        })->all();
 
         $engine = new AvailabilityEngine;
         $slots = [];

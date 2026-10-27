@@ -10,7 +10,7 @@
 <main>
     <h1>تنظیمات کلینیک</h1>
     <p>منطقه زمانی برنامه کلینیک: Asia/Tehran. این صفحه موتور تعیین زمان‌های آزاد نیست.</p>
-    <p>سیاست تخصیص یونیت‌ها و فضای مشاوره: placeholder — owner to confirm.</p>
+    <p>دو یونیت دندان‌پزشکی بین پزشکان مشترک هستند و یک فضای مشاوره موجود است. نوع منبع موردنیاز برای هر خدمت قابل تنظیم است؛ انتخاب نوبت از منابع مشترک در تسک ۱۳ پیاده‌سازی می‌شود.</p>
     @if (session('success')) <p role="status">{{ session('success') }}</p> @endif
     @if ($errors->any())
         <ul role="alert">@foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>

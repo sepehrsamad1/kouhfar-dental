@@ -135,7 +135,6 @@ final class AvailabilityRepository
 
                     $segments = [[$start, $end]];
                     foreach ($breaks->get($weekday, collect()) as $break) {
-
                         if ($break->practitioner_id !== null && $break->practitioner_id !== $practitioner->id) {
                             continue;
                         }

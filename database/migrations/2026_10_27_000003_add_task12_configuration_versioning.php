@@ -59,12 +59,12 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('schedule_breaks');
-        Schema::dropIfExists('clinic_working_hours');
-
         if (DB::table('schedule_exceptions')->whereNull('practitioner_id')->exists()) {
             throw new RuntimeException('Cannot roll back Task 12 while clinic-wide schedule exceptions exist; resolve them explicitly first.');
         }
+
+        Schema::dropIfExists('schedule_breaks');
+        Schema::dropIfExists('clinic_working_hours');
 
         DB::statement('ALTER TABLE services DROP CONSTRAINT IF EXISTS services_duration_positive_check');
         DB::statement('ALTER TABLE schedule_exceptions DROP CONSTRAINT IF EXISTS schedule_exceptions_time_order');

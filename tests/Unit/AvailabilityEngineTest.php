@@ -280,7 +280,7 @@ it('records an engine-core benchmark for a 14-day, 1000-appointment workload', f
     $p99 = $durationsMs[(int) ceil(count($durationsMs) * 0.99) - 1];
 
     fwrite(STDERR, sprintf(
-        "Availability engine-core benchmark: 10 samples, 1000 appointments, 10 practitioners, 3 resources, 14 days; p95=%.2fms p99=%.2fms (CI runner; excludes database/repository overhead).%s",
+        'Availability engine-core benchmark: 10 samples, 1000 appointments, 10 practitioners, 3 resources, 14 days; p95=%.2fms p99=%.2fms (CI runner; excludes database/repository overhead).%s',
         $p95,
         $p99,
         PHP_EOL

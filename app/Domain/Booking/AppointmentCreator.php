@@ -123,39 +123,53 @@ final class AppointmentCreator
             $occupiedEnd = $requestedEnd->modify(sprintf('+%d minutes', $service->buffer_after_minutes));
 
             try {
-                $appointment = Appointment::query()->create([
-                    'patient_id' => $patient->getKey(),
-                    'service_id' => $service->getKey(),
-                    'status' => AppointmentStatus::Pending,
-                    'start_at' => $requestedStart,
-                    'end_at' => $requestedEnd,
-                    'source' => 'public',
-                    'expires_at' => $expiresAt,
-                    'created_by' => null,
-                    'version' => 1,
-                ]);
+                $appointment = DB::transaction(function () use (
+                    $patient,
+                    $service,
+                    $requestedStart,
+                    $requestedEnd,
+                    $expiresAt,
+                    $practitioner,
+                    $resource,
+                    $occupiedStart,
+                    $occupiedEnd,
+                ): Appointment {
+                    $appointment = Appointment::query()->create([
+                        'patient_id' => $patient->getKey(),
+                        'service_id' => $service->getKey(),
+                        'status' => AppointmentStatus::Pending,
+                        'start_at' => $requestedStart,
+                        'end_at' => $requestedEnd,
+                        'source' => 'public',
+                        'expires_at' => $expiresAt,
+                        'created_by' => null,
+                        'version' => 1,
+                    ]);
 
-                DB::table('appointment_practitioners')->insert([
-                    'appointment_id' => $appointment->getKey(),
-                    'practitioner_id' => $practitioner->getKey(),
-                    'active' => true,
-                    'occupied' => DB::raw(sprintf(
-                        "tstzrange('%s'::timestamptz, '%s'::timestamptz, '[)')",
-                        $occupiedStart->format('Y-m-d H:i:sP'),
-                        $occupiedEnd->format('Y-m-d H:i:sP'),
-                    )),
-                ]);
+                    DB::table('appointment_practitioners')->insert([
+                        'appointment_id' => $appointment->getKey(),
+                        'practitioner_id' => $practitioner->getKey(),
+                        'active' => true,
+                        'occupied' => DB::raw(sprintf(
+                            "tstzrange('%s'::timestamptz, '%s'::timestamptz, '[)')",
+                            $occupiedStart->format('Y-m-d H:i:sP'),
+                            $occupiedEnd->format('Y-m-d H:i:sP'),
+                        )),
+                    ]);
 
-                DB::table('appointment_resources')->insert([
-                    'appointment_id' => $appointment->getKey(),
-                    'resource_id' => $resource->getKey(),
-                    'active' => true,
-                    'occupied' => DB::raw(sprintf(
-                        "tstzrange('%s'::timestamptz, '%s'::timestamptz, '[)')",
-                        $occupiedStart->format('Y-m-d H:i:sP'),
-                        $occupiedEnd->format('Y-m-d H:i:sP'),
-                    )),
-                ]);
+                    DB::table('appointment_resources')->insert([
+                        'appointment_id' => $appointment->getKey(),
+                        'resource_id' => $resource->getKey(),
+                        'active' => true,
+                        'occupied' => DB::raw(sprintf(
+                            "tstzrange('%s'::timestamptz, '%s'::timestamptz, '[)')",
+                            $occupiedStart->format('Y-m-d H:i:sP'),
+                            $occupiedEnd->format('Y-m-d H:i:sP'),
+                        )),
+                    ]);
+
+                    return $appointment;
+                });
             } catch (QueryException $exception) {
                 if ($this->isExclusionViolation($exception)) {
                     return $this->storeResponse(

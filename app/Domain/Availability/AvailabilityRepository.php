@@ -64,7 +64,7 @@ final class AvailabilityRepository
         $appointmentModels = Appointment::query()
             ->whereIn('status', ['pending', 'confirmed'])
             ->where(function ($query) use ($eligiblePractitionerIds, $resourceIds): void {
-                $query->whereHas('practitioners', function ($relation) use ($practitionerIds): void {
+                $query->whereHas('practitioners', function ($relation) use ($eligiblePractitionerIds): void {
                     $relation->whereIn('practitioners.id', $eligiblePractitionerIds)
                         ->where('appointment_practitioners.active', true);
                 })->orWhereHas('resources', function ($relation) use ($resourceIds): void {

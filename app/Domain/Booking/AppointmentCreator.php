@@ -241,7 +241,7 @@ final class AppointmentCreator
             return $record;
         }
 
-        if (! hash_equals($record->request_hash, $requestHash)) {
+        if (!hash_equals($record->request_hash, $requestHash)) {
             throw new AppointmentBookingException(
                 'IDEMPOTENCY_CONFLICT',
                 'The idempotency key was already used for a different request.',

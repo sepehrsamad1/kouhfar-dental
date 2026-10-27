@@ -17,8 +17,8 @@ Status: IN PROGRESS. Do not treat this task as verified until CI passes and the 
 - Staff configuration page and authenticated staff routes for services, practitioners, resources, clinic hours, practitioner hours, breaks, and schedule exceptions.
 - Admin-only configuration writes based on the existing Task 10 role matrix; reception/practitioner can read the settings.
 - Service name, duration, buffer-before, buffer-after, active status, and optimistic version check. Practitioner and resource display/type/active settings also have optimistic version checks.
-- New services, practitioners, and resources are initially inactive. No fictional catalog, practitioner, resource inventory, or practitioner-to-service assignment is seeded.
-- Closure/holiday exceptions and recurring breaks are blocked when they overlap confirmed appointments. Service duration/buffer changes and practitioner/resource deactivation are blocked when future confirmed appointments reference them. No appointments are automatically modified.
+- New services, practitioners, and resources are initially inactive. No fictional catalog, practitioner, resource inventory, or practitioner-to-service assignment is seeded. The existing non-production-only `DatabaseSeeder` now initializes the owner-confirmed clinic-wide 12:00-20:00 schedule for Saturday through Thursday using `firstOrCreate`, so rerunning it does not overwrite staff edits. Production seeding remains disabled.
+- Configuration changes write allowlisted before/after audit metadata without patient information. Closure/holiday exceptions and recurring breaks are blocked when they overlap confirmed appointments. Service duration/buffer changes and practitioner/resource deactivation are blocked when future confirmed appointments reference them. No appointments are automatically modified.
 - Feature tests cover role authorization, invalid cross-midnight periods, stale service version, appointment preservation, closure impact, and timezone conversion. Add/extend tests for every schedule edit/delete impact path before final verification.
 
 ## Owner-confirmed values
@@ -42,7 +42,7 @@ Status: IN PROGRESS. Do not treat this task as verified until CI passes and the 
 - Versioned edit/delete controls now exist for clinic hours, practitioner hours, breaks, and exceptions. Review the implementation and CI before marking acceptance criteria verified.
 - Schedule impact handling and conflict validation need broader automated coverage, including recurring breaks, exception overlaps, and all relevant appointment states.
 - No visual browser checks at 375px, 768px, and 1440px have been run for this new staff screen.
-- Tests and CI have not yet been executed for this branch.
+- CI passed on commit `5b8ed2ae00a5d700026c40689ac239e0b641931b` (Pint, PHPStan, PostgreSQL migrations, Laravel tests, JavaScript lint/typecheck/build, and browser smoke tests). Later audit/seeder changes are pending a fresh CI run.
 - The current staff screen uses the existing simple Blade panel style; it does not redesign the public website.
 
 ## Rollback and migration notes

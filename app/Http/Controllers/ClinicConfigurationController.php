@@ -214,6 +214,46 @@ final class ClinicConfigurationController
         return back()->with('success', 'ساعات کلینیک ثبت شد.');
     }
 
+    public function updateClinicHour(Request $request, ClinicWorkingHour $hour): RedirectResponse
+    {
+        Gate::authorize('manage-configuration');
+        $data = $request->validate([
+            'version' => ['required', 'integer', 'min:1'],
+            'weekday' => ['required', 'integer', Rule::in([1, 2, 3, 4, 6, 7]), Rule::unique('clinic_working_hours', 'weekday')->ignore($hour->id)],
+            'start_local' => ['required', 'date_format:H:i'],
+            'end_local' => ['required', 'date_format:H:i', 'after:start_local'],
+            'timezone' => ['required', Rule::in(['Asia/Tehran'])],
+        ]);
+        if ((int) $data['weekday'] !== $hour->weekday) {
+            $this->assertNoConfirmedAppointmentsOnWeekday($hour->weekday);
+        }
+        $this->assertNoConfirmedAppointmentsOutsidePeriod((int) $data['weekday'], $data['start_local'], $data['end_local']);
+        $version = (int) $data['version'];
+        unset($data['version']);
+        $updated = ClinicWorkingHour::query()->whereKey($hour->id)->where('version', $version)
+            ->update($data + ['version' => DB::raw('version + 1'), 'updated_at' => now('UTC')]);
+        if ($updated !== 1) {
+            throw ValidationException::withMessages(['version' => 'ساعات کلینیک هم‌زمان تغییر کرده است. صفحه را تازه‌سازی کنید.']);
+        }
+        AuditLogger::record($request->user('staff'), 'configuration.clinic_hours_updated', $hour, null, ['status' => 'updated']);
+
+        return back()->with('success', 'ساعات کلینیک ذخیره شد.');
+    }
+
+    public function deleteClinicHour(Request $request, ClinicWorkingHour $hour): RedirectResponse
+    {
+        Gate::authorize('manage-configuration');
+        $data = $request->validate(['version' => ['required', 'integer', 'min:1']]);
+        $this->assertNoConfirmedAppointmentsOnWeekday($hour->weekday);
+        $deleted = ClinicWorkingHour::query()->whereKey($hour->id)->where('version', (int) $data['version'])->delete();
+        if ($deleted !== 1) {
+            throw ValidationException::withMessages(['version' => 'ساعات کلینیک هم‌زمان تغییر کرده است. صفحه را تازه‌سازی کنید.']);
+        }
+        AuditLogger::record($request->user('staff'), 'configuration.clinic_hours_deleted', $hour, null, ['status' => 'deleted']);
+
+        return back()->with('success', 'بازه ساعات کلینیک حذف شد.');
+    }
+
     public function storeWorkingHour(Request $request): RedirectResponse
     {
         Gate::authorize('create', WorkingHour::class);
@@ -234,6 +274,52 @@ final class ClinicConfigurationController
         AuditLogger::record($request->user('staff'), 'configuration.practitioner_hours_created', $hour, null, ['practitioner_id' => $hour->practitioner_id]);
 
         return back()->with('success', 'ساعات پزشک ثبت شد.');
+    }
+
+    public function updateWorkingHour(Request $request, WorkingHour $hour): RedirectResponse
+    {
+        Gate::authorize('update', $hour);
+        $data = $request->validate([
+            'version' => ['required', 'integer', 'min:1'],
+            'practitioner_id' => ['required', 'uuid', 'exists:practitioners,id'],
+            'weekday' => ['required', 'integer', Rule::in([1, 2, 3, 4, 6, 7])],
+            'start_local' => ['required', 'date_format:H:i'],
+            'end_local' => ['required', 'date_format:H:i', 'after:start_local'],
+        ]);
+        if ((int) $data['weekday'] !== $hour->weekday || $data['practitioner_id'] !== $hour->practitioner_id) {
+            $this->assertNoConfirmedAppointmentsOnWeekday($hour->weekday, $hour->practitioner_id);
+        }
+        $this->assertNoConfirmedAppointmentsOutsidePeriod((int) $data['weekday'], $data['start_local'], $data['end_local'], $data['practitioner_id']);
+        $overlap = WorkingHour::query()->where('id', '!=', $hour->id)
+            ->where('practitioner_id', $data['practitioner_id'])->where('weekday', $data['weekday'])
+            ->where('start_local', '<', $data['end_local'])->where('end_local', '>', $data['start_local'])->exists();
+        if ($overlap) {
+            throw ValidationException::withMessages(['start_local' => 'ساعات کاری پزشک با بازه دیگری هم‌پوشانی دارد.']);
+        }
+        $version = (int) $data['version'];
+        unset($data['version']);
+        $updated = WorkingHour::query()->whereKey($hour->id)->where('version', $version)
+            ->update($data + ['version' => DB::raw('version + 1'), 'updated_at' => now('UTC')]);
+        if ($updated !== 1) {
+            throw ValidationException::withMessages(['version' => 'ساعات پزشک هم‌زمان تغییر کرده است. صفحه را تازه‌سازی کنید.']);
+        }
+        AuditLogger::record($request->user('staff'), 'configuration.practitioner_hours_updated', $hour, null, ['practitioner_id' => $data['practitioner_id']]);
+
+        return back()->with('success', 'ساعات پزشک ذخیره شد.');
+    }
+
+    public function deleteWorkingHour(Request $request, WorkingHour $hour): RedirectResponse
+    {
+        Gate::authorize('delete', $hour);
+        $data = $request->validate(['version' => ['required', 'integer', 'min:1']]);
+        $this->assertNoConfirmedAppointmentsOnWeekday($hour->weekday, $hour->practitioner_id);
+        $deleted = WorkingHour::query()->whereKey($hour->id)->where('version', (int) $data['version'])->delete();
+        if ($deleted !== 1) {
+            throw ValidationException::withMessages(['version' => 'ساعات پزشک هم‌زمان تغییر کرده است. صفحه را تازه‌سازی کنید.']);
+        }
+        AuditLogger::record($request->user('staff'), 'configuration.practitioner_hours_deleted', $hour, null, ['practitioner_id' => $hour->practitioner_id]);
+
+        return back()->with('success', 'بازه ساعات پزشک حذف شد.');
     }
 
     public function storeBreak(Request $request): RedirectResponse
@@ -267,6 +353,51 @@ final class ClinicConfigurationController
         AuditLogger::record($request->user('staff'), 'configuration.schedule_break_created', $break, null, ['practitioner_id' => $break->practitioner_id]);
 
         return back()->with('success', 'وقفه ثبت شد.');
+    }
+
+    public function updateBreak(Request $request, ScheduleBreak $break): RedirectResponse
+    {
+        Gate::authorize('manage-configuration');
+        $data = $request->validate([
+            'version' => ['required', 'integer', 'min:1'],
+            'practitioner_id' => ['nullable', 'uuid', 'exists:practitioners,id'],
+            'weekday' => ['required', 'integer', Rule::in([1, 2, 3, 4, 6, 7])],
+            'start_local' => ['required', 'date_format:H:i'],
+            'end_local' => ['required', 'date_format:H:i', 'after:start_local'],
+        ]);
+        $scope = $data['practitioner_id'] ?? null;
+        $overlapQuery = ScheduleBreak::query()->where('id', '!=', $break->id)
+            ->where('weekday', $data['weekday'])->where('start_local', '<', $data['end_local'])
+            ->where('end_local', '>', $data['start_local']);
+        $scope === null ? $overlapQuery->whereNull('practitioner_id') : $overlapQuery->where('practitioner_id', $scope);
+        if ($overlapQuery->exists()) {
+            throw ValidationException::withMessages(['start_local' => 'وقفه با وقفه دیگری در همین محدوده تداخل دارد.']);
+        }
+        $this->assertNoConfirmedAppointmentImpactForRecurringPeriod((int) $data['weekday'], $data['start_local'], $data['end_local'], $scope);
+        $data['timezone'] = 'Asia/Tehran';
+        $version = (int) $data['version'];
+        unset($data['version']);
+        $updated = ScheduleBreak::query()->whereKey($break->id)->where('version', $version)
+            ->update($data + ['version' => DB::raw('version + 1'), 'updated_at' => now('UTC')]);
+        if ($updated !== 1) {
+            throw ValidationException::withMessages(['version' => 'وقفه هم‌زمان تغییر کرده است. صفحه را تازه‌سازی کنید.']);
+        }
+        AuditLogger::record($request->user('staff'), 'configuration.schedule_break_updated', $break, null, ['practitioner_id' => $scope]);
+
+        return back()->with('success', 'وقفه ذخیره شد.');
+    }
+
+    public function deleteBreak(Request $request, ScheduleBreak $break): RedirectResponse
+    {
+        Gate::authorize('manage-configuration');
+        $data = $request->validate(['version' => ['required', 'integer', 'min:1']]);
+        $deleted = ScheduleBreak::query()->whereKey($break->id)->where('version', (int) $data['version'])->delete();
+        if ($deleted !== 1) {
+            throw ValidationException::withMessages(['version' => 'وقفه هم‌زمان تغییر کرده است. صفحه را تازه‌سازی کنید.']);
+        }
+        AuditLogger::record($request->user('staff'), 'configuration.schedule_break_deleted', $break, null, ['practitioner_id' => $break->practitioner_id]);
+
+        return back()->with('success', 'وقفه حذف شد.');
     }
 
     public function storeException(Request $request): RedirectResponse

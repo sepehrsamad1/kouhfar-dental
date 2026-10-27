@@ -61,6 +61,9 @@ final class ClinicConfigurationController
         ]));
         AuditLogger::record($request->user('staff'), 'configuration.service_created', $service, null, [
             'is_active' => false,
+            'duration_minutes' => (int) $data['duration_minutes'],
+            'buffer_before_minutes' => (int) $data['buffer_before_minutes'],
+            'buffer_after_minutes' => (int) $data['buffer_after_minutes'],
         ]);
 
         return back()->with('success', 'خدمت به صورت غیرفعال ثبت شد. فعال‌سازی عمومی تا تأیید تنظیمات انجام نمی‌شود.');
@@ -174,7 +177,10 @@ final class ClinicConfigurationController
             'kind' => ['required', 'string', 'min:2', 'max:80'],
         ]);
         $resource = Resource::query()->create($data + ['is_active' => false]);
-        AuditLogger::record($request->user('staff'), 'configuration.resource_created', $resource, null, ['is_active' => false]);
+        AuditLogger::record($request->user('staff'), 'configuration.resource_created', $resource, null, [
+            'is_active' => false,
+            'kind' => $resource->kind,
+        ]);
 
         return back()->with('success', 'منبع به صورت غیرفعال ثبت شد؛ سیاست تخصیص نوبت هنوز تعریف نشده است.');
     }
@@ -221,7 +227,12 @@ final class ClinicConfigurationController
             'timezone' => ['required', Rule::in(['Asia/Tehran'])],
         ]);
         $hour = ClinicWorkingHour::query()->create($data);
-        AuditLogger::record($request->user('staff'), 'configuration.clinic_hours_created', $hour, null, ['status' => 'configured']);
+        AuditLogger::record($request->user('staff'), 'configuration.clinic_hours_created', $hour, null, [
+            'weekday' => (int) $data['weekday'],
+            'start_local' => $data['start_local'],
+            'end_local' => $data['end_local'],
+            'timezone' => $data['timezone'],
+        ]);
 
         return back()->with('success', 'ساعات کلینیک ثبت شد.');
     }
@@ -298,7 +309,12 @@ final class ClinicConfigurationController
             throw ValidationException::withMessages(['start_local' => 'ساعات کاری این پزشک در این روز با بازه موجود هم‌پوشانی دارد.']);
         }
         $hour = WorkingHour::query()->create($data);
-        AuditLogger::record($request->user('staff'), 'configuration.practitioner_hours_created', $hour, null, ['practitioner_id' => $hour->practitioner_id]);
+        AuditLogger::record($request->user('staff'), 'configuration.practitioner_hours_created', $hour, null, [
+            'practitioner_id' => $hour->practitioner_id,
+            'weekday' => (int) $data['weekday'],
+            'start_local' => $data['start_local'],
+            'end_local' => $data['end_local'],
+        ]);
 
         return back()->with('success', 'ساعات پزشک ثبت شد.');
     }
@@ -392,7 +408,12 @@ final class ClinicConfigurationController
         );
         $data['timezone'] = 'Asia/Tehran';
         $break = ScheduleBreak::query()->create($data);
-        AuditLogger::record($request->user('staff'), 'configuration.schedule_break_created', $break, null, ['practitioner_id' => $break->practitioner_id]);
+        AuditLogger::record($request->user('staff'), 'configuration.schedule_break_created', $break, null, [
+            'practitioner_id' => $break->practitioner_id,
+            'weekday' => (int) $data['weekday'],
+            'start_local' => $data['start_local'],
+            'end_local' => $data['end_local'],
+        ]);
 
         return back()->with('success', 'وقفه ثبت شد.');
     }
@@ -483,7 +504,12 @@ final class ClinicConfigurationController
             $this->assertNoConfirmedAppointmentImpactForRange($data['starts_at'], $data['ends_at'], $data['practitioner_id'] ?? null);
         }
         $exception = ScheduleException::query()->create($data);
-        AuditLogger::record($request->user('staff'), 'configuration.schedule_exception_created', $exception, null, ['status' => $exception->kind, 'practitioner_id' => $exception->practitioner_id]);
+        AuditLogger::record($request->user('staff'), 'configuration.schedule_exception_created', $exception, null, [
+            'status' => $exception->kind,
+            'practitioner_id' => $exception->practitioner_id,
+            'starts_at' => $exception->starts_at->toIso8601String(),
+            'ends_at' => $exception->ends_at->toIso8601String(),
+        ]);
 
         return back()->with('success', 'استثنای برنامه ثبت شد. بررسی تعارض با سیاست تخصیص منابع هنوز در دسترس نیست.');
     }

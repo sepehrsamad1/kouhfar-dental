@@ -54,6 +54,7 @@ final class ClinicConfigurationController
             'duration_minutes' => ['required', 'integer', 'min:1', 'max:1440'],
             'buffer_before_minutes' => ['required', 'integer', 'min:0', 'max:1440'],
             'buffer_after_minutes' => ['required', 'integer', 'min:0', 'max:1440'],
+            'required_resource_kind' => ['nullable', Rule::in(['dental_unit', 'consultation_room'])],
         ]);
         $service = DB::transaction(fn () => Service::query()->create($data + [
             'is_active' => false,
@@ -64,6 +65,7 @@ final class ClinicConfigurationController
             'duration_minutes' => (int) $data['duration_minutes'],
             'buffer_before_minutes' => (int) $data['buffer_before_minutes'],
             'buffer_after_minutes' => (int) $data['buffer_after_minutes'],
+            'required_resource_kind' => $data['required_resource_kind'] ?? null,
         ]);
 
         return back()->with('success', 'خدمت به صورت غیرفعال ثبت شد. فعال‌سازی عمومی تا تأیید تنظیمات انجام نمی‌شود.');
@@ -78,12 +80,14 @@ final class ClinicConfigurationController
             'duration_minutes' => ['required', 'integer', 'min:1', 'max:1440'],
             'buffer_before_minutes' => ['required', 'integer', 'min:0', 'max:1440'],
             'buffer_after_minutes' => ['required', 'integer', 'min:0', 'max:1440'],
+            'required_resource_kind' => ['nullable', Rule::in(['dental_unit', 'consultation_room'])],
             'is_active' => ['required', 'boolean'],
         ]);
 
         $configurationChanged = (int) $data['duration_minutes'] !== $service->duration_minutes
             || (int) $data['buffer_before_minutes'] !== $service->buffer_before_minutes
-            || (int) $data['buffer_after_minutes'] !== $service->buffer_after_minutes;
+            || (int) $data['buffer_after_minutes'] !== $service->buffer_after_minutes
+            || ($data['required_resource_kind'] ?? null) !== $service->required_resource_kind;
         if ($configurationChanged) {
             $impacted = Appointment::query()
                 ->where('service_id', $service->id)
@@ -111,11 +115,13 @@ final class ClinicConfigurationController
                 'duration_minutes' => $service->duration_minutes,
                 'buffer_before_minutes' => $service->buffer_before_minutes,
                 'buffer_after_minutes' => $service->buffer_after_minutes,
+                'required_resource_kind' => $service->required_resource_kind,
             ], [
                 'is_active' => (bool) $data['is_active'],
                 'duration_minutes' => (int) $data['duration_minutes'],
                 'buffer_before_minutes' => (int) $data['buffer_before_minutes'],
                 'buffer_after_minutes' => (int) $data['buffer_after_minutes'],
+                'required_resource_kind' => $data['required_resource_kind'] ?? null,
             ]);
 
             return true;

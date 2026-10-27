@@ -48,8 +48,8 @@ final class AvailabilityRepository
             ->get()
             ->map(static function (Appointment $appointment): array {
                 return [
-                    'start' => $appointment->start_at->toDateTimeImmutable(),
-                    'end' => $appointment->end_at->toDateTimeImmutable(),
+                    'start' => $appointment->start_at->subMinutes($appointment->service->buffer_before_minutes)->toDateTimeImmutable(),
+                    'end' => $appointment->end_at->addMinutes($appointment->service->buffer_after_minutes)->toDateTimeImmutable(),
                     'status' => $appointment->status->value,
                     'expires_at' => $appointment->expires_at?->toDateTimeImmutable(),
                     'practitioner_ids' => $appointment->practitioners

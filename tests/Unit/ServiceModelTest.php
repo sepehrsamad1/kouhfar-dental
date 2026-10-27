@@ -8,6 +8,7 @@ it('allows the approved service fields for mass assignment', function () {
         'duration_minutes',
         'buffer_before_minutes',
         'buffer_after_minutes',
+        'required_resource_kind',
         'is_active',
         'is_public_bookable',
         'version',

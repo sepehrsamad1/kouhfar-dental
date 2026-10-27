@@ -40,10 +40,15 @@ final class AvailabilityRepository
             ->whereHas('services', fn ($query) => $query->whereKey($service->getKey()))
             ->get();
 
+        // Include appointments whose service buffers overlap the requested window,
+        // even when their actual appointment interval sits just outside it.
+        $maxBufferBefore = (int) (Service::query()->max('buffer_before_minutes') ?? 0);
+        $maxBufferAfter = (int) (Service::query()->max('buffer_after_minutes') ?? 0);
+
         $appointments = Appointment::query()
             ->whereIn('status', ['pending', 'confirmed'])
-            ->where('start_at', '<', $rangeEnd)
-            ->where('end_at', '>', $rangeStart)
+            ->where('start_at', '<', $rangeEnd->addMinutes($maxBufferBefore))
+            ->where('end_at', '>', $rangeStart->subMinutes($maxBufferAfter))
             ->with(['practitioners', 'resources', 'service'])
             ->get()
             ->map(static function (Appointment $appointment): array {

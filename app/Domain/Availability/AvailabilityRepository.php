@@ -143,10 +143,15 @@ final class AvailabilityRepository
                 if ($exception->practitioner_id !== null && $exception->practitioner_id !== $practitioner->id) {
                     continue;
                 }
-                $segments[] = [
-                    $exception->starts_at->toDateTimeImmutable(),
-                    $exception->ends_at->toDateTimeImmutable(),
-                ];
+                $exceptionStart = $exception->starts_at->toDateTimeImmutable();
+                $exceptionEnd = $exception->ends_at->toDateTimeImmutable();
+                $dayStart = $date->startOfDay()->toDateTimeImmutable();
+                $dayEnd = $date->addDay()->startOfDay()->toDateTimeImmutable();
+                $openingStart = $exceptionStart > $dayStart ? $exceptionStart : $dayStart;
+                $openingEnd = $exceptionEnd < $dayEnd ? $exceptionEnd : $dayEnd;
+                if ($openingEnd > $openingStart) {
+                    $segments[] = [$openingStart, $openingEnd];
+                }
             }
 
             if ($segments === []) {

@@ -94,7 +94,22 @@
 
     <section>
         <h2>ساعات کلینیک</h2>
-        <ul>@foreach ($clinicHours as $hour)<li>{{ $weekdays[$hour->weekday] ?? $hour->weekday }}: {{ substr($hour->start_local, 0, 5) }} تا {{ substr($hour->end_local, 0, 5) }} ({{ $hour->timezone }})</li>@endforeach</ul>
+        <ul>@foreach ($clinicHours as $hour)
+            <li>{{ $weekdays[$hour->weekday] ?? $hour->weekday }}: {{ substr($hour->start_local, 0, 5) }} تا {{ substr($hour->end_local, 0, 5) }} ({{ $hour->timezone }})
+                @if ($canManage)
+                    <form method="post" action="{{ route('staff.configuration.clinic-hours.update', $hour) }}">@csrf @method('PATCH')
+                        <input type="hidden" name="version" value="{{ $hour->version }}">
+                        <label>روز <select name="weekday" required>@foreach ($weekdays as $number => $label)<option value="{{ $number }}" @selected($hour->weekday === $number)>{{ $label }}</option>@endforeach</select></label>
+                        <label>شروع <input type="time" name="start_local" value="{{ substr($hour->start_local, 0, 5) }}" required></label>
+                        <label>پایان <input type="time" name="end_local" value="{{ substr($hour->end_local, 0, 5) }}" required></label>
+                        <input type="hidden" name="timezone" value="Asia/Tehran"><button type="submit">ذخیره</button>
+                    </form>
+                    <form method="post" action="{{ route('staff.configuration.clinic-hours.delete', $hour) }}">@csrf @method('DELETE')
+                        <input type="hidden" name="version" value="{{ $hour->version }}"><button type="submit">حذف ساعات</button>
+                    </form>
+                @endif
+            </li>
+        @endforeach</ul>
         @if ($canManage)
             <form method="post" action="{{ route('staff.configuration.clinic-hours.store') }}">@csrf
                 <label>روز <select name="weekday" required>@foreach ($weekdays as $number => $label)<option value="{{ $number }}">{{ $label }}</option>@endforeach</select></label>
@@ -108,7 +123,22 @@
 
     <section>
         <h2>ساعات پزشکان</h2>
-        <ul>@foreach ($workingHours as $hour)<li>{{ $hour->practitioner?->display_name_fa }} - {{ $weekdays[$hour->weekday] ?? $hour->weekday }}: {{ substr($hour->start_local, 0, 5) }} تا {{ substr($hour->end_local, 0, 5) }}</li>@endforeach</ul>
+        <ul>@foreach ($workingHours as $hour)
+            <li>{{ $hour->practitioner?->display_name_fa }} - {{ $weekdays[$hour->weekday] ?? $hour->weekday }}: {{ substr($hour->start_local, 0, 5) }} تا {{ substr($hour->end_local, 0, 5) }}
+                @if ($canManage)
+                    <form method="post" action="{{ route('staff.configuration.working-hours.update', $hour) }}">@csrf @method('PATCH')
+                        <input type="hidden" name="version" value="{{ $hour->version }}">
+                        <label>پزشک <select name="practitioner_id" required>@foreach ($practitioners as $practitioner)<option value="{{ $practitioner->id }}" @selected($hour->practitioner_id === $practitioner->id)>{{ $practitioner->display_name_fa }}</option>@endforeach</select></label>
+                        <label>روز <select name="weekday" required>@foreach ($weekdays as $number => $label)<option value="{{ $number }}" @selected($hour->weekday === $number)>{{ $label }}</option>@endforeach</select></label>
+                        <label>شروع <input type="time" name="start_local" value="{{ substr($hour->start_local, 0, 5) }}" required></label><label>پایان <input type="time" name="end_local" value="{{ substr($hour->end_local, 0, 5) }}" required></label>
+                        <button type="submit">ذخیره</button>
+                    </form>
+                    <form method="post" action="{{ route('staff.configuration.working-hours.delete', $hour) }}">@csrf @method('DELETE')
+                        <input type="hidden" name="version" value="{{ $hour->version }}"><button type="submit">حذف ساعات</button>
+                    </form>
+                @endif
+            </li>
+        @endforeach</ul>
         @if ($canManage)
             <form method="post" action="{{ route('staff.configuration.working-hours.store') }}">@csrf
                 <label>پزشک <select name="practitioner_id" required>@foreach ($practitioners as $practitioner)<option value="{{ $practitioner->id }}">{{ $practitioner->display_name_fa }}</option>@endforeach</select></label>
@@ -121,7 +151,22 @@
 
     <section>
         <h2>وقفه‌ها</h2>
-        <ul>@foreach ($breaks as $break)<li>{{ $break->practitioner?->display_name_fa ?? 'کلینیک' }} - {{ $weekdays[$break->weekday] ?? $break->weekday }}: {{ substr($break->start_local, 0, 5) }} تا {{ substr($break->end_local, 0, 5) }}</li>@endforeach</ul>
+        <ul>@foreach ($breaks as $break)
+            <li>{{ $break->practitioner?->display_name_fa ?? 'کلینیک' }} - {{ $weekdays[$break->weekday] ?? $break->weekday }}: {{ substr($break->start_local, 0, 5) }} تا {{ substr($break->end_local, 0, 5) }}
+                @if ($canManage)
+                    <form method="post" action="{{ route('staff.configuration.breaks.update', $break) }}">@csrf @method('PATCH')
+                        <input type="hidden" name="version" value="{{ $break->version }}">
+                        <label>پزشک (خالی = کلینیک) <select name="practitioner_id"><option value="">کلینیک</option>@foreach ($practitioners as $practitioner)<option value="{{ $practitioner->id }}" @selected($break->practitioner_id === $practitioner->id)>{{ $practitioner->display_name_fa }}</option>@endforeach</select></label>
+                        <label>روز <select name="weekday" required>@foreach ($weekdays as $number => $label)<option value="{{ $number }}" @selected($break->weekday === $number)>{{ $label }}</option>@endforeach</select></label>
+                        <label>شروع <input type="time" name="start_local" value="{{ substr($break->start_local, 0, 5) }}" required></label><label>پایان <input type="time" name="end_local" value="{{ substr($break->end_local, 0, 5) }}" required></label>
+                        <button type="submit">ذخیره وقفه</button>
+                    </form>
+                    <form method="post" action="{{ route('staff.configuration.breaks.delete', $break) }}">@csrf @method('DELETE')
+                        <input type="hidden" name="version" value="{{ $break->version }}"><button type="submit">حذف وقفه</button>
+                    </form>
+                @endif
+            </li>
+        @endforeach</ul>
         @if ($canManage)
             <form method="post" action="{{ route('staff.configuration.breaks.store') }}">@csrf
                 <label>پزشک (خالی = کلینیک) <select name="practitioner_id"><option value="">کلینیک</option>@foreach ($practitioners as $practitioner)<option value="{{ $practitioner->id }}">{{ $practitioner->display_name_fa }}</option>@endforeach</select></label>
@@ -134,7 +179,23 @@
 
     <section>
         <h2>تعطیلی‌ها و استثناهای برنامه</h2>
-        <ul>@foreach ($exceptions as $exception)<li>{{ $exception->practitioner?->display_name_fa ?? 'کلینیک' }}: {{ $exception->starts_at->setTimezone('Asia/Tehran')->format('Y-m-d H:i') }} تا {{ $exception->ends_at->setTimezone('Asia/Tehran')->format('Y-m-d H:i') }} - {{ $exception->kind }}</li>@endforeach</ul>
+        <ul>@foreach ($exceptions as $exception)
+            <li>{{ $exception->practitioner?->display_name_fa ?? 'کلینیک' }}: {{ $exception->starts_at->setTimezone('Asia/Tehran')->format('Y-m-d H:i') }} تا {{ $exception->ends_at->setTimezone('Asia/Tehran')->format('Y-m-d H:i') }} - {{ $exception->kind }}
+                @if ($canManage)
+                    <form method="post" action="{{ route('staff.configuration.exceptions.update', $exception) }}">@csrf @method('PATCH')
+                        <input type="hidden" name="version" value="{{ $exception->version }}">
+                        <label>پزشک (خالی = کلینیک) <select name="practitioner_id"><option value="">کلینیک</option>@foreach ($practitioners as $practitioner)<option value="{{ $practitioner->id }}" @selected($exception->practitioner_id === $practitioner->id)>{{ $practitioner->display_name_fa }}</option>@endforeach</select></label>
+                        <label>شروع به وقت تهران <input type="datetime-local" name="starts_at" value="{{ $exception->starts_at->setTimezone('Asia/Tehran')->format('Y-m-d\TH:i') }}" required></label>
+                        <label>پایان به وقت تهران <input type="datetime-local" name="ends_at" value="{{ $exception->ends_at->setTimezone('Asia/Tehran')->format('Y-m-d\TH:i') }}" required></label>
+                        <label>نوع <select name="kind" required><option value="closed" @selected($exception->kind === 'closed')>تعطیلی</option><option value="holiday" @selected($exception->kind === 'holiday')>تعطیلات</option><option value="special_opening" @selected($exception->kind === 'special_opening')>ساعات ویژه</option></select></label>
+                        <button type="submit">ذخیره استثنا</button>
+                    </form>
+                    <form method="post" action="{{ route('staff.configuration.exceptions.delete', $exception) }}">@csrf @method('DELETE')
+                        <input type="hidden" name="version" value="{{ $exception->version }}"><button type="submit">حذف استثنا</button>
+                    </form>
+                @endif
+            </li>
+        @endforeach</ul>
         @if ($canManage)
             <form method="post" action="{{ route('staff.configuration.exceptions.store') }}">@csrf
                 <label>پزشک (خالی = کلینیک) <select name="practitioner_id"><option value="">کلینیک</option>@foreach ($practitioners as $practitioner)<option value="{{ $practitioner->id }}">{{ $practitioner->display_name_fa }}</option>@endforeach</select></label>

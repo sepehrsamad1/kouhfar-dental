@@ -82,7 +82,7 @@ Migration `2026_10_27_000003_add_task12_configuration_versioning.php` adds versi
 
 ## Next step
 
-1. Run the full GitHub Actions workflow after the resource-kind migration, starter seeder, and new tests; fix any failures.
+1. Confirm the latest GitHub Actions run passes after the resource-kind migration, starter seeder, and practitioner-assignment UI/tests; fix any failures.
 2. Perform responsive visual checks at 375px, 768px, and 1440px, including the existing homepage hero-stat icons and Persian typography.
 3. Keep practitioner/service assignments empty until clinic management enters real practitioner identities and confirms qualifications.
 4. Do not run `ClinicStarterConfigurationSeeder` in production without explicit approval; review its inactive values first.

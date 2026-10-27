@@ -1,6 +1,6 @@
 # Task 13 — Availability engine and timezone-correct slot generation
 
-Status: IN PROGRESS — initial pure core, database adapter, route/controller and baseline tests committed; full verification and correctness review remain.
+Status: IN PROGRESS — availability engine, repository adapter, endpoint, adapter-level exception tests, and CI verification are passing; full repository/database performance measurement and endpoint exposure review remain.
 
 ## Branch and scope
 - Branch: `task/13-availability-engine`
@@ -26,14 +26,14 @@ Status: IN PROGRESS — initial pure core, database adapter, route/controller an
 - `tests/Feature/AvailabilityEndpointTest.php`: no-store response and inactive/unapproved service behavior.
 
 ## Important limitations still being addressed
-- This is not yet approved as production-ready. Laravel Pint and PHPStan passed on the latest fully completed check before the current test-fixture/test additions; rerun the full CI and fix any remaining failures.
+- Latest CI run (2026-10-27, commit `222252d592a5ec4b1666ed113fa46bdf829e1f26`) passed: Pint, PHPStan, migrations, all Laravel tests, and browser smoke tests. 147 tests passed with 1,486 assertions. Keep the PR Draft until the remaining scope-specific review is complete.
 - A follow-up migration now makes `schedule_exceptions.practitioner_id` nullable so clinic-wide exceptions accepted by the configuration controller can be persisted. Validate it through PostgreSQL migration tests.
 - The adapter now adds manager-configured `special_opening` intervals (clinic-wide or practitioner-scoped), merges overlaps, subtracts breaks, and applies `closed`/`holiday` intervals last so a closure cannot be re-opened. Adapter-level PostgreSQL tests are being added to verify opening and closure precedence. Public holidays are not inferred automatically.
 - Pending holds must be assigned `expires_at = server_now + 1 hour` by the eventual request-creation workflow. That workflow is not part of this endpoint.
 - Availability reads do not themselves make booking creation race-safe. The eventual write path must use transactions and database-backed conflict protection. Existing database exclusion ranges currently represent appointment intervals; verify how service buffers should be protected at booking-write time before claiming race-safe buffer enforcement.
 - Unit coverage includes buffered working-period fit, five-minute alignment, pending expiry, exact minimum-notice boundary, booking-horizon exclusion, and independent practitioner/resource conflict checks. Adapter-level tests now cover configured special openings and closure precedence; CI must confirm them.
 - Engine-core benchmark (CI runner, 10 samples, 1,000 appointments, 10 practitioners, 3 resources, 14 days): p95 187.25 ms / p99 187.25 ms on the latest successful run. This measures the pure calculator only; it excludes database/repository overhead, so the end-to-end p95/p99 target is not yet verified.
-- Confirm endpoint authorization/rate limiting policy before connecting it to public UI; it currently returns opaque practitioner/resource identifiers as part of each slot.
+- Before connecting the endpoint to public UI, confirm whether practitioner/resource identifiers are needed by the client; the current response returns opaque practitioner/resource identifiers, has `Cache-Control: no-store, private`, and is rate-limited to 60 requests/minute. The public route intentionally has no patient data.
 - No production migrations, seeding, deployment or merge to `main` has been performed.
 
 ## Algorithm contract

@@ -80,7 +80,7 @@ final class AppointmentCreator
                 ->where('resources.is_active', true)
                 ->first();
 
-            if (! $service || ! $practitioner || ! $resource) {
+            if ($service === null || $practitioner === null || $resource === null) {
                 return $this->storeResponse(
                     $record,
                     409,
@@ -241,7 +241,7 @@ final class AppointmentCreator
             return $record;
         }
 
-        if (!hash_equals($record->request_hash, $requestHash)) {
+        if (hash_equals($record->request_hash, $requestHash) === false) {
             throw new AppointmentBookingException(
                 'IDEMPOTENCY_CONFLICT',
                 'The idempotency key was already used for a different request.',

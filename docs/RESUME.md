@@ -1,4 +1,4 @@
-# Resume point (as of 2026-10-26)
+# Resume point (as of 2026-10-27)
 
 Prompt source of truth: the Laravel 13, 32-task prompt pack.
 
@@ -7,7 +7,7 @@ Prompt source of truth: the Laravel 13, 32-task prompt pack.
 | Task | State | Notes |
 |---|---|---|
 | 01 UI audit | Docs done | Original browser screenshots and console log were not captured. |
-| 02 Requirements | Draft done | Owner decisions D1 to D16 remain open in `docs/product-spec.md` section 8. |
+| 02 Requirements | Draft done | Some original product decisions remain open; see the updated statuses in `docs/product-spec.md` section 2. |
 | 03 Architecture and API contract | Design done | Contract was not validated against a running server. |
 | 04 Repo setup | Scaffold done | Lockfiles are present. Clean-clone verification and GitHub settings still need owner verification. |
 | 05 Laravel migration and existing UI integration | Verified | See `docs/task05-visual-diff.md` and `docs/task05-status.md`. |

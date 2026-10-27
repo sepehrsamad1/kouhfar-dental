@@ -33,6 +33,7 @@ final class AvailabilityEngine
         $periods = $input['working_periods'] ?? [];
         $exceptions = $input['closed_dates'] ?? [];
         $appointments = $input['appointments'] ?? [];
+        $occupancy = $this->buildOccupancyIndex($appointments, $now);
 
         if ($duration < 1 || $before < 0 || $after < 0 || $grid < 1 || $notice < 0 || $horizon < 1) {
             throw new InvalidArgumentException('Invalid duration, buffer, grid, notice, or horizon.');
@@ -75,7 +76,7 @@ final class AvailabilityEngine
                 }
 
                 foreach ($eligiblePractitioners as $practitionerId) {
-                    if ($this->hasConflict($occupiedStart, $occupiedEnd, $appointments, (string) $practitionerId, null, $now)) {
+                    if ($this->hasConflict($occupiedStart, $occupiedEnd, $occupancy['practitioners'][(string) $practitionerId] ?? [])) {
                         continue;
                     }
 
@@ -86,7 +87,7 @@ final class AvailabilityEngine
                         if (isset($input['required_resource_kind']) && $resource['kind'] !== $input['required_resource_kind']) {
                             continue;
                         }
-                        if ($this->hasConflict($occupiedStart, $occupiedEnd, $appointments, (string) $practitionerId, (string) $resource['id'], $now)) {
+                        if ($this->hasConflict($occupiedStart, $occupiedEnd, $occupancy['resources'][(string) $resource['id']] ?? [])) {
                             continue;
                         }
 
@@ -110,14 +111,16 @@ final class AvailabilityEngine
         return $results;
     }
 
-    private function hasConflict(
-        DateTimeImmutable $start,
-        DateTimeImmutable $end,
-        array $appointments,
-        string $practitionerId,
-        ?string $resourceId,
-        DateTimeImmutable $now
-    ): bool {
+    /**
+     * Index active appointment occupancy once so each candidate checks only the
+     * intervals for its practitioner and resource, not every appointment in the clinic.
+     *
+     * @return array{practitioners: array<string, list<array{start: DateTimeImmutable, end: DateTimeImmutable}>>, resources: array<string, list<array{start: DateTimeImmutable, end: DateTimeImmutable}>>}
+     */
+    private function buildOccupancyIndex(array $appointments, DateTimeImmutable $now): array
+    {
+        $index = ['practitioners' => [], 'resources' => []];
+
         foreach ($appointments as $appointment) {
             $status = (string) ($appointment['status'] ?? '');
             if ($status === 'pending') {
@@ -129,15 +132,39 @@ final class AvailabilityEngine
                 continue;
             }
 
-            $existingStart = $this->asUtc($appointment['start']);
-            $existingEnd = $this->asUtc($appointment['end']);
-            if ($existingStart >= $end || $existingEnd <= $start) {
-                continue;
+            $interval = [
+                'start' => $this->asUtc($appointment['start']),
+                'end' => $this->asUtc($appointment['end']),
+            ];
+
+            foreach ($appointment['practitioner_ids'] ?? [] as $practitionerId) {
+                $index['practitioners'][(string) $practitionerId][] = $interval;
             }
-            if (in_array($practitionerId, $appointment['practitioner_ids'] ?? [], true)) {
-                return true;
+            foreach ($appointment['resource_ids'] ?? [] as $resourceId) {
+                $index['resources'][(string) $resourceId][] = $interval;
             }
-            if ($resourceId !== null && in_array($resourceId, $appointment['resource_ids'] ?? [], true)) {
+        }
+
+        foreach (['practitioners', 'resources'] as $kind) {
+            foreach ($index[$kind] as &$intervals) {
+                usort($intervals, static fn (array $a, array $b): int => $a['start'] <=> $b['start']);
+            }
+            unset($intervals);
+        }
+
+        return $index;
+    }
+
+    /**
+     * @param list<array{start: DateTimeImmutable, end: DateTimeImmutable}> $intervals
+     */
+    private function hasConflict(DateTimeImmutable $start, DateTimeImmutable $end, array $intervals): bool
+    {
+        foreach ($intervals as $interval) {
+            if ($interval['start'] >= $end) {
+                break;
+            }
+            if ($interval['end'] > $start) {
                 return true;
             }
         }

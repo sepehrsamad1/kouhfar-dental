@@ -13,7 +13,11 @@ Prompt source of truth: the Laravel 13, 32-task prompt pack.
 | 05 Laravel migration and existing UI integration | Verified | See `docs/task05-visual-diff.md` and `docs/task05-status.md`. |
 | 06 CI, testing, and developer tooling | Verified | PR #1 merged into `main`; GitHub Actions passed 1/1 checks. Local PostgreSQL integration test was skipped; CI uses PostgreSQL. |
 | 07 Core Eloquent data model | Complete for approved scope (OTP deferred) | Model classes, factories, and configuration tests are merged into main. OTP and VerificationChallenge are deferred. Database-backed checks remain for Task 08. |
-| 08 Database migrations, seeders, and constraints | Verified | See `docs/task08-status.md`. |\n| 09 Staff authentication | Verified | See `docs/task09-status.md`. |\n| 10 Authorization and audit controls | Verified | See `docs/task10-status.md`. |\n| 11 Staff patient management | Verified | See `docs/task11-status.md`; CI run #90 passed on `main`. |\n| 12 Services, practitioners, resources, and working hours | In progress | See `docs/task12-status.md`; use branch `task/12-clinic-configuration`. |
+| 08 Database migrations, seeders, and constraints | Verified | See `docs/task08-status.md`. |
+| 09 Staff authentication | Verified | See `docs/task09-status.md`. |
+| 10 Authorization and audit controls | Verified | See `docs/task10-status.md`. |
+| 11 Staff patient management | Verified | See `docs/task11-status.md`; CI run #90 passed on `main`. |
+| 12 Services, practitioners, resources, and working hours | In progress | See `docs/task12-status.md`; use branch `task/12-clinic-configuration`. |
 
 ## Next step
 

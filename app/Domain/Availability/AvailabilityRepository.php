@@ -140,9 +140,11 @@ final class AvailabilityRepository
             // practitioner; practitioner-scoped openings apply only to that practitioner.
             foreach ($exceptions as $exception) {
                 if ($exception->kind !== 'special_opening') {
+
                     continue;
                 }
                 if ($exception->practitioner_id !== null && $exception->practitioner_id !== $practitioner->id) {
+
                     continue;
                 }
                 $exceptionStart = $exception->starts_at->toDateTimeImmutable();
@@ -157,6 +159,7 @@ final class AvailabilityRepository
             }
 
             if ($segments === []) {
+
                 continue;
             }
 
@@ -178,6 +181,7 @@ final class AvailabilityRepository
 
             foreach ($breaks->get($weekday, collect()) as $break) {
                 if ($break->practitioner_id !== null && $break->practitioner_id !== $practitioner->id) {
+
                     continue;
                 }
                 $segments = $this->subtract(

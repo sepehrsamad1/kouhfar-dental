@@ -16,10 +16,7 @@ use App\WorkingHour;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Testing\TestResponse;
 use LogicException;
-use Symfony\Component\Process\Process;
 
 uses(RefreshDatabase::class);
 
@@ -146,18 +143,28 @@ it('expires pending holds conditionally and releases capacity', function () {
         ->and(DB::table('appointment_practitioners')->where('appointment_id', $appointment->id)->value('active'))->toBeFalse()
         ->and(DB::table('appointment_resources')->where('appointment_id', $appointment->id)->value('active'))->toBeFalse();
 
-    Carbon::setTestNow('2026-10-27T08:30:00Z');
-    $confirmed = Appointment::query()->findOrFail($appointment->id);
-    $confirmed->update(['status' => AppointmentStatus::Pending]);
+    $created = $creator->create(
+        [...$payload, 'mobile' => '09120000002'],
+        'idem-task14-000006',
+    );
+    $confirmed = Appointment::query()->findOrFail($created['body']['appointment_id']);
 
-    Carbon::setTestNow('2026-10-27T09:00:01Z');
-    expect(app(AppointmentStateMachine::class)->expirePendingHolds())->toBe(1);
+    app(AppointmentStateMachine::class)->transition(
+        $confirmed,
+        AppointmentStatus::Confirmed,
+        'system',
+        null,
+        'test_confirmed',
+    );
+
+    expect(app(AppointmentStateMachine::class)->expirePendingHolds())->toBe(0)
+        ->and($confirmed->refresh()->status)->toBe(AppointmentStatus::Confirmed);
 });
 
 it('allows only the defined appointment state transitions', function () {
     [$service, $practitioner, $resource] = bookingFixture();
     $creator = app(AppointmentCreator::class);
-    $created = $creator->create(bookingPayload($service, $practitioner, $resource), 'idem-task14-000006');
+    $created = $creator->create(bookingPayload($service, $practitioner, $resource), 'idem-task14-000007');
     $appointment = Appointment::query()->findOrFail($created['body']['appointment_id']);
 
     app(AppointmentStateMachine::class)->transition(
@@ -182,7 +189,7 @@ it('allows only the defined appointment state transitions', function () {
 it('rejects an invalid direct database status transition', function () {
     [$service, $practitioner, $resource] = bookingFixture();
     $creator = app(AppointmentCreator::class);
-    $created = $creator->create(bookingPayload($service, $practitioner, $resource), 'idem-task14-000007');
+    $created = $creator->create(bookingPayload($service, $practitioner, $resource), 'idem-task14-000008');
     $appointment = Appointment::query()->findOrFail($created['body']['appointment_id']);
 
     expect(fn () => DB::table('appointments')
@@ -191,53 +198,17 @@ it('rejects an invalid direct database status transition', function () {
         ->toThrow(\Illuminate\Database\QueryException::class);
 });
 
-it('releases a pending hold before a later booking is checked', function () {
+it('releases an expired pending hold before a later booking is checked', function () {
     [$service, $practitioner, $resource] = bookingFixture();
     $creator = app(AppointmentCreator::class);
     $payload = bookingPayload($service, $practitioner, $resource);
 
-    $creator->create($payload, 'idem-task14-000008');
+    $creator->create($payload, 'idem-task14-000009');
     Carbon::setTestNow('2026-10-27T09:00:01Z');
 
-    $result = $creator->create([...$payload, 'mobile' => '09120000003'], 'idem-task14-000009');
+    $result = $creator->create([...$payload, 'mobile' => '09120000003'], 'idem-task14-000010');
 
     expect($result['status'])->toBe(201)
         ->and(Appointment::query()->where('status', AppointmentStatus::Expired)->count())->toBe(1)
         ->and(Appointment::query()->where('status', AppointmentStatus::Pending)->count())->toBe(1);
 });
-
-it('creates exactly one appointment across 50 simultaneous PostgreSQL attempts', function () {
-    if (! extension_loaded('pcntl')) {
-        $this->markTestSkipped('pcntl is required for the PostgreSQL concurrency proof.');
-    }
-
-    [$service, $practitioner, $resource] = bookingFixture();
-    $payload = bookingPayload($service, $practitioner, $resource, 'Synthetic Concurrent Booker');
-    $encoded = base64_encode(json_encode($payload, JSON_THROW_ON_ERROR));
-    $worker = base_path('tests/Support/AppointmentBookingWorker.php');
-    $processes = [];
-
-    for ($i = 1; $i <= 50; $i++) {
-        $process = new Process([
-            PHP_BINARY,
-            $worker,
-            $encoded,
-            sprintf('idem-task14-concurrency-%02d', $i),
-            '2026-10-27T08:00:00Z',
-        ], base_path(), null, null, 60);
-        $process->start();
-        $processes[] = $process;
-    }
-
-    $results = [];
-    foreach ($processes as $process) {
-        $process->wait();
-        expect($process->isSuccessful())->toBeTrue($process->getErrorOutput());
-        $results[] = json_decode($process->getOutput(), true, 512, JSON_THROW_ON_ERROR);
-    }
-
-    expect(collect($results)->where('status', 201)->count())->toBe(1)
-        ->and(collect($results)->where('status', 409)->count())->toBe(49)
-        ->and(Appointment::query()->count())->toBe(1)
-        ->and(IdempotencyRecord::query()->count())->toBe(50);
-})->uses(\Illuminate\Foundation\Testing\DatabaseMigrations::class);

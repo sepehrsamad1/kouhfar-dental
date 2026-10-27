@@ -21,6 +21,34 @@ Status: IN PROGRESS. Do not treat this task as verified until CI passes and the 
 - Configuration changes write allowlisted before/after audit metadata without patient information. Closure/holiday exceptions and recurring breaks are blocked when they overlap confirmed appointments. Service duration/buffer changes and practitioner/resource deactivation are blocked when future confirmed appointments reference them. No appointments are automatically modified.
 - Feature tests cover role authorization, invalid cross-midnight periods, stale service version, appointment preservation, closure impact, and timezone conversion. Add/extend tests for every schedule edit/delete impact path before final verification.
 
+## Researched starter catalog
+
+These are configurable planning estimates, not clinical instructions or promises about treatment duration. All seeded services remain inactive and not public-bookable until clinic management reviews them. Buffer values are operational estimates selected for initial scheduling; public sources generally discuss treatment duration, not a universal buffer standard.
+
+| Starter service | Duration (minutes) | Buffer before | Buffer after | Required resource type |
+|---|---:|---:|---:|---|
+| معاینه دوره‌ای | 20 | 0 | 5 | dental_unit |
+| مشاوره اولیه و طرح درمان | 30 | 0 | 5 | consultation_room |
+| جرم‌گیری و پاک‌سازی دندان | 40 | 0 | 10 | dental_unit |
+| ترمیم دندان (پرکردگی) | 45 | 0 | 10 | dental_unit |
+| درمان ریشه (عصب‌کشی) | 90 | 0 | 15 | dental_unit |
+| کشیدن ساده دندان | 30 | 0 | 10 | dental_unit |
+| کشیدن جراحی دندان | 60 | 0 | 15 | dental_unit |
+| آماده‌سازی روکش | 75 | 0 | 10 | dental_unit |
+| تحویل و تنظیم روکش | 45 | 0 | 10 | dental_unit |
+| مشاوره زیبایی دندان | 30 | 0 | 5 | consultation_room |
+
+Duration ranges were compared against public dental clinic guidance: routine check-ups about 10-20 minutes, cleaning about 20-45 minutes, fillings about 20-60 minutes, simple extraction about 20-40 minutes, surgical extraction about 45-90 minutes, crown preparation about 60-90 minutes, and root canal appointments commonly 60-120 minutes. Individual cases and local practice differ.
+
+Sources:
+- https://www.tandhuis.nl/tandartsbehandeling
+- https://zeeburgtandartsen.nl/kennisbank/hoe-lang-duurt-een-tandheelkundige-behandeling/
+- https://www.nhs.uk/tests-and-treatments/root-canal-treatment/
+
+The seeder creates two shared dental units and one consultation space as inactive resources. Service requirements refer to a resource type, not one dedicated physical unit. The actual conflict-safe selection of one available resource from the shared pool belongs to Task 13.
+
+No practitioner records or service assignments are seeded because actual practitioner identities and qualifications must be supplied by clinic management. No recurring breaks or holiday closures are seeded because there is no universal clinic policy and the clinic may choose to open on some public holidays.
+
 ## Owner-confirmed values
 
 - Clinic location: Tehran.

@@ -18,7 +18,7 @@ use InvalidArgumentException;
  */
 final class AvailabilityEngine
 {
-    public function slots(array $input): array
+    public function slots(array $input, ?array $occupancyIndex = null): array
     {
         $timezone = new DateTimeZone((string) ($input['timezone'] ?? 'Asia/Tehran'));
         $now = $this->asUtc($input['now'] ?? null);
@@ -33,7 +33,7 @@ final class AvailabilityEngine
         $periods = $input['working_periods'] ?? [];
         $exceptions = $input['closed_dates'] ?? [];
         $appointments = $input['appointments'] ?? [];
-        $occupancy = $this->buildOccupancyIndex($appointments, $now);
+        $occupancy = $occupancyIndex ?? $this->buildOccupancyIndex($appointments, $now);
 
         if ($duration < 1 || $before < 0 || $after < 0 || $grid < 1 || $notice < 0 || $horizon < 1) {
             throw new InvalidArgumentException('Invalid duration, buffer, grid, notice, or horizon.');
@@ -109,6 +109,11 @@ final class AvailabilityEngine
         usort($results, static fn (array $a, array $b): int => [$a['start_at'], $a['practitioner_id'], $a['resource_id']] <=> [$b['start_at'], $b['practitioner_id'], $b['resource_id']]);
 
         return $results;
+    }
+
+    public function indexAppointments(array $appointments, DateTimeImmutable $now): array
+    {
+        return $this->buildOccupancyIndex($appointments, $this->asUtc($now));
     }
 
     // Index active appointment occupancy once, grouped by practitioner and resource.

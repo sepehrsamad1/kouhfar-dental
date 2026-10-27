@@ -271,7 +271,12 @@ final class ClinicConfigurationController
         if ($deleted !== 1) {
             throw ValidationException::withMessages(['version' => 'ساعات کلینیک هم‌زمان تغییر کرده است. صفحه را تازه‌سازی کنید.']);
         }
-        AuditLogger::record($request->user('staff'), 'configuration.clinic_hours_deleted', $hour, null, ['status' => 'deleted']);
+        AuditLogger::record($request->user('staff'), 'configuration.clinic_hours_deleted', $hour, [
+            'weekday' => $hour->weekday,
+            'start_local' => substr((string) $hour->start_local, 0, 5),
+            'end_local' => substr((string) $hour->end_local, 0, 5),
+            'timezone' => $hour->timezone,
+        ], ['status' => 'deleted']);
 
         return back()->with('success', 'بازه ساعات کلینیک حذف شد.');
     }
@@ -349,7 +354,12 @@ final class ClinicConfigurationController
         if ($deleted !== 1) {
             throw ValidationException::withMessages(['version' => 'ساعات پزشک هم‌زمان تغییر کرده است. صفحه را تازه‌سازی کنید.']);
         }
-        AuditLogger::record($request->user('staff'), 'configuration.practitioner_hours_deleted', $hour, null, ['practitioner_id' => $hour->practitioner_id]);
+        AuditLogger::record($request->user('staff'), 'configuration.practitioner_hours_deleted', $hour, [
+            'practitioner_id' => $hour->practitioner_id,
+            'weekday' => $hour->weekday,
+            'start_local' => substr((string) $hour->start_local, 0, 5),
+            'end_local' => substr((string) $hour->end_local, 0, 5),
+        ], ['status' => 'deleted']);
 
         return back()->with('success', 'بازه ساعات پزشک حذف شد.');
     }
@@ -437,7 +447,12 @@ final class ClinicConfigurationController
         if ($deleted !== 1) {
             throw ValidationException::withMessages(['version' => 'وقفه هم‌زمان تغییر کرده است. صفحه را تازه‌سازی کنید.']);
         }
-        AuditLogger::record($request->user('staff'), 'configuration.schedule_break_deleted', $break, null, ['practitioner_id' => $break->practitioner_id]);
+        AuditLogger::record($request->user('staff'), 'configuration.schedule_break_deleted', $break, [
+            'practitioner_id' => $break->practitioner_id,
+            'weekday' => $break->weekday,
+            'start_local' => substr((string) $break->start_local, 0, 5),
+            'end_local' => substr((string) $break->end_local, 0, 5),
+        ], ['status' => 'deleted']);
 
         return back()->with('success', 'وقفه حذف شد.');
     }
@@ -531,7 +546,12 @@ final class ClinicConfigurationController
         if ($deleted !== 1) {
             throw ValidationException::withMessages(['version' => 'استثنای برنامه هم‌زمان تغییر کرده است. صفحه را تازه‌سازی کنید.']);
         }
-        AuditLogger::record($request->user('staff'), 'configuration.schedule_exception_deleted', $exception, null, ['status' => 'deleted', 'practitioner_id' => $exception->practitioner_id]);
+        AuditLogger::record($request->user('staff'), 'configuration.schedule_exception_deleted', $exception, [
+            'status' => $exception->kind,
+            'practitioner_id' => $exception->practitioner_id,
+            'starts_at' => $exception->starts_at->toIso8601String(),
+            'ends_at' => $exception->ends_at->toIso8601String(),
+        ], ['status' => 'deleted']);
 
         return back()->with('success', 'استثنای برنامه حذف شد.');
     }

@@ -6,6 +6,7 @@ use App\ClinicWorkingHour;
 use App\Domain\Availability\AvailabilityRepository;
 use App\Practitioner;
 use App\Resource;
+use App\ScheduleBreak;
 use App\ScheduleException;
 use App\Service;
 use App\WorkingHour;
@@ -76,6 +77,52 @@ it('includes manager-configured special openings and lets closure exceptions tak
     ]);
     $closedSlots = $repository->forPublicService($service, $now);
     expect(array_column($closedSlots, 'display_local'))->not->toContain('2026-10-28 17:00');
+});
+
+
+it('subtracts recurring breaks from otherwise valid working periods', function (): void {
+    $service = Service::factory()->create([
+        'duration_minutes' => 30,
+        'buffer_before_minutes' => 0,
+        'buffer_after_minutes' => 0,
+        'required_resource_kind' => 'dental_unit',
+        'is_active' => true,
+        'is_public_bookable' => true,
+    ]);
+    $practitioner = Practitioner::factory()->create(['is_active' => true]);
+    $resource = Resource::factory()->create(['kind' => 'dental_unit', 'is_active' => true]);
+    $service->practitioners()->attach($practitioner->getKey());
+    $service->resources()->attach($resource->getKey());
+
+    ClinicWorkingHour::query()->create([
+        'weekday' => 3,
+        'start_local' => '09:00',
+        'end_local' => '17:00',
+        'timezone' => 'Asia/Tehran',
+    ]);
+    WorkingHour::query()->create([
+        'practitioner_id' => $practitioner->getKey(),
+        'weekday' => 3,
+        'start_local' => '09:00',
+        'end_local' => '17:00',
+    ]);
+    ScheduleBreak::query()->create([
+        'practitioner_id' => null,
+        'weekday' => 3,
+        'start_local' => '12:00',
+        'end_local' => '13:00',
+    ]);
+
+    $slots = app(AvailabilityRepository::class)->forPublicService(
+        $service,
+        new DateTimeImmutable('2026-10-27T06:00:00Z')
+    );
+
+    $displayTimes = array_column($slots, 'display_local');
+    expect($displayTimes)->toContain('2026-10-28 11:30')
+        ->and($displayTimes)->not->toContain('2026-10-28 12:00')
+        ->and($displayTimes)->not->toContain('2026-10-28 12:30')
+        ->and($displayTimes)->toContain('2026-10-28 13:00');
 });
 
 it('benchmarks the database-backed availability repository with 1000 relevant appointments', function (): void {

@@ -136,3 +136,46 @@ it('blocks service duration changes that could affect confirmed appointments and
     expect($service->refresh()->is_active)->toBeFalse()
         ->and(Appointment::query()->whereKey($appointment->id)->exists())->toBeTrue();
 });
+
+
+it('blocks a closure that overlaps a confirmed appointment without changing the appointment', function (): void {
+    $admin = configurationStaff('admin');
+    $service = Service::factory()->create();
+    $patient = \\App\\Patient::factory()->create();
+    $start = \\Illuminate\\Support\\Carbon::parse('2026-11-28 10:30', 'Asia/Tehran')->utc();
+    $appointment = Appointment::factory()->create([
+        'patient_id' => $patient->id,
+        'service_id' => $service->id,
+        'status' => AppointmentStatus::Confirmed,
+        'start_at' => $start,
+        'end_at' => $start->copy()->addHour(),
+    ]);
+
+    $this->actingAs($admin, 'staff')
+        ->from(route('staff.configuration.index'))
+        ->post(route('staff.configuration.exceptions.store'), [
+            'starts_at' => '2026-11-28T10:00',
+            'ends_at' => '2026-11-28T12:00',
+            'kind' => 'holiday',
+        ])
+        ->assertSessionHasErrors(['schedule']);
+
+    expect(\\App\\ScheduleException::query()->count())->toBe(0)
+        ->and($appointment->refresh()->status)->toBe(AppointmentStatus::Confirmed);
+});
+
+it('stores schedule exception instants in UTC from Tehran local time', function (): void {
+    $admin = configurationStaff('admin');
+
+    $this->actingAs($admin, 'staff')
+        ->post(route('staff.configuration.exceptions.store'), [
+            'starts_at' => '2026-11-28T10:00',
+            'ends_at' => '2026-11-28T11:00',
+            'kind' => 'special_opening',
+        ])
+        ->assertRedirect();
+
+    $exception = \\App\\ScheduleException::query()->firstOrFail();
+    expect($exception->starts_at->toIso8601String())
+        ->toBe(\\Illuminate\\Support\\Carbon::parse('2026-11-28 10:00', 'Asia/Tehran')->utc()->toIso8601String());
+});

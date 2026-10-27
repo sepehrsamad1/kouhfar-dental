@@ -16,15 +16,12 @@ Last updated: 2026-10-27.
 | 10 Authorization and audit controls | VERIFIED | See Task 10 status; CI passed. |
 | 11 Staff patient management | VERIFIED | CI run #90 passed on main. |
 | 12 Services, practitioners, resources, and working hours | MERGED; CI VERIFIED | PR #13 merged to `main` as `75f3b993ccba150ac4941407dcba4f1a84438d35`. CI run `40431587997` passed on code commit `9859a6a3ba7c03e5f9c9fa95a27a9ab77ad2acdd` (138 Laravel tests, 649 assertions, 5 Playwright tests). No production migration or seeding was run. |
-| 13 Availability engine and timezone-correct slot generation | READY TO START; owner decisions block final behavior | Build pure availability logic plus DB adapter, practitioner/resource conflict filtering, UTC instants and local display, expired-pending hold release, no-store policy, property/table tests, and performance measurements. Confirm holiday behavior, pending expiry, minimum notice, booking horizon, and performance budget. |
+| 13 Availability engine and timezone-correct slot generation | VERIFIED ON DRAFT BRANCH; MERGE PENDING OWNER APPROVAL | Pure database-independent availability engine plus DB adapter, timezone-correct UTC/local output, expired-pending release, no-store endpoint, randomized invariants, tricky-date coverage, and performance measurements. CI run `40533190659` passed (152 Laravel tests, 23,475 assertions). Keep PR #14 Draft until owner approves merge. |
 
 ## Decisions still requiring owner confirmation
 
 - Practitioner identities, qualifications, and practitioner-to-service assignments.
 - Exact recurring breaks and holiday dates; public holidays are not automatically clinic closures.
-- Pending request expiry duration (product spec D6 proposes 2 hours but it is not owner-approved).
-- Minimum notice and booking horizon.
-- Performance budget for representative clinic workload.
 - Other product-spec decisions not explicitly superseded by later owner instructions.
 
 Confirmed: two dental units shared between practitioners and one consultation space; clinic hours 12:00-20:00 Saturday-Thursday in `Asia/Tehran`; cross-midnight working periods prohibited.

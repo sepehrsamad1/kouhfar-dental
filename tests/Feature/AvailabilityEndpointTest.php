@@ -79,7 +79,6 @@ it('includes manager-configured special openings and lets closure exceptions tak
     expect(array_column($closedSlots, 'display_local'))->not->toContain('2026-10-28 17:00');
 });
 
-
 it('subtracts recurring breaks from otherwise valid working periods', function (): void {
     $service = Service::factory()->create([
         'duration_minutes' => 30,

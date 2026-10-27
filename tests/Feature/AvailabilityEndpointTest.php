@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
+use App\Domain\Availability\AvailabilityRepository;
 use App\ClinicWorkingHour;
 use App\Practitioner;
 use App\Resource;
 use App\ScheduleException;
 use App\Service;
 use App\WorkingHour;
-use App\Domain\Availability\AvailabilityRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

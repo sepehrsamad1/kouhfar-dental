@@ -23,10 +23,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use JsonException;
 
-final class AppointmentCapacityConflict extends \RuntimeException
-{
-}
-
 final class AppointmentCreator
 {
     private const IDEMPOTENCY_TTL_HOURS = 24;
@@ -162,7 +158,10 @@ final class AppointmentCreator
                             ->exists();
 
                         if ($conflictingPractitioner || $conflictingResource) {
-                            throw new AppointmentCapacityConflict;
+                            throw new AppointmentBookingException(
+                                'SLOT_UNAVAILABLE',
+                                'The selected slot is no longer available.',
+                            );
                         }
 
                         $range = sprintf(
@@ -188,7 +187,7 @@ final class AppointmentCreator
 
                     $reserved = true;
                     break;
-                } catch (AppointmentCapacityConflict) {
+                } catch (AppointmentBookingException) {
                     continue;
                 } catch (QueryException $exception) {
                     if ($this->isExclusionViolation($exception) === false) {

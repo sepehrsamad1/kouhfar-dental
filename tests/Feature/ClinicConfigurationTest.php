@@ -7,6 +7,7 @@ use App\ClinicWorkingHour;
 use App\Enums\AppointmentStatus;
 use App\Http\Middleware\EnsureStaffSessionIsFresh;
 use App\Patient;
+use App\ScheduleBreak;
 use App\ScheduleException;
 use App\Service;
 use App\StaffUser;
@@ -181,4 +182,62 @@ it('stores schedule exception instants in UTC from Tehran local time', function 
     $exception = ScheduleException::query()->firstOrFail();
     expect($exception->starts_at->toIso8601String())
         ->toBe(Carbon::parse('2026-11-28 10:00', 'Asia/Tehran')->utc()->toIso8601String());
+});
+
+
+it('supports versioned clinic-hour update and delete', function (): void {
+    $admin = configurationStaff('admin');
+    $this->actingAs($admin, 'staff')
+        ->post(route('staff.configuration.clinic-hours.store'), [
+            'weekday' => 6,
+            'start_local' => '12:00',
+            'end_local' => '20:00',
+            'timezone' => 'Asia/Tehran',
+        ])
+        ->assertRedirect();
+
+    $hour = ClinicWorkingHour::query()->firstOrFail();
+    $this->actingAs($admin, 'staff')
+        ->patch(route('staff.configuration.clinic-hours.update', $hour), [
+            'version' => $hour->version,
+            'weekday' => 6,
+            'start_local' => '13:00',
+            'end_local' => '20:00',
+            'timezone' => 'Asia/Tehran',
+        ])
+        ->assertRedirect();
+
+    $hour->refresh();
+    expect(substr($hour->start_local, 0, 5))->toBe('13:00')
+        ->and($hour->version)->toBe(2);
+
+    $this->actingAs($admin, 'staff')
+        ->delete(route('staff.configuration.clinic-hours.delete', $hour), ['version' => $hour->version])
+        ->assertRedirect();
+
+    expect(ClinicWorkingHour::query()->count())->toBe(0);
+});
+
+it('blocks recurring breaks that overlap future confirmed appointments', function (): void {
+    $admin = configurationStaff('admin');
+    $service = Service::factory()->create();
+    $start = Carbon::parse('2026-11-28 10:30', 'Asia/Tehran')->utc();
+    Appointment::factory()->create([
+        'service_id' => $service->id,
+        'status' => AppointmentStatus::Confirmed,
+        'start_at' => $start,
+        'end_at' => $start->copy()->addHour(),
+    ]);
+
+    $this->actingAs($admin, 'staff')
+        ->from(route('staff.configuration.index'))
+        ->post(route('staff.configuration.breaks.store'), [
+            'practitioner_id' => '',
+            'weekday' => 6,
+            'start_local' => '10:00',
+            'end_local' => '11:00',
+        ])
+        ->assertSessionHasErrors(['schedule']);
+
+    expect(ScheduleBreak::query()->count())->toBe(0);
 });

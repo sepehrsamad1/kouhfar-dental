@@ -64,9 +64,7 @@ final class AvailabilityRepository
         $appointments = [];
         foreach ($appointmentModels as $appointment) {
             $serviceModel = $appointment->service;
-            /** @var EloquentCollection<int, Practitioner> $appointmentPractitioners */
             $appointmentPractitioners = $appointment->practitioners;
-            /** @var EloquentCollection<int, Resource> $appointmentResources */
             $appointmentResources = $appointment->resources;
             $practitionerIds = [];
             foreach ($appointmentPractitioners as $appointmentPractitioner) {

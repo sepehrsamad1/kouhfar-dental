@@ -121,37 +121,80 @@ final class AvailabilityRepository
             $weekday = $date->dayOfWeekIso;
             $clinic = $clinicHours->get($weekday, collect());
             $staff = $practitionerHours->get($weekday, collect());
-            if ($clinic->isEmpty() || $staff->isEmpty()) {
-                continue;
-            }
+            $segments = [];
 
             foreach ($clinic as $clinicHour) {
                 foreach ($staff as $staffHour) {
                     $start = $this->localTime($date, max($clinicHour->start_local, $staffHour->start_local));
                     $end = $this->localTime($date, min($clinicHour->end_local, $staffHour->end_local));
-                    if ($end <= $start) {
-                        continue;
-                    }
-
-                    $segments = [[$start, $end]];
-                    foreach ($breaks->get($weekday, collect()) as $break) {
-                        if ($break->practitioner_id !== null && $break->practitioner_id !== $practitioner->id) {
-                            continue;
-                        }
-                        $segments = $this->subtract($segments, $this->localTime($date, $break->start_local), $this->localTime($date, $break->end_local));
-                    }
-                    foreach ($exceptions as $exception) {
-                        if ($exception->practitioner_id !== null && $exception->practitioner_id !== $practitioner->id) {
-                            continue;
-                        }
-                        if (in_array($exception->kind, ['closed', 'holiday'], true)) {
-                            $segments = $this->subtract($segments, $exception->starts_at->toDateTimeImmutable(), $exception->ends_at->toDateTimeImmutable());
-                        }
-                    }
-                    foreach ($segments as [$segmentStart, $segmentEnd]) {
-                        $periods[] = ['start' => $segmentStart, 'end' => $segmentEnd];
+                    if ($end > $start) {
+                        $segments[] = [$start, $end];
                     }
                 }
+            }
+
+            // An explicit special opening is a manager-configured exception to the
+            // regular weekly schedule. Clinic-wide openings apply to every active
+            // practitioner; practitioner-scoped openings apply only to that practitioner.
+            foreach ($exceptions as $exception) {
+                if ($exception->kind !== 'special_opening') {
+                    continue;
+                }
+                if ($exception->practitioner_id !== null && $exception->practitioner_id !== $practitioner->id) {
+                    continue;
+                }
+                $segments[] = [
+                    $exception->starts_at->toDateTimeImmutable(),
+                    $exception->ends_at->toDateTimeImmutable(),
+                ];
+            }
+
+            if ($segments === []) {
+                continue;
+            }
+
+            // Normalize overlapping normal/opening intervals before subtracting breaks
+            // and closures so a special opening cannot re-open a closed interval.
+            usort($segments, static fn (array $a, array $b): int => $a[0] <=> $b[0]);
+            $merged = [];
+            foreach ($segments as [$segmentStart, $segmentEnd]) {
+                if ($merged === [] || $segmentStart > $merged[array_key_last($merged)][1]) {
+                    $merged[] = [$segmentStart, $segmentEnd];
+                } else {
+                    $last = array_key_last($merged);
+                    if ($segmentEnd > $merged[$last][1]) {
+                        $merged[$last][1] = $segmentEnd;
+                    }
+                }
+            }
+            $segments = $merged;
+
+            foreach ($breaks->get($weekday, collect()) as $break) {
+                if ($break->practitioner_id !== null && $break->practitioner_id !== $practitioner->id) {
+                    continue;
+                }
+                $segments = $this->subtract(
+                    $segments,
+                    $this->localTime($date, $break->start_local),
+                    $this->localTime($date, $break->end_local)
+                );
+            }
+
+            foreach ($exceptions as $exception) {
+                if ($exception->practitioner_id !== null && $exception->practitioner_id !== $practitioner->id) {
+                    continue;
+                }
+                if (in_array($exception->kind, ['closed', 'holiday'], true)) {
+                    $segments = $this->subtract(
+                        $segments,
+                        $exception->starts_at->toDateTimeImmutable(),
+                        $exception->ends_at->toDateTimeImmutable()
+                    );
+                }
+            }
+
+            foreach ($segments as [$segmentStart, $segmentEnd]) {
+                $periods[] = ['start' => $segmentStart, 'end' => $segmentEnd];
             }
         }
 

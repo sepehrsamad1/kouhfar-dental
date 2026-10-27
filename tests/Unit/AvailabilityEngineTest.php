@@ -172,3 +172,48 @@ it('enforces the exact minimum notice and excludes dates beyond the booking hori
         ->and($atNotice)->not->toBeEmpty()
         ->and($beyondHorizon)->toBeEmpty();
 });
+
+it('blocks practitioner and shared-resource conflicts independently', function (): void {
+    $engine = new AvailabilityEngine;
+    $base = [
+        'timezone' => 'Asia/Tehran',
+        'now' => new DateTimeImmutable('2026-10-27T06:00:00Z'),
+        'duration_minutes' => 30,
+        'minimum_notice_minutes' => 0,
+        'horizon_days' => 14,
+        'grid_minutes' => 5,
+        'practitioner_ids' => ['p1'],
+        'resources' => [
+            ['id' => 'chair-1', 'kind' => 'dental_unit', 'active' => true],
+            ['id' => 'chair-2', 'kind' => 'dental_unit', 'active' => true],
+        ],
+        'required_resource_kind' => 'dental_unit',
+        'working_periods' => [[
+            'start' => new DateTimeImmutable('2026-10-28T08:30:00Z'),
+            'end' => new DateTimeImmutable('2026-10-28T09:00:00Z'),
+        ]],
+        'closed_dates' => [],
+    ];
+
+    $resourceConflict = $engine->slots($base + ['appointments' => [[
+        'start' => new DateTimeImmutable('2026-10-28T08:30:00Z'),
+        'end' => new DateTimeImmutable('2026-10-28T09:00:00Z'),
+        'status' => 'confirmed',
+        'expires_at' => null,
+        'practitioner_ids' => ['p2'],
+        'resource_ids' => ['chair-1'],
+    ]]]);
+
+    $practitionerConflict = $engine->slots($base + ['appointments' => [[
+        'start' => new DateTimeImmutable('2026-10-28T08:30:00Z'),
+        'end' => new DateTimeImmutable('2026-10-28T09:00:00Z'),
+        'status' => 'confirmed',
+        'expires_at' => null,
+        'practitioner_ids' => ['p1'],
+        'resource_ids' => ['chair-2'],
+    ]]]);
+
+    expect($resourceConflict)->not->toBeEmpty()
+        ->and(array_column($resourceConflict, 'resource_id'))->not->toContain('chair-1')
+        ->and($practitionerConflict)->toBeEmpty();
+});

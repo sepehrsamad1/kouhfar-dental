@@ -48,7 +48,7 @@ it('ignores expired pending holds but respects active pending and confirmed conf
         'required_resource_kind' => 'dental_unit',
         'working_periods' => [[
             'start' => new DateTimeImmutable('2026-10-28T08:30:00Z'),
-            'end' => new DateTimeImmutable('2026-10-28T16:30:00Z'),
+            'end' => new DateTimeImmutable('2026-10-28T09:00:00Z'),
         ]],
         'closed_dates' => [],
     ];

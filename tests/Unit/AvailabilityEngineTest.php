@@ -100,3 +100,41 @@ it('does not offer slots on configured closure dates or when the full buffered i
     $input['closed_dates'] = [];
     expect($engine->slots($input))->toBeEmpty();
 });
+
+
+it('preserves slot invariants across multiple durations and buffer combinations', function (): void {
+    $engine = new AvailabilityEngine();
+    foreach ([[15, 0, 0], [25, 5, 10], [40, 10, 5], [60, 0, 15]] as [$duration, $before, $after]) {
+        $periodStart = new DateTimeImmutable('2026-10-28T08:30:00Z');
+        $periodEnd = new DateTimeImmutable('2026-10-28T12:30:00Z');
+        $slots = $engine->slots([
+            'timezone' => 'Asia/Tehran',
+            'now' => new DateTimeImmutable('2026-10-27T06:00:00Z'),
+            'duration_minutes' => $duration,
+            'buffer_before_minutes' => $before,
+            'buffer_after_minutes' => $after,
+            'minimum_notice_minutes' => 1440,
+            'horizon_days' => 14,
+            'grid_minutes' => 5,
+            'practitioner_ids' => ['p1'],
+            'resources' => [['id' => 'chair-1', 'kind' => 'dental_unit', 'active' => true]],
+            'required_resource_kind' => 'dental_unit',
+            'working_periods' => [['start' => $periodStart, 'end' => $periodEnd]],
+            'closed_dates' => [],
+            'appointments' => [],
+        ]);
+
+        foreach ($slots as $slot) {
+            $start = new DateTimeImmutable($slot['start_at']);
+            $end = new DateTimeImmutable($slot['end_at']);
+            $occupiedStart = $start->modify(sprintf('-%d minutes', $before));
+            $occupiedEnd = $end->modify(sprintf('+%d minutes', $after));
+            $local = $start->setTimezone(new DateTimeZone('Asia/Tehran'));
+
+            expect($occupiedStart >= $periodStart)->toBeTrue()
+                ->and($occupiedEnd <= $periodEnd)->toBeTrue()
+                ->and((int) $local->format('i') % 5)->toBe(0)
+                ->and($end > $start)->toBeTrue();
+        }
+    }
+});

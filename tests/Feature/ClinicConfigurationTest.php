@@ -141,7 +141,6 @@ it('blocks service duration changes that could affect confirmed appointments and
         ->and(Appointment::query()->whereKey($appointment->id)->exists())->toBeTrue();
 });
 
-
 it('blocks a closure that overlaps a confirmed appointment without changing the appointment', function (): void {
     $admin = configurationStaff('admin');
     $service = Service::factory()->create();

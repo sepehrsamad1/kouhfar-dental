@@ -49,6 +49,8 @@ class AppointmentStoreRequest extends FormRequest
                     ->where('is_public_bookable', true)),
             ],
             'start_at' => ['required', 'string', 'max:64'],
+            'practitioner_id' => ['prohibited'],
+            'resource_id' => ['prohibited'],
             'idempotency_key' => [
                 'required',
                 'string',

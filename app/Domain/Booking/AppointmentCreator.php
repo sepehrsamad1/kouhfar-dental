@@ -178,7 +178,7 @@ final class AppointmentCreator
                 'target_type' => Appointment::class,
                 'target_id' => $appointment->getKey(),
                 'occurred_at' => $now,
-                'request_id' => request()->attributes->get('request_id'),
+                'request_id' => $this->requestId(),
                 'meta' => [
                     'after' => [
                         'status' => AppointmentStatus::Pending->value,
@@ -242,7 +242,10 @@ final class AppointmentCreator
         }
 
         if (! hash_equals($record->request_hash, $requestHash)) {
-            throw new AppointmentBookingException('IDEMPOTENCY_CONFLICT', 'The idempotency key was already used for a different request.');
+            throw new AppointmentBookingException(
+                'IDEMPOTENCY_CONFLICT',
+                'The idempotency key was already used for a different request.',
+            );
         }
 
         return $record;
@@ -291,6 +294,13 @@ final class AppointmentCreator
     {
         return $exception->getCode() === '23P01'
             || str_contains($exception->getMessage(), 'no_overlap');
+    }
+
+    private function requestId(): ?string
+    {
+        return app()->bound('request')
+            ? request()->attributes->get('request_id')
+            : null;
     }
 
     private function canonicalJson(array $input): string

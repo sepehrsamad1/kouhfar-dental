@@ -23,30 +23,20 @@ use JsonException;
 
 final class AppointmentCreator
 {
-    private const IDEMPOTENCY_SCOPE = 'public:appointment:create:v1';
-
     private const IDEMPOTENCY_TTL_HOURS = 24;
 
-    private AppointmentStateMachine $states;
-
-    private AvailabilityRepository $availability;
-
     public function __construct(
-        AppointmentStateMachine $states,
-        AvailabilityRepository $availability,
+        private readonly AppointmentStateMachine $states,
+        private readonly AvailabilityRepository $availability,
     ) {
-        $this->states = $states;
-        $this->availability = $availability;
     }
 
-    public function create(array $input, string $idempotencyKey): array
+    public function create(array $input, string $idempotencyKey, string $ownerScope = 'public:appointment:create:v1'): array
     {
         $normalizedInput = [
-            'patient_name' => trim($input['patient_name']),
+            'full_name' => trim($input['full_name']),
             'mobile' => IranianPhoneNumber::normalize($input['mobile']),
             'service_id' => $input['service_id'],
-            'practitioner_id' => $input['practitioner_id'],
-            'resource_id' => $input['resource_id'],
             'start_at' => (new DateTimeImmutable($input['start_at']))
                 ->setTimezone(new DateTimeZone('UTC'))
                 ->format('Y-m-d\TH:i:s\Z'),
@@ -54,8 +44,8 @@ final class AppointmentCreator
 
         $requestHash = hash('sha256', $this->canonicalJson($normalizedInput));
 
-        return DB::transaction(function () use ($normalizedInput, $idempotencyKey, $requestHash): array {
-            $record = $this->lockIdempotencyRecord($idempotencyKey, $requestHash);
+        return DB::transaction(function () use ($normalizedInput, $idempotencyKey, $ownerScope, $requestHash): array {
+            $record = $this->lockIdempotencyRecord($ownerScope, $idempotencyKey, $requestHash);
 
             if ($record->response_status !== 0 && $record->response_body !== null) {
                 return [
@@ -73,19 +63,7 @@ final class AppointmentCreator
                 ->where('is_public_bookable', true)
                 ->first();
 
-            $practitioner = $service?->practitioners()
-                ->whereKey($normalizedInput['practitioner_id'])
-                ->where('practitioners.is_active', true)
-                ->lockForUpdate()
-                ->first();
-
-            $resource = $service?->resources()
-                ->whereKey($normalizedInput['resource_id'])
-                ->where('resources.is_active', true)
-                ->lockForUpdate()
-                ->first();
-
-            if ($service === null || $practitioner === null || $resource === null) {
+            if ($service === null) {
                 return $this->storeResponse(
                     $record,
                     409,
@@ -97,13 +75,11 @@ final class AppointmentCreator
             $requestedEnd = $requestedStart->modify(sprintf('+%d minutes', $service->duration_minutes));
 
             $available = $this->availability->forPublicService($service, $now->toDateTimeImmutable());
-            $matches = array_filter(
+            $matches = array_values(array_filter(
                 $available,
                 static fn (array $slot): bool => $slot['start_at'] === $requestedStart->format('Y-m-d\TH:i:s\Z')
-                    && $slot['end_at'] === $requestedEnd->format('Y-m-d\TH:i:s\Z')
-                    && $slot['practitioner_id'] === (string) $practitioner->getKey()
-                    && $slot['resource_id'] === (string) $resource->getKey(),
-            );
+                    && $slot['end_at'] === $requestedEnd->format('Y-m-d\TH:i:s\Z'),
+            ));
 
             if ($matches === []) {
                 return $this->storeResponse(
@@ -113,73 +89,74 @@ final class AppointmentCreator
                 );
             }
 
-            $patient = $this->findOrCreatePatient(
-                $normalizedInput['patient_name'],
-                $normalizedInput['mobile'],
-            );
+            usort($matches, static fn (array $left, array $right): int => [
+                $left['practitioner_id'],
+                $left['resource_id'],
+            ] <=> [
+                $right['practitioner_id'],
+                $right['resource_id'],
+            ]);
+
+            $patient = Patient::query()->create([
+                'full_name' => $normalizedInput['full_name'],
+                'mobile_normalized' => $normalizedInput['mobile'],
+            ]);
 
             $expiresAt = $now->addHour();
             $occupiedStart = $requestedStart->modify(sprintf('-%d minutes', $service->buffer_before_minutes));
             $occupiedEnd = $requestedEnd->modify(sprintf('+%d minutes', $service->buffer_after_minutes));
 
-            try {
-                $appointment = DB::transaction(function () use (
-                    $patient,
-                    $service,
-                    $requestedStart,
-                    $requestedEnd,
-                    $expiresAt,
-                    $practitioner,
-                    $resource,
-                    $occupiedStart,
-                    $occupiedEnd,
-                ): Appointment {
-                    $appointment = Appointment::query()->create([
-                        'patient_id' => $patient->getKey(),
-                        'service_id' => $service->getKey(),
-                        'status' => AppointmentStatus::Pending,
-                        'start_at' => $requestedStart,
-                        'end_at' => $requestedEnd,
-                        'source' => 'public',
-                        'expires_at' => $expiresAt,
-                        'created_by' => null,
-                        'version' => 1,
-                    ]);
+            $appointment = Appointment::query()->create([
+                'patient_id' => $patient->getKey(),
+                'service_id' => $service->getKey(),
+                'status' => AppointmentStatus::Pending,
+                'start_at' => $requestedStart,
+                'end_at' => $requestedEnd,
+                'source' => 'public',
+                'expires_at' => $expiresAt,
+                'created_by' => null,
+                'version' => 1,
+            ]);
 
-                    DB::table('appointment_practitioners')->insert([
-                        'appointment_id' => $appointment->getKey(),
-                        'practitioner_id' => $practitioner->getKey(),
-                        'active' => true,
-                        'occupied' => DB::raw(sprintf(
+            $reserved = false;
+            foreach ($matches as $match) {
+                try {
+                    DB::transaction(function () use ($appointment, $match, $occupiedStart, $occupiedEnd): void {
+                        $range = sprintf(
                             "tstzrange('%s'::timestamptz, '%s'::timestamptz, '[)')",
                             $occupiedStart->format('Y-m-d H:i:sP'),
                             $occupiedEnd->format('Y-m-d H:i:sP'),
-                        )),
-                    ]);
+                        );
 
-                    DB::table('appointment_resources')->insert([
-                        'appointment_id' => $appointment->getKey(),
-                        'resource_id' => $resource->getKey(),
-                        'active' => true,
-                        'occupied' => DB::raw(sprintf(
-                            "tstzrange('%s'::timestamptz, '%s'::timestamptz, '[)')",
-                            $occupiedStart->format('Y-m-d H:i:sP'),
-                            $occupiedEnd->format('Y-m-d H:i:sP'),
-                        )),
-                    ]);
+                        DB::table('appointment_practitioners')->insert([
+                            'appointment_id' => $appointment->getKey(),
+                            'practitioner_id' => $match['practitioner_id'],
+                            'active' => true,
+                            'occupied' => DB::raw($range),
+                        ]);
 
-                    return $appointment;
-                });
-            } catch (QueryException $exception) {
-                if ($this->isExclusionViolation($exception)) {
-                    return $this->storeResponse(
-                        $record,
-                        409,
-                        ['code' => 'SLOT_UNAVAILABLE', 'message' => 'The selected slot is no longer available.'],
-                    );
+                        DB::table('appointment_resources')->insert([
+                            'appointment_id' => $appointment->getKey(),
+                            'resource_id' => $match['resource_id'],
+                            'active' => true,
+                            'occupied' => DB::raw($range),
+                        ]);
+                    });
+
+                    $reserved = true;
+                    break;
+                } catch (QueryException $exception) {
+                    if (! $this->isExclusionViolation($exception)) {
+                        throw $exception;
+                    }
                 }
+            }
 
-                throw $exception;
+            if (! $reserved) {
+                throw new AppointmentBookingException(
+                    'SLOT_UNAVAILABLE',
+                    'The selected slot is no longer available.',
+                );
             }
 
             AppointmentEvent::query()->create([
@@ -202,8 +179,8 @@ final class AppointmentCreator
                     'after' => [
                         'status' => AppointmentStatus::Pending->value,
                         'service_id' => $service->getKey(),
-                        'practitioner_id' => $practitioner->getKey(),
-                        'resource_id' => $resource->getKey(),
+                        'practitioner_id' => $match['practitioner_id'],
+                        'resource_id' => $match['resource_id'],
                         'reason_code' => 'public_booking_created',
                     ],
                 ],
@@ -213,7 +190,6 @@ final class AppointmentCreator
                 $record,
                 201,
                 [
-                    'appointment_id' => $appointment->getKey(),
                     'status' => AppointmentStatus::Pending->value,
                     'start_at' => $requestedStart->format('Y-m-d\TH:i:s\Z'),
                     'end_at' => $requestedEnd->format('Y-m-d\TH:i:s\Z'),
@@ -223,7 +199,7 @@ final class AppointmentCreator
         }, 3);
     }
 
-    private function lockIdempotencyRecord(string $key, string $requestHash): IdempotencyRecord
+    private function lockIdempotencyRecord(string $ownerScope, string $key, string $requestHash): IdempotencyRecord
     {
         $now = now('UTC');
 
@@ -234,7 +210,7 @@ final class AppointmentCreator
              ON CONFLICT (owner_scope, key) DO NOTHING',
             [
                 (string) Str::uuid(),
-                self::IDEMPOTENCY_SCOPE,
+                $ownerScope,
                 $key,
                 $requestHash,
                 $now,
@@ -243,7 +219,7 @@ final class AppointmentCreator
         );
 
         $record = IdempotencyRecord::query()
-            ->where('owner_scope', self::IDEMPOTENCY_SCOPE)
+            ->where('owner_scope', $ownerScope)
             ->where('key', $key)
             ->lockForUpdate()
             ->firstOrFail();
@@ -278,23 +254,6 @@ final class AppointmentCreator
         ])->save();
 
         return ['status' => $status, 'body' => $body];
-    }
-
-    private function findOrCreatePatient(string $name, string $mobile): Patient
-    {
-        $existing = Patient::query()
-            ->where('mobile_normalized', $mobile)
-            ->lockForUpdate()
-            ->first();
-
-        if ($existing !== null) {
-            return $existing;
-        }
-
-        return Patient::query()->create([
-            'full_name' => $name,
-            'mobile_normalized' => $mobile,
-        ]);
     }
 
     private function isExclusionViolation(QueryException $exception): bool

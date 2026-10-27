@@ -147,7 +147,7 @@ final class AvailabilityEngine
 
     private function asUtc(mixed $value): DateTimeImmutable
     {
-        if (!$value instanceof DateTimeImmutable && !is_string($value)) {
+        if (! $value instanceof DateTimeImmutable && ! is_string($value)) {
             throw new InvalidArgumentException('Date/time values must be strings or DateTimeImmutable instances.');
         }
 

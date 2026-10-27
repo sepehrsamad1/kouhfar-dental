@@ -111,12 +111,7 @@ final class AvailabilityEngine
         return $results;
     }
 
-    /**
-     * Index active appointment occupancy once so each candidate checks only the
-     * intervals for its practitioner and resource, not every appointment in the clinic.
-     *
-     * @return array<string, array<string, list<array{start: DateTimeImmutable, end: DateTimeImmutable}>>>
-     */
+    // Index active appointment occupancy once, grouped by practitioner and resource.
     private function buildOccupancyIndex(array $appointments, DateTimeImmutable $now): array
     {
         $index = ['practitioners' => [], 'resources' => []];
@@ -155,9 +150,6 @@ final class AvailabilityEngine
         return $index;
     }
 
-    /**
-     * @param list<array{start: DateTimeImmutable, end: DateTimeImmutable}> $intervals
-     */
     private function hasConflict(DateTimeImmutable $start, DateTimeImmutable $end, array $intervals): bool
     {
         foreach ($intervals as $interval) {

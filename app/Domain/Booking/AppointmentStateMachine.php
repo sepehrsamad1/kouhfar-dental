@@ -6,6 +6,7 @@ namespace App\Domain\Booking;
 
 use App\Appointment;
 use App\AppointmentEvent;
+use App\AuditLog;
 use App\Enums\AppointmentStatus;
 use Carbon\CarbonImmutable;
 use DateTimeImmutable;
@@ -97,6 +98,18 @@ final class AppointmentStateMachine
             'from_status' => AppointmentStatus::Pending,
             'to_status' => AppointmentStatus::Expired,
             'occurred_at' => $now,
+        ]);
+
+        AuditLog::query()->create([
+            'actor_id' => null,
+            'action' => 'appointment.status_changed',
+            'target_type' => 'Appointment',
+            'target_id' => $appointment->getKey(),
+            'occurred_at' => $now,
+            'request_id' => request()->attributes->get('request_id'),
+            'meta' => [
+                'status' => AppointmentStatus::Expired->value,
+            ],
         ]);
 
         return true;

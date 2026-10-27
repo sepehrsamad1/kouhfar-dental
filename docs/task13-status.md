@@ -1,45 +1,36 @@
 # Task 13 — Availability engine and timezone-correct slot generation
 
-Status: STARTED — design/repository inspection only. Core behavior is paused pending owner decisions listed below, as required by the task prompt.
+Status: IN PROGRESS — owner decisions recorded; implementation on this branch only.
 
-## Branch and dependencies
-
+## Branch and scope
 - Branch: `task/13-availability-engine`
-- Base: current `main`, including Task 12 merge and documentation status updates.
-- Dependencies: Task 03 API/architecture contract and Task 12 configuration foundations are present.
-- Confirmed clinic timezone: `Asia/Tehran`.
-- Confirmed recurring clinic hours: 12:00-20:00, Saturday through Thursday.
-- Confirmed resources: two shared dental units and one consultation space.
+- Do not merge to `main` without explicit owner approval.
+- Clinic timezone: `Asia/Tehran`.
+- Recurring clinic hours: 12:00–20:00, Saturday through Thursday.
+- Shared resources: two dental units and one consultation space.
 - Cross-midnight working periods are prohibited.
 
-## Planned implementation
+## Owner decisions (2026-10-27)
+- Holiday policy: only configured exceptions entered by clinic management close/alter the schedule; Iranian public holidays are not automatically closed.
+- Pending appointment hold: 1 hour. A pending appointment occupies capacity only while its `expires_at` is strictly later than the injected/server clock.
+- Minimum booking notice: 24 hours from the current instant.
+- Booking horizon: 14 calendar days in the clinic timezone. The final instant is the end of the local date 14 days after the current local date; slots after that boundary are excluded.
+- Slot-start granularity: 5 minutes, aligned to local wall-clock minutes.
+- Performance budget (proposed pilot target): availability computation should have p95 <= 250 ms and p99 <= 500 ms for a 14-day query, up to 10 active practitioners, 3 shared resources, 30 configured services, and 1,000 overlapping/relevant appointment records, measured on the CI runner with a warmed process and without external network calls. Record actual sample count and environment. This is a proposed engineering target for the pilot, not a production SLA; report if the available test environment cannot reliably measure it.
 
-1. Define a pure availability domain service that receives normalized working periods, exceptions, practitioner/service eligibility, occupancy, resource capacity, current instant, minimum notice, booking horizon, and slot granularity.
-2. Put Eloquent/database reads behind a dedicated adapter; keep core slot math independent of Laravel/database.
-3. Treat pending appointments as capacity-occupying only while their `expires_at` is after the injected server clock; confirmed appointments always occupy capacity.
-4. Require the complete service duration plus configured buffers to fit inside valid working time and require both practitioner and a compatible shared resource to be conflict-free.
-5. Calculate schedule boundaries in `Asia/Tehran`; return UTC ISO instants and a separate local display value.
-6. Add explicit no-store headers to availability responses where applicable.
-7. Add deterministic table tests and property-based/invariant tests for working-hour boundaries, breaks, closures, occupancy, notice, horizon, resources, and timezone transitions.
-8. Measure a representative clinic workload and record environment, fixture size, and observed timings.
+## Algorithm contract
+1. Core slot calculation must be a pure, database-independent function over normalized working periods, exceptions, service duration/buffers, practitioner/service eligibility, compatible resources, occupied appointments, current instant, notice, horizon and grid.
+2. Database access is isolated in an adapter. Availability reads do not themselves make booking creation race-safe; the eventual write path must use transactional/database conflict protection.
+3. A slot is returned only when the complete occupied interval (start minus pre-buffer through end plus post-buffer) fits within working time and has no practitioner or compatible-resource conflict.
+4. Interpret schedules in `Asia/Tehran`; return UTC ISO instants and a separate clinic-local display value.
+5. Expired pending holds are ignored using the server clock, even if a scheduled expiry job has not run. Confirmed appointments always occupy capacity; cancelled, expired, completed and no-show appointments do not block future slots.
+6. Availability responses use `Cache-Control: no-store` where exposed to clients.
+7. Public holidays are ordinary working dates unless an explicit configured exception says otherwise.
+8. Grid is fixed at five minutes for this version; service duration and buffers need not be multiples of five, but starts remain aligned to the five-minute grid.
 
-## Owner decisions required before finalizing behavior
-
-- **Holiday/exception policy:** Clinic timezone and weekly hours are confirmed, but exact holiday dates and whether the clinic closes on public holidays are not. No public holiday should be auto-closed without approval. Confirm whether Task 13 should honor configured `schedule_exceptions` and treat all other dates as ordinary according to weekly hours.
-- **Pending hold expiry:** Product spec D6 lists 2 hours as a proposal, not an approved value. Confirm the intended expiry duration. Regardless of duration, expired pending appointments must not occupy capacity based on the server clock even if a scheduled expiry job has not yet run.
-- **Minimum notice and booking horizon:** No approved values are recorded. Confirm the minimum lead time and maximum days ahead a patient may book.
-- **Performance budget:** Confirm a target (for example, maximum response time and a representative date range/concurrency). Do not treat an illustrative target as approved.
-
-## Slot granularity
-
-Not yet finalized. Proposed implementation should use a configurable, documented fixed grid (likely 5-minute increments) and only return starts aligned to that grid; confirm before making it an API guarantee.
-
-## Safety and scope
-
-- No real patient data, clinic-specific practitioner identities, qualifications, break policies, or holiday closures are invented.
-- No production migrations, production seeding, deployment, or merge to `main` are performed by this task branch.
-- Task 13 must not claim that availability reads alone make booking creation race-safe; final booking writes must continue to use database-backed conflict protection/transactions.
-
-## Verification record
-
-No Task 13 code or tests have been committed yet. Verification will be recorded only after implementation and CI evidence are available.
+## Verification plan
+- Deterministic table tests for opening/closing boundaries, breaks, closures, minimum notice, 14-day horizon, resource and practitioner conflicts, and expired pending holds.
+- Property/invariant tests: every emitted slot fits working hours and the horizon, meets notice, avoids occupancy, and has aligned starts.
+- Timezone fixtures around local midnight and timezone offset changes; no cross-midnight work periods.
+- Benchmark the representative workload above and record observed timings.
+- No production migrations, production seeding, deployment or merge to `main` in this task.

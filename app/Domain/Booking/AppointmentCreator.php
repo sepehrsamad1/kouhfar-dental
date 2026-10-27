@@ -27,16 +27,18 @@ final class AppointmentCreator
 
     private const IDEMPOTENCY_TTL_HOURS = 24;
 
+    private AppointmentStateMachine $states;
+
+    private AvailabilityRepository $availability;
+
     public function __construct(
-        private readonly AppointmentStateMachine $states,
-        private readonly AvailabilityRepository $availability,
+        AppointmentStateMachine $states,
+        AvailabilityRepository $availability,
     ) {
+        $this->states = $states;
+        $this->availability = $availability;
     }
 
-    /**
-     * @param array{patient_name:string,mobile:string,service_id:string,practitioner_id:string,resource_id:string,start_at:string} $input
-     * @return array{status:int,body:array<string,mixed>}
-     */
     public function create(array $input, string $idempotencyKey): array
     {
         $normalizedInput = [

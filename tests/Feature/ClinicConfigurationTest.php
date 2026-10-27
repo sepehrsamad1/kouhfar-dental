@@ -11,6 +11,7 @@ use App\Patient;
 use App\Practitioner;
 use App\ScheduleBreak;
 use App\ScheduleException;
+use App\WorkingHour;
 use App\Service;
 use App\StaffUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -498,7 +499,7 @@ it('blocks narrowing practitioner hours when a confirmed appointment falls outsi
     $admin = configurationStaff('admin');
     $practitioner = Practitioner::factory()->create(['is_active' => true]);
     $service = Service::factory()->create();
-    $hour = App\WorkingHour::query()->create([
+    $hour = WorkingHour::query()->create([
         'practitioner_id' => $practitioner->id,
         'weekday' => 6,
         'start_local' => '12:00',

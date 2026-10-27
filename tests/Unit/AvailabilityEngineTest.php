@@ -218,6 +218,105 @@ it('blocks practitioner and shared-resource conflicts independently', function (
         ->and($practitionerConflict)->toBeEmpty();
 });
 
+
+it('keeps generated slots valid across randomized durations, buffers, and working periods', function (): void {
+    mt_srand(13013);
+    $engine = new AvailabilityEngine;
+
+    for ($case = 0; $case < 50; $case++) {
+        $duration = mt_rand(1, 12) * 5;
+        $before = mt_rand(0, 3) * 5;
+        $after = mt_rand(0, 3) * 5;
+        $startMinute = mt_rand(0, 4) * 5;
+        $periodStart = new DateTimeImmutable(sprintf('2026-10-28 09:%02d:00', $startMinute), new DateTimeZone('Asia/Tehran'));
+        $periodEnd = $periodStart->modify('+8 hours');
+
+        $slots = $engine->slots([
+            'timezone' => 'Asia/Tehran',
+            'now' => new DateTimeImmutable('2026-10-27T06:00:00Z'),
+            'duration_minutes' => $duration,
+            'buffer_before_minutes' => $before,
+            'buffer_after_minutes' => $after,
+            'minimum_notice_minutes' => 0,
+            'horizon_days' => 14,
+            'grid_minutes' => 5,
+            'practitioner_ids' => ['p1'],
+            'resources' => [['id' => 'chair-1', 'kind' => 'dental_unit', 'active' => true]],
+            'required_resource_kind' => 'dental_unit',
+            'working_periods' => [['start' => $periodStart, 'end' => $periodEnd]],
+            'closed_dates' => [],
+            'appointments' => [],
+        ]);
+
+        foreach ($slots as $slot) {
+            $start = new DateTimeImmutable($slot['start_at']);
+            $end = new DateTimeImmutable($slot['end_at']);
+            $localStart = $start->setTimezone(new DateTimeZone('Asia/Tehran'));
+            $occupiedStart = $start->modify(sprintf('-%d minutes', $before));
+            $occupiedEnd = $end->modify(sprintf('+%d minutes', $after));
+
+            expect($localStart->format('Y-m-d'))->toBe('2026-10-28')
+                ->and((int) $localStart->format('i') % 5)->toBe(0)
+                ->and($end > $start)->toBeTrue()
+                ->and($occupiedStart >= $periodStart)->toBeTrue()
+                ->and($occupiedEnd <= $periodEnd)->toBeTrue();
+        }
+    }
+});
+
+it('converts clinic-local wall time to UTC while preserving the separate local display value', function (): void {
+    $engine = new AvailabilityEngine;
+    $slots = $engine->slots([
+        'timezone' => 'Asia/Tehran',
+        'now' => new DateTimeImmutable('2026-10-27T20:30:00Z'),
+        'duration_minutes' => 30,
+        'buffer_before_minutes' => 0,
+        'buffer_after_minutes' => 0,
+        'minimum_notice_minutes' => 0,
+        'horizon_days' => 14,
+        'grid_minutes' => 5,
+        'practitioner_ids' => ['p1'],
+        'resources' => [['id' => 'chair-1', 'kind' => 'dental_unit', 'active' => true]],
+        'required_resource_kind' => 'dental_unit',
+        'working_periods' => [[
+            'start' => new DateTimeImmutable('2026-10-28 09:00:00', new DateTimeZone('Asia/Tehran')),
+            'end' => new DateTimeImmutable('2026-10-28 10:00:00', new DateTimeZone('Asia/Tehran')),
+        ]],
+        'closed_dates' => [],
+        'appointments' => [],
+    ]);
+
+    expect($slots[0]['display_local'])->toBe('2026-10-28 09:00')
+        ->and($slots[0]['start_at'])->toBe('2026-10-28T05:30:00Z')
+        ->and($slots[0]['timezone'])->toBe('Asia/Tehran');
+});
+
+it('rejects cross-midnight working periods instead of inventing a next-day rule', function (): void {
+    $engine = new AvailabilityEngine;
+
+    $slots = $engine->slots([
+        'timezone' => 'Asia/Tehran',
+        'now' => new DateTimeImmutable('2026-10-27T06:00:00Z'),
+        'duration_minutes' => 30,
+        'buffer_before_minutes' => 0,
+        'buffer_after_minutes' => 0,
+        'minimum_notice_minutes' => 0,
+        'horizon_days' => 14,
+        'grid_minutes' => 5,
+        'practitioner_ids' => ['p1'],
+        'resources' => [['id' => 'chair-1', 'kind' => 'dental_unit', 'active' => true]],
+        'required_resource_kind' => 'dental_unit',
+        'working_periods' => [[
+            'start' => new DateTimeImmutable('2026-10-28 23:30:00', new DateTimeZone('Asia/Tehran')),
+            'end' => new DateTimeImmutable('2026-10-29 00:30:00', new DateTimeZone('Asia/Tehran')),
+        ]],
+        'closed_dates' => [],
+        'appointments' => [],
+    ]);
+
+    expect($slots)->toBeEmpty();
+});
+
 it('records an engine-core benchmark for a 14-day, 1000-appointment workload', function (): void {
     $engine = new AvailabilityEngine;
     $timezone = new DateTimeZone('Asia/Tehran');

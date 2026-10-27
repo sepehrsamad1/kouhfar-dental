@@ -16,9 +16,9 @@ Status: IN PROGRESS. Do not treat this task as verified until CI passes and the 
 - Nullable practitioner ownership for clinic-wide schedule exceptions.
 - Staff configuration page and authenticated staff routes for services, practitioners, resources, clinic hours, practitioner hours, breaks, and schedule exceptions.
 - Admin-only configuration writes based on the existing Task 10 role matrix; reception/practitioner can read the settings.
-- Service name, duration, buffer-before, buffer-after, active status, and optimistic version check.
+- Service name, duration, buffer-before, buffer-after, active status, and optimistic version check. Practitioner and resource display/type/active settings also have optimistic version checks.
 - New services, practitioners, and resources are initially inactive. No fictional catalog, practitioner, resource inventory, or practitioner-to-service assignment is seeded.
-- Closure/holiday exceptions are blocked when they overlap confirmed appointments. Service duration/buffer changes are blocked when future confirmed appointments reference that service. No appointments are automatically modified.
+- Closure/holiday exceptions and recurring breaks are blocked when they overlap confirmed appointments. Service duration/buffer changes and practitioner/resource deactivation are blocked when future confirmed appointments reference them. No appointments are automatically modified.
 - Initial feature tests cover role authorization, invalid cross-midnight periods, stale service version, and appointment preservation.
 
 ## Owner-confirmed values
@@ -39,8 +39,8 @@ Status: IN PROGRESS. Do not treat this task as verified until CI passes and the 
 
 ## Known incomplete acceptance criteria
 
-- Full edit/deactivate workflows for practitioners, resources, working hours, breaks, and exceptions remain to be completed.
-- Schedule impact handling and conflict validation need broader automated coverage, including recurring breaks and all relevant appointment states.
+- Full edit/deactivate workflows for recurring clinic/practitioner hours, breaks, and exceptions remain to be completed; these currently support creation and listing only.
+- Schedule impact handling and conflict validation need broader automated coverage, including recurring breaks, exception overlaps, and all relevant appointment states.
 - No visual browser checks at 375px, 768px, and 1440px have been run for this new staff screen.
 - Tests and CI have not yet been executed for this branch.
 - The current staff screen uses the existing simple Blade panel style; it does not redesign the public website.

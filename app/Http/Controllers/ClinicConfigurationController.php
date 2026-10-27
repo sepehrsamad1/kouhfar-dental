@@ -203,7 +203,7 @@ final class ClinicConfigurationController
     {
         Gate::authorize('manage-configuration');
         $data = $request->validate([
-            'weekday' => ['required', 'integer', Rule::in([1, 2, 3, 4, 6, 7])],
+            'weekday' => ['required', 'integer', Rule::in([1, 2, 3, 4, 6, 7]), Rule::unique('clinic_working_hours', 'weekday')],
             'start_local' => ['required', 'date_format:H:i'],
             'end_local' => ['required', 'date_format:H:i', 'after:start_local'],
             'timezone' => ['required', Rule::in(['Asia/Tehran'])],

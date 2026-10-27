@@ -31,10 +31,17 @@ final class AppointmentCreator
 {
     private const IDEMPOTENCY_TTL_HOURS = 24;
 
+    private AppointmentStateMachine $states;
+
+    private AvailabilityRepository $availability;
+
     public function __construct(
-        private readonly AppointmentStateMachine $states,
-        private readonly AvailabilityRepository $availability,
-    ) {}
+        AppointmentStateMachine $states,
+        AvailabilityRepository $availability,
+    ) {
+        $this->states = $states;
+        $this->availability = $availability;
+    }
 
     public function create(array $input, string $idempotencyKey, string $ownerScope = 'public:appointment:create:v1'): array
     {

@@ -18,6 +18,7 @@ use DateTimeImmutable;
 use DateTimeZone;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 final class AvailabilityRepository
 {
@@ -61,25 +62,31 @@ final class AvailabilityRepository
             ->with(['practitioners', 'resources', 'service'])
             ->get();
 
+        $appointmentIds = $appointmentModels->modelKeys();
+        $practitionersByAppointment = DB::table('appointment_practitioners')
+            ->whereIn('appointment_id', $appointmentIds)
+            ->where('active', true)
+            ->get(['appointment_id', 'practitioner_id'])
+            ->groupBy('appointment_id');
+        $resourcesByAppointment = DB::table('appointment_resources')
+            ->whereIn('appointment_id', $appointmentIds)
+            ->where('active', true)
+            ->get(['appointment_id', 'resource_id'])
+            ->groupBy('appointment_id');
+
         $appointments = [];
         foreach ($appointmentModels as $appointment) {
+            /** @var Service $serviceModel */
             $serviceModel = $appointment->service;
-            $appointmentPractitioners = $appointment->practitioners;
-            $appointmentResources = $appointment->resources;
-            $practitionerIds = [];
-            foreach ($appointmentPractitioners as $appointmentPractitioner) {
-                if ((bool) $appointmentPractitioner->pivot->active) {
-                    $practitionerIds[] = (string) $appointmentPractitioner->getKey();
-                }
-            }
-            $resourceIds = [];
-            foreach ($appointmentResources as $appointmentResource) {
-                if ((bool) $appointmentResource->pivot->active) {
-                    $resourceIds[] = (string) $appointmentResource->getKey();
-                }
-            }
-            $status = $appointment->status;
-            $statusValue = $status instanceof AppointmentStatus ? $status->value : (string) $status;
+            $practitionerIds = $practitionersByAppointment->get($appointment->getKey(), collect())
+                ->pluck('practitioner_id')
+                ->map(static fn ($id): string => (string) $id)
+                ->all();
+            $resourceIds = $resourcesByAppointment->get($appointment->getKey(), collect())
+                ->pluck('resource_id')
+                ->map(static fn ($id): string => (string) $id)
+                ->all();
+            $statusValue = (string) $appointment->getRawOriginal('status');
             $startAt = CarbonImmutable::parse((string) $appointment->start_at);
             $endAt = CarbonImmutable::parse((string) $appointment->end_at);
             $expiresAt = $appointment->expires_at === null
@@ -181,8 +188,8 @@ final class AvailabilityRepository
 
                     continue;
                 }
-                $exceptionStart = $exception->starts_at->toDateTimeImmutable();
-                $exceptionEnd = $exception->ends_at->toDateTimeImmutable();
+                $exceptionStart = CarbonImmutable::parse((string) $exception->starts_at)->toDateTimeImmutable();
+                $exceptionEnd = CarbonImmutable::parse((string) $exception->ends_at)->toDateTimeImmutable();
                 $dayStart = $date->startOfDay()->toDateTimeImmutable();
                 $dayEnd = $date->addDay()->startOfDay()->toDateTimeImmutable();
                 $openingStart = $exceptionStart > $dayStart ? $exceptionStart : $dayStart;
@@ -233,8 +240,8 @@ final class AvailabilityRepository
                 if (in_array($exception->kind, ['closed', 'holiday'], true)) {
                     $segments = $this->subtract(
                         $segments,
-                        $exception->starts_at->toDateTimeImmutable(),
-                        $exception->ends_at->toDateTimeImmutable()
+                        CarbonImmutable::parse((string) $exception->starts_at)->toDateTimeImmutable(),
+                        CarbonImmutable::parse((string) $exception->ends_at)->toDateTimeImmutable()
                     );
                 }
             }

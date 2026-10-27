@@ -70,10 +70,10 @@ No practitioner records or service assignments are seeded because actual practit
 
 ## Known incomplete acceptance criteria
 
-- Versioned edit/delete controls now exist for clinic hours, practitioner hours, breaks, and exceptions. CI must be rerun after the new resource-kind migration, seeder, and tests.
+- Versioned edit/delete controls exist for clinic hours, practitioner hours, breaks, and exceptions. Admins can explicitly assign services to practitioners; removals that affect future confirmed appointments are blocked.
 - Schedule impact handling and conflict validation need broader automated coverage, including recurring breaks, exception overlaps, and all relevant appointment states.
 - No visual browser checks at 375px, 768px, and 1440px have been run for this new staff screen.
-- Previous GitHub Actions run `40425347718` passed on code commit `42ad11761afeaae56965dca3749b6acbcb100419`: JavaScript lint/typecheck/build, Pint, PHPStan, PostgreSQL migrations, 129 Laravel tests (604 assertions), and 4 browser smoke tests. New resource-kind and starter-catalog changes have not yet passed CI.
+- GitHub Actions run `40430514875` passed on code commit `340ec1729d620a48d248a09e402ac999155f791b`: JavaScript lint/typecheck/build, Pint, PHPStan, PostgreSQL migrations, 133 Laravel tests (629 assertions), and 4 Playwright browser smoke tests.
 - The current staff screen uses the existing simple Blade panel style; it does not redesign the public website.
 
 ## Rollback and migration notes
@@ -82,8 +82,7 @@ Migration `2026_10_27_000003_add_task12_configuration_versioning.php` adds versi
 
 ## Next step
 
-1. Confirm the latest GitHub Actions run passes after the resource-kind migration, starter seeder, and practitioner-assignment UI/tests; fix any failures.
-2. Perform responsive visual checks at 375px, 768px, and 1440px, including the existing homepage hero-stat icons and Persian typography.
-3. Keep practitioner/service assignments empty until clinic management enters real practitioner identities and confirms qualifications.
-4. Do not run `ClinicStarterConfigurationSeeder` in production without explicit approval; review its inactive values first.
-5. Keep the PR draft until CI, responsive checks, and connected-account review are complete.
+1. Perform responsive visual checks at 375px, 768px, and 1440px, including the existing homepage hero-stat icons and Persian typography.
+2. Keep practitioner/service assignments empty until clinic management enters real practitioner identities and confirms qualifications.
+3. Do not run `ClinicStarterConfigurationSeeder` in production without explicit approval; review its inactive values first.
+4. Keep the PR draft until responsive checks and connected-account review are complete.

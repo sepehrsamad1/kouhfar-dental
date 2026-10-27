@@ -124,6 +124,35 @@ final class ClinicConfigurationController
         return back()->with('success', 'پزشک به صورت غیرفعال ثبت شد؛ صلاحیت یا خدماتی به او اختصاص داده نشده است.');
     }
 
+    public function updatePractitioner(Request $request, Practitioner $practitioner): RedirectResponse
+    {
+        Gate::authorize('update', $practitioner);
+        $data = $request->validate([
+            'version' => ['required', 'integer', 'min:1'],
+            'display_name_fa' => ['required', 'string', 'min:2', 'max:200'],
+            'is_active' => ['required', 'boolean'],
+        ]);
+        if (! (bool) $data['is_active'] && $practitioner->is_active) {
+            $impacted = \\App\\Appointment::query()
+                ->where('status', 'confirmed')->where('start_at', '>=', now('UTC'))
+                ->whereHas('practitioners', fn ($builder) => $builder->whereKey($practitioner->id)->where('appointment_practitioners.active', true))
+                ->orderBy('start_at')->get(['id']);
+            if ($impacted->isNotEmpty()) {
+                throw ValidationException::withMessages(['practitioner' => 'غیرفعال‌سازی پزشک با نوبت‌های تأییدشده مرتبط است. تغییری ذخیره نشد. شناسه نوبت‌ها: '.$impacted->pluck('id')->implode(', ')]);
+            }
+        }
+        $version = (int) $data['version'];
+        unset($data['version']);
+        $updated = Practitioner::query()->whereKey($practitioner->id)->where('version', $version)
+            ->update($data + ['version' => DB::raw('version + 1'), 'updated_at' => now('UTC')]);
+        if ($updated !== 1) {
+            throw ValidationException::withMessages(['version' => 'تنظیمات پزشک هم‌زمان تغییر کرده است. صفحه را تازه‌سازی کنید.']);
+        }
+        AuditLogger::record($request->user('staff'), 'configuration.practitioner_updated', $practitioner, null, ['is_active' => (bool) $data['is_active']]);
+
+        return back()->with('success', 'تنظیمات پزشک ذخیره شد.');
+    }
+
     public function storeResource(Request $request): RedirectResponse
     {
         Gate::authorize('create', Resource::class);
@@ -135,6 +164,36 @@ final class ClinicConfigurationController
         AuditLogger::record($request->user('staff'), 'configuration.resource_created', $resource, null, ['is_active' => false]);
 
         return back()->with('success', 'منبع به صورت غیرفعال ثبت شد؛ سیاست تخصیص نوبت هنوز تعریف نشده است.');
+    }
+
+    public function updateResource(Request $request, Resource $resource): RedirectResponse
+    {
+        Gate::authorize('update', $resource);
+        $data = $request->validate([
+            'version' => ['required', 'integer', 'min:1'],
+            'name_fa' => ['required', 'string', 'min:2', 'max:200'],
+            'kind' => ['required', 'string', 'min:2', 'max:80'],
+            'is_active' => ['required', 'boolean'],
+        ]);
+        if (! (bool) $data['is_active'] && $resource->is_active) {
+            $impacted = \\App\\Appointment::query()
+                ->where('status', 'confirmed')->where('start_at', '>=', now('UTC'))
+                ->whereHas('resources', fn ($builder) => $builder->whereKey($resource->id)->where('appointment_resources.active', true))
+                ->orderBy('start_at')->get(['id']);
+            if ($impacted->isNotEmpty()) {
+                throw ValidationException::withMessages(['resource' => 'غیرفعال‌سازی منبع با نوبت‌های تأییدشده مرتبط است. تغییری ذخیره نشد. شناسه نوبت‌ها: '.$impacted->pluck('id')->implode(', ')]);
+            }
+        }
+        $version = (int) $data['version'];
+        unset($data['version']);
+        $updated = Resource::query()->whereKey($resource->id)->where('version', $version)
+            ->update($data + ['version' => DB::raw('version + 1'), 'updated_at' => now('UTC')]);
+        if ($updated !== 1) {
+            throw ValidationException::withMessages(['version' => 'تنظیمات منبع هم‌زمان تغییر کرده است. صفحه را تازه‌سازی کنید.']);
+        }
+        AuditLogger::record($request->user('staff'), 'configuration.resource_updated', $resource, null, ['is_active' => (bool) $data['is_active']]);
+
+        return back()->with('success', 'تنظیمات منبع ذخیره شد.');
     }
 
     public function storeClinicHour(Request $request): RedirectResponse

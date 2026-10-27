@@ -275,22 +275,10 @@ final class AppointmentCreator
             return $existing;
         }
 
-        $row = DB::selectOne(
-            'INSERT INTO patients (id, full_name, mobile_normalized, created_at, updated_at)
-             VALUES (?, ?, ?, ?, ?)
-             ON CONFLICT (mobile_normalized)
-             DO UPDATE SET updated_at = patients.updated_at
-             RETURNING id',
-            [
-                (string) Str::uuid(),
-                $name,
-                $mobile,
-                now('UTC'),
-                now('UTC'),
-            ],
-        );
-
-        return Patient::query()->findOrFail($row->id);
+        return Patient::query()->create([
+            'full_name' => $name,
+            'mobile_normalized' => $mobile,
+        ]);
     }
 
     private function isExclusionViolation(QueryException $exception): bool

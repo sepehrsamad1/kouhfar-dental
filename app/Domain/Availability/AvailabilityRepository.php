@@ -60,20 +60,42 @@ final class AvailabilityRepository
             ->with(['practitioners', 'resources', 'service'])
             ->get();
 
-        $appointments = $appointmentModels->map(static function (Appointment $appointment): array {
-            return [
-                'start' => $appointment->start_at->subMinutes($appointment->service->buffer_before_minutes)->toDateTimeImmutable(),
-                'end' => $appointment->end_at->addMinutes($appointment->service->buffer_after_minutes)->toDateTimeImmutable(),
-                'status' => $appointment->status->value,
-                'expires_at' => $appointment->expires_at?->toDateTimeImmutable(),
-                'practitioner_ids' => $appointment->practitioners
-                    ->filter(fn ($practitioner) => (bool) $practitioner->pivot->active)
-                    ->pluck('id')->all(),
-                'resource_ids' => $appointment->resources
-                    ->filter(fn ($resource) => (bool) $resource->pivot->active)
-                    ->pluck('id')->all(),
+        $appointments = [];
+        foreach ($appointmentModels as $appointment) {
+            $serviceModel = $appointment->service;
+            /** @var EloquentCollection<int, Practitioner> $appointmentPractitioners */
+            $appointmentPractitioners = $appointment->practitioners;
+            /** @var EloquentCollection<int, Resource> $appointmentResources */
+            $appointmentResources = $appointment->resources;
+            $practitionerIds = [];
+            foreach ($appointmentPractitioners as $appointmentPractitioner) {
+                if ((bool) $appointmentPractitioner->pivot->active) {
+                    $practitionerIds[] = (string) $appointmentPractitioner->getKey();
+                }
+            }
+            $resourceIds = [];
+            foreach ($appointmentResources as $appointmentResource) {
+                if ((bool) $appointmentResource->pivot->active) {
+                    $resourceIds[] = (string) $appointmentResource->getKey();
+                }
+            }
+            $status = $appointment->status;
+            $statusValue = $status instanceof \\App\\Enums\\AppointmentStatus ? $status->value : (string) $status;
+            $startAt = CarbonImmutable::parse((string) $appointment->start_at);
+            $endAt = CarbonImmutable::parse((string) $appointment->end_at);
+            $expiresAt = $appointment->expires_at === null
+                ? null
+                : CarbonImmutable::parse((string) $appointment->expires_at);
+
+            $appointments[] = [
+                'start' => $startAt->subMinutes((int) $serviceModel->buffer_before_minutes)->toDateTimeImmutable(),
+                'end' => $endAt->addMinutes((int) $serviceModel->buffer_after_minutes)->toDateTimeImmutable(),
+                'status' => $statusValue,
+                'expires_at' => $expiresAt?->toDateTimeImmutable(),
+                'practitioner_ids' => $practitionerIds,
+                'resource_ids' => $resourceIds,
             ];
-        })->all();
+        }
 
         $engine = new AvailabilityEngine;
         $slots = [];

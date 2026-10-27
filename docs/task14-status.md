@@ -1,6 +1,6 @@
 # Task 14 — Transactional appointment creation
 
-Status: IMPLEMENTED ON DRAFT BRANCH — CI verification pending.
+Status: VERIFIED ON DRAFT BRANCH — merge pending owner approval.
 
 ## Branch and scope
 - Branch: `task/14-appointment-creation`

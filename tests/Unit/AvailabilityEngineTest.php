@@ -218,7 +218,6 @@ it('blocks practitioner and shared-resource conflicts independently', function (
         ->and($practitionerConflict)->toBeEmpty();
 });
 
-
 it('keeps generated slots valid across randomized durations, buffers, and working periods', function (): void {
     mt_srand(13013);
     $engine = new AvailabilityEngine;

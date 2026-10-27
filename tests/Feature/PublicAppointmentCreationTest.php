@@ -200,6 +200,75 @@ it('enforces buffer occupancy at the database level', function (): void {
         ->and(DB::table('appointment_resources')->where('resource_id', $resource->id)->where('active', true)->count())->toBe(1);
 });
 
+it('expires an idempotency key after 24 hours and allows it to be reused', function (): void {
+    [$service] = publicBookingFixture();
+    $start = new DateTimeImmutable('2026-10-28 10:00:00', new DateTimeZone('Asia/Tehran'));
+    $key = 'expired-key';
+    DB::table('idempotency_records')->insert([
+        'id' => (string) Str::uuid(),
+        'owner_scope' => 'public:'.hash('sha256', '127.0.0.1|Symfony'),
+        'key' => $key,
+        'request_hash' => hash('sha256', 'old-body'),
+        'response_status' => 201,
+        'response_body' => ['status' => 'pending'],
+        'created_at' => now('UTC')->subDay()->subMinute(),
+        'expires_at' => now('UTC')->subMinute(),
+    ]);
+
+    $response = $this->postJson(route('api.v1.booking.appointments.store'), [
+        'service_id' => $service->id,
+        'start_at' => $start->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d\TH:i:s\Z'),
+        'full_name' => 'بیمار جدید',
+        'mobile' => '09121234567',
+    ], ['Idempotency-Key' => $key, 'User-Agent' => 'Symfony']);
+
+    $response->assertCreated();
+    expect(DB::table('idempotency_records')->where('key', $key)->count())->toBe(1);
+});
+
+it('writes an audit entry for an appointment status transition', function (): void {
+    [$service] = publicBookingFixture();
+    $start = new DateTimeImmutable('2026-10-28 10:00:00', new DateTimeZone('Asia/Tehran'));
+
+    $this->postJson(route('api.v1.booking.appointments.store'), [
+        'service_id' => $service->id,
+        'start_at' => $start->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d\TH:i:s\Z'),
+        'full_name' => 'بیمار حسابرسی',
+        'mobile' => '09121234567',
+    ], ['Idempotency-Key' => 'audit-1'])->assertCreated();
+
+    $appointment = Appointment::query()->firstOrFail();
+    app(\App\Domain\Booking\AppointmentStateMachine::class)->transition(
+        $appointment,
+        AppointmentStatus::Cancelled,
+        'system',
+    );
+
+    expect(DB::table('audit_logs')
+        ->where('target_id', $appointment->id)
+        ->where('action', 'appointment.status_changed')
+        ->count())->toBe(1);
+});
+
+it('lets the database reject an invalid appointment transition', function (): void {
+    [$service] = publicBookingFixture();
+    $start = new DateTimeImmutable('2026-10-28 10:00:00', new DateTimeZone('Asia/Tehran'));
+
+    $this->postJson(route('api.v1.booking.appointments.store'), [
+        'service_id' => $service->id,
+        'start_at' => $start->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d\TH:i:s\Z'),
+        'full_name' => 'بیمار وضعیت',
+        'mobile' => '09121234567',
+    ], ['Idempotency-Key' => 'db-transition-1'])->assertCreated();
+
+    $appointment = Appointment::query()->firstOrFail();
+
+    expect(fn () => DB::table('appointments')
+        ->where('id', $appointment->id)
+        ->update(['status' => AppointmentStatus::Completed->value]))
+        ->toThrow(\Illuminate\Database\QueryException::class);
+});
+
 it('runs the required 50-way PostgreSQL concurrency test when process forking is available', function (): void {
     if (! function_exists('pcntl_fork')) {
         $this->markTestSkipped('PCNTL is required for the 50-way PostgreSQL concurrency proof.');

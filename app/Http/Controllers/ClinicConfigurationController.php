@@ -103,8 +103,16 @@ final class ClinicConfigurationController
             if ($updated !== 1) {
                 return false;
             }
-            AuditLogger::record($request->user('staff'), 'configuration.service_updated', $service, null, [
+            AuditLogger::record($request->user('staff'), 'configuration.service_updated', $service, [
+                'is_active' => $service->is_active,
+                'duration_minutes' => $service->duration_minutes,
+                'buffer_before_minutes' => $service->buffer_before_minutes,
+                'buffer_after_minutes' => $service->buffer_after_minutes,
+            ], [
                 'is_active' => (bool) $data['is_active'],
+                'duration_minutes' => (int) $data['duration_minutes'],
+                'buffer_before_minutes' => (int) $data['buffer_before_minutes'],
+                'buffer_after_minutes' => (int) $data['buffer_after_minutes'],
             ]);
 
             return true;
@@ -151,7 +159,9 @@ final class ClinicConfigurationController
         if ($updated !== 1) {
             throw ValidationException::withMessages(['version' => 'تنظیمات پزشک هم‌زمان تغییر کرده است. صفحه را تازه‌سازی کنید.']);
         }
-        AuditLogger::record($request->user('staff'), 'configuration.practitioner_updated', $practitioner, null, ['is_active' => (bool) $data['is_active']]);
+        AuditLogger::record($request->user('staff'), 'configuration.practitioner_updated', $practitioner, [
+            'is_active' => $practitioner->is_active,
+        ], ['is_active' => (bool) $data['is_active']]);
 
         return back()->with('success', 'تنظیمات پزشک ذخیره شد.');
     }
@@ -194,7 +204,9 @@ final class ClinicConfigurationController
         if ($updated !== 1) {
             throw ValidationException::withMessages(['version' => 'تنظیمات منبع هم‌زمان تغییر کرده است. صفحه را تازه‌سازی کنید.']);
         }
-        AuditLogger::record($request->user('staff'), 'configuration.resource_updated', $resource, null, ['is_active' => (bool) $data['is_active']]);
+        AuditLogger::record($request->user('staff'), 'configuration.resource_updated', $resource, [
+            'is_active' => $resource->is_active,
+        ], ['is_active' => (bool) $data['is_active']]);
 
         return back()->with('success', 'تنظیمات منبع ذخیره شد.');
     }
@@ -235,7 +247,17 @@ final class ClinicConfigurationController
         if ($updated !== 1) {
             throw ValidationException::withMessages(['version' => 'ساعات کلینیک هم‌زمان تغییر کرده است. صفحه را تازه‌سازی کنید.']);
         }
-        AuditLogger::record($request->user('staff'), 'configuration.clinic_hours_updated', $hour, null, ['status' => 'updated']);
+        AuditLogger::record($request->user('staff'), 'configuration.clinic_hours_updated', $hour, [
+            'weekday' => $hour->weekday,
+            'start_local' => substr((string) $hour->start_local, 0, 5),
+            'end_local' => substr((string) $hour->end_local, 0, 5),
+            'timezone' => $hour->timezone,
+        ], [
+            'weekday' => (int) $data['weekday'],
+            'start_local' => $data['start_local'],
+            'end_local' => $data['end_local'],
+            'timezone' => $data['timezone'],
+        ]);
 
         return back()->with('success', 'ساعات کلینیک ذخیره شد.');
     }
@@ -303,7 +325,17 @@ final class ClinicConfigurationController
         if ($updated !== 1) {
             throw ValidationException::withMessages(['version' => 'ساعات پزشک هم‌زمان تغییر کرده است. صفحه را تازه‌سازی کنید.']);
         }
-        AuditLogger::record($request->user('staff'), 'configuration.practitioner_hours_updated', $hour, null, ['practitioner_id' => $data['practitioner_id']]);
+        AuditLogger::record($request->user('staff'), 'configuration.practitioner_hours_updated', $hour, [
+            'practitioner_id' => $hour->practitioner_id,
+            'weekday' => $hour->weekday,
+            'start_local' => substr((string) $hour->start_local, 0, 5),
+            'end_local' => substr((string) $hour->end_local, 0, 5),
+        ], [
+            'practitioner_id' => $data['practitioner_id'],
+            'weekday' => (int) $data['weekday'],
+            'start_local' => $data['start_local'],
+            'end_local' => $data['end_local'],
+        ]);
 
         return back()->with('success', 'ساعات پزشک ذخیره شد.');
     }
@@ -382,7 +414,17 @@ final class ClinicConfigurationController
         if ($updated !== 1) {
             throw ValidationException::withMessages(['version' => 'وقفه هم‌زمان تغییر کرده است. صفحه را تازه‌سازی کنید.']);
         }
-        AuditLogger::record($request->user('staff'), 'configuration.schedule_break_updated', $break, null, ['practitioner_id' => $scope]);
+        AuditLogger::record($request->user('staff'), 'configuration.schedule_break_updated', $break, [
+            'practitioner_id' => $break->practitioner_id,
+            'weekday' => $break->weekday,
+            'start_local' => substr((string) $break->start_local, 0, 5),
+            'end_local' => substr((string) $break->end_local, 0, 5),
+        ], [
+            'practitioner_id' => $scope,
+            'weekday' => (int) $data['weekday'],
+            'start_local' => $data['start_local'],
+            'end_local' => $data['end_local'],
+        ]);
 
         return back()->with('success', 'وقفه ذخیره شد.');
     }
@@ -464,7 +506,17 @@ final class ClinicConfigurationController
         if ($updated !== 1) {
             throw ValidationException::withMessages(['version' => 'استثنای برنامه هم‌زمان تغییر کرده است. صفحه را تازه‌سازی کنید.']);
         }
-        AuditLogger::record($request->user('staff'), 'configuration.schedule_exception_updated', $exception, null, ['status' => $data['kind'], 'practitioner_id' => $scope]);
+        AuditLogger::record($request->user('staff'), 'configuration.schedule_exception_updated', $exception, [
+            'status' => $exception->kind,
+            'practitioner_id' => $exception->practitioner_id,
+            'starts_at' => $exception->starts_at->toIso8601String(),
+            'ends_at' => $exception->ends_at->toIso8601String(),
+        ], [
+            'status' => $data['kind'],
+            'practitioner_id' => $scope,
+            'starts_at' => $data['starts_at']->toIso8601String(),
+            'ends_at' => $data['ends_at']->toIso8601String(),
+        ]);
 
         return back()->with('success', 'استثنای برنامه ذخیره شد.');
     }

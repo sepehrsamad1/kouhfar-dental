@@ -26,6 +26,7 @@
                 <label>مدت (دقیقه) <input type="number" name="duration_minutes" min="1" max="1440" value="{{ $service->duration_minutes }}" required @disabled(! $canManage)></label>
                 <label>وقفه قبل <input type="number" name="buffer_before_minutes" min="0" max="1440" value="{{ $service->buffer_before_minutes }}" required @disabled(! $canManage)></label>
                 <label>وقفه بعد <input type="number" name="buffer_after_minutes" min="0" max="1440" value="{{ $service->buffer_after_minutes }}" required @disabled(! $canManage)></label>
+                <label>نوع منبع موردنیاز <select name="required_resource_kind" @disabled(! $canManage)><option value="">هنوز مشخص نشده</option><option value="dental_unit" @selected($service->required_resource_kind === 'dental_unit')>یونیت دندان‌پزشکی مشترک</option><option value="consultation_room" @selected($service->required_resource_kind === 'consultation_room')>فضای مشاوره</option></select></label>
                 <input type="hidden" name="is_active" value="0" @disabled(! $canManage)><label>فعال <input type="checkbox" name="is_active" value="1" @checked($service->is_active) @disabled(! $canManage)></label>
                 <button type="submit" @disabled(! $canManage)>ذخیره</button>
             </form>
@@ -36,7 +37,8 @@
                 <label>نام <input name="name_fa" maxlength="200" required></label>
                 <label>مدت (دقیقه) <input type="number" name="duration_minutes" min="1" max="1440" required></label>
                 <label>وقفه قبل (دقیقه) <input type="number" name="buffer_before_minutes" min="0" max="1440" value="0" required></label>
-                <label>وقفه بعد (دقیقه) <input type="number" name="buffer_after_minutes" min="0" max="1440" value="0" required></label>
+                <label>وقفه بعد (دقیقه) <input type="number" name="buffer_after_minutes" min="0" max="1440" value="10" required></label>
+                <label>نوع منبع موردنیاز <select name="required_resource_kind"><option value="">هنوز مشخص نشده</option><option value="dental_unit">یونیت دندان‌پزشکی مشترک</option><option value="consultation_room">فضای مشاوره</option></select></label>
                 <button type="submit">ثبت خدمت غیرفعال</button>
             </form>
         @endif

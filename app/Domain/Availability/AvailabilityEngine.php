@@ -115,10 +115,7 @@ final class AvailabilityEngine
      * Index active appointment occupancy once so each candidate checks only the
      * intervals for its practitioner and resource, not every appointment in the clinic.
      *
-     * @return array{
-     *     practitioners: array<string, list<array{start: DateTimeImmutable, end: DateTimeImmutable}>>,
-     *     resources: array<string, list<array{start: DateTimeImmutable, end: DateTimeImmutable}>>
-     * }
+     * @return array<string, array<string, list<array{start: DateTimeImmutable, end: DateTimeImmutable}>>>
      */
     private function buildOccupancyIndex(array $appointments, DateTimeImmutable $now): array
     {

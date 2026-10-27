@@ -15,7 +15,7 @@ Last updated: 2026-10-27.
 | 9 Staff authentication | VERIFIED | Laravel staff session authentication, Argon2id password hashing, throttling, disabled-account handling, logout/session invalidation, and timeout enforcement are implemented. CI run #58 (40394941109) passed. |
 | 10 Authorization and audit controls | VERIFIED | Task 10 role matrix, Policies/Gates, practitioner scope, IDOR tests, and minimal audit metadata are implemented. CI run #73 (40401175212) passed. |
 | 11 Staff patient management | VERIFIED | `docs/task11-status.md` records CI run #78 passing. Merge commit `ee82cb56bd7ed6b8f4422db3159f3a3a656b0e8d` is on main; CI run #90 (40409553811) passed on main. |
-| 12 Services, practitioners, resources, and working hours | IN PROGRESS | Branch `task/12-clinic-configuration`; configuration models, staff screen, routes, validation, optimistic service version checks, appointment-impact guards, and initial feature tests are added. Remaining CRUD and schedule-conflict coverage plus CI verification are pending. |
+| 12 Services, practitioners, resources, and working hours | IN PROGRESS | Branch `task/12-clinic-configuration`; configuration models, staff screen, versioned configuration routes, appointment-impact guards, and feature tests are added. CI verification and broader edit/delete impact coverage are pending. |
 
 ## Decisions still requiring owner confirmation
 

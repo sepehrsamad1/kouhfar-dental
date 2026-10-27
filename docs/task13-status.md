@@ -1,6 +1,6 @@
 # Task 13 — Availability engine and timezone-correct slot generation
 
-Status: IMPLEMENTED ON DRAFT BRANCH — core availability logic, database adapter, no-store endpoint, exception/break handling, randomized invariant coverage, timezone/midnight coverage, and representative performance measurements are implemented. Booking-write concurrency remains intentionally outside this task and must be enforced by the eventual booking-creation workflow.
+Status: VERIFIED ON DRAFT BRANCH — core availability logic, database adapter, no-store endpoint, exception/break handling, randomized invariant coverage, timezone/midnight coverage, and representative performance measurements are implemented. Booking-write concurrency remains intentionally outside this task and must be enforced by the eventual booking-creation workflow.
 
 ## Branch and scope
 - Branch: `task/13-availability-engine`
@@ -26,7 +26,7 @@ Status: IMPLEMENTED ON DRAFT BRANCH — core availability logic, database adapte
 - `tests/Feature/AvailabilityEndpointTest.php`: no-store response, inactive/unapproved service behavior, special-opening support, and closure precedence.
 
 ## Verification and deliberate scope boundaries
-- Latest CI run for the branch (`40512353832`, commit `d791e2dd426f0a1d9e560d9eb5373a350297352c`) passed: JavaScript lint/typecheck/build, Pint, PHPStan, PostgreSQL migrations, Laravel tests, and browser smoke tests. The PR currently reports 147 Laravel tests and 1,486 assertions before these additional regression/property cases.
+- Latest CI run for the branch (`40533190659`, commit `bf9560117bdc0441b7776c9e186f30ebd9f91aa6`) passed: JavaScript lint/typecheck/build, Pint, PHPStan, PostgreSQL migrations, Laravel tests, and browser smoke tests. The successful CI run reports 152 Laravel tests and 23,475 assertions, including the added randomized invariant and tricky-date regression coverage.
 - A follow-up migration makes `schedule_exceptions.practitioner_id` nullable so clinic-wide exceptions accepted by the configuration controller can be persisted; the PostgreSQL migration test passed in CI.
 - The adapter now adds manager-configured `special_opening` intervals (clinic-wide or practitioner-scoped), merges overlaps, subtracts breaks, and applies `closed`/`holiday` intervals last so a closure cannot be re-opened. The PostgreSQL feature test for special-opening support and closure precedence passed in CI. Public holidays are not inferred automatically.
 - Pending holds must be assigned `expires_at = server_now + 1 hour` by the eventual request-creation workflow. That workflow is not part of this endpoint.

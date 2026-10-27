@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Domain\Availability;
 
 use App\Appointment;
-use App\Enums\AppointmentStatus;
 use App\ClinicWorkingHour;
+use App\Enums\AppointmentStatus;
 use App\Practitioner;
 use App\Resource;
 use App\ScheduleBreak;

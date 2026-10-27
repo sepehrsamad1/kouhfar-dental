@@ -8,12 +8,14 @@ use App\ClinicWorkingHour;
 use App\Enums\AppointmentStatus;
 use App\Http\Middleware\EnsureStaffSessionIsFresh;
 use App\Patient;
+use App\Practitioner;
 use App\ScheduleBreak;
 use App\ScheduleException;
 use App\Service;
 use App\StaffUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 uses(RefreshDatabase::class);
 
@@ -316,5 +318,54 @@ it('blocks a required resource type change when confirmed appointments reference
         ->assertSessionHasErrors(['service']);
 
     expect($service->refresh()->required_resource_kind)->toBe('dental_unit')
+        ->and(Appointment::query()->whereKey($appointment->id)->exists())->toBeTrue();
+});
+
+
+it('allows an administrator to configure practitioner service assignments with version checks', function (): void {
+    $admin = configurationStaff('admin');
+    $practitioner = Practitioner::factory()->create(['is_active' => false]);
+    $service = Service::factory()->create(['is_active' => false]);
+
+    $this->actingAs($admin, 'staff')
+        ->patch(route('staff.configuration.practitioners.services.update', $practitioner), [
+            'version' => $practitioner->refresh()->version,
+            'service_ids' => [$service->id],
+        ])
+        ->assertRedirect();
+
+    expect($practitioner->refresh()->services()->whereKey($service->id)->exists())->toBeTrue()
+        ->and($practitioner->version)->toBe(2);
+});
+
+it('blocks removing a practitioner service assignment used by a confirmed appointment', function (): void {
+    $admin = configurationStaff('admin');
+    $practitioner = Practitioner::factory()->create(['is_active' => true]);
+    $service = Service::factory()->create(['is_active' => true]);
+    $practitioner->services()->attach($service->id);
+
+    $start = now('UTC')->addDays(60)->startOfHour();
+    $end = $start->copy()->addMinutes(30);
+    $appointment = Appointment::factory()->create([
+        'service_id' => $service->id,
+        'status' => AppointmentStatus::Confirmed,
+        'start_at' => $start,
+        'end_at' => $end,
+    ]);
+    DB::table('appointment_practitioners')->insert([
+        'appointment_id' => $appointment->id,
+        'practitioner_id' => $practitioner->id,
+        'active' => true,
+        'occupied' => DB::raw("tstzrange('".$start->toIso8601String()."', '".$end->toIso8601String()."', '[)')"),
+    ]);
+
+    $this->actingAs($admin, 'staff')
+        ->from(route('staff.configuration.index'))
+        ->patch(route('staff.configuration.practitioners.services.update', $practitioner), [
+            'version' => $practitioner->refresh()->version,
+        ])
+        ->assertSessionHasErrors(['service_ids']);
+
+    expect($practitioner->refresh()->services()->whereKey($service->id)->exists())->toBeTrue()
         ->and(Appointment::query()->whereKey($appointment->id)->exists())->toBeTrue();
 });

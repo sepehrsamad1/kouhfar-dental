@@ -26,7 +26,7 @@
                 <label>مدت (دقیقه) <input type="number" name="duration_minutes" min="1" max="1440" value="{{ $service->duration_minutes }}" required @disabled(! $canManage)></label>
                 <label>وقفه قبل <input type="number" name="buffer_before_minutes" min="0" max="1440" value="{{ $service->buffer_before_minutes }}" required @disabled(! $canManage)></label>
                 <label>وقفه بعد <input type="number" name="buffer_after_minutes" min="0" max="1440" value="{{ $service->buffer_after_minutes }}" required @disabled(! $canManage)></label>
-                <label>فعال <input type="checkbox" name="is_active" value="1" @checked($service->is_active) @disabled(! $canManage)></label>
+                <input type="hidden" name="is_active" value="0" @disabled(! $canManage)><label>فعال <input type="checkbox" name="is_active" value="1" @checked($service->is_active) @disabled(! $canManage)></label>
                 <button type="submit" @disabled(! $canManage)>ذخیره</button>
             </form>
         @endforeach

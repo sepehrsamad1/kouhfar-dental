@@ -483,8 +483,10 @@ final class ClinicConfigurationController
             'ends_at' => ['required', 'date', 'after:starts_at'],
             'kind' => ['required', Rule::in(['closed', 'holiday', 'special_opening'])],
         ]);
-        $data['starts_at'] = Carbon::parse($data['starts_at'], 'Asia/Tehran')->utc();
-        $data['ends_at'] = Carbon::parse($data['ends_at'], 'Asia/Tehran')->utc();
+        $startsAt = Carbon::parse($data['starts_at'], 'Asia/Tehran')->utc();
+        $endsAt = Carbon::parse($data['ends_at'], 'Asia/Tehran')->utc();
+        $data['starts_at'] = $startsAt;
+        $data['ends_at'] = $endsAt;
         $scope = $data['practitioner_id'] ?? null;
         $overlapQuery = ScheduleException::query()->where('id', '!=', $exception->id)
             ->where('starts_at', '<', $data['ends_at'])->where('ends_at', '>', $data['starts_at']);
@@ -514,8 +516,8 @@ final class ClinicConfigurationController
         ], [
             'status' => $data['kind'],
             'practitioner_id' => $scope,
-            'starts_at' => $data['starts_at']->toIso8601String(),
-            'ends_at' => $data['ends_at']->toIso8601String(),
+            'starts_at' => $startsAt->toIso8601String(),
+            'ends_at' => $endsAt->toIso8601String(),
         ]);
 
         return back()->with('success', 'استثنای برنامه ذخیره شد.');

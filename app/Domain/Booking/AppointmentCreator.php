@@ -152,9 +152,10 @@ final class AppointmentCreator
             }
 
             if ($reserved === false) {
-                throw new AppointmentBookingException(
-                    'SLOT_UNAVAILABLE',
-                    'The selected slot is no longer available.',
+                return $this->storeResponse(
+                    $record,
+                    409,
+                    ['code' => 'SLOT_UNAVAILABLE', 'message' => 'The selected slot is no longer available.'],
                 );
             }
 
@@ -189,6 +190,7 @@ final class AppointmentCreator
                 $record,
                 201,
                 [
+                    'appointment_id' => $appointment->getKey(),
                     'status' => AppointmentStatus::Pending->value,
                     'start_at' => $requestedStart->format('Y-m-d\TH:i:s\Z'),
                     'end_at' => $requestedEnd->format('Y-m-d\TH:i:s\Z'),

@@ -42,7 +42,7 @@ Task 16 is part of the frontend track after Tasks 05/06. It can proceed in paral
 | Keyboard access, focus/error summary, RTL announcements | Met | Passing Playwright keyboard test with Persian date/time assertions. |
 
 ## Verification evidence
-CI run `40735614122` on final commit `4c05439c6540d241c42bf2f16f795318a5870160` completed with **success**.
+Final head `4a5b1a0a826b060fb7268398ab211d09451723c9` is CI-verified by run `40736243788`, which completed with **success**.
 - JavaScript lint/typecheck/build: PASS.
 - PHP Pint: PASS.
 - PHPStan: PASS.
@@ -50,8 +50,7 @@ CI run `40735614122` on final commit `4c05439c6540d241c42bf2f16f795318a5870160` 
 - Laravel tests: **169 passed, 23,613 assertions**.
 - Browser smoke tests: **10 passed**.
 - Playwright Chromium installation: PASS.
-- Existing responsive screenshot upload: PASS.
-- The CI browser suite provides functional keyboard/RTL/date-time evidence. A separate baseline-image comparison at exactly 375/768/1440 was not independently performed in this run.
+- Task 16 responsive screenshots at **375, 768 and 1440px**: PASS and uploaded as the `task16-responsive-screenshots` artifact. The responsive test also checks RTL, booking CTA visibility and horizontal-overflow absence.
 
 ## Open boundaries (not blockers for Task 16 implementation)
 - Task 15 must add OTP/verification because D8 is confirmed, plus privacy consent, anti-abuse, request status and any patient-safe tracking token. Integrate only after provider/policy approval and its API contract exist.

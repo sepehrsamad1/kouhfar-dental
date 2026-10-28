@@ -37,12 +37,12 @@ class ContentItemPolicy
 
     public function approve(StaffUser $user, ContentItem $contentItem): bool
     {
-        return $user->role === 'admin' && $contentItem->status->value === ContentItemStatus::Review->value;
+        return $user->role === 'admin' && $contentItem->statusValue() === ContentItemStatus::Review->value;
     }
 
     public function publish(StaffUser $user, ContentItem $contentItem): bool
     {
-        if ($user->role !== 'admin' || $contentItem->status->value !== 'review') {
+        if ($user->role !== 'admin' || $contentItem->statusValue() !== ContentItemStatus::Review->value) {
             return false;
         }
 
@@ -51,11 +51,11 @@ class ContentItemPolicy
 
     public function archive(StaffUser $user, ContentItem $contentItem): bool
     {
-        return $user->role === 'admin' && $contentItem->status->value === ContentItemStatus::Published->value;
+        return $user->role === 'admin' && $contentItem->statusValue() === ContentItemStatus::Published->value;
     }
 
     public function createVersion(StaffUser $user, ContentItem $contentItem): bool
     {
-        return $user->role === 'admin' && $contentItem->status->value === 'published';
+        return $user->role === 'admin' && $contentItem->statusValue() === ContentItemStatus::Published->value;
     }
 }

@@ -1,10 +1,10 @@
-.staff-config-page {
+.staff-shell {
     min-width: 320px;
     background: #f4f6f9;
     color: #172033;
 }
 
-.staff-config-page .staff-config {
+.staff-shell .staff-config {
     box-sizing: border-box;
     width: min(100% - 2rem, 1180px);
     margin: 0 auto;
@@ -173,7 +173,7 @@
 }
 
 @media (max-width: 480px) {
-    .staff-config-page .staff-config {
+    .staff-shell .staff-config {
         width: min(100% - 1rem, 1180px);
     }
 

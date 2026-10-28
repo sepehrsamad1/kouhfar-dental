@@ -23,6 +23,7 @@ Route::middleware(['auth:staff', 'staff.session.fresh', PreventStoreCache::class
     Route::post('/staff/logout', [StaffAuthController::class, 'destroy'])->name('staff.logout');
     Route::get('/staff/admin/audit', function () {
         Gate::authorize('view-audit-log');
+
         return response()->noContent();
     })->name('staff.admin.audit');
 

@@ -21,10 +21,7 @@ Prompt source of truth: the Laravel 13, 32-task prompt pack.
 | 13 Availability engine and timezone-correct slot generation | Merged; CI verified | PR #14 merged; see `docs/task13-status.md`. |
 | 14 Transactional appointment creation | Merged; CI verified | PR #15 merged; endpoint `POST /api/v1/appointments`; see `docs/task14-status.md`. |
 | 15 Public booking API | Not started | Independent backend track; D8 OTP requirement is now confirmed, but provider/subscription, budget, privacy consent and lookup details remain unresolved. |
-| 16 Connect existing booking UI to real API | CI verified on task branch; merge pending owner approval | Final commit `4c05439c6540d241c42bf2f16f795318a5870160`; CI run `40735614122` passed the full configured suite. See `docs/task16-status.md`. |
-
-
-## Current state and next step
+| 16 Connect existing booking UI to real API | VERIFIED ON TASK BRANCH; MERGE PENDING OWNER APPROVAL | PR #17. CI run `40737793534` passed: 169 Laravel tests (23,613 assertions), 10 browser tests, and responsive regression screenshots at 375/768/1440.\n\n## Current state and next step
 
 Task 16 can progress in parallel with Task 15 because its frontend track already has Task 13 availability and Task 14 atomic appointment creation. The local patch connects to those implemented endpoints; the small public catalog and versioned availability adapters were added because the frontend needs an approved public service list and date-filtered slots. OTP is owner-confirmed as required. No SMS vendor, subscription, consent policy or patient lookup is invented; a default-on fail-closed gate prevents unverified production bookings. The confirmation says the request is pending clinic approval, not that the appointment is confirmed.
 

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Session as StaffSession;
 use App\StaffUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
@@ -15,6 +16,21 @@ function task17Staff(array $attributes = []): StaffUser
     ], $attributes));
 }
 
+function authenticateTask17Staff(StaffUser $staff): void
+{
+    $registry = StaffSession::factory()->create([
+        'user_id' => $staff->id,
+        'expires_at' => now('UTC')->addHour(),
+        'last_seen_at' => now('UTC'),
+    ]);
+
+    $this->actingAs($staff, 'staff');
+
+    session()->put('staff_registry_session_id', $registry->id);
+    session()->put('staff_authenticated_at', now('UTC')->timestamp);
+    session()->put('staff_last_activity_at', now('UTC')->timestamp);
+}
+
 it('protects the staff dashboard and applies no-store headers', function (): void {
     $response = $this->get(route('staff.dashboard'));
 
@@ -22,7 +38,9 @@ it('protects the staff dashboard and applies no-store headers', function (): voi
 
     $staff = task17Staff();
 
-    $response = $this->actingAs($staff, 'staff')->get(route('staff.dashboard'));
+    authenticateTask17Staff($staff);
+
+    $response = $this->get(route('staff.dashboard'));
 
     $response->assertOk()
         ->assertHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
@@ -34,14 +52,18 @@ it('protects the staff dashboard and applies no-store headers', function (): voi
 it('shows only authorized staff navigation', function (): void {
     $reception = task17Staff();
 
-    $response = $this->actingAs($reception, 'staff')->get(route('staff.dashboard'));
+    authenticateTask17Staff($reception);
+
+    $response = $this->get(route('staff.dashboard'));
 
     $response->assertDontSee(route('staff.configuration.index'))
         ->assertDontSee(route('staff.admin.audit'));
 
     $admin = task17Staff(['role' => 'admin']);
 
-    $response = $this->actingAs($admin, 'staff')->get(route('staff.dashboard'));
+    authenticateTask17Staff($admin);
+
+    $response = $this->get(route('staff.dashboard'));
 
     $response->assertSee(route('staff.configuration.index'))
         ->assertSee(route('staff.admin.audit'));
@@ -69,14 +91,14 @@ it('rejects an external intended URL after successful staff login', function ():
 it('keeps staff configuration and patient pages on the isolated staff bundle', function (): void {
     $staff = task17Staff(['role' => 'admin']);
 
-    $this->actingAs($staff, 'staff')
-        ->get(route('staff.configuration.index'))
+    authenticateTask17Staff($staff);
+
+    $this->get(route('staff.configuration.index'))
         ->assertOk()
         ->assertSee('staff-', false)
         ->assertDontSee('app-', false);
 
-    $this->actingAs($staff, 'staff')
-        ->get(route('staff.patients.index'))
+    $this->get(route('staff.patients.index'))
         ->assertOk()
         ->assertSee('staff-', false)
         ->assertDontSee('app-', false);

@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use App\ClinicWorkingHour;
-use App\Patient;
 use App\Practitioner;
 use App\Resource;
 use App\ScheduleBreak;

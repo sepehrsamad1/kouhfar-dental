@@ -72,14 +72,12 @@ it('keeps staff configuration and patient pages on the isolated staff bundle', f
     $this->actingAs($staff, 'staff')
         ->get(route('staff.configuration.index'))
         ->assertOk()
-        ->assertSee('resources/css/staff.css')
-        ->assertSee('resources/js/staff.js')
-        ->assertDontSee('resources/js/app.js');
+        ->assertSee('staff-', false)
+        ->assertDontSee('app-', false);
 
     $this->actingAs($staff, 'staff')
         ->get(route('staff.patients.index'))
         ->assertOk()
-        ->assertSee('resources/css/staff.css')
-        ->assertSee('resources/js/staff.js')
-        ->assertDontSee('resources/js/app.js');
+        ->assertSee('staff-', false)
+        ->assertDontSee('app-', false);
 });

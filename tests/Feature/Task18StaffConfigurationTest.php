@@ -99,4 +99,3 @@ it('keeps patient update aligned with PatientUpdateRequest by submitting mobile,
         ->assertDontSee('name="mobile_normalized"', false)
         ->assertSee('بدون تغییر؛ برای تغییر شماره، شماره جدید را وارد کنید');
 });
-

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use App\ContentItem;
 use App\Enums\ContentItemStatus;
-use App\Enums\ContentKind;
 use App\Services\PublishedContentProvider;
 use App\StaffUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;

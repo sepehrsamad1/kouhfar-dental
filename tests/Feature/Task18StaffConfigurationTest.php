@@ -43,12 +43,21 @@ it('renders complete staff configuration create and update/delete forms with cur
     $practitioner = Practitioner::factory()->create();
     $practitioner->services()->sync([$service->id]);
     $resource = Resource::factory()->create();
-    $clinicHour = ClinicWorkingHour::factory()->create();
+    $clinicHour = ClinicWorkingHour::query()->create([
+        'weekday' => 1,
+        'start_local' => '09:00',
+        'end_local' => '10:00',
+        'timezone' => 'Asia/Tehran',
+    ]);
     $workingHour = WorkingHour::factory()->create([
         'practitioner_id' => $practitioner->id,
     ]);
-    $break = ScheduleBreak::factory()->create([
+    $break = ScheduleBreak::query()->create([
         'practitioner_id' => $practitioner->id,
+        'weekday' => 1,
+        'start_local' => '10:00',
+        'end_local' => '10:15',
+        'timezone' => 'Asia/Tehran',
     ]);
     $exception = ScheduleException::factory()->create([
         'practitioner_id' => $practitioner->id,

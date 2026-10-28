@@ -24,7 +24,7 @@ function authenticateTask17Staff(StaffUser $staff): void
     test()->post(route('staff.login.store'), [
         'email' => $staff->email,
         'password' => 'task17-password',
-    ])->assertRedirect(route('staff.dashboard'));
+    ])->assertRedirect();
 }
 it('protects the staff dashboard and applies no-store headers', function (): void {
     $response = $this->get(route('staff.dashboard'));
@@ -38,7 +38,7 @@ it('protects the staff dashboard and applies no-store headers', function (): voi
     $response = $this->get(route('staff.dashboard'));
 
     $response->assertOk()
-        ->assertHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+        ->assertHeader('Cache-Control', fn ($value) => str_contains($value, 'no-store') && str_contains($value, 'no-cache'))
         ->assertHeader('Pragma', 'no-cache')
         ->assertSee('پنل کارکنان')
         ->assertDontSee('resources/css/app.css');

@@ -6,6 +6,7 @@ use App\Http\Controllers\AvailabilityController;
 use App\Http\Controllers\ClinicConfigurationController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\StaffAuthController;
+use App\Http\Middleware\PreventStoreCache;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 
@@ -17,12 +18,11 @@ Route::middleware('guest:staff')->group(function (): void {
     Route::post('/staff/login', [StaffAuthController::class, 'store'])->name('staff.login.store');
 });
 
-Route::middleware(['auth:staff', 'staff.session.fresh'])->group(function (): void {
+Route::middleware(['auth:staff', 'staff.session.fresh', PreventStoreCache::class])->group(function (): void {
     Route::view('/staff', 'staff.dashboard')->name('staff.dashboard');
     Route::post('/staff/logout', [StaffAuthController::class, 'destroy'])->name('staff.logout');
     Route::get('/staff/admin/audit', function () {
         Gate::authorize('view-audit-log');
-
         return response()->noContent();
     })->name('staff.admin.audit');
 

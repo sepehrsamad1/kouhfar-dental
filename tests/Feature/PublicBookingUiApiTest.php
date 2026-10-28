@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Appointment;
 use App\Service;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -57,7 +58,7 @@ it('fails closed when owner-required phone verification is not configured', func
         ])
         ->assertStatus(503)
         ->assertJsonPath('code', 'PHONE_VERIFICATION_NOT_READY');
-    expect(\App\Appointment::query()->count())->toBe(0);
+    expect(Appointment::query()->count())->toBe(0);
 });
 
 it('keeps staff-only modules and routes out of the public Vite bundle', function (): void {

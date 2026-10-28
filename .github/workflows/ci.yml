@@ -120,3 +120,10 @@ jobs:
           name: task16-responsive-screenshots
           path: test-results/task16-responsive-*.png
           if-no-files-found: ignore
+      - name: Upload Task 19 responsive screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: task19-calendar-responsive-screenshots
+          path: test-results/task19-calendar-*.png
+          if-no-files-found: ignore

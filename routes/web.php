@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Controllers\AvailabilityController;
 use App\Http\Controllers\ClinicConfigurationController;
 use App\Http\Controllers\PatientController;
+use App\Http\Controllers\StaffAppointmentController;
 use App\Http\Controllers\StaffAuthController;
 use App\Http\Middleware\PreventStoreCache;
 use Illuminate\Support\Facades\Gate;
@@ -47,6 +48,13 @@ Route::middleware(['auth:staff', 'staff.session.fresh', PreventStoreCache::class
     Route::post('/staff/configuration/exceptions', [ClinicConfigurationController::class, 'storeException'])->name('staff.configuration.exceptions.store');
     Route::patch('/staff/configuration/exceptions/{exception}', [ClinicConfigurationController::class, 'updateException'])->name('staff.configuration.exceptions.update');
     Route::delete('/staff/configuration/exceptions/{exception}', [ClinicConfigurationController::class, 'deleteException'])->name('staff.configuration.exceptions.delete');
+
+    Route::get('/staff/appointments', [StaffAppointmentController::class, 'index'])->name('staff.appointments.index');
+    Route::post('/staff/appointments/{appointment}/confirm', [StaffAppointmentController::class, 'confirm'])->name('staff.appointments.confirm');
+    Route::post('/staff/appointments/{appointment}/cancel', [StaffAppointmentController::class, 'cancel'])->name('staff.appointments.cancel');
+    Route::post('/staff/appointments/{appointment}/complete', [StaffAppointmentController::class, 'complete'])->name('staff.appointments.complete');
+    Route::post('/staff/appointments/{appointment}/no-show', [StaffAppointmentController::class, 'noShow'])->name('staff.appointments.no-show');
+    Route::patch('/staff/appointments/{appointment}/reschedule', [StaffAppointmentController::class, 'reschedule'])->name('staff.appointments.reschedule');
 
     Route::get('/staff/patients', [PatientController::class, 'index'])->name('staff.patients.index');
     Route::post('/staff/patients', [PatientController::class, 'store'])->name('staff.patients.store');

@@ -109,3 +109,176 @@ body.staff-shell {
         padding-top: 1rem;
     }
 }
+
+
+.staff-calendar__header,
+.staff-calendar__navigation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.staff-calendar__timezone,
+.staff-calendar__announcement,
+.staff-calendar__empty {
+    color: #4b5563;
+}
+
+.staff-calendar__views {
+    display: flex;
+    gap: .5rem;
+    flex-wrap: wrap;
+}
+
+.staff-calendar__views a,
+.staff-calendar__navigation a {
+    padding: .5rem .75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+    background: #fff;
+    color: #1f2937;
+    text-decoration: none;
+}
+
+.staff-calendar__views a.is-active,
+.staff-calendar__views a:focus-visible,
+.staff-calendar__navigation a:focus-visible,
+.staff-calendar__actions button:focus-visible,
+.staff-calendar__actions input:focus-visible {
+    outline: 3px solid #67e8f9;
+    outline-offset: 2px;
+}
+
+.staff-calendar__navigation {
+    margin: 1rem 0;
+}
+
+.staff-calendar__week {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: .75rem;
+}
+
+.staff-calendar__day {
+    min-width: 0;
+    min-height: 180px;
+    padding: .75rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background: #fff;
+}
+
+.staff-calendar__day h2 {
+    margin-top: 0;
+    font-size: 1rem;
+}
+
+.staff-calendar__day-list {
+    display: grid;
+    gap: .75rem;
+}
+
+.staff-calendar__card {
+    padding: 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    background: #fff;
+}
+
+.staff-calendar__card header,
+.staff-calendar__actions {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    flex-wrap: wrap;
+}
+
+.staff-calendar__status {
+    padding: .2rem .5rem;
+    border-radius: 999px;
+    background: #f3f4f6;
+    font-size: .85rem;
+}
+
+.staff-calendar__actions form {
+    margin: 0;
+}
+
+.staff-calendar__actions button {
+    min-height: 38px;
+    padding: .45rem .7rem;
+    border: 1px solid #9ca3af;
+    border-radius: 7px;
+    background: #fff;
+    font: inherit;
+    cursor: pointer;
+}
+
+.staff-calendar__reschedule {
+    display: flex;
+    align-items: end;
+    gap: .5rem;
+    flex-wrap: wrap;
+}
+
+.staff-calendar__reschedule label {
+    display: grid;
+    gap: .25rem;
+}
+
+.staff-calendar__reschedule input {
+    min-height: 38px;
+    padding: .35rem .5rem;
+    border: 1px solid #9ca3af;
+    border-radius: 7px;
+    font: inherit;
+}
+
+.staff-calendar__table-wrap {
+    overflow-x: auto;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+}
+
+.staff-calendar__table {
+    width: 100%;
+    min-width: 760px;
+    border-collapse: collapse;
+}
+
+.staff-calendar__table caption {
+    padding: 1rem;
+    text-align: right;
+    font-weight: 700;
+}
+
+.staff-calendar__table th,
+.staff-calendar__table td {
+    padding: .75rem;
+    border-top: 1px solid #e5e7eb;
+    text-align: right;
+    vertical-align: top;
+}
+
+.staff-calendar__announcement {
+    margin-top: 1rem;
+}
+
+@media (max-width: 900px) {
+    .staff-calendar__week {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .staff-calendar__week {
+        grid-template-columns: 1fr;
+    }
+
+    .staff-calendar__reschedule {
+        align-items: stretch;
+    }
+}

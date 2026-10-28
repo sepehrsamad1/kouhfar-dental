@@ -12,6 +12,7 @@
         <div class="staff-nav__inner">
             <div class="staff-nav__links">
                 <a class="staff-nav__brand" href="{{ route('staff.dashboard') }}">داشبورد پرسنل</a>
+                <a href="{{ route('staff.appointments.index') }}">تقویم نوبت‌ها</a>
                 <a href="{{ route('staff.patients.index') }}">بیماران</a>
                 @can('manage-configuration')
                     <a href="{{ route('staff.configuration.index') }}">تنظیمات کلینیک</a>

@@ -44,6 +44,7 @@ final class AppointmentStateMachine
         string $actorType,
         ?string $actorId = null,
         ?string $reasonCode = null,
+        ?int $expectedVersion = null,
     ): Appointment {
         $from = AppointmentStatus::from((string) $appointment->getRawOriginal('status'));
 
@@ -56,12 +57,22 @@ final class AppointmentStateMachine
         }
 
         $now = now('UTC');
+        $expectedVersion ??= $appointment->version;
 
-        $appointment->forceFill([
-            'status' => $to,
-            'version' => $appointment->version + 1,
-            'updated_at' => $now,
-        ])->save();
+        $affected = Appointment::query()
+            ->whereKey($appointment->getKey())
+            ->where('version', $expectedVersion)
+            ->update([
+                'status' => $to,
+                'version' => DB::raw('version + 1'),
+                'updated_at' => $now,
+            ]);
+
+        if ($affected !== 1) {
+            throw new AppointmentConcurrencyException('The appointment was changed by another staff member. Refresh the calendar and try again.');
+        }
+
+        $appointment->refresh();
 
         $active = in_array($to, [
             AppointmentStatus::Pending,

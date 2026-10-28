@@ -23,7 +23,7 @@ final class AvailabilityRepository
 {
     public const TIMEZONE = 'Asia/Tehran';
 
-    public function forPublicService(Service $service, DateTimeImmutable $now): array
+    public function forPublicService(Service $service, DateTimeImmutable $now, ?string $excludeAppointmentId = null): array
     {
         if ($service->is_active === false || $service->is_public_bookable === false) {
 
@@ -74,6 +74,7 @@ final class AvailabilityRepository
             })
             ->where('start_at', '<', $rangeEnd->addMinutes($maxBufferBefore))
             ->where('end_at', '>', $rangeStart->subMinutes($maxBufferAfter))
+            ->when($excludeAppointmentId !== null, fn ($query) => $query->where('id', '!=', $excludeAppointmentId))
             ->with('service')
             ->get();
 

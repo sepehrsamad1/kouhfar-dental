@@ -30,6 +30,7 @@ class StaffAuthController
 
         if (RateLimiter::tooManyAttempts($throttleKey, $maxAttempts)) {
             $this->recordAttempt($email, $request, false);
+
             return back()->withErrors(['email' => 'اطلاعات ورود صحیح نیست.'])->onlyInput('email');
         }
 
@@ -42,6 +43,7 @@ class StaffAuthController
         if (! $authenticated) {
             RateLimiter::hit($throttleKey, $decaySeconds);
             $this->recordAttempt($email, $request, false);
+
             return back()->withErrors(['email' => 'اطلاعات ورود صحیح نیست.'])->onlyInput('email');
         }
 

@@ -102,7 +102,7 @@ test('keyboard can complete the flow and announces Persian date/time', async ({ 
     await page.keyboard.press('Enter');
     const focus = async (selector) => {
         for (let i = 0; i < 60; i += 1) {
-            if (await page.locator(selector).evaluate((node) => node === document.activeElement)) return;
+            if (await page.locator(selector).first().evaluate((node) => node === document.activeElement)) return;
             await page.keyboard.press('Tab');
         }
         throw new Error(`Keyboard focus did not reach ${selector}`);

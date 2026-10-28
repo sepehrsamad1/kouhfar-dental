@@ -55,6 +55,24 @@ class ContentItem extends Model
             ->whereNotNull('published_at');
     }
 
+    public function statusValue(): string
+    {
+        return (string) $this->getRawOriginal('status');
+    }
+
+    public function kindValue(): string
+    {
+        return (string) $this->getRawOriginal('kind');
+    }
+
+    /** @return array<string, mixed> */
+    public function bodyData(): array
+    {
+        $body = $this->getAttribute('body');
+
+        return is_array($body) ? $body : [];
+    }
+
     public function requiresOwnerApproval(): bool
     {
         return $this->approval_scope !== 'general';
@@ -62,9 +80,9 @@ class ContentItem extends Model
 
     public function isEditable(): bool
     {
-        return in_array($this->status, [
-            ContentItemStatus::Draft,
-            ContentItemStatus::Review,
+        return in_array($this->statusValue(), [
+            ContentItemStatus::Draft->value,
+            ContentItemStatus::Review->value,
         ], true);
     }
 }

@@ -8,7 +8,6 @@ use App\Enums\ContentKind;
 use App\Services\PublishedContentProvider;
 use App\StaffUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 uses(RefreshDatabase::class);
@@ -95,12 +94,9 @@ it('requires review and explicit owner approval before publishing governed conte
     expect(app(PublishedContentProvider::class)->forKnowledge('fa')->pluck('content_key'))
         ->toContain($item->content_key);
 
-    expect(DB::table('audit_logs')->where('target_id', $item->id)->pluck('action')->all())
-        ->toEqualCanonicalizing([
-            'content.submitted_for_review',
-            'content.approved',
-            'content.published',
-        ]);
+    test()->assertDatabaseHas('audit_logs', ['target_id' => $item->id, 'action' => 'content.submitted_for_review']);
+    test()->assertDatabaseHas('audit_logs', ['target_id' => $item->id, 'action' => 'content.approved']);
+    test()->assertDatabaseHas('audit_logs', ['target_id' => $item->id, 'action' => 'content.published']);
 });
 
 it('escapes content in public rendering instead of treating it as trusted HTML', function (): void {

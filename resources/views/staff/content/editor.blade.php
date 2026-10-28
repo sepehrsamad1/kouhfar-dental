@@ -18,7 +18,7 @@
         @if ($item) @method('PATCH') @endif
         @unless ($item)
             <label>کلید محتوا<input name="content_key" value="{{ old('content_key') }}" required pattern="[a-z0-9][a-z0-9_-]*"></label>
-            <label>نوع<select name="kind" required>@foreach (AppEnumsContentKind::cases() as $kind)<option value="{{ $kind->value }}">{{ $kind->value }}</option>@endforeach</select></label>
+            <label>نوع<select name="kind" required>@foreach (\App\Enums\ContentKind::cases() as $kind)<option value="{{ $kind->value }}">{{ $kind->value }}</option>@endforeach</select></label>
             <label>زبان<select name="locale" required><option value="fa">fa</option><option value="en">en</option></select></label>
         @endunless
         <label>دامنه تأیید

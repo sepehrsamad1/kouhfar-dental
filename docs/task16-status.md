@@ -4,8 +4,8 @@
 
 ## Branch / commit
 - Branch: `task/16-booking-ui-api-integration`
-- Verification commit: `35657b6ab3ef288c773b54e91a3204f3790fe9c4`
-- CI run: `40737793534` — **SUCCESS**
+- Verification commit: `2bebc17633e9f1cbdb1bfbb6fb0073e44afe2213`
+- CI run: `40738292241` — **SUCCESS**
 - Base: `main` at Task 14 merge `9920f2b9dc80352412921bff20c8241f61c7f49e`
 
 ## Implemented

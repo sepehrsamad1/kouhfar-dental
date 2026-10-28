@@ -26,6 +26,7 @@ function authenticateTask17Staff(StaffUser $staff): void
         'password' => 'task17-password',
     ])->assertRedirect();
 }
+
 it('protects the staff dashboard and applies no-store headers', function (): void {
     $response = $this->get(route('staff.dashboard'));
 
@@ -38,12 +39,12 @@ it('protects the staff dashboard and applies no-store headers', function (): voi
     $response = $this->get(route('staff.dashboard'));
 
     $response->assertOk()
-        ->assertHeader('Pragma', 'no-cache');
+        ->assertHeader('Pragma', 'no-cache')
+        ->assertSee('پنل کارکنان')
+        ->assertDontSee('resources/css/app.css');
 
     expect($response->headers->get('Cache-Control'))->toContain('no-store');
     expect($response->headers->get('Cache-Control'))->toContain('no-cache');
-        ->assertSee('پنل کارکنان')
-        ->assertDontSee('resources/css/app.css');
 });
 
 it('hides configuration navigation from reception staff', function (): void {
@@ -67,6 +68,7 @@ it('shows configuration and audit navigation to administrators', function (): vo
     $response->assertSee(route('staff.configuration.index'))
         ->assertSee(route('staff.admin.audit'));
 });
+
 it('rejects an external intended URL after successful staff login', function (): void {
     $staff = task17Staff([
         'role' => 'admin',

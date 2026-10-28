@@ -34,4 +34,4 @@ Task 13 owner-approved booking policies used by Task 14:
 
 D8 mobile OTP is now owner-confirmed as required (2026-10-28). The SMS provider/subscription, budget, copy and operational policies remain unresolved. Task 15 must implement and verify the grant flow; public appointment creation fails closed while `BOOKING_PHONE_VERIFICATION_REQUIRED=true`.
 
-| 16 Connect existing booking UI to real API | Implemented in local patch; verification pending | Uses Task 13/14 APIs; adds minimal public service listing + versioned/redacted availability adapters; see `docs/task16-status.md`. D8 OTP is owner-confirmed as required; the SMS provider remains unselected and booking fails closed by default. Not pushed/merged; PHP/CI/browser visual checks remain pending. |
+| 16 Connect existing booking UI to real API | CI VERIFIED ON TASK BRANCH; MERGE PENDING OWNER APPROVAL | Final branch commit `4c05439c6540d241c42bf2f16f795318a5870160`; CI run `40735614122` passed: 169 Laravel tests (23,613 assertions), 10 Playwright browser tests, JS/PHP/static/migration checks. PR #17 remains draft and unmerged. |

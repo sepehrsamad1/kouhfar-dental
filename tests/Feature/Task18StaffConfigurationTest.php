@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\ClinicWorkingHour;
+use App\Patient;
 use App\Practitioner;
 use App\Resource;
 use App\ScheduleBreak;
@@ -91,6 +92,8 @@ it('renders complete staff configuration create and update/delete forms with cur
 
 it('keeps patient update aligned with PatientUpdateRequest by submitting mobile, not a client-normalized field', function (): void {
     task18AuthenticateStaff();
+
+    Patient::factory()->create();
 
     $response = test()->get(route('staff.patients.index'));
 

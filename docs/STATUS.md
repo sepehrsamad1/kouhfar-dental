@@ -22,7 +22,7 @@ Last updated: 2026-10-29.
 | 16 Connect existing booking UI to real API | MERGED; CI VERIFIED | PR #17 merged to main as `2ad1e590e93eaaa38965cfbfeff660c0a9f47cf2`. CI run `40740015793` passed after merge. |
 | 17 Staff portal shell | MERGED; CI VERIFIED | PR #18 merged; staff shell, cache protection, isolated assets, Gate-controlled navigation and staff authentication safeguards implemented. |
 | 18 Staff management UI | MERGED; CI VERIFIED | PR #20 merged; staff configuration/patient management UI completed, version-aware forms and tests added. Full PR CI passed before merge. |
-| 19 Staff appointment calendar and lifecycle | IMPLEMENTED; CI PENDING | Day/week/list calendar, server-authorized lifecycle actions, 24-hour cancellation/reschedule cutoff, fresh availability checks, optimistic version checks, local-time display, and integration coverage implemented on the Task 19 branch. PR/CI verification pending. |
+| 19 Staff appointment calendar and lifecycle | MERGED; CI VERIFIED | PR #21 merged to `main` as `a9c9a230eff975f09c9c67e9741fb1baf89c465b`. PR CI run `40771222818` passed: 184 Laravel tests / 23,704 assertions, PHPStan, migrations, 16 Playwright browser tests, and Task 19 responsive screenshots at 375/768/1440px. |
 
 ## Decisions still requiring owner confirmation
 

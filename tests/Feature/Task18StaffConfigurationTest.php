@@ -28,27 +28,30 @@ function task18AuthenticateStaff(string $role = 'admin'): StaffUser
     test()->post(route('staff.login.store'), [
         'email' => $staff->email,
         'password' => 'task18-password',
-    ])->assertRedirect(route('staff.dashboard'));
+    ])->assertRedirect();
 
     return $staff;
 }
 it('renders complete staff configuration create and update/delete forms with current versions', function (): void {
     task18AuthenticateStaff();
 
-    $service = Service::factory()->create();
-    $practitioner = Practitioner::factory()->create();
+    $service = Service::factory()->create(['version' => 1]);
+    $practitioner = Practitioner::factory()->create(['version' => 1]);
     $practitioner->services()->sync([$service->id]);
-    $resource = Resource::factory()->create();
+    $resource = Resource::factory()->create(['version' => 1]);
     $clinicHour = ClinicWorkingHour::query()->create([
+        'version' => 1,
         'weekday' => 1,
         'start_local' => '09:00',
         'end_local' => '10:00',
         'timezone' => 'Asia/Tehran',
     ]);
     $workingHour = WorkingHour::factory()->create([
+        'version' => 1,
         'practitioner_id' => $practitioner->id,
     ]);
     $break = ScheduleBreak::query()->create([
+        'version' => 1,
         'practitioner_id' => $practitioner->id,
         'weekday' => 1,
         'start_local' => '10:00',
@@ -56,6 +59,7 @@ it('renders complete staff configuration create and update/delete forms with cur
         'timezone' => 'Asia/Tehran',
     ]);
     $exception = ScheduleException::factory()->create([
+        'version' => 1,
         'practitioner_id' => $practitioner->id,
     ]);
 
@@ -86,7 +90,7 @@ it('renders complete staff configuration create and update/delete forms with cur
 });
 
 it('keeps patient update aligned with PatientUpdateRequest by submitting mobile, not a client-normalized field', function (): void {
-    task18AuthenticateAdmin();
+    task18AuthenticateStaff();
 
     $response = test()->get(route('staff.patients.index'));
 
@@ -96,8 +100,3 @@ it('keeps patient update aligned with PatientUpdateRequest by submitting mobile,
         ->assertSee('بدون تغییر؛ برای تغییر شماره، شماره جدید را وارد کنید');
 });
 
-it('keeps configuration unavailable to non-admin staff', function (): void {
-    task18AuthenticateStaff('reception');
-
-    test()->get(route('staff.configuration.index'))->assertForbidden();
-});

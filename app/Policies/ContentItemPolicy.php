@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Policies;
 
 use App\ContentItem;
+use App\Enums\ContentItemStatus;
 use App\StaffUser;
 
 class ContentItemPolicy
@@ -31,12 +32,12 @@ class ContentItemPolicy
 
     public function submitReview(StaffUser $user, ContentItem $contentItem): bool
     {
-        return $user->role === 'admin' && $contentItem->status->value === 'draft';
+        return $user->role === 'admin' && $contentItem->statusValue() === ContentItemStatus::Draft->value;
     }
 
     public function approve(StaffUser $user, ContentItem $contentItem): bool
     {
-        return $user->role === 'admin' && $contentItem->status->value === 'review';
+        return $user->role === 'admin' && $contentItem->status->value === ContentItemStatus::Review->value;
     }
 
     public function publish(StaffUser $user, ContentItem $contentItem): bool
@@ -50,7 +51,7 @@ class ContentItemPolicy
 
     public function archive(StaffUser $user, ContentItem $contentItem): bool
     {
-        return $user->role === 'admin' && $contentItem->status->value === 'published';
+        return $user->role === 'admin' && $contentItem->status->value === ContentItemStatus::Published->value;
     }
 
     public function createVersion(StaffUser $user, ContentItem $contentItem): bool

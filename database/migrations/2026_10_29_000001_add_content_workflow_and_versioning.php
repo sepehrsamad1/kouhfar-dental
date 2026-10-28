@@ -24,7 +24,7 @@ return new class extends Migration
             $table->timestampTz('archived_at')->nullable()->after('published_by');
         });
 
-        DB::statement("UPDATE content_items SET content_key = kind || '-' || locale WHERE content_key IS NULL");
+        DB::statement('UPDATE content_items SET content_key = kind || \'-\' || locale WHERE content_key IS NULL');
 
         Schema::table('content_items', function (Blueprint $table): void {
             $table->string('content_key', 160)->nullable(false)->change();
@@ -36,8 +36,8 @@ return new class extends Migration
             $table->foreign('published_by')->references('id')->on('staff_users')->nullOnDelete();
         });
 
-        DB::statement("CREATE UNIQUE INDEX content_items_one_published_version ON content_items (content_key, locale) WHERE status = 'published'");
-        DB::statement("CREATE INDEX content_items_knowledge_lookup ON content_items (content_key, locale, status, published_at)");
+        DB::statement('CREATE UNIQUE INDEX content_items_one_published_version ON content_items (content_key, locale) WHERE status = \'published\'');
+        DB::statement('CREATE INDEX content_items_knowledge_lookup ON content_items (content_key, locale, status, published_at)');
     }
 
     public function down(): void

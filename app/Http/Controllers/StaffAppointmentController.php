@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Appointment;
+use App\AppointmentEvent;
 use App\Domain\Availability\AvailabilityRepository;
 use App\Domain\Booking\AppointmentConcurrencyException;
 use App\Domain\Booking\AppointmentStateMachine;
 use App\Enums\AppointmentStatus;
-use App\Service;
+use App\Support\AuditLogger;
 use Carbon\CarbonImmutable;
 use DateTimeImmutable;
 use DateTimeZone;
@@ -197,7 +198,7 @@ final class StaffAppointmentController
                 }
                 $this->assertCancellationWindow($current);
 
-                $newStart = (new DateTimeImmutable($validated['start_at']))->setTimezone(new DateTimeZone(self::TIMEZONE));
+                $newStart = new DateTimeImmutable($validated['start_at'], new DateTimeZone(self::TIMEZONE));
                 $service = $current->service;
                 $newEnd = $newStart->modify(sprintf('+%d minutes', $service->duration_minutes));
 
@@ -264,6 +265,16 @@ final class StaffAppointmentController
                     'from_status' => AppointmentStatus::Confirmed,
                     'to_status' => AppointmentStatus::Confirmed,
                     'occurred_at' => now('UTC'),
+                ]);
+
+                $current->refresh();
+                AuditLogger::record($request->user('staff'), 'appointment.rescheduled', $current, [
+                    'status' => AppointmentStatus::Confirmed->value,
+                    'version' => $current->version - 1,
+                ], [
+                    'status' => AppointmentStatus::Confirmed->value,
+                    'version' => $current->version,
+                    'reason_code' => 'staff_rescheduled',
                 ]);
             });
         } catch (AppointmentConcurrencyException|LogicException|QueryException $exception) {

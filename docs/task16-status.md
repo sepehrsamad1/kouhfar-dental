@@ -1,6 +1,6 @@
 # Task 16 — Connect Existing Booking UI to the Real API
 
-**State: IMPLEMENTED IN LOCAL PATCH; VERIFICATION PENDING. Not pushed or merged.**
+**State: CI VERIFIED ON TASK BRANCH; MERGE PENDING OWNER APPROVAL.**
 Task 16 is part of the frontend track after Tasks 05/06. It can proceed in parallel with Task 15 because Tasks 13 and 14 already provide availability and transactional booking creation. The repo's original Task 16 dependency label is superseded by the owner's clarified track plan.
 
 ## Repository facts checked
@@ -35,18 +35,23 @@ Task 16 is part of the frontend track after Tasks 05/06. It can proceed in paral
 ## Acceptance status
 | Criterion | State | Evidence |
 |---|---|---|
-| All API errors map to tested safe messages | Partially met | Frontend map + unit tests; copy is repository-owned placeholder until clinic review; PHP API response shapes are covered by the added feature tests, which were not executable here |
-| Retries cannot duplicate booking | Client met, end-to-end server verification pending | Client retries keep identical key; Task 14 server idempotency is documented and already tested upstream |
-| Public bundle contains no staff-only code | Pending | Existing CI build/Pest coverage not executed in sandbox |
-| Real flow succeeds only after server confirmation | Client met, browser run pending | Strict 201 + status/time validation in client, without rendering internal IDs; success browser test authored |
-| Keyboard access, focus/error summary, RTL announcements | Implemented, browser run pending | Wizard focus management, alert/live region, Persian date/time labels; Playwright test authored |
+| All API errors map to tested safe messages | Met | Fixed Persian/English client copy plus CI JS/feature tests; raw server messages are not rendered. |
+| Retries cannot duplicate booking | Met | Client keeps the same idempotency key; Task 14 server idempotency is already CI-verified. |
+| Public bundle contains no staff-only code | Met | CI build and `PublicBookingUiApiTest` passed. |
+| Real flow succeeds only after server confirmation | Met | Strict 201/status/time validation plus passing Playwright browser suite. |
+| Keyboard access, focus/error summary, RTL announcements | Met | Passing Playwright keyboard test with Persian date/time assertions. |
 
-## Commands/evidence
-- Executed: `node tools/smoke-test.mjs` → **PASS**.
-- Executed: `node --test tests/js/booking-api.test.mjs` → **8 passed, 0 failed**.
-- Executed: `node --check` on changed booking JS and `resources/js/app.js` → syntax checks passed.
-- Not executable here: `npm` and `php`/Composer are absent; therefore `npm run lint`, `npm run typecheck`, `npm run build`, Pint, PHPStan, `php artisan test`, PostgreSQL migration tests and `npm run test:browser` were not run.
-- Visual comparison at 375/768/1440 was not run. UI styles were scoped; still require project CI/browser evidence before saying VERIFIED.
+## Verification evidence
+CI run `40735614122` on final commit `4c05439c6540d241c42bf2f16f795318a5870160` completed with **success**.
+- JavaScript lint/typecheck/build: PASS.
+- PHP Pint: PASS.
+- PHPStan: PASS.
+- PostgreSQL migrations: PASS.
+- Laravel tests: **169 passed, 23,613 assertions**.
+- Browser smoke tests: **10 passed**.
+- Playwright Chromium installation: PASS.
+- Existing responsive screenshot upload: PASS.
+- The CI browser suite provides functional keyboard/RTL/date-time evidence. A separate baseline-image comparison at exactly 375/768/1440 was not independently performed in this run.
 
 ## Open boundaries (not blockers for Task 16 implementation)
 - Task 15 must add OTP/verification because D8 is confirmed, plus privacy consent, anti-abuse, request status and any patient-safe tracking token. Integrate only after provider/policy approval and its API contract exist.

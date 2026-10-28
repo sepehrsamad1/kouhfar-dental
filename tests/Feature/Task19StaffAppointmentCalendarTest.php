@@ -172,7 +172,7 @@ it('enforces the approved 24-hour cancellation and rescheduling cutoff', functio
         $practitioner,
         $resource,
         AppointmentStatus::Confirmed,
-        '2026-10-30T09:00:00Z'
+        '2026-10-30T08:00:00Z'
     );
 
     task19Staff('reception');
@@ -268,4 +268,26 @@ it('confirms a pending appointment only after a fresh availability check', funct
 
     expect($pending->refresh()->status)->toBe(AppointmentStatus::Confirmed)
         ->and($pending->version)->toBe(2);
+});
+
+it('allows a started confirmed appointment to be marked as no-show', function (): void {
+    [$service, $practitioner, $resource] = task19BookingFixture();
+
+    $appointment = task19Appointment(
+        $service,
+        $practitioner,
+        $resource,
+        AppointmentStatus::Confirmed,
+        '2026-10-29T07:00:00Z'
+    );
+
+    task19Staff('reception');
+
+    $response = $this->postJson(route('staff.appointments.no-show', $appointment), [
+        'version' => $appointment->version,
+    ]);
+
+    $response->assertOk();
+
+    expect($appointment->refresh()->status)->toBe(AppointmentStatus::NoShow);
 });

@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Session as StaffSession;
 use App\StaffUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
@@ -18,19 +17,15 @@ function task17Staff(array $attributes = []): StaffUser
 
 function authenticateTask17Staff(StaffUser $staff): void
 {
-    $registry = StaffSession::factory()->create([
-        'user_id' => $staff->id,
-        'expires_at' => now('UTC')->addHour(),
-        'last_seen_at' => now('UTC'),
-    ]);
+    $staff->forceFill([
+        'password_hash' => Hash::make('task17-password'),
+    ])->save();
 
-    test()->actingAs($staff, 'staff');
-
-    session()->put('staff_registry_session_id', $registry->id);
-    session()->put('staff_authenticated_at', now('UTC')->timestamp);
-    session()->put('staff_last_activity_at', now('UTC')->timestamp);
+    test()->post(route('staff.login.store'), [
+        'email' => $staff->email,
+        'password' => 'task17-password',
+    ])->assertRedirect(route('staff.dashboard'));
 }
-
 it('protects the staff dashboard and applies no-store headers', function (): void {
     $response = $this->get(route('staff.dashboard'));
 

@@ -46,8 +46,8 @@ it('keeps unpublished content out of public rendering and AI knowledge context',
     test()->get(route('content.show', ['contentKey' => 'public-faq', 'locale' => 'fa']))
         ->assertNotFound();
 
-    expect(app(PublishedContentProvider::class)->forKnowledge('fa'))
-        ->not->toContain(fn (array $item): bool => $item['content_key'] === $draft->content_key);
+    expect(app(PublishedContentProvider::class)->forKnowledge('fa')->pluck('content_key')->all())
+        ->not->toContain($draft->content_key);
 });
 
 it('enforces admin-only content workflow actions', function (): void {

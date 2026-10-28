@@ -9,7 +9,12 @@ use App\StaffUser;
 
 class ContentItemPolicy
 {
-    public function view(StaffUser $user): bool
+    public function viewAny(StaffUser $user): bool
+    {
+        return $user->role === 'admin';
+    }
+
+    public function view(StaffUser $user, ContentItem $contentItem): bool
     {
         return $user->role === 'admin';
     }
@@ -21,11 +26,35 @@ class ContentItemPolicy
 
     public function update(StaffUser $user, ContentItem $contentItem): bool
     {
-        return $user->role === 'admin';
+        return $user->role === 'admin' && $contentItem->isEditable();
     }
 
-    public function delete(StaffUser $user, ContentItem $contentItem): bool
+    public function submitReview(StaffUser $user, ContentItem $contentItem): bool
     {
-        return $user->role === 'admin';
+        return $user->role === 'admin' && $contentItem->status->value === 'draft';
+    }
+
+    public function approve(StaffUser $user, ContentItem $contentItem): bool
+    {
+        return $user->role === 'admin' && $contentItem->status->value === 'review';
+    }
+
+    public function publish(StaffUser $user, ContentItem $contentItem): bool
+    {
+        if ($user->role !== 'admin' || $contentItem->status->value !== 'review') {
+            return false;
+        }
+
+        return ! $contentItem->requiresOwnerApproval() || $contentItem->owner_approved_at !== null;
+    }
+
+    public function archive(StaffUser $user, ContentItem $contentItem): bool
+    {
+        return $user->role === 'admin' && $contentItem->status->value === 'published';
+    }
+
+    public function createVersion(StaffUser $user, ContentItem $contentItem): bool
+    {
+        return $user->role === 'admin' && $contentItem->status->value === 'published';
     }
 }

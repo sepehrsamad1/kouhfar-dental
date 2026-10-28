@@ -8,36 +8,32 @@ use App\Resource;
 use App\ScheduleBreak;
 use App\ScheduleException;
 use App\Service;
-use App\Session as StaffSession;
 use App\StaffUser;
 use App\WorkingHour;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
 
 uses(RefreshDatabase::class);
 
-function task18AuthenticateAdmin(): StaffUser
+function task18AuthenticateStaff(string $role = 'admin'): StaffUser
 {
     $staff = StaffUser::factory()->active()->create([
-        'role' => 'admin',
+        'role' => $role,
     ]);
 
-    $registry = StaffSession::factory()->create([
-        'user_id' => $staff->id,
-        'expires_at' => now('UTC')->addHour(),
-        'last_seen_at' => now('UTC'),
-    ]);
+    $staff->forceFill([
+        'password_hash' => Hash::make('task18-password'),
+    ])->save();
 
-    test()->actingAs($staff, 'staff');
-
-    session()->put('staff_registry_session_id', $registry->id);
-    session()->put('staff_authenticated_at', now('UTC')->timestamp);
-    session()->put('staff_last_activity_at', now('UTC')->timestamp);
+    test()->post(route('staff.login.store'), [
+        'email' => $staff->email,
+        'password' => 'task18-password',
+    ])->assertRedirect(route('staff.dashboard'));
 
     return $staff;
 }
-
 it('renders complete staff configuration create and update/delete forms with current versions', function (): void {
-    task18AuthenticateAdmin();
+    task18AuthenticateStaff();
 
     $service = Service::factory()->create();
     $practitioner = Practitioner::factory()->create();
@@ -101,9 +97,7 @@ it('keeps patient update aligned with PatientUpdateRequest by submitting mobile,
 });
 
 it('keeps configuration unavailable to non-admin staff', function (): void {
-    $staff = StaffUser::factory()->active()->create([
-        'role' => 'reception',
-    ]);
+    task18AuthenticateStaff('reception');
 
     test()->get(route('staff.configuration.index'))->assertForbidden();
 });

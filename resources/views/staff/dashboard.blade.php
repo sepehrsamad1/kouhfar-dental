@@ -1,20 +1,18 @@
-<!doctype html>
-<html lang="fa" dir="rtl">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>پنل کارکنان | {{ config('app.name') }}</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-<body>
-    <main>
-        <h1>پنل کارکنان</h1>
-        <p>{{ auth('staff')->user()->display_name }}</p>
-        <p><a href="{{ route('staff.configuration.index') }}">تنظیمات کلینیک</a></p>
-        <form method="post" action="{{ route('staff.logout') }}">
-            @csrf
-            <button type="submit">خروج</button>
-        </form>
-    </main>
-</body>
-</html>
+@extends('layouts.staff')
+
+@section('title', 'داشبورد پرسنل')
+
+@section('content')
+    <h1>پنل کارکنان</h1>
+    <p>{{ auth('staff')->user()->display_name }}</p>
+
+    <nav aria-label="عملیات پرسنل">
+        <p><a href="{{ route('staff.patients.index') }}">مدیریت بیماران</a></p>
+        @can('manage-configuration')
+            <p><a href="{{ route('staff.configuration.index') }}">تنظیمات کلینیک</a></p>
+        @endcan
+        @can('view-audit-log')
+            <p><a href="{{ route('staff.admin.audit') }}">گزارش حسابرسی</a></p>
+        @endcan
+    </nav>
+@endsection

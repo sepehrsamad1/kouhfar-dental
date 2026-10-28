@@ -44,7 +44,6 @@ it('renders a same-origin CSRF token for the public booking POST', function (): 
     $this->get('/')->assertOk()->assertSee('name="csrf-token"', false);
 });
 
-
 it('fails closed when owner-required phone verification is not configured', function (): void {
     config(['booking.phone_verification_required' => true]);
     $service = Service::factory()->create(['is_active' => true, 'is_public_bookable' => true]);

@@ -43,7 +43,7 @@
             <input id="full_name" name="full_name" value="{{ old('full_name') }}" maxlength="200" required>
 
             <label for="mobile">موبایل</label>
-            <input id="mobile" name="mobile" value="{{ old('mobile') }}" maxlength="40" required inputmode="tel">
+            <input id="mobile" name="mobile" value="{{ old('mobile') }}" maxlength="40" required inputmode="tel" autocomplete="tel">
 
             @if (session('duplicate_warning'))
                 <label>
@@ -80,7 +80,7 @@
                             @csrf
                             @method('PATCH')
                             <input name="full_name" value="{{ $patient['full_name'] }}" maxlength="200" required>
-                            <input name="mobile" value="" placeholder="در صورت تغییر، شماره جدید" maxlength="40" inputmode="tel">
+                            <input name="mobile" value="" placeholder="بدون تغییر؛ برای تغییر شماره، شماره جدید را وارد کنید" maxlength="40" inputmode="tel" autocomplete="tel">
                             <input type="hidden" name="version" value="{{ $patient['version'] }}">
                             <label>
                                 <input type="checkbox" name="confirm_duplicate" value="1">

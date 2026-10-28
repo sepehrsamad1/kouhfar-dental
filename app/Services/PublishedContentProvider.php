@@ -24,11 +24,11 @@ final class PublishedContentProvider
             ->get()
             ->map(static fn (ContentItem $item): array => [
                 'content_key' => $item->content_key,
-                'kind' => $item->kind->value,
+                'kind' => $item->kindValue(),
                 'locale' => $item->locale,
                 'version' => $item->version,
-                'title' => (string) ($item->body['title'] ?? ''),
-                'text' => (string) ($item->body['text'] ?? ''),
+                'title' => (string) ($item->bodyData()['title'] ?? ''),
+                'text' => (string) ($item->bodyData()['text'] ?? ''),
             ]);
     }
 }

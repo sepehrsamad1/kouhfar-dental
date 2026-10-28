@@ -109,8 +109,8 @@ test('keyboard can complete the flow and announces Persian date/time', async ({ 
     };
     await focus('#bkServices .bk__opt'); await page.keyboard.press('Enter');
     await focus('#bkNext'); await page.keyboard.press('Enter');
-    await focus('#bkDates .bk__date');
-    await expect(page.locator('#bkDates .bk__date').first()).toHaveAttribute('aria-label', /پنجشنبه|مهر|آبان/);
+    await focus('#bkDates .bk__date:nth-of-type(2)');
+    await expect(page.locator('#bkDates .bk__date').nth(1)).toHaveAttribute('aria-label', /پنجشنبه|مهر|آبان/);
     await page.keyboard.press('Enter');
     await focus('#bkNext'); await page.keyboard.press('Enter');
     await focus('#bkTimes .bk__time');

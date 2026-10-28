@@ -1,12 +1,8 @@
-<!doctype html>
-<html lang="fa" dir="rtl">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>تنظیمات کلینیک | {{ config('app.name') }}</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/css/staff-configuration.css'])
-</head>
-<body class="staff-config-page">
+@extends('layouts.staff')
+
+@section('title', 'تنظیمات کلینیک')
+
+@section('content')
 <main class="staff-config">
     <h1>تنظیمات کلینیک</h1>
     <p>منطقه زمانی برنامه کلینیک: Asia/Tehran. این صفحه موتور تعیین زمان‌های آزاد نیست.</p>
@@ -220,5 +216,4 @@
         @endif
     </section>
 </main>
-</body>
-</html>
+@endsection

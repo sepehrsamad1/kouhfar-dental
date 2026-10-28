@@ -10,3 +10,5 @@
 @import './legacy/10-persian-letter-spacing-fix.css';
 @import './legacy/11-services-glass-redesign.css';
 @import './legacy/12-hero-bottom-photo-halo.css';
+
+@import './booking-a11y.css';

@@ -23,7 +23,7 @@ Sources: docs/ui-audit.md (Package 1), the source UI HTML, the Package 2 prompt.
 | D5 | Request vs confirmed booking | ASSUMPTION | Public booking creates `pending`; staff confirms |
 | D6 | Expiry of unconfirmed requests | OWNER DECISION | Proposed 2 hours; owner to choose |
 | D7 | Phone bookings entered by staff | ASSUMPTION | Staff can create `confirmed` directly |
-| D8 | Mobile verification (OTP) | OWNER DECISION | Recommended yes for public requests; SMS provider not chosen |
+| D8 | Mobile verification (OTP) | OWNER CONFIRMED: required | Owner confirmed on 2026-10-28. SMS provider/subscription, budget, approved message and operational policies remain undecided; public creation must fail closed until Task 15 verifies a one-time grant. |
 | D9 | Follow-up (view/cancel) access | ASSUMPTION | Secure token; re-verify via OTP. No lookup by phone alone |
 | D10 | Cancellation and rescheduling cutoff | OWNER DECISION | Proposed 24 h before start; value needed |
 | D11 | Retention of patients, appointments, images | OWNER DECISION | No deletion until approved |
@@ -81,17 +81,17 @@ Rules:
 
 All checks run on the server. Hiding a button is not access control.
 
-## 4a. Public booking flow (ASSUMPTION; depends on D5, D8, D9)
+## 4a. Public booking flow (OTP requirement confirmed; remaining workflow depends on D5/D9)
 
 1. Visitor picks an active service (no login).
 2. Visitor picks a date; server returns free slots only (no patient data).
 3. Visitor picks a slot and enters name and mobile number.
-4. If D8 is approved: OTP sent and verified; it binds the request to that one slot for a short time.
+4. OTP is required. A one-time verification grant must bind to the normalized phone and the one booking attempt/slot; exact expiry/attempt/resend policy remains owner/provider configuration.
 5. Server creates a `pending` booking with `expires_at` and returns a follow-up token. No patient-visible record is returned.
 6. Staff confirms or rejects in the staff panel.
 7. Patient cancel or reschedule: only with the follow-up token plus re-verification, and only before the D10 cutoff.
 
-If D8 is not approved, step 4 is removed and the spec is re-reviewed for abuse risk before build.
+Current gate: D8 is confirmed required. Until Task 15 implements an approved provider and grant, public booking creation fails closed.
 
 ## 5. Patient data (minimum; ASSUMPTION until D11/D12)
 
@@ -119,7 +119,7 @@ Search is paginated and capped. Near-matches are shown to staff and never auto-m
 | R-PUB-02 | Public | Availability shows only free slots; no patient data. |
 | R-PUB-03 | Public | Public request creates `pending` only, never `confirmed`. |
 | R-PUB-04 | Public | Mock reference and fake confirmation removed before go-live (Package 16). |
-| R-PUB-05 | Public | If D8 approved, public request requires verified OTP; otherwise spec re-reviewed before build. |
+| R-PUB-05 | Public | Every public booking request requires a valid, single-use OTP grant bound to the phone and booking attempt; creation is denied when verification is missing or unavailable. |
 | R-BK-01 | Booking | Lifecycle follows section 3 exactly. |
 | R-BK-02 | Booking | Server computes end time and duration from the service. |
 | R-BK-03 | Booking | Double booking of practitioner or resource prevented by the database, not the UI. |
@@ -147,7 +147,7 @@ Search is paginated and capped. Near-matches are shown to staff and never auto-m
 1. (Blocks Package 3) How many practitioners and chairs? Is booking tied to one practitioner?
 2. (Blocks Package 3) Service durations and buffers? Which services are bookable online?
 3. (Blocks Package 14) Pending expiry: how long (D6)?
-4. (Blocks Package 15) Use SMS OTP for public requests (D8)? Which provider, what budget?
+4. (Blocks provider activation in Task 15) Which SMS provider/subscription and budget ceiling? D8 is confirmed required; do not enable production booking until the approved provider is configured and the grant flow passes tests.
 5. (Blocks Package 13) Working hours, holidays, and how far ahead patients can book (D4)?
 6. (Blocks Package 10) Approve the role table in section 4, including whether practitioners log in?
 7. (Blocks Package 28) Retention for patients, appointments, and images (D11)?

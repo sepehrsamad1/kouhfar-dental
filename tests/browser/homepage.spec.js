@@ -12,7 +12,7 @@ test.describe('Kouhfar Dental public homepage', () => {
         await expect(page.locator('h1')).toContainText('زیبایی طبیعی');
     });
 
-    test('booking demo opens and can be closed', async ({ page }) => {
+    test('booking dialog opens and can be closed', async ({ page }) => {
         await page.goto('/');
 
         await page.locator('[data-book]').first().click();

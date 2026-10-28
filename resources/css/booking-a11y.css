@@ -1,0 +1,22 @@
+/* Task 16: scoped booking errors and screen-reader announcements. No Persian letter spacing. */
+.bk__errs {
+    margin: 0 0 var(--s-4);
+    padding: var(--s-3) var(--s-4);
+    border-radius: 12px;
+    background: oklch(97% .02 25);
+    box-shadow: inset 0 0 0 1.5px oklch(58% .16 25);
+    color: oklch(42% .14 25);
+    font-size: var(--t-xs);
+    line-height: 1.85;
+}
+.bk__errs:focus { outline: 2px solid oklch(52% .16 25); outline-offset: 2px; }
+.bk__errs ul { margin: var(--s-2) 0 0; padding-inline-start: 1.2em; }
+.bk__errsH { margin: 0; font-weight: 500; }
+.bk__errsRetry { margin-top: var(--s-3); }
+.bk__live {
+    position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+    overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+#bk .bk__opts[aria-busy="true"], #bk .bk__dates[aria-busy="true"], #bk .bk__times[aria-busy="true"] {
+    opacity: .6; pointer-events: none;
+}

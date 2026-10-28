@@ -8,7 +8,7 @@ Every requirement in docs/product-spec.md section 6 has a row here. Status is "p
 | R-PUB-02 | Availability response has no patient data | Public availability response contains no names or phones | pending |
 | R-PUB-03 | Public request is `pending` | Submit public request; stored status is `pending` | pending |
 | R-PUB-04 | No mock reference or fake confirmation | Production build contains no mock reference generator | pending |
-| R-PUB-05 | OTP gate if D8 approved | Request without verified OTP rejected; OTP reuse rejected | pending |
+| R-PUB-05 | OTP gate (D8 confirmed required) | Request without verified OTP rejected; OTP reuse rejected; fail closed without provider | pending |
 | R-BK-01 | Lifecycle matches spec section 3 | Each allowed transition succeeds; each disallowed transition returns 409 | pending |
 | R-BK-02 | Server computes end time | Client sends different end; stored end equals service duration | pending |
 | R-BK-03 | No double booking | Concurrent requests for one slot: only allowed count succeeds (real PostgreSQL) | pending |

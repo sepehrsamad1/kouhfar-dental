@@ -1,6 +1,6 @@
 # Project status
 
-Last updated: 2026-10-27.
+Last updated: 2026-10-28.
 
 | Package | Status | Notes |
 |---|---|---|
@@ -17,7 +17,7 @@ Last updated: 2026-10-27.
 | 11 Staff patient management | VERIFIED | CI run #90 passed on main. |
 | 12 Services, practitioners, resources, and working hours | MERGED; CI VERIFIED | PR #13 merged to `main` as `75f3b993ccba150ac4941407dcba4f1a84438d35`. CI run `40431587997` passed on code commit `9859a6a3ba7c03e5f9c9fa95a27a9ab77ad2acdd` (138 Laravel tests, 649 assertions, 5 Playwright tests). No production migration or seeding was run. |
 | 13 Availability engine and timezone-correct slot generation | MERGED; CI VERIFIED | PR #14 merged to `main` as `89736b5a67ef6ddb2033ed806b90581cfdf4b993`. Post-merge CI run `40534205011` passed the full suite. |
-| 14 Transactional appointment creation | VERIFIED ON DRAFT BRANCH; MERGE PENDING OWNER APPROVAL | PR #15. One-transaction public booking, idempotency replay/conflict handling, buffered PostgreSQL capacity reservation, pending-hold expiry, state-transition controls, audit/events, versioned endpoint coverage, and 50-attempt PostgreSQL concurrency proof. CI run `40540118213` passed: 161 Laravel tests, 23,581 assertions, full static/migration/browser checks. |
+| 14 Transactional appointment creation | MERGED; CI VERIFIED | PR #15 is merged to `main`; current main head `9920f2b9dc80352412921bff20c8241f61c7f49e` is the merge commit. One-transaction public booking, idempotency replay/conflict handling, buffered PostgreSQL capacity reservation, pending-hold expiry, state-transition controls, audit/events, and 50-attempt PostgreSQL concurrency proof. The recorded CI run `40540118213` passed: 161 Laravel tests, 23,581 assertions, full static/migration/browser checks. The older Task 14 status page was stale and has been reconciled.
 
 ## Decisions still requiring owner confirmation
 
@@ -32,4 +32,6 @@ Task 13 owner-approved booking policies used by Task 14:
 - Minimum booking notice: 24 hours.
 - Booking horizon: through the end of the local date 14 days after the current local date.
 
-OTP and VerificationChallenge remain deferred. Do not invent clinic policies or implement behavior that depends on unresolved decisions.
+D8 mobile OTP is now owner-confirmed as required (2026-10-28). The SMS provider/subscription, budget, copy and operational policies remain unresolved. Task 15 must implement and verify the grant flow; public appointment creation fails closed while `BOOKING_PHONE_VERIFICATION_REQUIRED=true`.
+
+| 16 Connect existing booking UI to real API | Implemented in local patch; verification pending | Uses Task 13/14 APIs; adds minimal public service listing + versioned/redacted availability adapters; see `docs/task16-status.md`. D8 OTP is owner-confirmed as required; the SMS provider remains unselected and booking fails closed by default. Not pushed/merged; PHP/CI/browser visual checks remain pending. |

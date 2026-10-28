@@ -84,7 +84,8 @@ final class StaffAppointmentController
                 if ($status !== AppointmentStatus::Pending) {
                     throw new LogicException('This appointment cannot be confirmed from its current state.');
                 }
-                if ($current->expires_at !== null && $current->expires_at->isPast()) {
+                $expiresAt = $current->getRawOriginal('expires_at');
+                if ($expiresAt !== null && CarbonImmutable::parse((string) $expiresAt, 'UTC')->isPast()) {
                     $states->expirePendingHolds();
                     throw new LogicException('This appointment hold has expired.');
                 }
@@ -97,8 +98,8 @@ final class StaffAppointmentController
                 );
 
                 if (! collect($available)->contains(
-                    fn (array $slot): bool => $slot['start_at'] === $current->start_at->setTimezone('UTC')->format('Y-m-d\TH:i:s\Z')
-                        && $slot['end_at'] === $current->end_at->setTimezone('UTC')->format('Y-m-d\TH:i:s\Z')
+                    fn (array $slot): bool => $slot['start_at'] === CarbonImmutable::parse((string) $current->getRawOriginal('start_at'), 'UTC')->format('Y-m-d\TH:i:s\Z')
+                        && $slot['end_at'] === CarbonImmutable::parse((string) $current->getRawOriginal('end_at'), 'UTC')->format('Y-m-d\TH:i:s\Z')
                 )) {
                     throw new AppointmentConcurrencyException('The appointment slot is no longer available.');
                 }

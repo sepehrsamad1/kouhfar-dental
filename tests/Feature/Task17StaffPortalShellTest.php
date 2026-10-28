@@ -38,13 +38,15 @@ it('protects the staff dashboard and applies no-store headers', function (): voi
     $response = $this->get(route('staff.dashboard'));
 
     $response->assertOk()
-        ->assertHeader('Cache-Control', fn ($value) => str_contains($value, 'no-store') && str_contains($value, 'no-cache'))
-        ->assertHeader('Pragma', 'no-cache')
+        ->assertHeader('Pragma', 'no-cache');
+
+    expect($response->headers->get('Cache-Control'))->toContain('no-store');
+    expect($response->headers->get('Cache-Control'))->toContain('no-cache');
         ->assertSee('پنل کارکنان')
         ->assertDontSee('resources/css/app.css');
 });
 
-it('shows only authorized staff navigation', function (): void {
+it('hides configuration navigation from reception staff', function (): void {
     $reception = task17Staff();
 
     authenticateTask17Staff($reception);
@@ -53,7 +55,9 @@ it('shows only authorized staff navigation', function (): void {
 
     $response->assertDontSee(route('staff.configuration.index'))
         ->assertDontSee(route('staff.admin.audit'));
+});
 
+it('shows configuration and audit navigation to administrators', function (): void {
     $admin = task17Staff(['role' => 'admin']);
 
     authenticateTask17Staff($admin);
@@ -63,7 +67,6 @@ it('shows only authorized staff navigation', function (): void {
     $response->assertSee(route('staff.configuration.index'))
         ->assertSee(route('staff.admin.audit'));
 });
-
 it('rejects an external intended URL after successful staff login', function (): void {
     $staff = task17Staff([
         'role' => 'admin',

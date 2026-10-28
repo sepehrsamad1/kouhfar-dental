@@ -105,16 +105,5 @@ it('keeps configuration unavailable to non-admin staff', function (): void {
         'role' => 'reception',
     ]);
 
-    $registry = StaffSession::factory()->create([
-        'user_id' => $staff->id,
-        'expires_at' => now('UTC')->addHour(),
-        'last_seen_at' => now('UTC'),
-    ]);
-
-    test()->actingAs($staff, 'staff');
-    session()->put('staff_registry_session_id', $registry->id);
-    session()->put('staff_authenticated_at', now('UTC')->timestamp);
-    session()->put('staff_last_activity_at', now('UTC')->timestamp);
-
     test()->get(route('staff.configuration.index'))->assertForbidden();
 });

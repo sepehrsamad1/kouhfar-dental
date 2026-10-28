@@ -21,14 +21,14 @@ Prompt source of truth: the Laravel 13, 32-task prompt pack.
 | 13 Availability engine and timezone-correct slot generation | Merged; CI verified | PR #14 merged; see `docs/task13-status.md`. |
 | 14 Transactional appointment creation | Merged; CI verified | PR #15 merged; endpoint `POST /api/v1/appointments`; see `docs/task14-status.md`. |
 | 15 Public booking API | Not started | Independent backend track; D8 OTP requirement is now confirmed, but provider/subscription, budget, privacy consent and lookup details remain unresolved. |
-| 16 Connect existing booking UI to real API | Implemented in local patch; verification pending | Consumes Task 13/14, adds minimal public catalog and redacted availability adapters; see `docs/task16-status.md`. |
+| 16 Connect existing booking UI to real API | CI verified on task branch; merge pending owner approval | Final commit `4c05439c6540d241c42bf2f16f795318a5870160`; CI run `40735614122` passed the full configured suite. See `docs/task16-status.md`. |
 
 
 ## Current state and next step
 
 Task 16 can progress in parallel with Task 15 because its frontend track already has Task 13 availability and Task 14 atomic appointment creation. The local patch connects to those implemented endpoints; the small public catalog and versioned availability adapters were added because the frontend needs an approved public service list and date-filtered slots. OTP is owner-confirmed as required. No SMS vendor, subscription, consent policy or patient lookup is invented; a default-on fail-closed gate prevents unverified production bookings. The confirmation says the request is pending clinic approval, not that the appointment is confirmed.
 
-Task 16 is not yet verified or merged: PHP, Composer, npm and the Laravel runtime are unavailable in the current coding sandbox. Run the documented CI checks after applying the patch; use synthetic-only records. OTP implementation remains deferred to Task 15; provider and budget still need owner decisions.
+Task 16 is CI-verified on its task branch. The implementation uses Task 13/14, keeps OTP fail-closed, and leaves provider/budget/privacy-consent decisions for Task 15. Merge to `main` is still a separate owner action.
 
 ## Rules for resuming
 

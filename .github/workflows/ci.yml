@@ -133,4 +133,3 @@ jobs:
           name: task20-content-responsive-screenshots
           path: test-results/task20-content-*.png
           if-no-files-found: ignore
-          if-no-files-found: ignore

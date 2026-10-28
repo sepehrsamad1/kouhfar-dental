@@ -21,8 +21,9 @@ Route::middleware('guest:staff')->group(function (): void {
 Route::middleware(['auth:staff', 'staff.session.fresh', PreventStoreCache::class])->group(function (): void {
     Route::view('/staff', 'staff.dashboard')->name('staff.dashboard');
     Route::post('/staff/logout', [StaffAuthController::class, 'destroy'])->name('staff.logout');
-    Route::get('/staff/admin/audit', function () {
+    Route::get('/staff/admin/audit', function (): void {
         Gate::authorize('view-audit-log');
+
         return response()->noContent();
     })->name('staff.admin.audit');
 
@@ -34,6 +35,7 @@ Route::middleware(['auth:staff', 'staff.session.fresh', PreventStoreCache::class
     Route::patch('/staff/configuration/practitioners/{practitioner}/services', [ClinicConfigurationController::class, 'updatePractitionerServices'])->name('staff.configuration.practitioners.services.update');
     Route::post('/staff/configuration/resources', [ClinicConfigurationController::class, 'storeResource'])->name('staff.configuration.resources.store');
     Route::patch('/staff/configuration/resources/{resource}', [ClinicConfigurationController::class, 'updateResource'])->name('staff.configuration.resources.update');
+    Route::post('/staff/configuration/resources/{resource}', [ClinicConfigurationController::class, 'updateResource'])->name('staff.configuration.resources.update');
     Route::post('/staff/configuration/clinic-hours', [ClinicConfigurationController::class, 'storeClinicHour'])->name('staff.configuration.clinic-hours.store');
     Route::patch('/staff/configuration/clinic-hours/{hour}', [ClinicConfigurationController::class, 'updateClinicHour'])->name('staff.configuration.clinic-hours.update');
     Route::delete('/staff/configuration/clinic-hours/{hour}', [ClinicConfigurationController::class, 'deleteClinicHour'])->name('staff.configuration.clinic-hours.delete');

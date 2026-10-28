@@ -90,6 +90,7 @@ final class StaffAppointmentController
                     throw new LogicException('This appointment hold has expired.');
                 }
 
+                /** @var Service $service */
                 $service = $current->service()->firstOrFail();
                 $available = app(AvailabilityRepository::class)->forPublicService(
                     $service,
@@ -207,6 +208,7 @@ final class StaffAppointmentController
                 $this->assertCancellationWindow($current);
 
                 $newStart = new DateTimeImmutable($validated['start_at'], new DateTimeZone(self::TIMEZONE));
+                /** @var Service $service */
                 $service = $current->service;
                 $newEnd = $newStart->modify(sprintf('+%d minutes', $service->duration_minutes));
 

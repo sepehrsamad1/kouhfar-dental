@@ -8,6 +8,7 @@ use App\Enums\ContentKind;
 use App\Services\PublishedContentProvider;
 use App\StaffUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 uses(RefreshDatabase::class);
@@ -94,7 +95,7 @@ it('requires review and explicit owner approval before publishing governed conte
     expect(app(PublishedContentProvider::class)->forKnowledge('fa')->pluck('content_key'))
         ->toContain($item->content_key);
 
-    expect(\Illuminate\Support\Facades\DB::table('audit_logs')->where('target_id', $item->id)->pluck('action')->all())
+    expect(DB::table('audit_logs')->where('target_id', $item->id)->pluck('action')->all())
         ->toEqualCanonicalizing([
             'content.submitted_for_review',
             'content.approved',

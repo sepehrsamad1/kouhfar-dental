@@ -80,7 +80,8 @@ final class StaffAppointmentController
                 $current = Appointment::query()->lockForUpdate()->findOrFail($appointment->getKey());
 
                 $this->assertVersion($request, $current);
-                if ($current->status !== AppointmentStatus::Pending) {
+                $status = AppointmentStatus::from((string) $current->getRawOriginal('status'));
+                if ($status !== AppointmentStatus::Pending) {
                     throw new LogicException('This appointment cannot be confirmed from its current state.');
                 }
                 if ($current->expires_at !== null && $current->expires_at->isPast()) {
@@ -120,9 +121,10 @@ final class StaffAppointmentController
                 $current = Appointment::query()->lockForUpdate()->findOrFail($appointment->getKey());
                 $this->assertVersion($request, $current);
 
-                if ($current->status === AppointmentStatus::Confirmed) {
+                $status = AppointmentStatus::from((string) $current->getRawOriginal('status'));
+                if ($status === AppointmentStatus::Confirmed) {
                     $this->assertCancellationWindow($current);
-                } elseif ($current->status !== AppointmentStatus::Pending) {
+                } elseif ($status !== AppointmentStatus::Pending) {
                     throw new LogicException('This appointment cannot be cancelled from its current state.');
                 }
 
@@ -144,7 +146,9 @@ final class StaffAppointmentController
                 $current = Appointment::query()->lockForUpdate()->findOrFail($appointment->getKey());
                 $this->assertVersion($request, $current);
 
-                if ($current->status !== AppointmentStatus::Confirmed || $current->start_at->isFuture()) {
+                $status = AppointmentStatus::from((string) $current->getRawOriginal('status'));
+                $startAt = CarbonImmutable::parse((string) $current->getRawOriginal('start_at'), 'UTC');
+                if ($status !== AppointmentStatus::Confirmed || $startAt->isFuture()) {
                     throw new LogicException('Only a started confirmed appointment can be completed.');
                 }
 
@@ -166,7 +170,9 @@ final class StaffAppointmentController
                 $current = Appointment::query()->lockForUpdate()->findOrFail($appointment->getKey());
                 $this->assertVersion($request, $current);
 
-                if ($current->status !== AppointmentStatus::Confirmed || $current->start_at->isFuture()) {
+                $status = AppointmentStatus::from((string) $current->getRawOriginal('status'));
+                $startAt = CarbonImmutable::parse((string) $current->getRawOriginal('start_at'), 'UTC');
+                if ($status !== AppointmentStatus::Confirmed || $startAt->isFuture()) {
                     throw new LogicException('Only a started confirmed appointment can be marked as no-show.');
                 }
 
@@ -193,7 +199,8 @@ final class StaffAppointmentController
                 $current = Appointment::query()->with('service')->lockForUpdate()->findOrFail($appointment->getKey());
                 $this->assertVersion($request, $current);
 
-                if ($current->status !== AppointmentStatus::Confirmed) {
+                $status = AppointmentStatus::from((string) $current->getRawOriginal('status'));
+                if ($status !== AppointmentStatus::Confirmed) {
                     throw new LogicException('Only confirmed appointments can be rescheduled.');
                 }
                 $this->assertCancellationWindow($current);
@@ -308,7 +315,8 @@ final class StaffAppointmentController
 
     private function assertCancellationWindow(Appointment $appointment): void
     {
-        if (now('UTC')->greaterThanOrEqualTo($appointment->start_at->subDay())) {
+        $startAt = CarbonImmutable::parse((string) $appointment->getRawOriginal('start_at'), 'UTC');
+        if (now('UTC')->greaterThanOrEqualTo($startAt->subDay())) {
             throw new LogicException('Cancellation and rescheduling are closed within 24 hours of the appointment.');
         }
     }

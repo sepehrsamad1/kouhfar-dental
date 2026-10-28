@@ -112,3 +112,11 @@ jobs:
           name: task12-responsive-screenshots
           path: test-results/task12-configuration-*.png
           if-no-files-found: ignore
+
+      - name: Upload Task 16 responsive screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: task16-responsive-screenshots
+          path: test-results/task16-responsive-*.png
+          if-no-files-found: ignore

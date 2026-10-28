@@ -1,3 +1,5 @@
+import { initBookingWizard } from './booking/wizard.js';
+
 /* Task 05 Laravel integration: preserve the existing modular browser runtime order. */
 
 /* ---- legacy/ak-assets.js ---- */
@@ -187,16 +189,9 @@ window.AK_DATA = {
     {q:'چگونه برای درمان مناسب تصمیم بگیرم؟', a:'انتخاب روش درمان به وضعیت دندان‌ها و هدف شما بستگی دارد. در جلسه بررسی، گزینه‌های موجود و تفاوت آن‌ها توضیح داده می‌شود تا تصمیم‌گیری آگاهانه باشد.'},
     {q:'آیا قبل از درمان نیاز به مشاوره دارم؟', a:'بله. بررسی اولیه برای مشخص شدن شرایط دهان و تعیین طرح درمان لازم است. بدون این بررسی، اعلام دقیق مراحل و زمان‌بندی امکان‌پذیر نیست.'},
     {q:'چگونه نوبت رزرو کنم؟', a:'از دکمه «رزرو نوبت» در همین صفحه استفاده کنید: خدمت، تاریخ و ساعت را انتخاب کنید و شماره تماس خود را وارد نمایید. سپس برای تأیید نهایی با شما تماس گرفته می‌شود.'},
-    {q:'آیا امکان رزرو آنلاین وجود دارد؟', a:'بله. فرم رزرو در همین وب‌سایت در دسترس است. در این نمونه اولیه، نوبت‌ها شبیه‌سازی شده‌اند و در نسخه نهایی به تقویم کلینیک متصل می‌شوند.'},
+    {q:'آیا امکان رزرو آنلاین وجود دارد؟', a:'بله. خدمت، تاریخ و ساعت قابل رزرو را انتخاب کنید و اطلاعات تماس خود را وارد نمایید. درخواست شما پس از ثبت در سامانه، برای تأیید نهایی توسط کلینیک بررسی می‌شود.'},
     {q:'برای شروع درمان چه اطلاعاتی لازم است؟', a:'نام، شماره تماس و خدمت مورد نظر برای رزرو کافی است. در صورت داشتن تصویربرداری یا سابقه درمان پیشین، همراه داشتن آن به بررسی کمک می‌کند.'}
   ],
-
-  booking:{
-    /* first option is the safe default for undecided visitors */
-    services:['مشاوره و بررسی اولیه','ایمپلنت دیجیتال','زیبایی و طرح لبخند','لمینت سرامیکی','پروتز و روکش','بلیچینگ','جراحی','درمان ریشه','ترمیمی'],
-    times:['09:00','10:00','11:30','13:00','14:00','16:30','18:00'],
-    days:14
-  },
 
   /* ---- AI assistant script: edit answers freely ---- */
   ai:{
@@ -619,159 +614,8 @@ const AI=(()=>{
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&open&&!$('#bk').open&&!$('#sheet').open)set(false)});
   return{open:()=>set(true),ask(q){set(true);setTimeout(()=>{me(q);answer(q)},700)}}})();
 
-/* ============================================================
-   BOOKING — 5 steps + confirmation
-   ============================================================ */
-const Booking=(()=>{
-  const dlg=$('#bk'),rail=$('#bkRail'),next=$('#bkNext'),back=$('#bkBack'),foot=$('#bkFoot');
-  const STEPS=['انتخاب خدمت','انتخاب تاریخ','انتخاب ساعت','اطلاعات تماس','تأیید رزرو'];
-  const st={step:1,service:'',date:null,time:'',name:'',phone:'',ref:''};
-
-  /* rail */
-  STEPS.forEach((s,i)=>rail.appendChild(el('span','bk__step',`<i>${fa(i+1)}</i>${s}`)));
-
-  /* step 1 */
-  const svcWrap=$('#bkServices');
-  AK_DATA.booking.services.forEach(s=>{
-    const b=el('button','bk__opt',`<span class="bk__optT">${s}</span>`);
-    b.type='button';b.setAttribute('aria-pressed','false');b.dataset.svc=s;
-    svcWrap.appendChild(b);
-  });
-  svcWrap.addEventListener('click',e=>{const b=e.target.closest('.bk__opt');if(!b)return;
-    st.service=b.dataset.svc;
-    $$('.bk__opt',svcWrap).forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
-    sync()});
-
-  /* step 2 — Jalali strip */
-  const dateWrap=$('#bkDates');
-  function buildDates(){
-    dateWrap.replaceChildren();
-    const now=new Date();
-    for(let i=1;i<=AK_DATA.booking.days;i++){
-      const d=new Date(now);d.setDate(now.getDate()+i);
-      const closed=d.getDay()===5; /* Friday */
-      const b=el('button','bk__date',`
-        <span class="bk__dw">${jalali(d,{weekday:'short'})}</span>
-        <span class="bk__dd">${jalali(d,{day:'numeric'})}</span>
-        <span class="bk__dm">${jalali(d,{month:'long'})}</span>`);
-      b.type='button';b.setAttribute('aria-pressed','false');b.dataset.t=d.getTime();
-      if(closed){b.disabled=true;b.title='تعطیل'}
-      dateWrap.appendChild(b);
-    }
-  }
-  buildDates();
-  dateWrap.addEventListener('click',e=>{const b=e.target.closest('.bk__date');if(!b)return;
-    st.date=new Date(+b.dataset.t);st.time='';
-    $$('.bk__date',dateWrap).forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
-    buildTimes();sync()});
-
-  /* step 3 — deterministic simulated availability */
-  const timeWrap=$('#bkTimes');
-  function buildTimes(){
-    timeWrap.replaceChildren();
-    if(!st.date)return;
-    const seed=st.date.getDate()+st.date.getMonth()*7;
-    $('#bkTimeSub').textContent='ساعت‌های خالی برای '+jalali(st.date,{weekday:'long',day:'numeric',month:'long'});
-    AK_DATA.booking.times.forEach((t,i)=>{
-      const b=el('button','bk__time',fa(t));b.type='button';b.setAttribute('aria-pressed','false');b.dataset.t=t;
-      if((seed+i*3)%4===0)b.disabled=true;
-      timeWrap.appendChild(b);
-    });
-  }
-  timeWrap.addEventListener('click',e=>{const b=e.target.closest('.bk__time');if(!b)return;
-    st.time=b.dataset.t;
-    $$('.bk__time',timeWrap).forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
-    sync()});
-
-  /* step 4 — validation */
-  const nameI=$('#bkName'),phoneI=$('#bkPhone');
-  const normalize=v=>v.replace(/[۰-۹]/g,c=>FA.indexOf(c)).replace(/\D/g,'');
-  function validName(){const ok=nameI.value.trim().length>=3;
-    $('#fName').classList.toggle('is-bad',!ok&&nameI.value.length>0);
-    $('#eName').textContent=(!ok&&nameI.value.length>0)?'نام را کامل وارد کنید':'';return ok}
-  function validPhone(){const v=normalize(phoneI.value);const ok=/^09\d{9}$/.test(v);
-    $('#fPhone').classList.toggle('is-bad',!ok&&v.length>0);
-    $('#ePhone').textContent=(!ok&&v.length>0)?'شماره موبایل باید با ۰۹ شروع شود و ۱۱ رقم باشد':'';
-    return ok}
-  [nameI,phoneI].forEach(i=>i.addEventListener('input',()=>{
-    if(i===phoneI)phoneI.value=normalize(phoneI.value).slice(0,11);
-    sync()}));
-
-  /* step 5 */
-  function review(target){
-    const rows=[
-      ['خدمت',st.service],
-      ['تاریخ',st.date?jalali(st.date,{weekday:'long',day:'numeric',month:'long',year:'numeric'}):'—'],
-      ['ساعت',fa(st.time)],
-      ['نام',nameI.value.trim()],
-      ['موبایل',fa(normalize(phoneI.value))]
-    ];
-    setTrustedHTML(target,rows.map(r=>`<div class="bk__rrow"><span class="bk__rk"></span><span class="bk__rv"></span></div>`).join('')); rows.forEach((r,i)=>{const row=target.children[i];row.children[0].textContent=r[0];row.children[1].textContent=r[1]||'—';});
-  }
-
-  function canAdvance(){
-    if(st.step===1)return !!st.service;
-    if(st.step===2)return !!st.date;
-    if(st.step===3)return !!st.time;
-    if(st.step===4)return validName()&&validPhone();
-    return true;
-  }
-  function sync(){
-    $$('.bk__pane').forEach(p=>p.classList.toggle('is-now',+p.dataset.step===st.step));
-    $$('.bk__step',rail).forEach((s,i)=>{s.classList.toggle('is-now',i+1===st.step);
-      s.classList.toggle('is-done',i+1<st.step)});
-    rail.style.display=st.step===6?'none':'';
-    foot.style.display=st.step===6?'none':'';
-    back.hidden=st.step<=1;
-    next.textContent=st.step===5?'تأیید و ثبت رزرو':'مرحله بعد';
-    next.setAttribute('aria-disabled',String(!canAdvance()));
-    if(st.step===5)review($('#bkReview'));
-  }
-
-  next.addEventListener('click',()=>{
-    if(!canAdvance()){
-      if(st.step===4){validName();validPhone();Toast.show('نام و شماره موبایل را کامل وارد کنید')}
-      else Toast.show('برای ادامه، یک گزینه انتخاب کنید');
-      return;
-    }
-    if(st.step===5){
-      setTrustedHTML(next,'<span class="spin"></span>در حال ثبت');next.setAttribute('aria-disabled','true');
-      setTimeout(()=>{
-        st.ref='AK-'+fa(String(Math.floor(1000+Math.random()*8999)))+'-'+fa(String(new Date().getFullYear()).slice(2));
-        $('#bkRef').textContent=st.ref;review($('#bkDetails'));
-        st.step=6;next.textContent='مرحله بعد';sync();
-        $('.bk__body').scrollTop=0;
-      },1100);
-      return;
-    }
-    st.step++;sync();$('.bk__body').scrollTop=0;
-  });
-  back.addEventListener('click',()=>{if(st.step>1){st.step--;sync();$('.bk__body').scrollTop=0}});
-  $('#bkShow').addEventListener('click',e=>{
-    const d=$('#bkDetails');d.hidden=!d.hidden;
-    e.currentTarget.textContent=d.hidden?'مشاهده جزئیات رزرو':'بستن جزئیات';
-  });
-  $('#bkHome').addEventListener('click',()=>{close();setTimeout(()=>goto('#home'),260)});
-
-  function open(preselect){
-    if(preselect){
-      const match=AK_DATA.booking.services.find(s=>s===preselect)||
-                  AK_DATA.booking.services.find(s=>preselect.includes(s)||s.includes(preselect));
-      if(match){st.service=match;
-        $$('.bk__opt',svcWrap).forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.svc===match)));
-        st.step=2;}
-    }
-    if(!dlg.open)dlg.showModal();
-    requestAnimationFrame(()=>dlg.classList.add('is-on'));
-    document.body.classList.add('is-locked');
-    sync();
-  }
-  function close(){dlg.classList.remove('is-on');document.body.classList.remove('is-locked');
-    setTimeout(()=>dlg.open&&dlg.close(),420)}
-  $('#bkClose').addEventListener('click',close);
-  dlg.addEventListener('cancel',e=>{e.preventDefault();close()});
-  sync();
-  return{open,close}})();
+/* Booking is now API-backed; preserves the existing modal, selectors, and step markup. */
+const Booking = initBookingWizard({ toast: Toast, goto });
 
 /* ============================================================
    SMART SMILE ASSESSMENT — frontend-only demo

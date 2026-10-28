@@ -1,11 +1,11 @@
 # Task 14 — Transactional appointment creation
 
-Status: VERIFIED ON DRAFT BRANCH — merge pending owner approval.
+Status: MERGED TO MAIN — CI VERIFIED. Reconciled from repository main after merge PR #15 (current inspected main head: `9920f2b9dc80352412921bff20c8241f61c7f49e`).
 
 ## Branch and scope
 - Branch: `task/14-appointment-creation`
-- PR: #15
-- Keep the PR Draft until CI passes and the owner reviews the implementation.
+- PR: #15 (merged to `main`)
+- Recorded CI run `40540118213` passed the full verification suite.
 - Public booking endpoint: `POST /api/v1/appointments`.
 - PostgreSQL is authoritative for capacity reservation and appointment state invariants.
 
@@ -39,6 +39,6 @@ Creation and state changes write AppointmentEvent records. Sensitive booking mut
 ## Deliberate omissions
 - Public booking does not merge patients by mobile number; each distinct booking request creates its own patient record, while idempotency prevents duplicate retries.
 - No automatic Iranian holiday policy.
-- The existing UI remains simulated; API integration is outside this task.
+- The existing UI was simulated at Task 14; Task 16 now replaces that behavior in its local patch.
 - No production migration/seeding/deployment.
 - No public appointment mutation/cancellation flow in this task.

@@ -15,10 +15,11 @@
     "dev": "node tools/dev-server.mjs",
     "lint": "node tools/lint.mjs",
     "typecheck": "node tools/typecheck.mjs",
-    "test": "node tools/test.mjs",
+    "test": "node tools/smoke-test.mjs && node --test tests/js/*.test.mjs",
     "build": "vite build",
     "build:legacy": "node tools/build.mjs",
-    "test:browser": "playwright test"
+    "test:browser": "playwright test",
+    "test:booking": "node --test tests/js/*.test.mjs"
   },
   "type": "module",
   "devDependencies": {

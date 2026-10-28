@@ -107,8 +107,8 @@ it('creates and replays through the versioned public booking endpoint', function
         ->withHeader('Idempotency-Key', 'idem-task14-http-000001')
         ->postJson('/api/v1/appointments', $payload);
 
-    $first->assertCreated();
-    $replay->assertCreated();
+    $first->assertCreated()->assertJsonMissingPath('appointment_id')->assertJsonPath('status', 'pending');
+    $replay->assertCreated()->assertJsonMissingPath('appointment_id');
     expect($replay->json())->toMatchArray($first->json())
         ->and(Appointment::query()->count())->toBe(1);
 });

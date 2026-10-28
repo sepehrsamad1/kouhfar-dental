@@ -374,6 +374,8 @@
     <div class="bk__body">
       <div class="container">
         <div class="bk__rail" id="bkRail" aria-hidden="true"></div>
+        <div class="bk__errs" id="bkErrors" role="alert" tabindex="-1" hidden></div>
+        <p class="bk__live" id="bkLive" aria-live="polite" aria-atomic="true"></p>
 
         <!-- step 1 -->
         <section class="bk__pane" data-step="1">
@@ -385,7 +387,7 @@
         <!-- step 2 -->
         <section class="bk__pane" data-step="2">
           <h2 class="bk__h">انتخاب تاریخ</h2>
-          <p class="bk__sub">تاریخ‌های نمایش‌داده‌شده نمونه‌اند و در نسخه نهایی از تقویم کلینیک خوانده می‌شوند.</p>
+          <p class="bk__sub">تاریخ موردنظر خود را انتخاب کنید؛ ساعت‌های قابل رزرو بر اساس برنامه کلینیک نمایش داده می‌شوند.</p>
           <div class="bk__dates" id="bkDates"></div>
         </section>
 
@@ -419,7 +421,6 @@
           <h2 class="bk__h">تأیید رزرو</h2>
           <p class="bk__sub">اطلاعات را بررسی کنید و رزرو را تأیید نمایید.</p>
           <div class="bk__review" id="bkReview"></div>
-          <p class="bk__note">این نمونه اولیه است و رزرو واقعی ثبت نمی‌شود. در نسخه نهایی، اطلاعات به سیستم نوبت‌دهی کلینیک ارسال خواهد شد.</p>
         </section>
 
         <!-- confirmation -->
@@ -428,9 +429,9 @@
             <span class="bk__okIcon" aria-hidden="true">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
             </span>
-            <h2 class="bk__okH">رزرو شما با موفقیت ثبت شد</h2>
-            <p class="bk__sub">همکاران کلینیک برای تأیید نهایی با شما تماس می‌گیرند.</p>
-            <div class="bk__ref"><span class="bk__refK">کد پیگیری</span><span class="bk__refV" id="bkRef">—</span></div>
+            <h2 class="bk__okH">درخواست رزرو شما ثبت شد</h2>
+            <p class="bk__sub">درخواست شما در انتظار تأیید کلینیک است.</p>
+            <div class="bk__ref"><span class="bk__refK">وضعیت درخواست</span><span class="bk__refV" id="bkRef">—</span></div>
             <div class="bk__review" id="bkDetails" hidden></div>
             <div style="display:flex;flex-wrap:wrap;gap:var(--s-3)">
               <button class="btn btn--ghost" id="bkShow">مشاهده جزئیات رزرو</button>

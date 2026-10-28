@@ -19,7 +19,7 @@ for (const viewport of viewports) {
 
         await page.screenshot({
             path: `test-results/task20-content-${viewport.name}.png`,
-            fullPage: true,
+            fullPage: false,
         });
     });
 }

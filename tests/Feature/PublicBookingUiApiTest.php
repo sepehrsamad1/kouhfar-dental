@@ -67,7 +67,10 @@ it('keeps staff-only modules and routes out of the public Vite bundle', function
     $manifest = json_decode(file_get_contents($manifestPath), true, flags: JSON_THROW_ON_ERROR);
     $seen = [];
     $visit = function (string $key) use (&$visit, &$seen, $manifest): void {
-        if (isset($seen[$key]) || ! isset($manifest[$key])) {
+        if (isset($seen[$key])) {
+            return;
+        }
+        if (array_key_exists($key, $manifest) === false) {
             return;
         }
         $seen[$key] = $manifest[$key];

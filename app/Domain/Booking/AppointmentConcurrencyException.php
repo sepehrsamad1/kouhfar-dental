@@ -6,6 +6,4 @@ namespace App\Domain\Booking;
 
 use RuntimeException;
 
-final class AppointmentConcurrencyException extends RuntimeException
-{
-}
+final class AppointmentConcurrencyException extends RuntimeException {}

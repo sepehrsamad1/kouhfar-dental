@@ -30,7 +30,6 @@ class StaffAuthController
 
         if (RateLimiter::tooManyAttempts($throttleKey, $maxAttempts)) {
             $this->recordAttempt($email, $request, false);
-
             return back()->withErrors(['email' => 'اطلاعات ورود صحیح نیست.'])->onlyInput('email');
         }
 
@@ -43,7 +42,6 @@ class StaffAuthController
         if (! $authenticated) {
             RateLimiter::hit($throttleKey, $decaySeconds);
             $this->recordAttempt($email, $request, false);
-
             return back()->withErrors(['email' => 'اطلاعات ورود صحیح نیست.'])->onlyInput('email');
         }
 
@@ -66,7 +64,7 @@ class StaffAuthController
         $request->session()->put('staff_last_activity_at', $now->timestamp);
         $this->recordAttempt($email, $request, true);
 
-        return redirect()->intended(route('staff.dashboard'));
+        return redirect()->to($this->safeIntendedUrl());
     }
 
     public function destroy(Request $request): RedirectResponse
@@ -82,6 +80,27 @@ class StaffAuthController
         $request->session()->regenerateToken();
 
         return redirect()->route('staff.login');
+    }
+
+    private function safeIntendedUrl(): string
+    {
+        $intended = session()->pull('url.intended');
+
+        if (! is_string($intended) || $intended === '') {
+            return route('staff.dashboard');
+        }
+
+        $parts = parse_url($intended);
+
+        if ($parts === false || isset($parts['scheme'], $parts['host'], $parts['user'], $parts['pass'])) {
+            return route('staff.dashboard');
+        }
+
+        if (! str_starts_with($intended, '/') || str_starts_with($intended, '//')) {
+            return route('staff.dashboard');
+        }
+
+        return url($intended);
     }
 
     private function recordAttempt(string $email, Request $request, bool $success): void

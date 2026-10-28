@@ -228,7 +228,7 @@ final class StaffAppointmentController
                     $occupiedEnd->format('Y-m-d H:i:sP'),
                 );
 
-                Appointment::query()
+                $affected = Appointment::query()
                     ->whereKey($current->getKey())
                     ->where('version', $current->version)
                     ->update([
@@ -237,6 +237,10 @@ final class StaffAppointmentController
                         'version' => DB::raw('version + 1'),
                         'updated_at' => now('UTC'),
                     ]);
+
+                if ($affected !== 1) {
+                    throw new AppointmentConcurrencyException('The appointment was changed by another staff member. Refresh the calendar and try again.');
+                }
 
                 DB::table('appointment_practitioners')->where('appointment_id', $current->getKey())->delete();
                 DB::table('appointment_resources')->where('appointment_id', $current->getKey())->delete();
@@ -254,11 +258,7 @@ final class StaffAppointmentController
                     'occupied' => DB::raw($range),
                 ]);
 
-                if (Appointment::query()->whereKey($current->getKey())->where('version', $current->version)->exists() === false) {
-                    throw new AppointmentConcurrencyException('The appointment was changed by another staff member.');
-                }
-
-                app(\App\AppointmentEvent::class)::query()->create([
+                AppointmentEvent::query()->create([
                     'appointment_id' => $current->getKey(),
                     'actor_type' => 'staff',
                     'actor_id' => (string) $request->user('staff')->getKey(),

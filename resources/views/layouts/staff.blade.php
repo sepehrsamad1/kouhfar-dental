@@ -14,6 +14,9 @@
                 <a class="staff-nav__brand" href="{{ route('staff.dashboard') }}">داشبورد پرسنل</a>
                 <a href="{{ route('staff.appointments.index') }}">تقویم نوبت‌ها</a>
                 <a href="{{ route('staff.patients.index') }}">بیماران</a>
+                @can('viewAny', \App\ContentItem::class)
+                    <a href="{{ route('staff.content.index') }}">محتوای سایت</a>
+                @endcan
                 @can('manage-configuration')
                     <a href="{{ route('staff.configuration.index') }}">تنظیمات کلینیک</a>
                 @endcan

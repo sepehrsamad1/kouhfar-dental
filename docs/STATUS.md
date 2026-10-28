@@ -23,6 +23,7 @@ Last updated: 2026-10-29.
 | 17 Staff portal shell | MERGED; CI VERIFIED | PR #18 merged; staff shell, cache protection, isolated assets, Gate-controlled navigation and staff authentication safeguards implemented. |
 | 18 Staff management UI | MERGED; CI VERIFIED | PR #20 merged; staff configuration/patient management UI completed, version-aware forms and tests added. Full PR CI passed before merge. |
 | 19 Staff appointment calendar and lifecycle | MERGED; CI VERIFIED | PR #21 merged to `main` as `a9c9a230eff975f09c9c67e9741fb1baf89c465b`. PR CI run `40771222818` passed: 184 Laravel tests / 23,704 assertions, PHPStan, migrations, 16 Playwright browser tests, and Task 19 responsive screenshots at 375/768/1440px. |
+| 20 Content workflow and publication boundary | IMPLEMENTED; CI PENDING | Draft/review/published/archived workflow, versioning, explicit approval gate for clinical/pricing/testimonial content, staff editor/preview, audit trail, public published-only rendering, and published-only knowledge provider added. Existing website copy was not silently migrated. |
 
 ## Decisions still requiring owner confirmation
 

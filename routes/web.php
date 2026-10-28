@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\AvailabilityController;
 use App\Http\Controllers\ClinicConfigurationController;
+use App\Http\Controllers\ContentItemController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\StaffAppointmentController;
 use App\Http\Controllers\StaffAuthController;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'home')->name('home');
 Route::get('/booking/availability/{service}', AvailabilityController::class)->middleware('throttle:60,1')->name('booking.availability');
+Route::get('/content/{contentKey}/{locale}', [ContentItemController::class, 'show'])->where('locale', 'fa|en')->name('content.show');
 
 Route::middleware('guest:staff')->group(function (): void {
     Route::get('/staff/login', [StaffAuthController::class, 'create'])->name('staff.login');
@@ -27,6 +29,18 @@ Route::middleware(['auth:staff', 'staff.session.fresh', PreventStoreCache::class
 
         return response()->noContent();
     })->name('staff.admin.audit');
+
+    Route::get('/staff/content', [ContentItemController::class, 'index'])->name('staff.content.index');
+    Route::get('/staff/content/create', [ContentItemController::class, 'create'])->name('staff.content.create');
+    Route::post('/staff/content', [ContentItemController::class, 'store'])->name('staff.content.store');
+    Route::get('/staff/content/{contentItem}/edit', [ContentItemController::class, 'edit'])->name('staff.content.edit');
+    Route::patch('/staff/content/{contentItem}', [ContentItemController::class, 'update'])->name('staff.content.update');
+    Route::get('/staff/content/{contentItem}/preview', [ContentItemController::class, 'preview'])->name('staff.content.preview');
+    Route::post('/staff/content/{contentItem}/review', [ContentItemController::class, 'submitReview'])->name('staff.content.review');
+    Route::post('/staff/content/{contentItem}/approve', [ContentItemController::class, 'approve'])->name('staff.content.approve');
+    Route::post('/staff/content/{contentItem}/publish', [ContentItemController::class, 'publish'])->name('staff.content.publish');
+    Route::post('/staff/content/{contentItem}/archive', [ContentItemController::class, 'archive'])->name('staff.content.archive');
+    Route::post('/staff/content/{contentItem}/version', [ContentItemController::class, 'createVersion'])->name('staff.content.version');
 
     Route::get('/staff/configuration', [ClinicConfigurationController::class, 'index'])->name('staff.configuration.index');
     Route::post('/staff/configuration/services', [ClinicConfigurationController::class, 'storeService'])->name('staff.configuration.services.store');

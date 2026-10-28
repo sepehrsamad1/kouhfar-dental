@@ -24,7 +24,7 @@ function authenticateTask17Staff(StaffUser $staff): void
         'last_seen_at' => now('UTC'),
     ]);
 
-    $this->actingAs($staff, 'staff');
+    test()->actingAs($staff, 'staff');
 
     session()->put('staff_registry_session_id', $registry->id);
     session()->put('staff_authenticated_at', now('UTC')->timestamp);

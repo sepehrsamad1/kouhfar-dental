@@ -1,61 +1,79 @@
 # Task 16 — Connect Existing Booking UI to the Real API
 
-**State: CI VERIFIED ON TASK BRANCH; MERGE PENDING OWNER APPROVAL.**
-Task 16 is part of the frontend track after Tasks 05/06. It can proceed in parallel with Task 15 because Tasks 13 and 14 already provide availability and transactional booking creation. The repo's original Task 16 dependency label is superseded by the owner's clarified track plan.
+**State: VERIFIED ON TASK BRANCH; NOT MERGED.**
 
-## Repository facts checked
-- Public repository main is readable. The inspected main head is merge commit `9920f2b9dc80352412921bff20c8241f61c7f49e` (PR #15, Task 14).
-- `docs/STATUS.md` and `docs/task14-status.md` still claimed Task 14 merge was pending. Updated both to reflect the repository's actual main history.
-- Actual Task 14 route: `POST /api/v1/appointments`, request fields `full_name`, `mobile`, `service_id`, `start_at`, required `Idempotency-Key`; success is 201 with `status`, `start_at`, `end_at`, `expires_at`; the public controller strips internal `appointment_id`.
-- Actual Task 13 route: `/booking/availability/{service}`. It originally exposed practitioner/resource IDs. The new versioned adapter hides those IDs and scopes the results by date.
-- No public service listing endpoint existed. Task 16 adds a minimal endpoint exposing only services currently marked active and public-bookable.
-- D8 mobile OTP was explicitly confirmed as required by the owner during this task; SMS vendor/subscription, budget, consent copy and integration secret remain unresolved. A default-on server gate now fails closed until Task 15 implements an approved verification grant.
+## Branch / commit
+- Branch: `task/16-booking-ui-api-integration`
+- Verification commit: `35657b6ab3ef288c773b54e91a3204f3790fe9c4`
+- CI run: `40737793534` — **SUCCESS**
+- Base: `main` at Task 14 merge `9920f2b9dc80352412921bff20c8241f61c7f49e`
 
-## Changes
-- `resources/js/booking/api-client.js`, `retry.js`, `error-messages.js`, `format.js`, `wizard.js`: one JSDoc-typed client and a replacement booking wizard in the existing Blade/Vite runtime. Same modal IDs, classes, labels and five-step flow; no frontend framework.
-- `resources/js/app.js`: imports the new wizard, removes fake booking code from the runtime and removes the stale simulated `AK_DATA.booking` network options. Other frontend modules untouched.
-- `resources/css/booking-a11y.css`, `resources/css/app.css`: scoped error summary and screen-reader live announcements, no typography redesign or Persian letter-spacing changes.
-- `resources/views/layouts/app.blade.php`: CSRF meta tag.
-- `resources/views/home-body.blade.php`: error/live regions; current date copy; removes false prototype notice; confirmation says **booking request received**, not confirmed; shows pending clinic approval, not an internal UUID as a tracking number.
-- `routes/api.php`, `PublicServicesController.php`, `PublicAvailabilityController.php`: versioned service list and date-scoped availability routes; CSRF-enabled Task 14 POST; throttle limits.
-- `AvailabilityController.php`: legacy public availability route now omits practitioner/resource IDs.
-- `tests/Feature/PublicBookingUiApiTest.php`: tests service visibility, date validation, availability redaction and CSRF meta.
-- `tests/js/booking-api.test.mjs`: 8 Node tests cover exact Laravel paths/payload, copy safety, idempotent retries, errors, response validation and Tehran formatting.
-- `tests/browser/booking-api.spec.js`: 5 Playwright cases cover server-confirmed success, slot conflict, network retry with same key and keyboard-only completion.
-- `docs/task16-api-contract.md`, `docs/phone-verification-provider-seam.md`, `docs/STATUS.md`, `docs/RESUME.md`, `docs/task14-status.md`.
+## Implemented
+- Existing Blade/Vite booking wizard now consumes the real Laravel APIs from Tasks 13/14.
+- Added versioned public service catalog: `GET /api/v1/services`.
+- Added date-scoped, capacity-redacted availability: `GET /api/v1/availability/{service}?date=YYYY-MM-DD`.
+- Connected booking submission to `POST /api/v1/appointments`.
+- Preserved the existing modal IDs/classes, five-step flow, RTL layout, Estedad typography and existing frontend framework-free architecture.
+- Removed fake booking success/reference behavior; success is rendered only after a valid server 201 response.
+- Public appointment responses do not expose the internal appointment UUID.
+- Availability responses do not expose practitioner/resource IDs.
+- Added bounded retry behavior and preserves the same Idempotency-Key for the same booking attempt.
+- Raw server error text is not shown to users; fixed Persian/English error copy is used.
+- Added CSRF protection to the public POST through the existing Laravel web middleware.
+- Added keyboard/focus/error-live-region accessibility support.
+- Added responsive regression coverage at 375px, 768px and 1440px.
 
-## Retry, privacy and security
-- GET up to 3 attempts; POST up to 3 attempts only on ambiguous network/timeouts or 502/503/504; same key reused for same unchanged attempt.
-- Exponential full jitter, 350 ms base, 3 s cap; timeout 10 s GET / 15 s POST.
-- POST sends same-origin credentials, `X-CSRF-TOKEN` and Idempotency-Key. Laravel `web` middleware adds session + CSRF protection.
-- The client discards raw server message text and maps status/error codes to fixed Persian/English text. Only allowlisted validation field names are used.
-- Availability response omits provider/resource IDs. No staff/admin imports added to public entry; bundle test remains pending.
-- Name/mobile appear only in the booking request/review UI; no logging or analytics added. Test data is synthetic. No external provider or real phone used.
-
-## Acceptance status
-| Criterion | State | Evidence |
-|---|---|---|
-| All API errors map to tested safe messages | Met | Fixed Persian/English client copy plus CI JS/feature tests; raw server messages are not rendered. |
-| Retries cannot duplicate booking | Met | Client keeps the same idempotency key; Task 14 server idempotency is already CI-verified. |
-| Public bundle contains no staff-only code | Met | CI build and `PublicBookingUiApiTest` passed. |
-| Real flow succeeds only after server confirmation | Met | Strict 201/status/time validation plus passing Playwright browser suite. |
-| Keyboard access, focus/error summary, RTL announcements | Met | Passing Playwright keyboard test with Persian date/time assertions. |
+## Security / OTP boundary
+- Owner-confirmed decision: public booking requires mobile OTP verification.
+- Task 15 is intentionally deferred while provider, subscription, budget, privacy consent and operational verification policy are gathered.
+- `BOOKING_PHONE_VERIFICATION_REQUIRED=true` remains enabled by default.
+- Until Task 15 provides a valid server-side verification grant, public appointment creation returns **503 PHONE_VERIFICATION_NOT_READY** and creates no appointment.
+- No SMS provider, SDK, credential, real message or provider secret was added.
+- Tests use synthetic data only.
 
 ## Verification evidence
-Final head `4a5b1a0a826b060fb7268398ab211d09451723c9` is CI-verified by run `40736243788`, which completed with **success**.
-- JavaScript lint/typecheck/build: PASS.
-- PHP Pint: PASS.
-- PHPStan: PASS.
-- PostgreSQL migrations: PASS.
-- Laravel tests: **169 passed, 23,613 assertions**.
-- Browser smoke tests: **10 passed**.
-- Playwright Chromium installation: PASS.
-- Task 16 responsive screenshots at **375, 768 and 1440px**: PASS and uploaded as the `task16-responsive-screenshots` artifact. The responsive test also checks RTL, booking CTA visibility and horizontal-overflow absence.
+CI run `40737793534` completed successfully with:
+- JavaScript lint — PASS
+- JavaScript typecheck — PASS
+- Vite build — PASS
+- PHP formatting — PASS
+- PHPStan — PASS
+- PostgreSQL migrations — PASS
+- Laravel tests — **169 passed, 23,613 assertions**
+- Browser tests — **10 passed**
+- Responsive screenshots — **375px, 768px, 1440px** uploaded as Task 16 artifact
+- No production commands or real messaging were used.
 
-## Open boundaries (not blockers for Task 16 implementation)
-- Task 15 must add OTP/verification because D8 is confirmed, plus privacy consent, anti-abuse, request status and any patient-safe tracking token. Integrate only after provider/policy approval and its API contract exist.
-- No patient tracking code exists in Task 14; the UI does not fabricate one or expose `appointment_id` (stripped by the public controller). Public creation is currently blocked by `BOOKING_PHONE_VERIFICATION_REQUIRED=true` until Task 15 completes.
-- Service list remains empty until services are explicitly activated and approved for public booking by clinic staff.
+The responsive browser regression explicitly verifies:
+- no horizontal overflow at all three widths;
+- all three hero-stat icons remain present and visible;
+- Persian hero copy has normal letter-spacing;
+- the hero is fully ready before screenshots are captured.
 
-## Rollback / next action
-Revert this patch to return to the simulated wizard; no migration/schema change. Apply the patch to a branch, run the full CI sequence and browser tests with synthetic data, then review the resulting diff before merge. No production command or database operation was run.
+## Acceptance
+| Criterion | State | Evidence |
+|---|---|---|
+| Public responses reveal only permitted information | **Met** | Redacted service/availability/appointment responses + feature tests |
+| Tracking/reference does not expose internal appointment ID | **Met** | Public controller strips `appointment_id`; browser/API tests assert no UUID |
+| Booking succeeds only after real server response | **Met** | API client validates 201 response; Playwright success test |
+| Retry preserves idempotency key | **Met** | Node + Playwright tests |
+| Raw API/server errors are not exposed | **Met** | Error mapping tests + browser conflict/OTP tests |
+| OTP production gate fails closed | **Met** | 503 gate test; no appointment created |
+| Responsive frontend regression | **Met** | CI screenshots/tests at 375/768/1440 |
+| No staff-only code in public bundle | **Met** | Public bundle feature test passes |
+| No real messaging/provider | **Met** | No provider integration; synthetic CI only |
+
+## Deliberate omissions
+- Task 15 OTP/VerificationChallenge implementation.
+- SMS provider integration and credentials.
+- Privacy notice wording/version and consent workflow.
+- Patient tracking-token/status lookup.
+- Real SMS delivery.
+
+These are intentionally outside Task 16 and remain part of the deferred Task 15 track.
+
+## Rollback
+Task 16 introduces no database migration. Reverting the Task 16 branch commits returns the public booking UI to the prior simulated behavior. Do not revert Tasks 13/14.
+
+## Next step
+Task 16 is **verified on the branch but not merged into `main`**. Merge PR #17 only when the owner explicitly authorizes the merge.

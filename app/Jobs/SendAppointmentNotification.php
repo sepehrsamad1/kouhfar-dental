@@ -19,7 +19,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Notification;
 use Throwable;
 
-final class SendAppointmentNotification implements ShouldQueue, ShouldBeUnique
+final class SendAppointmentNotification implements ShouldBeUnique, ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -30,9 +30,7 @@ final class SendAppointmentNotification implements ShouldQueue, ShouldBeUnique
 
     public int $timeout = 30;
 
-    public function __construct(public string $outboxId)
-    {
-    }
+    public function __construct(public string $outboxId) {}
 
     public function uniqueId(): string
     {

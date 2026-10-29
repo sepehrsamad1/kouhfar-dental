@@ -71,7 +71,7 @@ final class SendAppointmentNotification implements ShouldQueue, ShouldBeUnique
             return;
         }
 
-        if ($type === AppointmentNotificationType::Reminder && $currentStatus !== \App\Enums\AppointmentStatus::Confirmed) {
+        if ($type === AppointmentNotificationType::Reminder && $currentStatus !== AppointmentStatus::Confirmed) {
             return;
         }
 

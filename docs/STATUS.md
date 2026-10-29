@@ -24,12 +24,14 @@ Last updated: 2026-10-29.
 | 18 Staff management UI | MERGED; CI VERIFIED | PR #20 merged; staff configuration/patient management UI completed, version-aware forms and tests added. Full PR CI passed before merge. |
 | 19 Staff appointment calendar and lifecycle | MERGED; CI VERIFIED | PR #21 merged to `main` as `a9c9a230eff975f09c9c67e9741fb1baf89c465b`. PR CI run `40771222818` passed: 184 Laravel tests / 23,704 assertions, PHPStan, migrations, 16 Playwright browser tests, and Task 19 responsive screenshots at 375/768/1440px. |
 | 20 Content workflow and publication boundary | MERGED; CI VERIFIED | PR #22 merged to `main` as `e55392434bcbfc854a3eea971e61ef9e08084b33`. Final PR CI run `40775032725` passed: 191 Laravel tests / 23,753 assertions, PHPStan, migrations, 19 Playwright browser tests, and Task 20 responsive screenshots at 375/768/1440px. |
+| 21 Secure image and media system | IMPLEMENTED; pending CI | Owner-approved retention/access policy recorded. Secure private storage, content validation, re-encoding, signed access, soft delete, purge job and Task 22 scheduler hook implemented on `task/21-secure-media`. |
 
 ## Decisions still requiring owner confirmation
 
 - Practitioner identities, qualifications, and practitioner-to-service assignments.
 - Exact recurring breaks and holiday dates; public holidays are not automatically clinic closures.
 - Task 15 SMS provider/subscription, budget, privacy notice text/version, verification-grant policy, anti-abuse policy and tracking/status verification policy.
+- Task 21 broader reception/practitioner media access matrix remains unapproved; current policy is admin-only.
 
 Confirmed: two dental units shared between practitioners and one consultation space; clinic hours 12:00-20:00 Saturday-Thursday in `Asia/Tehran`; cross-midnight working periods prohibited.
 

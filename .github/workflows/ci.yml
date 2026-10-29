@@ -82,10 +82,7 @@ jobs:
         run: npm run build
 
       - name: Check PHP formatting
-        run: |
-          vendor/bin/pint app/Http/Controllers/MediaAssetController.php
-          git diff -- app/Http/Controllers/MediaAssetController.php
-          vendor/bin/pint --test
+        run: vendor/bin/pint --test
 
       - name: Run PHP static analysis
         run: vendor/bin/phpstan analyse

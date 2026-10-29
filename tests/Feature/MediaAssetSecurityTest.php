@@ -124,7 +124,7 @@ it('re-encodes JPEG uploads and strips EXIF metadata', function () {
     $processed = Storage::disk('media')->get($asset->storage_key);
 
     expect($processed)->not->toContain('KOUHFAR-SYNTHETIC-EXIF')
-        ->and($processed)->not->toContain('Exif\\x00\\x00');
+        ->and($processed)->not->toContain("Exif\x00\x00");
 });
 
 it('rejects a renamed executable or non-image payload despite an image extension', function () {

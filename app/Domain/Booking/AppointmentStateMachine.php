@@ -88,6 +88,32 @@ final class AppointmentStateMachine
             ->where('appointment_id', $appointment->getKey())
             ->update(['active' => $active]);
 
+        if ($to === AppointmentStatus::Confirmed) {
+            NotificationOutbox::enqueue(
+                $appointment->getKey(),
+                \App\Enums\AppointmentNotificationType::Confirmed,
+                $now,
+                'appointment:'.$appointment->getKey().':confirmed:'.$appointment->version,
+            );
+
+            $reminderAt = $appointment->start_at->subDay();
+            if ($reminderAt->isFuture()) {
+                NotificationOutbox::enqueue(
+                    $appointment->getKey(),
+                    \App\Enums\AppointmentNotificationType::Reminder,
+                    $reminderAt,
+                    'appointment:'.$appointment->getKey().':reminder:'.$appointment->version,
+                );
+            }
+        } elseif ($to === AppointmentStatus::Cancelled) {
+            NotificationOutbox::enqueue(
+                $appointment->getKey(),
+                \App\Enums\AppointmentNotificationType::Cancelled,
+                $now,
+                'appointment:'.$appointment->getKey().':cancelled:'.$appointment->version,
+            );
+        }
+
         AppointmentEvent::query()->create([
             'appointment_id' => $appointment->getKey(),
             'actor_type' => $actorType,

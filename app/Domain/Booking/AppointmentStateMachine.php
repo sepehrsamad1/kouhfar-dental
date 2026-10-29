@@ -7,8 +7,9 @@ namespace App\Domain\Booking;
 use App\Appointment;
 use App\AppointmentEvent;
 use App\AuditLog;
-use App\NotificationOutbox;
+use App\Enums\AppointmentNotificationType;
 use App\Enums\AppointmentStatus;
+use App\NotificationOutbox;
 use App\StaffUser;
 use App\Support\AuditLogger;
 use Illuminate\Support\Facades\DB;
@@ -91,7 +92,7 @@ final class AppointmentStateMachine
         if ($to === AppointmentStatus::Confirmed) {
             NotificationOutbox::enqueue(
                 $appointment->getKey(),
-                \App\Enums\AppointmentNotificationType::Confirmed,
+                AppointmentNotificationType::Confirmed,
                 $now,
                 'appointment:'.$appointment->getKey().':confirmed:'.$appointment->version,
             );
@@ -100,7 +101,7 @@ final class AppointmentStateMachine
             if ($reminderAt->isFuture()) {
                 NotificationOutbox::enqueue(
                     $appointment->getKey(),
-                    \App\Enums\AppointmentNotificationType::Reminder,
+                    AppointmentNotificationType::Reminder,
                     $reminderAt,
                     'appointment:'.$appointment->getKey().':reminder:'.$appointment->version,
                 );
@@ -108,7 +109,7 @@ final class AppointmentStateMachine
         } elseif ($to === AppointmentStatus::Cancelled) {
             NotificationOutbox::enqueue(
                 $appointment->getKey(),
-                \App\Enums\AppointmentNotificationType::Cancelled,
+                AppointmentNotificationType::Cancelled,
                 $now,
                 'appointment:'.$appointment->getKey().':cancelled:'.$appointment->version,
             );
@@ -194,7 +195,7 @@ final class AppointmentStateMachine
                 'occurred_at' => $now,
             ]);
 
-            NotificationOutbox::enqueue($appointmentId, \App\Enums\AppointmentNotificationType::Expired, $now, 'appointment:'.$appointmentId.':hold_expired');
+            NotificationOutbox::enqueue($appointmentId, AppointmentNotificationType::Expired, $now, 'appointment:'.$appointmentId.':hold_expired');
 
             AuditLog::query()->create([
                 'actor_id' => null,

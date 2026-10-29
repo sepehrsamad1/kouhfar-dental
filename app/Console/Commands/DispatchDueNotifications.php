@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
-use App\Enums\AppointmentNotificationType;
 use App\Jobs\SendAppointmentNotification;
 use App\NotificationOutbox;
 use Carbon\CarbonImmutable;
@@ -32,7 +31,7 @@ final class DispatchDueNotifications extends Command
             ->get()
             ->each(function (NotificationOutbox $outbox) use ($now, $localNow, $timezone, &$count): void {
                 if ($outbox->type->isAutomated() && $this->isQuietHour($localNow)) {
-                    $outbox->update(['scheduled_at' => $this->nextRelease($localNow, $timezone)->setTimezone('UTC')]);
+                    $outbox->update(['scheduled_at' => $this->nextRelease($localNow)->setTimezone('UTC')]);
                     return;
                 }
 
@@ -52,7 +51,7 @@ final class DispatchDueNotifications extends Command
         return $minutes >= 22 * 60 || $minutes < 8 * 60 + 1;
     }
 
-    private function nextRelease(CarbonImmutable $local, string $timezone): CarbonImmutable
+    private function nextRelease(CarbonImmutable $local): CarbonImmutable
     {
         $release = $local->setTime(8, 1);
 

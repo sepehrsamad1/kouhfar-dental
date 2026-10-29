@@ -6,6 +6,7 @@ namespace App\Jobs;
 
 use App\Appointment;
 use App\Enums\AppointmentNotificationType;
+use App\Enums\AppointmentStatus;
 use App\NotificationOutbox;
 use App\Notifications\AppointmentSmsNotification;
 use Illuminate\Bus\Queueable;
@@ -16,6 +17,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Notification;
+use Throwable;
 
 final class SendAppointmentNotification implements ShouldQueue, ShouldBeUnique
 {
@@ -65,7 +67,7 @@ final class SendAppointmentNotification implements ShouldQueue, ShouldBeUnique
         $type = $outbox->type;
         $currentStatus = $appointment->status;
 
-        if ($type === AppointmentNotificationType::Confirmed && $currentStatus !== \App\Enums\AppointmentStatus::Confirmed) {
+        if ($type === AppointmentNotificationType::Confirmed && $currentStatus !== AppointmentStatus::Confirmed) {
             return;
         }
 
@@ -73,7 +75,7 @@ final class SendAppointmentNotification implements ShouldQueue, ShouldBeUnique
             return;
         }
 
-        if ($type === AppointmentNotificationType::Expired && $currentStatus !== \App\Enums\AppointmentStatus::Expired) {
+        if ($type === AppointmentNotificationType::Expired && $currentStatus !== AppointmentStatus::Expired) {
             return;
         }
 

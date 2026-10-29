@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\AvailabilityController;
 use App\Http\Controllers\ClinicConfigurationController;
+use App\Http\Controllers\MediaAssetController;
 use App\Http\Controllers\ContentItemController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\StaffAppointmentController;
@@ -23,6 +24,9 @@ Route::middleware('guest:staff')->group(function (): void {
 
 Route::middleware(['auth:staff', 'staff.session.fresh', PreventStoreCache::class])->group(function (): void {
     Route::view('/staff', 'staff.dashboard')->name('staff.dashboard');
+    Route::post('/staff/media', [MediaAssetController::class, 'store'])->name('staff.media.store');
+    Route::get('/staff/media/{mediaAsset}/download', [MediaAssetController::class, 'download'])->middleware('signed')->name('staff.media.download');
+    Route::delete('/staff/media/{mediaAsset}', [MediaAssetController::class, 'delete'])->name('staff.media.delete');
     Route::post('/staff/logout', [StaffAuthController::class, 'destroy'])->name('staff.logout');
     Route::get('/staff/admin/audit', function () {
         Gate::authorize('view-audit-log');

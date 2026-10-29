@@ -139,7 +139,7 @@ it('denies an unsigned download and an expired signed download', function () {
         ['mediaAsset' => $asset->id],
     );
 
-    $this->get($expired)->assertForbidden();
+    $this->actingAs($admin, 'staff')->get($expired)->assertForbidden();
 });
 
 it('soft deletes early and queues the 30-day hard purge hook', function () {

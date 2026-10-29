@@ -7,6 +7,7 @@ namespace App\Domain\Booking;
 use App\Appointment;
 use App\AppointmentEvent;
 use App\AuditLog;
+use App\NotificationOutbox;
 use App\Enums\AppointmentStatus;
 use App\StaffUser;
 use App\Support\AuditLogger;
@@ -166,6 +167,8 @@ final class AppointmentStateMachine
                 'to_status' => AppointmentStatus::Expired,
                 'occurred_at' => $now,
             ]);
+
+            NotificationOutbox::enqueue($appointmentId, \App\Enums\AppointmentNotificationType::Expired, $now, 'appointment:'.$appointmentId.':hold_expired');
 
             AuditLog::query()->create([
                 'actor_id' => null,

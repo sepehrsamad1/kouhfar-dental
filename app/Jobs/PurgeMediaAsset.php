@@ -19,9 +19,7 @@ final class PurgeMediaAsset implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public function __construct(public string $mediaAssetId)
-    {
-    }
+    public function __construct(public string $mediaAssetId) {}
 
     public function handle(MediaAssetService $service): void
     {

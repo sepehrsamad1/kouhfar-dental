@@ -7,6 +7,8 @@ namespace App\Services;
 use App\Appointment;
 use App\Enums\MediaAssetKind;
 use App\MediaAsset;
+use DateTimeImmutable;
+use DateTimeZone;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -17,6 +19,7 @@ final class MediaAssetService
     public const MAX_BYTES = 10_485_760;
 
     private const MAX_PIXELS = 40_000_000;
+
     private const MAX_DIMENSION = 10_000;
 
     private const FORMATS = [
@@ -132,9 +135,9 @@ final class MediaAssetService
         return true;
     }
 
-    public function eligibleForPurge(MediaAsset $mediaAsset, ?\DateTimeImmutable $now = null): bool
+    public function eligibleForPurge(MediaAsset $mediaAsset, ?DateTimeImmutable $now = null): bool
     {
-        $now ??= new \DateTimeImmutable('now', new \DateTimeZone('UTC'));
+        $now ??= new DateTimeImmutable('now', new DateTimeZone('UTC'));
 
         if ($mediaAsset->deleted_at !== null) {
             return $mediaAsset->deleted_at->getTimestamp() <= $now->modify('-30 days')->getTimestamp();
@@ -155,7 +158,7 @@ final class MediaAssetService
             ->max('end_at');
 
         if (is_string($lastAppointmentEnd)) {
-            $appointmentDate = new \DateTimeImmutable($lastAppointmentEnd, new \DateTimeZone('UTC'));
+            $appointmentDate = new DateTimeImmutable($lastAppointmentEnd, new DateTimeZone('UTC'));
             if ($appointmentDate->getTimestamp() > $anchor->getTimestamp()) {
                 $anchor = $appointmentDate;
             }

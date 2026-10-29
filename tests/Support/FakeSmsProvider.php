@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Support;
 
-use App\Notifications\SmsMessage;
 use App\Notifications\Sms\SmsProvider;
+use App\Notifications\SmsMessage;
 use RuntimeException;
 
 final class FakeSmsProvider implements SmsProvider

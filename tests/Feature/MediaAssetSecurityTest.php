@@ -22,7 +22,7 @@ function validWebpUpload(): UploadedFile
     $image = imagecreatetruecolor(2, 2);
     $path = tempnam(sys_get_temp_dir(), 'kouhfar-test-webp-');
 
-    if ($path === false || ! imagewebp($image, $path, 80)) {
+    if ($path === false || imagewebp($image, $path, 80) === false) {
         imagedestroy($image);
         test()->markTestSkipped('WebP encoding is unavailable in the test environment.');
     }
@@ -49,7 +49,7 @@ function jpegUploadWithExifMarker(): UploadedFile
     $image = imagecreatetruecolor(2, 2);
     $path = tempnam(sys_get_temp_dir(), 'kouhfar-test-jpeg-');
 
-    if ($path === false || ! imagejpeg($image, $path, 90)) {
+    if ($path === false || imagejpeg($image, $path, 90) === false) {
         imagedestroy($image);
         test()->fail('Unable to create JPEG fixture.');
     }
@@ -58,7 +58,7 @@ function jpegUploadWithExifMarker(): UploadedFile
     $jpeg = file_get_contents($path);
     unlink($path);
 
-    if ($jpeg === false || ! str_starts_with($jpeg, "\xFF\xD8")) {
+    if ($jpeg === false || str_starts_with($jpeg, "\xFF\xD8") === false) {
         test()->fail('Unable to create a valid JPEG fixture.');
     }
 

@@ -53,13 +53,13 @@ function jpegUploadWithExifMarker(): UploadedFile
     $jpeg = file_get_contents($path);
     unlink($path);
 
-    if ($jpeg === false || ! str_starts_with($jpeg, "\\xFF\\xD8")) {
+    if ($jpeg === false || ! str_starts_with($jpeg, "\xFF\xD8")) {
         test()->fail('Unable to create a valid JPEG fixture.');
     }
 
-    $exifPayload = "Exif\\x00\\x00".'KOUHFAR-SYNTHETIC-EXIF';
+    $exifPayload = "Exif\x00\x00".'KOUHFAR-SYNTHETIC-EXIF';
     $segmentLength = strlen($exifPayload) + 2;
-    $app1 = "\\xFF\\xE1".pack('n', $segmentLength).$exifPayload;
+    $app1 = "\xFF\xE1".pack('n', $segmentLength).$exifPayload;
     $withExif = substr($jpeg, 0, 2).$app1.substr($jpeg, 2);
 
     return UploadedFile::fake()->createWithContent('synthetic-exif.jpg', $withExif);

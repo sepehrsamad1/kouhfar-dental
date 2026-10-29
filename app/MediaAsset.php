@@ -27,7 +27,6 @@ class MediaAsset extends Model
         'owner_patient_id',
         'kind',
         'created_by',
-        'created_at',
     ];
 
     protected function casts(): array

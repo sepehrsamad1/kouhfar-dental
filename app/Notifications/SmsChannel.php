@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Notifications;
 
 use App\Notifications\Sms\SmsProvider;
+use App\Notifications\Sms\SmsNotificationContract;
 use Illuminate\Notifications\Notification;
 use LogicException;
 
@@ -14,6 +15,10 @@ final class SmsChannel
 
     public function send(object $notifiable, Notification $notification): void
     {
+        if (! $notification instanceof SmsNotificationContract) {
+            throw new LogicException('SMS notifications must implement SmsNotificationContract.');
+        }
+
         $message = $notification->toSms($notifiable);
 
         if (! $message instanceof SmsMessage) {

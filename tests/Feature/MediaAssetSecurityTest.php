@@ -39,6 +39,32 @@ function validPngUpload(): UploadedFile
     return UploadedFile::fake()->createWithContent('patient.png', $png);
 }
 
+function jpegUploadWithExifMarker(): UploadedFile
+{
+    $image = imagecreatetruecolor(2, 2);
+    $path = tempnam(sys_get_temp_dir(), 'kouhfar-test-jpeg-');
+
+    if ($path === false || ! imagejpeg($image, $path, 90)) {
+        imagedestroy($image);
+        test()->fail('Unable to create JPEG fixture.');
+    }
+
+    imagedestroy($image);
+    $jpeg = file_get_contents($path);
+    unlink($path);
+
+    if ($jpeg === false || ! str_starts_with($jpeg, "\\xFF\\xD8")) {
+        test()->fail('Unable to create a valid JPEG fixture.');
+    }
+
+    $exifPayload = "Exif\\x00\\x00".'KOUHFAR-SYNTHETIC-EXIF';
+    $segmentLength = strlen($exifPayload) + 2;
+    $app1 = "\\xFF\\xE1".pack('n', $segmentLength).$exifPayload;
+    $withExif = substr($jpeg, 0, 2).$app1.substr($jpeg, 2);
+
+    return UploadedFile::fake()->createWithContent('synthetic-exif.jpg', $withExif);
+}
+
 it('accepts a real png, stores it privately with a generated filename and returns a 15-minute signed url', function () {
     Storage::fake('media');
 
@@ -80,6 +106,25 @@ it('accepts WebP when the server image processor supports it', function () {
 
     $response->assertCreated()->assertJsonPath('mime_type', 'image/webp');
     Storage::disk('media')->assertExists(MediaAsset::query()->firstOrFail()->storage_key);
+});
+
+it('re-encodes JPEG uploads and strips EXIF metadata', function () {
+    Storage::fake('media');
+
+    $admin = StaffUser::factory()->active()->state(['role' => 'admin'])->create();
+
+    $response = $this->actingAs($admin, 'staff')->post('/staff/media', [
+        'media' => jpegUploadWithExifMarker(),
+        'kind' => 'case_before',
+    ]);
+
+    $response->assertCreated();
+
+    $asset = MediaAsset::query()->firstOrFail();
+    $processed = Storage::disk('media')->get($asset->storage_key);
+
+    expect($processed)->not->toContain('KOUHFAR-SYNTHETIC-EXIF')
+        ->and($processed)->not->toContain('Exif\\x00\\x00');
 });
 
 it('rejects a renamed executable or non-image payload despite an image extension', function () {

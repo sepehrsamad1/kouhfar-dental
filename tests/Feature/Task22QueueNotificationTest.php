@@ -3,18 +3,18 @@
 declare(strict_types=1);
 
 use App\Appointment;
+use App\ClinicWorkingHour;
+use App\Domain\Booking\AppointmentCreator;
 use App\Domain\Booking\AppointmentStateMachine;
 use App\Enums\AppointmentNotificationType;
 use App\Enums\AppointmentStatus;
-use App\ClinicWorkingHour;
-use App\Domain\Booking\AppointmentCreator;
 use App\Jobs\SendAppointmentNotification;
 use App\NotificationOutbox;
+use App\Notifications\SmsChannel;
 use App\Practitioner;
 use App\Resource;
 use App\Service;
 use App\WorkingHour;
-use App\Notifications\SmsChannel;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
@@ -124,7 +124,7 @@ it('sends an outbox notification once even if the job is executed twice', functi
     [$appointment] = task22Booking();
     $outbox = NotificationOutbox::query()->where('appointment_id', $appointment->getKey())->where('type', AppointmentNotificationType::Pending)->firstOrFail();
 
-    $fake = new FakeSmsProvider();
+    $fake = new FakeSmsProvider;
     app()->instance(SmsChannel::class, new SmsChannel($fake));
 
     (new SendAppointmentNotification($outbox->getKey()))->handle();

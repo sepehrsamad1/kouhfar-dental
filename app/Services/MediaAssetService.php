@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Appointment;
 use App\Enums\MediaAssetKind;
 use App\MediaAsset;
 use Illuminate\Http\UploadedFile;
@@ -139,10 +140,28 @@ final class MediaAssetService
             return $mediaAsset->deleted_at->getTimestamp() <= $now->modify('-30 days')->getTimestamp();
         }
 
-        $retentionDays = $mediaAsset->owner_patient_id === null ? 90 : 730;
+        if ($mediaAsset->created_at === null) {
+            return false;
+        }
 
-        return $mediaAsset->created_at !== null
-            && $mediaAsset->created_at->getTimestamp() <= $now->modify("-{$retentionDays} days")->getTimestamp();
+        if ($mediaAsset->owner_patient_id === null) {
+            return $mediaAsset->created_at->getTimestamp() <= $now->modify('-90 days')->getTimestamp();
+        }
+
+        $anchor = $mediaAsset->created_at;
+        $lastAppointmentEnd = Appointment::query()
+            ->where('patient_id', $mediaAsset->owner_patient_id)
+            ->where('end_at', '<=', $now->format('Y-m-d H:i:sP'))
+            ->max('end_at');
+
+        if (is_string($lastAppointmentEnd)) {
+            $appointmentDate = new \DateTimeImmutable($lastAppointmentEnd, new \DateTimeZone('UTC'));
+            if ($appointmentDate->getTimestamp() > $anchor->getTimestamp()) {
+                $anchor = $appointmentDate;
+            }
+        }
+
+        return $anchor->getTimestamp() <= $now->modify('-2 years')->getTimestamp();
     }
 
     private function encodePng(\GdImage $image, string $path): bool

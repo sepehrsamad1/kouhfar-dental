@@ -17,7 +17,7 @@ use Tests\Support\FakeSmsProvider;
 uses(RefreshDatabase::class);
 
 beforeEach(function (): void {
-    Carbon::setTestNow('2026-10-29T18:00:00Z');
+    Carbon::setTestNow('2026-10-27T18:00:00Z');
     config(['notifications.sms.driver' => 'null']);
 });
 
@@ -104,7 +104,7 @@ it('expires only overdue pending appointments and releases capacity idempotently
 it('delays automated notifications during quiet hours but not transactional notifications', function (): void {
     [$appointment] = task22Booking();
 
-    Carbon::setTestNow('2026-10-29T20:00:00Z'); // 23:30 Asia/Tehran
+    Carbon::setTestNow('2026-10-27T20:00:00Z'); // 23:30 Asia/Tehran
     NotificationOutbox::enqueue($appointment->getKey(), AppointmentNotificationType::Reminder, now('UTC'), 'quiet-reminder');
     NotificationOutbox::enqueue($appointment->getKey(), AppointmentNotificationType::Pending, now('UTC'), 'quiet-pending');
 

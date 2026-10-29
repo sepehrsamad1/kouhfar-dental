@@ -110,6 +110,10 @@ final class StaffAppointmentController
 
                 $states->transition($current, AppointmentStatus::Confirmed, 'staff', (string) $request->user('staff')->getKey(), 'staff_confirmed', $current->version);
                 NotificationOutbox::enqueue($current->getKey(), AppointmentNotificationType::Confirmed, now('UTC'), 'appointment:'.$current->getKey().':confirmed:'.$current->version);
+                $reminderAt = $current->start_at->subDay();
+                if ($reminderAt->isFuture()) {
+                    NotificationOutbox::enqueue($current->getKey(), AppointmentNotificationType::Reminder, $reminderAt, 'appointment:'.$current->getKey().':reminder:'.$current->version);
+                }
             });
         } catch (AppointmentConcurrencyException|LogicException $exception) {
             return $this->conflict($request, $exception->getMessage());

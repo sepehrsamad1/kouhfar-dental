@@ -98,7 +98,7 @@ final class MediaAssetService
             }
 
             try {
-                return MediaAsset::query()->create([
+                return MediaAsset::query()->forceCreate([
                     'storage_key' => $storageKey,
                     'mime_type' => $mime,
                     'byte_size' => strlen($processed),

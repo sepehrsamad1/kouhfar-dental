@@ -34,7 +34,7 @@ final class AppointmentSmsNotification extends Notification
             AppointmentNotificationType::Confirmed =>
                 "نوبت شما تأیید شد: {$date} ساعت {$time}، {$practitioner}. آدرس: ".config('notifications.sms.clinic_address').' | '.config('notifications.sms.clinic_map_url'),
             AppointmentNotificationType::Reminder =>
-                "یادآوری نوبت: فردا {$date} ساعت {$time}، {$practitioner}. لطفاً برای حضور به‌موقع برنامه‌ریزی کنید.",
+                "یادآوری نوبت: {$date} ساعت {$time}، {$practitioner}. لطفاً برای حضور به‌موقع برنامه‌ریزی کنید.",
             AppointmentNotificationType::Expired =>
                 'مهلت ۱ ساعته درخواست رزرو شما به پایان رسید و زمان انتخاب‌شده آزاد شد. برای رزرو دوباره درخواست جدید ثبت کنید.',
             AppointmentNotificationType::Cancelled =>

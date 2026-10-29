@@ -47,7 +47,7 @@ final class MediaAssetService
         }
 
         $size = @getimagesizefromstring($bytes);
-        if ($size === false || ($size[0] ?? 0) < 1 || ($size[1] ?? 0) < 1) {
+        if ($size === false || ($size[0] ?? 0) < 1 || ($size[1] ?? 0) < 1 || ($size['mime'] ?? null) !== $mime) {
             throw ValidationException::withMessages(['media' => 'The uploaded file is not a valid image.']);
         }
 

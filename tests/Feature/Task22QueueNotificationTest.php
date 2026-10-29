@@ -6,12 +6,9 @@ use App\Appointment;
 use App\Domain\Booking\AppointmentStateMachine;
 use App\Enums\AppointmentNotificationType;
 use App\Enums\AppointmentStatus;
-use App\Http\Controllers\StaffAppointmentController;
 use App\Jobs\SendAppointmentNotification;
 use App\NotificationOutbox;
 use App\Notifications\SmsChannel;
-use App\Notifications\Sms\SmsProvider;
-use App\StaffUser;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
@@ -62,7 +59,7 @@ function task22Booking(): array
         'full_name' => 'Synthetic Queue Patient',
         'mobile' => '09120000001',
         'service_id' => $service->getKey(),
-        'start_at' => '2026-10-31T09:30:00Z',
+        'start_at' => '2026-10-29T09:30:00Z',
     ], 'task22-'.uniqid());
 
     return [Appointment::query()->findOrFail($result['body']['appointment_id']), $practitioner];

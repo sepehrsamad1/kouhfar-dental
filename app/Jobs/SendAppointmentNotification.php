@@ -92,7 +92,7 @@ final class SendAppointmentNotification implements ShouldQueue, ShouldBeUnique
         ])->save();
     }
 
-    public function failed(\Throwable $exception): void
+    public function failed(Throwable $exception): void
     {
         NotificationOutbox::query()
             ->whereKey($this->outboxId)

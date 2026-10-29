@@ -5,9 +5,8 @@ use App\Jobs\PurgeMediaAsset;
 use App\MediaAsset;
 use App\Patient;
 use App\Services\MediaAssetService;
+use App\Session;
 use App\StaffUser;
-use DateTimeImmutable;
-use DateTimeZone;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Queue;
@@ -15,6 +14,21 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 
 uses(RefreshDatabase::class);
+
+function freshStaffSession(StaffUser $staff): array
+{
+    $registry = Session::factory()->create([
+        'user_id' => $staff->id,
+        'expires_at' => now('UTC')->addHours(2),
+        'last_seen_at' => now('UTC'),
+    ]);
+
+    return [
+        'staff_registry_session_id' => $registry->id,
+        'staff_authenticated_at' => now('UTC')->timestamp,
+        'staff_last_activity_at' => now('UTC')->timestamp,
+    ];
+}
 
 function validWebpUpload(): UploadedFile
 {
@@ -74,7 +88,7 @@ it('accepts a real png, stores it privately with a generated filename and return
 
     $admin = StaffUser::factory()->active()->state(['role' => 'admin'])->create();
 
-    $response = $this->actingAs($admin, 'staff')->post('/staff/media', [
+    $response = $this->actingAs($admin, 'staff')->withSession(freshStaffSession($admin))->post('/staff/media', [
         'media' => validPngUpload(),
         'kind' => 'smile_input',
     ]);
@@ -159,7 +173,7 @@ it('rejects files larger than 10 MB', function () {
 it('denies non-admin staff because no broader media role has been approved', function () {
     $reception = StaffUser::factory()->active()->state(['role' => 'reception'])->create();
 
-    $response = $this->actingAs($reception, 'staff')->post('/staff/media', [
+    $response = $this->actingAs($reception, 'staff')->withSession(freshStaffSession($reception))->post('/staff/media', [
         'media' => validPngUpload(),
         'kind' => 'other',
     ]);

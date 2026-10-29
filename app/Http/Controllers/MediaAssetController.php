@@ -13,6 +13,7 @@ use App\StaffUser;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -52,7 +53,7 @@ final class MediaAssetController
         ], 201);
     }
 
-    public function download(MediaAsset $mediaAsset): Response
+    public function download(MediaAsset $mediaAsset): StreamedResponse
     {
         Gate::authorize('view', $mediaAsset);
 
@@ -68,7 +69,7 @@ final class MediaAssetController
         return response()->streamDownload(
             function () use ($disk, $mediaAsset): void {
                 $stream = $disk->readStream($mediaAsset->storage_key);
-                if ($stream === false) {
+                if ($stream === null) {
                     abort(404);
                 }
 
@@ -109,7 +110,7 @@ final class MediaAssetController
             'occurred_at' => now('UTC'),
             'request_id' => request()->attributes->get('request_id'),
             'meta' => json_encode([
-                'kind' => $asset->kind->value,
+                'kind' => (string) $asset->getRawOriginal('kind'),
                 'mime_type' => $asset->mime_type,
                 'byte_size' => $asset->byte_size,
             ], JSON_THROW_ON_ERROR),

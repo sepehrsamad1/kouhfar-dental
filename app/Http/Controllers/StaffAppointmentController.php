@@ -293,7 +293,7 @@ final class StaffAppointmentController
                 ]);
             });
         } catch (AppointmentConcurrencyException|LogicException|QueryException $exception) {
-            if ($exception instanceof QueryException && ! str_contains($exception->getMessage(), 'no_overlap') && $exception->getCode() !== '23P01') {
+            if ($exception instanceof QueryException && str_contains($exception->getMessage(), 'no_overlap') === false && $exception->getCode() !== '23P01') {
                 throw $exception;
             }
 

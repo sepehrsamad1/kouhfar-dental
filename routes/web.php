@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 use App\Http\Controllers\AvailabilityController;
 use App\Http\Controllers\ClinicConfigurationController;
-use App\Http\Controllers\MediaAssetController;
 use App\Http\Controllers\ContentItemController;
+use App\Http\Controllers\MediaAssetController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\StaffAppointmentController;
 use App\Http\Controllers\StaffAuthController;

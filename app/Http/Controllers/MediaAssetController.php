@@ -14,6 +14,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
@@ -36,6 +37,8 @@ final class MediaAssetController
             $request->input('owner_patient_id'),
             $actor->id,
         );
+
+        $this->audit($actor, 'media.created', $asset);
 
         return response()->json([
             'id' => $asset->id,
@@ -85,9 +88,30 @@ final class MediaAssetController
     {
         Gate::authorize('delete', $mediaAsset);
 
+        /** @var StaffUser $actor */
+        $actor = request()->user('staff');
+
         $service->softDelete($mediaAsset);
+        $this->audit($actor, 'media.soft_deleted', $mediaAsset);
         PurgeMediaAsset::dispatch($mediaAsset->id)->delay(now('UTC')->addDays(30));
 
         return back()->with('success', 'رسانه حذف شد و پس از دوره نگهداری پاک‌سازی می‌شود.');
+
+    private function audit(StaffUser $actor, string $action, MediaAsset $asset): void
+    {
+        DB::table('audit_logs')->insert([
+            'id' => (string) str()->uuid(),
+            'actor_id' => $actor->id,
+            'action' => $action,
+            'target_type' => MediaAsset::class,
+            'target_id' => $asset->id,
+            'occurred_at' => now('UTC'),
+            'request_id' => request()->attributes->get('request_id'),
+            'meta' => json_encode([
+                'kind' => $asset->kind->value,
+                'mime_type' => $asset->mime_type,
+                'byte_size' => $asset->byte_size,
+            ], JSON_THROW_ON_ERROR),
+        ]);
     }
 }

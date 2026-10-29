@@ -70,7 +70,7 @@ it('creates one pending outbox entry and never duplicates it', function (): void
 
     expect(NotificationOutbox::query()
         ->where('appointment_id', $appointment->getKey())
-        ->where('type', AppointmentNotificationType::Pending)
+        ->where('type', AppointmentNotificationType::Pending->value)
         ->count())->toBe(1);
 
     NotificationOutbox::enqueue(
@@ -82,7 +82,7 @@ it('creates one pending outbox entry and never duplicates it', function (): void
 
     expect(NotificationOutbox::query()
         ->where('appointment_id', $appointment->getKey())
-        ->where('type', AppointmentNotificationType::Pending)
+        ->where('type', AppointmentNotificationType::Pending->value)
         ->count())->toBe(1);
 });
 
@@ -97,7 +97,7 @@ it('expires only overdue pending appointments and releases capacity idempotently
 
     expect(NotificationOutbox::query()
         ->where('appointment_id', $appointment->getKey())
-        ->where('type', AppointmentNotificationType::Expired)
+        ->where('type', AppointmentNotificationType::Expired->value)
         ->count())->toBe(1);
 });
 
@@ -165,7 +165,7 @@ it('uses the approved 24-hour reminder timing after confirmation', function (): 
 
     $reminder = NotificationOutbox::query()
         ->where('appointment_id', $appointment->getKey())
-        ->where('type', AppointmentNotificationType::Reminder)
+        ->where('type', AppointmentNotificationType::Reminder->value)
         ->first();
 
     expect($reminder)->not->toBeNull()

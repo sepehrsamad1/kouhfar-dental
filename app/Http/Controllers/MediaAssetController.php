@@ -96,6 +96,7 @@ final class MediaAssetController
         PurgeMediaAsset::dispatch($mediaAsset->id)->delay(now('UTC')->addDays(30));
 
         return back()->with('success', 'رسانه حذف شد و پس از دوره نگهداری پاک‌سازی می‌شود.');
+    }
 
     private function audit(StaffUser $actor, string $action, MediaAsset $asset): void
     {

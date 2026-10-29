@@ -10,6 +10,8 @@ use App\Domain\Availability\AvailabilityRepository;
 use App\Domain\Booking\AppointmentConcurrencyException;
 use App\Domain\Booking\AppointmentStateMachine;
 use App\Enums\AppointmentStatus;
+use App\Enums\AppointmentNotificationType;
+use App\NotificationOutbox;
 use App\Service;
 use App\Support\AuditLogger;
 use Carbon\CarbonImmutable;
@@ -279,6 +281,8 @@ final class StaffAppointmentController
                 ]);
 
                 $current->refresh();
+                NotificationOutbox::enqueue($current->getKey(), AppointmentNotificationType::Rescheduled, now('UTC'), 'appointment:'.$current->getKey().':rescheduled:'.$current->version);
+
                 AuditLogger::record($request->user('staff'), 'appointment.rescheduled', $current, [
                     'status' => AppointmentStatus::Confirmed->value,
                     'version' => $current->version - 1,

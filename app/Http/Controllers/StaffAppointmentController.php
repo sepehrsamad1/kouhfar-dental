@@ -10,8 +10,6 @@ use App\Domain\Availability\AvailabilityRepository;
 use App\Domain\Booking\AppointmentConcurrencyException;
 use App\Domain\Booking\AppointmentStateMachine;
 use App\Enums\AppointmentStatus;
-use App\NotificationOutbox;
-use App\Enums\AppointmentNotificationType;
 use App\Service;
 use App\Support\AuditLogger;
 use Carbon\CarbonImmutable;
@@ -109,11 +107,6 @@ final class StaffAppointmentController
                 }
 
                 $states->transition($current, AppointmentStatus::Confirmed, 'staff', (string) $request->user('staff')->getKey(), 'staff_confirmed', $current->version);
-                NotificationOutbox::enqueue($current->getKey(), AppointmentNotificationType::Confirmed, now('UTC'), 'appointment:'.$current->getKey().':confirmed:'.$current->version);
-                $reminderAt = $current->start_at->subDay();
-                if ($reminderAt->isFuture()) {
-                    NotificationOutbox::enqueue($current->getKey(), AppointmentNotificationType::Reminder, $reminderAt, 'appointment:'.$current->getKey().':reminder:'.$current->version);
-                }
             });
         } catch (AppointmentConcurrencyException|LogicException $exception) {
             return $this->conflict($request, $exception->getMessage());
@@ -139,7 +132,6 @@ final class StaffAppointmentController
                 }
 
                 $states->transition($current, AppointmentStatus::Cancelled, 'staff', (string) $request->user('staff')->getKey(), 'staff_cancelled', $current->version);
-                NotificationOutbox::enqueue($current->getKey(), AppointmentNotificationType::Cancelled, now('UTC'), 'appointment:'.$current->getKey().':cancelled:'.$current->version);
             });
         } catch (AppointmentConcurrencyException|LogicException $exception) {
             return $this->conflict($request, $exception->getMessage());
@@ -287,8 +279,6 @@ final class StaffAppointmentController
                 ]);
 
                 $current->refresh();
-                NotificationOutbox::enqueue($current->getKey(), AppointmentNotificationType::Rescheduled, now('UTC'), 'appointment:'.$current->getKey().':rescheduled:'.$current->version);
-
                 AuditLogger::record($request->user('staff'), 'appointment.rescheduled', $current, [
                     'status' => AppointmentStatus::Confirmed->value,
                     'version' => $current->version - 1,

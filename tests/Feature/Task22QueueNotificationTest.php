@@ -6,8 +6,14 @@ use App\Appointment;
 use App\Domain\Booking\AppointmentStateMachine;
 use App\Enums\AppointmentNotificationType;
 use App\Enums\AppointmentStatus;
+use App\ClinicWorkingHour;
+use App\Domain\Booking\AppointmentCreator;
 use App\Jobs\SendAppointmentNotification;
 use App\NotificationOutbox;
+use App\Practitioner;
+use App\Resource;
+use App\Service;
+use App\WorkingHour;
 use App\Notifications\SmsChannel;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -27,7 +33,7 @@ afterEach(function (): void {
 
 function task22Booking(): array
 {
-    $service = \App\Service::factory()->create([
+    $service = Service::factory()->create([
         'duration_minutes' => 30,
         'buffer_before_minutes' => 10,
         'buffer_after_minutes' => 10,
@@ -35,19 +41,19 @@ function task22Booking(): array
         'is_public_bookable' => true,
         'required_resource_kind' => 'chair',
     ]);
-    $practitioner = \App\Practitioner::factory()->create(['is_active' => true]);
-    $resource = \App\Resource::factory()->create(['kind' => 'chair', 'is_active' => true]);
+    $practitioner = Practitioner::factory()->create(['is_active' => true]);
+    $resource = Resource::factory()->create(['kind' => 'chair', 'is_active' => true]);
     $service->practitioners()->attach($practitioner);
     $service->resources()->attach($resource);
 
-    \App\ClinicWorkingHour::query()->create([
+    ClinicWorkingHour::query()->create([
         'weekday' => 4,
         'start_local' => '12:00:00',
         'end_local' => '20:00:00',
         'timezone' => 'Asia/Tehran',
         'version' => 1,
     ]);
-    \App\WorkingHour::query()->create([
+    WorkingHour::query()->create([
         'practitioner_id' => $practitioner->getKey(),
         'weekday' => 4,
         'start_local' => '12:00:00',
@@ -55,7 +61,7 @@ function task22Booking(): array
         'version' => 1,
     ]);
 
-    $result = app(\App\Domain\Booking\AppointmentCreator::class)->create([
+    $result = app(AppointmentCreator::class)->create([
         'full_name' => 'Synthetic Queue Patient',
         'mobile' => '09120000001',
         'service_id' => $service->getKey(),

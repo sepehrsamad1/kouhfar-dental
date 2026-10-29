@@ -50,7 +50,7 @@ final class MediaAssetService
         }
 
         $size = @getimagesizefromstring($bytes);
-        if ($size === false || ($size[0] ?? 0) < 1 || ($size[1] ?? 0) < 1 || ($size['mime'] ?? null) !== $mime) {
+        if ($size === false || $size[0] < 1 || $size[1] < 1 || $size['mime'] !== $mime) {
             throw ValidationException::withMessages(['media' => 'The uploaded file is not a valid image.']);
         }
 
@@ -140,18 +140,22 @@ final class MediaAssetService
         $now ??= new DateTimeImmutable('now', new DateTimeZone('UTC'));
 
         if ($mediaAsset->deleted_at !== null) {
-            return $mediaAsset->deleted_at->getTimestamp() <= $now->modify('-30 days')->getTimestamp();
+            $deletedAt = new DateTimeImmutable((string) $mediaAsset->deleted_at, new DateTimeZone('UTC'));
+
+            return $deletedAt->getTimestamp() <= $now->modify('-30 days')->getTimestamp();
         }
 
         if ($mediaAsset->created_at === null) {
             return false;
         }
 
+        $createdAt = new DateTimeImmutable((string) $mediaAsset->created_at, new DateTimeZone('UTC'));
+
         if ($mediaAsset->owner_patient_id === null) {
-            return $mediaAsset->created_at->getTimestamp() <= $now->modify('-90 days')->getTimestamp();
+            return $createdAt->getTimestamp() <= $now->modify('-90 days')->getTimestamp();
         }
 
-        $anchor = $mediaAsset->created_at;
+        $anchor = $createdAt;
         $lastAppointmentEnd = Appointment::query()
             ->where('patient_id', $mediaAsset->owner_patient_id)
             ->where('end_at', '<=', $now->format('Y-m-d H:i:sP'))

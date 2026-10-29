@@ -13,6 +13,7 @@ use App\StaffUser;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
@@ -26,8 +27,11 @@ final class MediaAssetController
         /** @var StaffUser $actor */
         $actor = $request->user('staff');
 
+        /** @var UploadedFile $upload */
+        $upload = $request->file('media');
+
         $asset = $service->store(
-            $request->file('media'),
+            $upload,
             MediaAssetKind::from($request->string('kind')->toString()),
             $request->input('owner_patient_id'),
             $actor->id,
@@ -59,7 +63,15 @@ final class MediaAssetController
         }
 
         return response()->streamDownload(
-            fn () => print($disk->get($mediaAsset->storage_key)),
+            function () use ($disk, $mediaAsset): void {
+                $stream = $disk->readStream($mediaAsset->storage_key);
+                if ($stream === false) {
+                    abort(404);
+                }
+
+                fpassthru($stream);
+                fclose($stream);
+            },
             'media-'.$mediaAsset->id.'.'.pathinfo($mediaAsset->storage_key, PATHINFO_EXTENSION),
             [
                 'Content-Type' => $mediaAsset->mime_type,

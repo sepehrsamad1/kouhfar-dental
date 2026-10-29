@@ -138,7 +138,7 @@ it('retries a failed provider call without changing the outbox payload', functio
     [$appointment] = task22Booking();
     $outbox = NotificationOutbox::query()->where('appointment_id', $appointment->getKey())->where('type', AppointmentNotificationType::Pending)->firstOrFail();
 
-    $fake = new FakeSmsProvider();
+    $fake = new FakeSmsProvider;
     $fake->fail = true;
     app()->instance(SmsChannel::class, new SmsChannel($fake));
 

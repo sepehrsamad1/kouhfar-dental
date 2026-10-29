@@ -9,7 +9,9 @@ use App\AppointmentEvent;
 use App\Domain\Availability\AvailabilityRepository;
 use App\Domain\Booking\AppointmentConcurrencyException;
 use App\Domain\Booking\AppointmentStateMachine;
+use App\Enums\AppointmentNotificationType;
 use App\Enums\AppointmentStatus;
+use App\NotificationOutbox;
 use App\Service;
 use App\Support\AuditLogger;
 use Carbon\CarbonImmutable;
@@ -99,10 +101,10 @@ final class StaffAppointmentController
                     $current->getKey()
                 );
 
-                if (! collect($available)->contains(
+                if (collect($available)->contains(
                     fn (array $slot): bool => $slot['start_at'] === CarbonImmutable::parse((string) $current->getRawOriginal('start_at'), 'UTC')->format('Y-m-d\TH:i:s\Z')
                         && $slot['end_at'] === CarbonImmutable::parse((string) $current->getRawOriginal('end_at'), 'UTC')->format('Y-m-d\TH:i:s\Z')
-                )) {
+                ) === false) {
                     throw new AppointmentConcurrencyException('The appointment slot is no longer available.');
                 }
 
@@ -279,6 +281,8 @@ final class StaffAppointmentController
                 ]);
 
                 $current->refresh();
+                NotificationOutbox::enqueue($current->getKey(), AppointmentNotificationType::Rescheduled, now('UTC'), 'appointment:'.$current->getKey().':rescheduled:'.$current->version);
+
                 AuditLogger::record($request->user('staff'), 'appointment.rescheduled', $current, [
                     'status' => AppointmentStatus::Confirmed->value,
                     'version' => $current->version - 1,
@@ -289,7 +293,7 @@ final class StaffAppointmentController
                 ]);
             });
         } catch (AppointmentConcurrencyException|LogicException|QueryException $exception) {
-            if ($exception instanceof QueryException && ! str_contains($exception->getMessage(), 'no_overlap') && $exception->getCode() !== '23P01') {
+            if ($exception instanceof QueryException && str_contains($exception->getMessage(), 'no_overlap') === false && $exception->getCode() !== '23P01') {
                 throw $exception;
             }
 

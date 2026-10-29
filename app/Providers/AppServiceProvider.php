@@ -8,6 +8,7 @@ use App\AIRequest;
 use App\Appointment;
 use App\ContentItem;
 use App\MediaAsset;
+use App\Notifications\SmsChannel;
 use App\Patient;
 use App\Policies\AIRequestPolicy;
 use App\Policies\AppointmentPolicy;
@@ -23,6 +24,7 @@ use App\Practitioner;
 use App\Resource;
 use App\ScheduleException;
 use App\Service;
+use App\Services\SmsProviderManager;
 use App\StaffUser;
 use App\WorkingHour;
 use Illuminate\Support\Facades\Gate;
@@ -32,7 +34,10 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        //
+        $this->app->singleton(SmsProviderManager::class);
+        $this->app->singleton(SmsChannel::class, fn ($app): SmsChannel => new SmsChannel(
+            $app->make(SmsProviderManager::class)->resolve(),
+        ));
     }
 
     public function boot(): void

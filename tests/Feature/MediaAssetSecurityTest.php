@@ -151,6 +151,25 @@ it('enforces the 90-day pre-consultation and 2-year clinical retention windows',
         ->and($service->eligibleForPurge($patientRecord, $now))->toBeTrue();
 });
 
+it('extends clinical retention through the patients last historical appointment', function () {
+    $service = app(MediaAssetService::class);
+    $now = new DateTimeImmutable('2026-10-29 00:00:00', new DateTimeZone('UTC'));
+
+    $patient = \App\Patient::factory()->create();
+    \App\Appointment::factory()->create([
+        'patient_id' => $patient->id,
+        'start_at' => $now->modify('-1 year -1 day'),
+        'end_at' => $now->modify('-1 year'),
+    ]);
+
+    $asset = MediaAsset::factory()->create([
+        'owner_patient_id' => $patient->id,
+        'created_at' => $now->modify('-3 years'),
+    ]);
+
+    expect($service->eligibleForPurge($asset, $now))->toBeFalse();
+});
+
 it('does not purge a soft-deleted asset until 30 days have passed', function () {
     $service = app(MediaAssetService::class);
     $now = new DateTimeImmutable('2026-10-29 00:00:00', new DateTimeZone('UTC'));

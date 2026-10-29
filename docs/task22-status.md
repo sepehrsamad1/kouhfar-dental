@@ -71,3 +71,5 @@ A managed process supervisor should keep the queue worker alive. No production c
 - No invented consent/privacy/legal policy.
 - No automatic patient-record deletion beyond the already approved Task 21 media policy.
 
+
+<!-- CI refresh -->

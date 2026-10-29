@@ -1,9 +1,13 @@
 <?php
 
+use App\Appointment;
 use App\Jobs\PurgeMediaAsset;
 use App\MediaAsset;
+use App\Patient;
 use App\Services\MediaAssetService;
 use App\StaffUser;
+use DateTimeImmutable;
+use DateTimeZone;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Queue;
@@ -217,7 +221,7 @@ it('enforces the 90-day pre-consultation and 2-year clinical retention windows',
         'owner_patient_id' => null,
     ]);
 
-    $patient = \App\Patient::factory()->create();
+    $patient = Patient::factory()->create();
     $patientRecord = MediaAsset::factory()->create([
         'created_at' => $now->modify('-731 days'),
         'owner_patient_id' => $patient->id,
@@ -232,7 +236,7 @@ it('extends clinical retention through the patients last historical appointment'
     $now = new DateTimeImmutable('2026-10-29 00:00:00', new DateTimeZone('UTC'));
 
     $patient = \App\Patient::factory()->create();
-    \App\Appointment::factory()->create([
+    Appointment::factory()->create([
         'patient_id' => $patient->id,
         'start_at' => $now->modify('-1 year -1 day'),
         'end_at' => $now->modify('-1 year'),

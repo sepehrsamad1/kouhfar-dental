@@ -12,6 +12,23 @@ use Illuminate\Support\Facades\URL;
 
 uses(RefreshDatabase::class);
 
+function validWebpUpload(): UploadedFile
+{
+    $image = imagecreatetruecolor(2, 2);
+    $path = tempnam(sys_get_temp_dir(), 'kouhfar-test-webp-');
+
+    if ($path === false || ! imagewebp($image, $path, 80)) {
+        imagedestroy($image);
+        test()->markTestSkipped('WebP encoding is unavailable in the test environment.');
+    }
+
+    imagedestroy($image);
+    $bytes = file_get_contents($path);
+    unlink($path);
+
+    return UploadedFile::fake()->createWithContent('client-supplied.webp', $bytes === false ? '' : $bytes);
+}
+
 function validPngUpload(): UploadedFile
 {
     $png = base64_decode(
@@ -49,6 +66,20 @@ it('accepts a real png, stores it privately with a generated filename and return
         ->and($url)->toContain('expires=');
 
     $this->get($url)->assertOk()->assertHeader('Content-Type', 'image/png');
+});
+
+it('accepts WebP when the server image processor supports it', function () {
+    Storage::fake('media');
+
+    $admin = StaffUser::factory()->active()->state(['role' => 'admin'])->create();
+
+    $response = $this->actingAs($admin, 'staff')->post('/staff/media', [
+        'media' => validWebpUpload(),
+        'kind' => 'other',
+    ]);
+
+    $response->assertCreated()->assertJsonPath('mime_type', 'image/webp');
+    Storage::disk('media')->assertExists(MediaAsset::query()->firstOrFail()->storage_key);
 });
 
 it('rejects a renamed executable or non-image payload despite an image extension', function () {

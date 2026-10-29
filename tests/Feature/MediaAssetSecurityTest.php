@@ -137,7 +137,7 @@ it('rejects a renamed executable or non-image payload despite an image extension
 
     $admin = StaffUser::factory()->active()->state(['role' => 'admin'])->create();
 
-    $response = $this->actingAs($admin, 'staff')->post('/staff/media', [
+    $response = $this->actingAs($admin, 'staff')->withHeaders(['Accept' => 'application/json'])->post('/staff/media', [
         'media' => UploadedFile::fake()->createWithContent('evil.png', "<?php echo 'not an image';"),
         'kind' => 'other',
     ]);
@@ -149,7 +149,7 @@ it('rejects a renamed executable or non-image payload despite an image extension
 it('rejects files larger than 10 MB', function () {
     $admin = StaffUser::factory()->active()->state(['role' => 'admin'])->create();
 
-    $response = $this->actingAs($admin, 'staff')->post('/staff/media', [
+    $response = $this->actingAs($admin, 'staff')->withHeaders(['Accept' => 'application/json'])->post('/staff/media', [
         'media' => UploadedFile::fake()->create('large.jpg', 10_241, 'image/jpeg'),
         'kind' => 'other',
     ]);

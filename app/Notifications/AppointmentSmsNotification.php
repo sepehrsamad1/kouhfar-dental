@@ -7,8 +7,9 @@ namespace App\Notifications;
 use App\Appointment;
 use App\Enums\AppointmentNotificationType;
 use Illuminate\Notifications\Notification;
+use App\Notifications\Sms\SmsNotificationContract;
 
-final class AppointmentSmsNotification extends Notification
+final class AppointmentSmsNotification extends Notification implements SmsNotificationContract
 {
     public function __construct(
         private readonly Appointment $appointment,

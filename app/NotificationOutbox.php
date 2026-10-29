@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use App\Enums\AppointmentNotificationType;
 use Carbon\CarbonImmutable;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 

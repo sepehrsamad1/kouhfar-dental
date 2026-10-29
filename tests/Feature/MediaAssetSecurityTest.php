@@ -1,12 +1,12 @@
 <?php
 
 use App\Appointment;
+use App\Http\Middleware\EnsureStaffSessionIsFresh;
 use App\Jobs\PurgeMediaAsset;
 use App\MediaAsset;
 use App\Patient;
 use App\Services\MediaAssetService;
 use App\StaffUser;
-use App\Http\Middleware\EnsureStaffSessionIsFresh;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Queue;

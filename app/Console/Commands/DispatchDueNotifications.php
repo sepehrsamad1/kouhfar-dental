@@ -32,6 +32,7 @@ final class DispatchDueNotifications extends Command
             ->each(function (NotificationOutbox $outbox) use ($localNow, &$count): void {
                 if ($outbox->type->isAutomated() && $this->isQuietHour($localNow)) {
                     $outbox->update(['scheduled_at' => $this->nextRelease($localNow)->setTimezone('UTC')]);
+
                     return;
                 }
 

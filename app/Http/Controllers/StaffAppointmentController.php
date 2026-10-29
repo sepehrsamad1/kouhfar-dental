@@ -101,10 +101,10 @@ final class StaffAppointmentController
                     $current->getKey()
                 );
 
-                if (! collect($available)->contains(
+                if (collect($available)->contains(
                     fn (array $slot): bool => $slot['start_at'] === CarbonImmutable::parse((string) $current->getRawOriginal('start_at'), 'UTC')->format('Y-m-d\TH:i:s\Z')
                         && $slot['end_at'] === CarbonImmutable::parse((string) $current->getRawOriginal('end_at'), 'UTC')->format('Y-m-d\TH:i:s\Z')
-                )) {
+                ) === false) {
                     throw new AppointmentConcurrencyException('The appointment slot is no longer available.');
                 }
 

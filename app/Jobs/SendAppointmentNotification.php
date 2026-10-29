@@ -30,7 +30,9 @@ final class SendAppointmentNotification implements ShouldQueue, ShouldBeUnique
 
     public int $timeout = 30;
 
-    public function __construct(public string $outboxId) {}
+    public function __construct(public string $outboxId)
+    {
+    }
 
     public function uniqueId(): string
     {

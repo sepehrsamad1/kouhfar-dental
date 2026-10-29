@@ -95,7 +95,7 @@ final class SendAppointmentNotification implements ShouldQueue, ShouldBeUnique
         NotificationOutbox::query()
             ->whereKey($this->outboxId)
             ->update([
-                'last_error' => substr($exception->getMessage(), 0, 1000),
+                'last_error' => 'SMS notification delivery failed after retries.',
             ]);
     }
 }

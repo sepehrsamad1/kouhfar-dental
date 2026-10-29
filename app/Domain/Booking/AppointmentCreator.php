@@ -11,6 +11,7 @@ use App\Domain\Availability\AvailabilityRepository;
 use App\Enums\AppointmentStatus;
 use App\IdempotencyRecord;
 use App\Patient;
+use App\NotificationOutbox;
 use App\Practitioner;
 use App\Resource;
 use App\Service;
@@ -219,6 +220,8 @@ final class AppointmentCreator
                 'to_status' => AppointmentStatus::Pending,
                 'occurred_at' => $now,
             ]);
+
+            NotificationOutbox::enqueue($appointment->getKey(), \App\Enums\AppointmentNotificationType::Pending, $now, 'appointment:'.$appointment->getKey().':booking_pending');
 
             AuditLog::query()->create([
                 'actor_id' => null,

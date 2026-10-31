@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
-use RuntimeException;
-use UnexpectedValueException;
 
 final class AvalAIClient
 {
@@ -26,15 +24,15 @@ final class AvalAIClient
         $model = $options['model'] ?? config('services.avalai.model');
 
         if (! is_string($apiKey) || trim($apiKey) === '') {
-            throw new RuntimeException('AvalAI API key is not configured.');
+            throw new \RuntimeException('AvalAI API key is not configured.');
         }
 
         if (! is_string($baseUrl) || trim($baseUrl) === '') {
-            throw new RuntimeException('AvalAI base URL is not configured.');
+            throw new \RuntimeException('AvalAI base URL is not configured.');
         }
 
         if (! is_string($model) || trim($model) === '') {
-            throw new RuntimeException('AvalAI model is not configured.');
+            throw new \RuntimeException('AvalAI model is not configured.');
         }
 
         unset($options['model'], $options['messages']);
@@ -53,7 +51,7 @@ final class AvalAIClient
         $data = $response->throw()->json();
 
         if (! is_array($data)) {
-            throw new UnexpectedValueException('AvalAI returned an invalid JSON response.');
+            throw new \UnexpectedValueException('AvalAI returned an invalid JSON response.');
         }
 
         return $data;

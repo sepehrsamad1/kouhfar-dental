@@ -17,7 +17,7 @@ After changing environment values on a Laravel deployment, refresh cached config
 
 ## Use
 
-Resolve `App\\Services\\AvalAIClient` through Laravel's container and call `chat($messages, $options)`. The client sends a Bearer-authenticated JSON request to `/chat/completions` and throws for missing configuration or unsuccessful HTTP responses.
+Resolve `App\Services\AvalAIClient` through Laravel's container and call `chat($messages, $options)`. The client sends a Bearer-authenticated JSON request to `/chat/completions` and throws for missing configuration or unsuccessful HTTP responses.
 
 ## Safety boundary
 

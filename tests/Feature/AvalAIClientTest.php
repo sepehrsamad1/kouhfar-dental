@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use App\Services\AvalAIClient;
 use Illuminate\Support\Facades\Http;
-use RuntimeException;
 
 beforeEach(function (): void {
     config([
@@ -44,7 +43,7 @@ it('fails before making a request when the API key is missing', function (): voi
 
     expect(fn () => app(AvalAIClient::class)->chat([
         ['role' => 'user', 'content' => 'test'],
-    ]))->toThrow(RuntimeException::class, 'AvalAI API key is not configured.');
+    ]))->toThrow(\RuntimeException::class, 'AvalAI API key is not configured.');
 });
 
 it('fails before making a request when no model is configured', function (): void {
@@ -53,5 +52,5 @@ it('fails before making a request when no model is configured', function (): voi
 
     expect(fn () => app(AvalAIClient::class)->chat([
         ['role' => 'user', 'content' => 'test'],
-    ]))->toThrow(RuntimeException::class, 'AvalAI model is not configured.');
+    ]))->toThrow(\RuntimeException::class, 'AvalAI model is not configured.');
 });

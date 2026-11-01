@@ -73,7 +73,7 @@ it('returns a safe fallback when the provider fails', function (): void {
     $response
         ->assertOk()
         ->assertJsonPath('status', 'fallback')
-        ->assertJsonPath('answer', 'AI service is temporarily unavailable.');
+        ->assertJsonPath('answer', 'اطلاعات تأییدشده کافی برای پاسخ ایمن به این سؤال در دسترس نیست. لطفاً با کلینیک یا یک دندانپزشک واجد صلاحیت تماس بگیرید.');
 });
 
 it('returns an explicit disabled state without exposing provider details', function (): void {

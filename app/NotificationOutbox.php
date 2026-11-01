@@ -58,7 +58,6 @@ class NotificationOutbox extends Model
         'attempts',
         'created_at',
         'sent_at',
-        'scheduled_at',
     ];
 
     protected function casts(): array

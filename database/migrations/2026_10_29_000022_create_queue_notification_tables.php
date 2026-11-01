@@ -61,7 +61,40 @@ return new class extends Migration
                 $table->text('last_error')->nullable();
                 $table->foreign('appointment_id')->references('id')->on('appointments')->cascadeOnDelete();
             });
+
+            return;
         }
+
+        // Extend the pre-existing notification outbox scaffold instead of
+        // silently leaving it incompatible with the Task 22 contract.
+        Schema::table('notification_outbox', function (Blueprint $table): void {
+            if (! Schema::hasColumn('notification_outbox', 'appointment_id')) {
+                $table->uuid('appointment_id')->nullable()->index();
+            }
+
+            if (! Schema::hasColumn('notification_outbox', 'type')) {
+                $table->string('type', 80)->nullable();
+            }
+
+            if (! Schema::hasColumn('notification_outbox', 'dedupe_key')) {
+                $table->string('dedupe_key', 191)->nullable()->unique();
+            }
+
+            if (! Schema::hasColumn('notification_outbox', 'scheduled_at')) {
+                $table->timestampTz('scheduled_at')->nullable()->index();
+            }
+
+            if (! Schema::hasColumn('notification_outbox', 'last_error')) {
+                $table->text('last_error')->nullable();
+            }
+        });
+
+        Schema::table('notification_outbox', function (Blueprint $table): void {
+            $table->foreign('appointment_id')
+                ->references('id')
+                ->on('appointments')
+                ->cascadeOnDelete();
+        });
     }
 
     public function down(): void

@@ -28,6 +28,8 @@ class NotificationOutbox extends Model
 
     public $timestamps = false;
 
+    protected $table = 'notification_outbox';
+
     protected $hidden = [
         'recipient_hash',
         'payload_ref',

@@ -6,6 +6,7 @@ namespace App\Console\Commands;
 
 use App\Jobs\SendAppointmentNotification;
 use App\NotificationOutbox;
+use App\Services\Clock;
 use Carbon\CarbonImmutable;
 use Illuminate\Console\Command;
 
@@ -15,9 +16,15 @@ final class DispatchDueNotifications extends Command
 
     protected $description = 'Dispatch due appointment notification outbox entries without bypassing approved quiet hours.';
 
+    public function __construct(
+        private readonly Clock $clock,
+    ) {
+        parent::__construct();
+    }
+
     public function handle(): int
     {
-        $now = CarbonImmutable::now('UTC');
+        $now = $this->clock->now();
 
         $timezone = (string) config('notifications.sms.timezone', 'Asia/Tehran');
         $localNow = $now->setTimezone($timezone);

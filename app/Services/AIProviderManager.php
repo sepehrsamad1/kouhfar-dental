@@ -19,8 +19,7 @@ final class AIProviderManager
     public function __construct(
         private readonly AIUsageRecorder $usage,
         private readonly AIRequestRecorder $requests,
-    ) {
-    }
+    ) {}
 
     /** @return array{status: string, output: ?string, input_tokens: int, output_tokens: int} */
     public function generateText(string $feature, string $prompt, array $context = []): array

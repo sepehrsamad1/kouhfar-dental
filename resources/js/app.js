@@ -601,15 +601,17 @@ const AI=(()=>{
       const label=el('div','msg__sourcesLabel','منابع تأییدشده');
       list.appendChild(label);
       sources.slice(0,5).forEach(source=>{
+        const label=`${String(source.title||source.content_key||'منبع')} · نسخه ${Number(source.version)||1}`;
         const url=safeSourceUrl(source?.url);
-        if(!url)return;
-        const a=document.createElement('a');
-        a.className='msg__source';
-        a.href=url;
-        a.target='_blank';
-        a.rel='noopener noreferrer';
-        a.textContent=`${String(source.title||source.content_key||'منبع')} · نسخه ${Number(source.version)||1}`;
-        list.appendChild(a);
+        const node=url?document.createElement('a'):document.createElement('span');
+        node.className='msg__source';
+        if(url){
+          node.href=url;
+          node.target='_blank';
+          node.rel='noopener noreferrer';
+        }
+        node.textContent=label;
+        list.appendChild(node);
       });
       if(list.children.length>1)n.appendChild(list);
     }

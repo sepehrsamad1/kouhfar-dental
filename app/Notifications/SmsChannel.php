@@ -11,9 +11,7 @@ use LogicException;
 
 final class SmsChannel
 {
-    public function __construct(private readonly SmsProvider $provider)
-    {
-    }
+    public function __construct(private readonly SmsProvider $provider) {}
 
     public function send(object $notifiable, Notification $notification): void
     {

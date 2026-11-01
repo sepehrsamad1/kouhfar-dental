@@ -16,7 +16,6 @@ final class AppointmentSmsNotification extends Notification implements SmsNotifi
         private readonly AppointmentNotificationType $type,
     ) {}
 
-
     public function via(object $notifiable): array
     {
         return [SmsChannel::class];

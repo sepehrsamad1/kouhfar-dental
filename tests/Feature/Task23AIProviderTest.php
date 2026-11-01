@@ -94,10 +94,9 @@ it('falls back safely when an unapproved provider is selected', function (): voi
 
 it('blocks calls after the configured per-minute limit', function (): void {
     config(['ai.rate_limits.per_minute' => 1]);
+    RateLimiter::clear('ai:'.substr(hash('sha256', 'limited-feature'), 0, 24).':'.now('UTC')->format('Y-m-d-H-i'));
 
     $manager = app(AIProviderManager::class);
-
-    expect($manager->generateText('limited-feature', 'one')->status ?? null)->toBeNull();
 
     $first = $manager->generateText('limited-feature', 'one');
     $second = $manager->generateText('limited-feature', 'two');

@@ -1,6 +1,6 @@
 # Project status
 
-Last updated: 2026-10-29.
+Last updated: 2026-11-01.
 
 | Package | Status | Notes |
 |---|---|---|
@@ -49,4 +49,5 @@ Task 16 boundary:
 - OTP remains fail-closed/default-on until Task 15 supplies the approved verification implementation.
 - No SMS provider, real message, provider credential, privacy notice, or real patient data was introduced.
 
-| 22 Queues, scheduler, and notifications | IMPLEMENTED; pending CI | Owner-approved Kavenegar target, log/null development provider, 1-hour pending expiry, 24-hour reminder, quiet hours 22:00–08:00 Asia/Tehran with 08:01 automated release, idempotent notification outbox, bounded retries, failed-job handling, and scheduled Task 21 media cleanup. See `docs/task22-status.md`. |
+| 22 Queues, scheduler, and notifications | MERGED; CI VERIFIED | PR #24 merged after CI run `41325374368` passed. See `docs/task22-status.md`. |
+| 23 AI provider abstraction and cost controls | IMPLEMENTED; pending CI | Deterministic fake provider, bounded text/image contracts, centralized configuration, privacy-safe request/usage accounting, rate/cost limits, safe fallback behavior, and disabled-by-default release gate. See `docs/task23-status.md`. |

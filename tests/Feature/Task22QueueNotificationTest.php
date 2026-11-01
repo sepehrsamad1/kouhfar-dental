@@ -25,7 +25,7 @@ uses(RefreshDatabase::class);
 
 beforeEach(function (): void {
     CarbonImmutable::setTestNow('2026-10-27T18:00:00Z');
-    app()->instance(Clock::class, new class implements Clock {
+    app()->instance(Clock::class, new class(CarbonImmutable::parse('2026-10-27T18:00:00Z')) implements Clock {
         public function __construct(
             public CarbonImmutable $nowValue,
         ) {}
@@ -34,7 +34,7 @@ beforeEach(function (): void {
         {
             return $this->nowValue;
         }
-    }(CarbonImmutable::parse('2026-10-27T18:00:00Z')));
+    });
     config(['notifications.sms.driver' => 'null']);
 });
 

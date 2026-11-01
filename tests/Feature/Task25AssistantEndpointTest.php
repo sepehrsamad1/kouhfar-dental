@@ -1,10 +1,10 @@
 <?php
 
-use AppContentItem;
-use AppEnumsContentItemStatus;
-use AppEnumsContentKind;
-use IlluminateFoundationTestingRefreshDatabase;
-use IlluminateSupportFacadesRateLimiter;
+use App\ContentItem;
+use App\Enums\ContentItemStatus;
+use App\Enums\ContentKind;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\RateLimiter;
 
 uses(RefreshDatabase::class);
 

@@ -17,18 +17,18 @@ use App\Service;
 use App\WorkingHour;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Date;
+use Carbon\CarbonImmutable;
 use Tests\Support\FakeSmsProvider;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function (): void {
-    Date::setTestNow('2026-10-27T18:00:00Z');
+    CarbonImmutable::setTestNow('2026-10-27T18:00:00Z');
     config(['notifications.sms.driver' => 'null']);
 });
 
 afterEach(function (): void {
-    Date::setTestNow();
+    CarbonImmutable::setTestNow();
 });
 
 function task22Booking(): array
@@ -110,7 +110,7 @@ it('expires only overdue pending appointments and releases capacity idempotently
 it('delays automated notifications during quiet hours but not transactional notifications', function (): void {
     [$appointment] = task22Booking();
 
-    Date::setTestNow('2026-10-27T20:00:00Z'); // 23:30 Asia/Tehran
+    CarbonImmutable::setTestNow('2026-10-27T20:00:00Z'); // 23:30 Asia/Tehran
     NotificationOutbox::enqueue($appointment->getKey(), AppointmentNotificationType::Reminder, now('UTC'), 'quiet-reminder');
     NotificationOutbox::enqueue($appointment->getKey(), AppointmentNotificationType::Pending, now('UTC'), 'quiet-pending');
 
@@ -156,7 +156,7 @@ it('uses the approved 24-hour reminder timing after confirmation', function (): 
     [$appointment] = task22Booking();
     $appointment->refresh();
 
-    Date::setTestNow($appointment->start_at->subDays(2));
+    CarbonImmutable::setTestNow($appointment->start_at->subDays(2));
     $appointment->expires_at = now('UTC')->addHour();
     $appointment->save();
 

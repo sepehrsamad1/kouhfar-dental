@@ -6,6 +6,7 @@ namespace App\Console\Commands;
 
 use App\Jobs\SendAppointmentNotification;
 use App\NotificationOutbox;
+use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Illuminate\Console\Command;
 
@@ -17,9 +18,9 @@ final class DispatchDueNotifications extends Command
 
     public function handle(): int
     {
-        // Use Laravel's now() helper so Carbon::setTestNow() in feature tests
-        // controls the same clock used by the dispatcher.
-        $now = now('UTC')->toImmutable();
+        // Read Carbon's explicit test clock when present so feature tests and
+        // production use the same deterministic time source.
+        $now = (Carbon::getTestNow()?->toImmutable() ?? CarbonImmutable::now('UTC'))->setTimezone('UTC');
         $timezone = (string) config('notifications.sms.timezone', 'Asia/Tehran');
         $localNow = $now->setTimezone($timezone);
 

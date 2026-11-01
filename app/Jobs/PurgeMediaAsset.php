@@ -19,7 +19,16 @@ final class PurgeMediaAsset implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    public int $tries = 5;
+
+    public int $timeout = 60;
+
     public function __construct(public string $mediaAssetId) {}
+
+    public function backoff(): array
+    {
+        return [60, 300, 900, 1800];
+    }
 
     public function handle(MediaAssetService $service): void
     {

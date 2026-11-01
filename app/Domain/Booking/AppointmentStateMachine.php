@@ -7,7 +7,9 @@ namespace App\Domain\Booking;
 use App\Appointment;
 use App\AppointmentEvent;
 use App\AuditLog;
+use App\Enums\AppointmentNotificationType;
 use App\Enums\AppointmentStatus;
+use App\NotificationOutbox;
 use App\StaffUser;
 use App\Support\AuditLogger;
 use Illuminate\Support\Facades\DB;
@@ -86,6 +88,32 @@ final class AppointmentStateMachine
         DB::table('appointment_resources')
             ->where('appointment_id', $appointment->getKey())
             ->update(['active' => $active]);
+
+        if ($to === AppointmentStatus::Confirmed) {
+            NotificationOutbox::enqueue(
+                $appointment->getKey(),
+                AppointmentNotificationType::Confirmed,
+                $now,
+                'appointment:'.$appointment->getKey().':confirmed:'.$appointment->version,
+            );
+
+            $reminderAt = $appointment->start_at->subDay();
+            if ($reminderAt->isFuture()) {
+                NotificationOutbox::enqueue(
+                    $appointment->getKey(),
+                    AppointmentNotificationType::Reminder,
+                    $reminderAt,
+                    'appointment:'.$appointment->getKey().':reminder:'.$appointment->version,
+                );
+            }
+        } elseif ($to === AppointmentStatus::Cancelled) {
+            NotificationOutbox::enqueue(
+                $appointment->getKey(),
+                AppointmentNotificationType::Cancelled,
+                $now,
+                'appointment:'.$appointment->getKey().':cancelled:'.$appointment->version,
+            );
+        }
 
         AppointmentEvent::query()->create([
             'appointment_id' => $appointment->getKey(),
@@ -166,6 +194,8 @@ final class AppointmentStateMachine
                 'to_status' => AppointmentStatus::Expired,
                 'occurred_at' => $now,
             ]);
+
+            NotificationOutbox::enqueue($appointmentId, AppointmentNotificationType::Expired, $now, 'appointment:'.$appointmentId.':hold_expired');
 
             AuditLog::query()->create([
                 'actor_id' => null,

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App;
 
 use App\Enums\AppointmentStatus;
+use Carbon\CarbonImmutable;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,6 +14,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property string $id
+ * @property string $patient_id
+ * @property AppointmentStatus $status
+ * @property CarbonImmutable $start_at
+ * @property CarbonImmutable $end_at
+ * @property CarbonImmutable|null $expires_at
+ * @property int $version
+ * @property-read Patient|null $patient
+ * @property-read Collection<int, Practitioner> $practitioners
+ */
 class Appointment extends Model
 {
     use HasFactory;

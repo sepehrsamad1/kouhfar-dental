@@ -41,6 +41,10 @@ jobs:
       MAIL_MAILER: array
       PULSE_ENABLED: false
       TELESCOPE_ENABLED: false
+      AI_ENABLED: true
+      AI_TEXT_ENABLED: true
+      AI_TEXT_PROVIDER: fake
+      AI_RATE_LIMIT_PER_MINUTE: 100
 
     steps:
       - name: Checkout

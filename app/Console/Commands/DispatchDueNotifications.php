@@ -31,9 +31,9 @@ final class DispatchDueNotifications extends Command
             ->limit(200)
             ->get()
             ->each(function (NotificationOutbox $outbox) use ($localNow, &$count): void {
-                $type = AppointmentNotificationType::tryFrom((string) $outbox->getRawOriginal('type'));
+                $type = $outbox->type;
 
-                if ($type?->isAutomated() === true && $this->isQuietHour($localNow)) {
+                if ($type instanceof AppointmentNotificationType && $type->isAutomated() && $this->isQuietHour($localNow)) {
                     $outbox->update(['scheduled_at' => $this->nextRelease($localNow)->setTimezone('UTC')]);
 
                     return;

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App;
 
 use App\Enums\AppointmentNotificationType;
-use Carbon\CarbonImmutable;
+use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -32,7 +32,7 @@ class NotificationOutbox extends Model
         'payload_ref',
     ];
 
-    public static function enqueue(string $appointmentId, AppointmentNotificationType $type, CarbonImmutable $scheduledAt, string $dedupeKey): self
+    public static function enqueue(string $appointmentId, AppointmentNotificationType $type, CarbonInterface $scheduledAt, string $dedupeKey): self
     {
         self::query()->insertOrIgnore([
             'id' => (string) str()->uuid(),

@@ -82,7 +82,7 @@ final class AssistantService
         $result = $this->ai->generateText('assistant', $prompt, [
             'locale' => $locale,
             'content_ids' => array_map(
-                static fn (array $source): string => $source['content_key'] . ':v' . $source['version'],
+                static fn (array $source): string => sprintf('%s:v%d', $source['content_key'], $source['version']),
                 $sources
             ),
             'feature_variant' => 'task24-grounded-assistant',
@@ -116,7 +116,7 @@ final class AssistantService
 
         return $items
             ->map(function (array $item) use ($terms): array {
-                $haystack = mb_strtolower($item['title'] . ' ' . $item['text']);
+                $haystack = mb_strtolower(sprintf('%s %s', $item['title'], $item['text']));
                 $score = 0;
                 foreach ($terms as $term) {
                     if ($term !== '' && mb_strlen($term) >= 3 && mb_stripos($haystack, $term) !== false) {

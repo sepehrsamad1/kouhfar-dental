@@ -25,12 +25,12 @@ final class AIProviderManager
     /** @return array{status: string, output: ?string, input_tokens: int, output_tokens: int} */
     public function generateText(string $feature, string $prompt, array $context = []): array
     {
-        if (! $this->enabled('text')) {
-            return $this->disabled('text');
+        if (!$this->enabled('text')) {
+            return $this->disabled();
         }
 
-        if (! $this->allowed($feature)) {
-            return $this->limited('text');
+        if (!$this->allowed($feature)) {
+            return $this->limited();
         }
 
         try {
@@ -48,18 +48,18 @@ final class AIProviderManager
             $this->safeFailureLog($feature, 'text');
             $this->requests->record($feature, 'failed', $this->contentIds($context));
 
-            return $this->fallback($feature, 'text');
+            return $this->fallback('text');
         }
     }
 
     /** @return array{status: string, result: array<string, mixed>|null, input_tokens: int, output_tokens: int} */
     public function analyzeImage(string $feature, string $imageReference, array $context = []): array
     {
-        if (! $this->enabled('image_analysis')) {
+        if (!$this->enabled('image_analysis')) {
             return ['status' => 'disabled', 'result' => null, 'input_tokens' => 0, 'output_tokens' => 0];
         }
 
-        if (! $this->allowed($feature)) {
+        if (!$this->allowed($feature)) {
             return ['status' => 'rate_limited', 'result' => null, 'input_tokens' => 0, 'output_tokens' => 0];
         }
 
@@ -85,11 +85,11 @@ final class AIProviderManager
     /** @return array{status: string, image_reference: ?string, input_tokens: int, output_tokens: int} */
     public function transformImage(string $feature, string $imageReference, array $context = []): array
     {
-        if (! $this->enabled('image_transformation')) {
+        if (!$this->enabled('image_transformation')) {
             return ['status' => 'disabled', 'image_reference' => null, 'input_tokens' => 0, 'output_tokens' => 0];
         }
 
-        if (! $this->allowed($feature)) {
+        if (!$this->allowed($feature)) {
             return ['status' => 'rate_limited', 'image_reference' => null, 'input_tokens' => 0, 'output_tokens' => 0];
         }
 
@@ -187,7 +187,7 @@ final class AIProviderManager
     {
         $ids = $context['content_ids'] ?? [];
 
-        if (! is_array($ids)) {
+        if (!is_array($ids)) {
             return [];
         }
 
@@ -203,7 +203,7 @@ final class AIProviderManager
     }
 
     /** @return array{status:string,output:?string,input_tokens:int,output_tokens:int} */
-    private function fallback(string $feature, string $capability): array
+    private function fallback(string $capability): array
     {
         $fallback = config("ai.capabilities.{$capability}.fallback");
 
@@ -216,13 +216,13 @@ final class AIProviderManager
     }
 
     /** @return array{status:string,output:?string,input_tokens:int,output_tokens:int} */
-    private function disabled(string $capability): array
+    private function disabled(): array
     {
         return ['status' => 'disabled', 'output' => null, 'input_tokens' => 0, 'output_tokens' => 0];
     }
 
     /** @return array{status:string,output:?string,input_tokens:int,output_tokens:int} */
-    private function limited(string $capability): array
+    private function limited(): array
     {
         return ['status' => 'rate_limited', 'output' => null, 'input_tokens' => 0, 'output_tokens' => 0];
     }

@@ -9,12 +9,17 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
-function task24Knowledge(string $key, string $title, string $text, string $locale='fa'): ContentItem
+function task24Knowledge(string $key, string $title, string $text, string $locale = 'fa'): ContentItem
 {
     return ContentItem::query()->create([
-        'content_key'=>$key,'kind'=>ContentKind::ClinicInfo,'locale'=>$locale,'version'=>1,
-        'body'=>['title'=>$title,'text'=>$text],'status'=>ContentItemStatus::Published,
-        'approval_scope'=>'general','published_at'=>now('UTC'),
+        'content_key' => $key,
+        'kind' => ContentKind::ClinicInfo,
+        'locale' => $locale,
+        'version' => 1,
+        'body' => ['title' => $title, 'text' => $text],
+        'status' => ContentItemStatus::Published,
+        'approval_scope' => 'general',
+        'published_at' => now('UTC'),
     ]);
 }
 

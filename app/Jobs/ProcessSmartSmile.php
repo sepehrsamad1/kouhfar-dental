@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Jobs;
 
+use App\MediaAsset;
 use App\Services\AIProviderManager;
 use App\SmartSmileSession;
 use Illuminate\Bus\Queueable;
@@ -41,14 +42,20 @@ final class ProcessSmartSmile implements ShouldQueue
     {
         $session = SmartSmileSession::query()->with('mediaAsset')->find($this->sessionId);
 
-        if ($session === null || $session->revoked_at !== null || $session->mediaAsset === null) {
+        if ($session === null || $session->revoked_at !== null) {
+            return;
+        }
+
+        $asset = $session->mediaAsset;
+
+        if (! $asset instanceof MediaAsset) {
             return;
         }
 
         $session->forceFill(['status' => 'processing'])->save();
 
         try {
-            if (Storage::disk('media')->exists($session->mediaAsset->storage_key) === false) {
+            if (Storage::disk('media')->exists($asset->storage_key) === false) {
                 $session->forceFill([
                     'status' => 'failed',
                     'result' => ['message' => 'تصویر در دسترس نیست. لطفاً دوباره تلاش کنید.'],

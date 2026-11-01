@@ -44,7 +44,6 @@ final class AssistantService
             $items = $this->knowledge->forKnowledge($locale)
                 ->filter(fn (array $item): bool => $item['content_key'] === 'dental-emergency-response');
 
-
             return ['status' => 'emergency', 'answer' => $this->emergencyResponse($locale), 'sources' => $this->sources($items)];
         }
 
@@ -103,7 +102,6 @@ final class AssistantService
             return ['status' => $result['status'], 'answer' => $this->unavailableText($locale), 'sources' => $sources];
         }
 
-
         return ['status' => 'succeeded', 'answer' => trim($result['output']), 'sources' => $sources];
     }
 
@@ -128,7 +126,6 @@ final class AssistantService
     private function rankKnowledge(Collection $items, string $message): Collection
     {
         $terms = preg_split('/[^\p{L}\p{N}]+/u', mb_strtolower($message)) ?: [];
-
 
         return $items
             ->map(function (array $item) use ($terms): array {

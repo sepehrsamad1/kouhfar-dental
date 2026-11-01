@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace AppHttpControllers;
+namespace App\Http\Controllers;
 
-use AppHttpRequestsSmartSmileUploadRequest;
-use AppServicesSmartSmileService;
-use IlluminateHttpJsonResponse;
-use IlluminateHttpRequest;
-use SymfonyComponentHttpFoundationResponse;
+use App\Http\Requests\SmartSmileUploadRequest;
+use App\Services\SmartSmileService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 final class SmartSmileController
 {
@@ -35,6 +35,7 @@ final class SmartSmileController
         }
 
         $session = $service->resolve($request->string('consent_token')->toString());
+
         if ($session === null || $session->revoked_at !== null) {
             return response()->json(['status' => 'consent_required', 'non_diagnostic' => true], Response::HTTP_FORBIDDEN);
         }

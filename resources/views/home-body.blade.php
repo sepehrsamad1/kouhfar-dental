@@ -456,41 +456,70 @@
   <span class="diamond" aria-hidden="true"></span><span id="toastMsg"></span>
 </div>
 
-<!-- ===================== SMILE ASSESSMENT MODAL (DEMO) ===================== -->
+<!-- ===================== SMILE ASSESSMENT MODAL ===================== -->
 <dialog class="smile-modal smart-smile-v2" id="smileModal" aria-label="ارزیابی هوشمند لبخند">
   <div class="smile-modal__panel">
     <div class="smile-modal__bar">
       <span class="smile-modal__brand">ارزیابی هوشمند لبخند</span>
-      <span class="smile-badge"><i aria-hidden="true"></i>نمایش نمایشی</span>
+      <span class="smile-badge"><i aria-hidden="true"></i>شبیه‌سازی غیرتشخیصی</span>
       <button class="iconbtn" id="smileClose" aria-label="بستن">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6L6 18"/></svg>
       </button>
     </div>
     <div class="smile-modal__body">
       <section class="ssa-stage is-now" data-ssa-stage="choose">
-        <div class="ssa-head"><span class="ssa-eyebrow"><i></i> تحلیل نمایشی با هوش مصنوعی</span><h2 class="ssa-title">مسیر نمونه را برای ارزیابی هوشمند لبخند انتخاب کنید</h2><p class="ssa-sub">هر مسیر یک مدل آماده‌ی قبل و بعد دارد. این تجربه صرفاً برای نمایش قابلیت‌های بصری سامانه است و تصویر یا داده‌ی شما را دریافت و تحلیل نمی‌کند.</p></div>
-        <div class="ssa-choice-grid">
-          <button type="button" class="ssa-choice" data-ssa-choice="gallery"><img class="ssa-choice__photo" src="assets/a-022.png" alt=""><span class="ssa-choice__shade"></span><span class="ssa-choice__content"><span class="ssa-choice__icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="9" cy="10" r="1.8"/><path d="M4.5 17.5l4.5-4.5 3.5 3.5 3-3 4 4"/></svg></span><b class="ssa-choice__title">انتخاب از گالری</b><span class="ssa-choice__desc">نمایش نمونه آماده‌ی شماره ۱: مقایسه‌ی رنگ، رسوبات سطحی و تراز دندان‌ها.</span><span class="ssa-choice__chip">مدل آماده‌ی گالری</span></span></button>
-          <button type="button" class="ssa-choice" data-ssa-choice="camera"><img class="ssa-choice__photo" src="assets/a-024.jpg" alt=""><span class="ssa-choice__shade"></span><span class="ssa-choice__content"><span class="ssa-choice__icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 8h3l2-2.5h6L17 8h3a1.5 1.5 0 011.5 1.5V18a1.5 1.5 0 01-1.5 1.5H4A1.5 1.5 0 012.5 18V9.5A1.5 1.5 0 014 8z"/><circle cx="12" cy="13.5" r="3.5"/></svg></span><b class="ssa-choice__title">گرفتن عکس با دوربین</b><span class="ssa-choice__desc">نمایش نمونه آماده‌ی شماره ۲: تمرکز بر بی‌نظمی چیدمان و ازدحام دندان‌های پیشین.</span><span class="ssa-choice__chip">مدل آماده‌ی دوربین</span></span></button>
+        <div class="ssa-head">
+          <span class="ssa-eyebrow"><i></i> شبیه‌سازی هوشمند لبخند</span>
+          <h2 class="ssa-title">تصویر خود را برای شبیه‌سازی انتخاب کنید</h2>
+          <p class="ssa-sub">این قابلیت فقط یک شبیه‌سازی غیرتشخیصی است و برای تشخیص بیماری، پیش‌بینی بیماری یا پیشنهاد درمان استفاده نمی‌شود.</p>
         </div>
-        <p class="ssa-note"><b>شفاف‌سازی:</b> در نسخه فعلی، این دو دکمه به دوربین یا گالری دستگاه دسترسی ندارند؛ برای ارائه‌ی تبلیغاتی، مدل‌های از پیش آماده‌شده نمایش داده می‌شوند.</p>
-      </section>
-
-      <section class="ssa-stage ssa-confirm" data-ssa-stage="confirm">
-        <div class="ssa-confirm__preview"><img id="ssaChosenImage" alt="نمونه انتخاب شده برای ارزیابی"><span class="ssa-confirm__source" id="ssaChosenSource"></span></div>
-        <div class="ssa-confirm__copy"><div class="ssa-head"><span class="ssa-eyebrow"><i></i> تصویر نمونه آماده است</span><h2 class="ssa-title">اسکن مجازی را شروع کنیم؟</h2><p class="ssa-sub">در چند ثانیه، روند نمایشی تشخیص نواحی قابل توجه اجرا و سپس نتیجه‌ی تعاملی نمایش داده می‌شود.</p></div><div class="ssa-steps"><span class="ssa-step">تشخیص محدوده‌ی لبخند</span><span class="ssa-step">نشانه‌گذاری نقاط قابل توجه</span><span class="ssa-step">آماده‌سازی مقایسه قبل و بعد</span></div><div class="ssa-confirm__actions"><button type="button" class="btn btn--primary" id="ssaStartScan">شروع اسکن مجازی</button><button type="button" class="btn btn--ghost" id="ssaChangeModel">تغییر نمونه</button></div></div>
+        <div class="ssa-confirm__copy" style="max-width:720px;margin-inline:auto">
+          <label class="ssa-note" style="display:block;cursor:pointer">
+            <input type="checkbox" id="ssaConsent" style="margin-inline-end:.5rem">
+            <b>رضایت آگاهانه:</b> می‌پذیرم تصویر انتخابی من برای این شبیه‌سازی پردازش شود. تصویر به‌صورت خصوصی نگهداری می‌شود و می‌توانم آن را حذف کنم.
+          </label>
+          <input id="ssaFile" type="file" accept="image/jpeg,image/png,image/webp" hidden>
+          <div class="ssa-confirm__actions" style="margin-top:1rem">
+            <button type="button" class="btn btn--primary" id="ssaPickImage">انتخاب تصویر</button>
+            <button type="button" class="btn btn--ghost" id="ssaUseImage" disabled>شروع شبیه‌سازی</button>
+          </div>
+          <p class="ssa-note" id="ssaFileName">هیچ تصویری انتخاب نشده است.</p>
+          <p class="ssa-note"><b>نکته ایمنی:</b> خروجی این قابلیت نظر پزشک نیست و نباید مبنای تصمیم درمانی قرار گیرد.</p>
+          <p class="ssa-note" id="ssaStatus" aria-live="polite"></p>
+        </div>
       </section>
 
       <section class="ssa-stage ssa-processing" data-ssa-stage="scan" aria-live="polite">
-        <div class="ssa-scan-frame"><img id="ssaScanImage" alt="تصویر در حال اسکن"><span class="ssa-scanner"></span><span class="ssa-target ssa-target--a"></span><span class="ssa-target ssa-target--b"></span></div>
-        <div class="ssa-process-copy"><b id="ssaProcessTitle">در حال شناسایی محدوده‌ی لبخند…</b><span id="ssaProcessText">این فرایند یک شبیه‌سازی گرافیکی است.</span></div><div class="ssa-progress" aria-hidden="true"><i id="ssaProgress"></i></div><div class="ssa-percent" id="ssaPercent">۰٪</div>
+        <div class="ssa-process-copy">
+          <b id="ssaProcessTitle">در حال پردازش تصویر…</b>
+          <span id="ssaProcessText">پردازش در صف سامانه قرار گرفته است.</span>
+        </div>
+        <div class="ssa-progress" aria-hidden="true"><i id="ssaProgress"></i></div>
+        <div class="ssa-percent" id="ssaPercent">۰٪</div>
       </section>
 
       <section class="ssa-stage ssa-result" data-ssa-stage="result">
-        <div class="ssa-result__visual"><div class="ssa-head"><span class="ssa-eyebrow"><i></i> نتیجه‌ی نمایشی</span><h2 class="ssa-title">نقشه‌ی مشاهده‌های ظاهری</h2><p class="ssa-sub">روی شماره‌های تصویر یا کارت‌های کنار آن بزنید تا ناحیه‌ی مربوطه برجسته شود.</p></div><div class="ssa-toggle" role="tablist" aria-label="نمای نتیجه"><button type="button" class="is-active" data-ssa-view="analysis" role="tab" aria-selected="true">نقشه‌ی ارزیابی</button><button type="button" data-ssa-view="compare" role="tab" aria-selected="false">قبل و بعد</button></div><div class="ssa-analysis-photo" id="ssaAnalysisPhoto"><img id="ssaBeforeImage" alt="نمونه پیش از درمان با نواحی قابل توجه"><div id="ssaZones"></div><div id="ssaHotspots"></div><span class="ssa-photo-label">تصویر قبل از درمان</span></div><div class="ssa-compare" id="ssaCompare"><div class="ssa-compare__pane"><img id="ssaCompareBefore" alt="نمونه قبل از درمان"><span>قبل</span></div><div class="ssa-compare__pane"><img id="ssaCompareAfter" alt="نمونه بعد از درمان"><span>بعد</span></div></div><p class="ssa-caption">نشانه‌گذاری‌ها فقط تفسیر بصریِ نمونه‌ها هستند و تشخیص یا توصیه پزشکی محسوب نمی‌شوند.</p></div>
-        <aside class="ssa-findings-panel"><div class="ssa-findings-panel__head"><h3>موارد قابل توجه</h3><p>با انتخاب هر مورد، محدوده‌ی همان مشاهده در تصویر سمت راست نمایش داده می‌شود.</p></div><div class="ssa-findings" id="ssaFindings"></div><div class="ssa-detail" id="ssaDetail" aria-live="polite"></div></aside>
-        <p class="ssa-disclaimer">این نتیجه یک دموی تبلیغاتی مبتنی بر تصاویر از پیش آماده است؛ هیچ‌گونه تحلیل واقعی تصویر، تشخیص پزشکی یا ذخیره‌سازی داده انجام نمی‌شود. تصمیم درمانی فقط پس از معاینه توسط پزشک امکان‌پذیر است.</p>
-        <div class="ssa-result-actions"><button type="button" class="btn btn--primary" data-book="مشاوره و بررسی اولیه" id="ssaConsult">درخواست مشاوره تخصصی</button><button type="button" class="btn btn--ghost" id="ssaRestart">ارزیابی یک نمونه دیگر</button></div>
+        <div class="ssa-result__visual">
+          <div class="ssa-head">
+            <span class="ssa-eyebrow"><i></i> نتیجه شبیه‌سازی</span>
+            <h2 class="ssa-title">خروجی غیرتشخیصی</h2>
+            <p class="ssa-sub" id="ssaResultText">این خروجی صرفاً برای نمایش قابلیت سامانه است.</p>
+          </div>
+        </div>
+        <p class="ssa-disclaimer">این قابلیت تشخیص پزشکی، پیش‌بینی بیماری، توصیه درمان یا تضمین نتیجه ارائه نمی‌کند. برای تصمیم‌گیری درمانی، معاینه و نظر پزشک لازم است.</p>
+        <div class="ssa-result-actions">
+          <button type="button" class="btn btn--primary" data-book="مشاوره و بررسی اولیه" id="ssaConsult">درخواست مشاوره</button>
+          <button type="button" class="btn btn--ghost" id="ssaDelete">حذف تصویر و نتیجه</button>
+          <button type="button" class="btn btn--ghost" id="ssaRestart">تصویر دیگری</button>
+        </div>
+      </section>
+
+      <section class="ssa-stage" data-ssa-stage="disabled">
+        <div class="ssa-head">
+          <span class="ssa-eyebrow"><i></i> قابلیت غیرفعال است</span>
+          <h2 class="ssa-title">این قابلیت فعلاً در دسترس نیست</h2>
+          <p class="ssa-sub">شبیه‌سازی هوشمند تا تکمیل بررسی‌های انتشار فعال نشده است.</p>
+        </div>
       </section>
     </div>
   </div>

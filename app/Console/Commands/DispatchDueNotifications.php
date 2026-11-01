@@ -17,7 +17,9 @@ final class DispatchDueNotifications extends Command
 
     public function handle(): int
     {
-        $now = CarbonImmutable::now('UTC');
+        // Use Laravel's now() helper so Carbon::setTestNow() in feature tests
+        // controls the same clock used by the dispatcher.
+        $now = now('UTC')->toImmutable();
         $timezone = (string) config('notifications.sms.timezone', 'Asia/Tehran');
         $localNow = $now->setTimezone($timezone);
 

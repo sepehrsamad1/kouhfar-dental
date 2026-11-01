@@ -27,7 +27,7 @@ final class AppointmentSmsNotification extends Notification implements SmsNotifi
         $localStart = $this->appointment->start_at->setTimezone('Asia/Tehran');
         $date = $localStart->format('Y/m/d');
         $time = $localStart->format('H:i');
-        $practitioner = $this->appointment->practitioners->first()?->display_name_fa ?? 'پزشک کلینیک';
+        $practitioner = $this->appointment->practitioners->first()?->display_name_fa ?: 'پزشک کلینیک';
 
         $body = match ($this->type) {
             AppointmentNotificationType::Pending => 'درخواست رزرو شما ثبت شد. این درخواست تا ۱ ساعت در انتظار تأیید است و در صورت عدم تأیید منقضی می‌شود.',

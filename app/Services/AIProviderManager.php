@@ -25,11 +25,11 @@ final class AIProviderManager
     /** @return array{status: string, output: ?string, input_tokens: int, output_tokens: int} */
     public function generateText(string $feature, string $prompt, array $context = []): array
     {
-        if (!$this->enabled('text')) {
+        if (! $this->enabled('text')) {
             return $this->disabled();
         }
 
-        if (!$this->allowed($feature)) {
+        if (! $this->allowed($feature)) {
             return $this->limited();
         }
 
@@ -187,7 +187,7 @@ final class AIProviderManager
     {
         $ids = $context['content_ids'] ?? [];
 
-        if (!is_array($ids)) {
+        if (! is_array($ids)) {
             return [];
         }
 

@@ -8,7 +8,6 @@ use App\Jobs\SendAppointmentNotification;
 use App\NotificationOutbox;
 use Carbon\CarbonImmutable;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Date;
 
 final class DispatchDueNotifications extends Command
 {
@@ -18,7 +17,7 @@ final class DispatchDueNotifications extends Command
 
     public function handle(): int
     {
-        $now = Date::now('UTC')->toImmutable();
+        $now = CarbonImmutable::now('UTC');
 
         $timezone = (string) config('notifications.sms.timezone', 'Asia/Tehran');
         $localNow = $now->setTimezone($timezone);

@@ -24,7 +24,9 @@ use App\Practitioner;
 use App\Resource;
 use App\ScheduleException;
 use App\Service;
+use App\Services\Clock;
 use App\Services\SmsProviderManager;
+use App\Services\SystemClock;
 use App\StaffUser;
 use App\WorkingHour;
 use Illuminate\Support\Facades\Gate;
@@ -38,6 +40,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(SmsChannel::class, fn ($app): SmsChannel => new SmsChannel(
             $app->make(SmsProviderManager::class)->resolve(),
         ));
+        $this->app->singleton(Clock::class, SystemClock::class);
     }
 
     public function boot(): void

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\AssistantController;
 use App\Http\Controllers\AvailabilityController;
 use App\Http\Controllers\ClinicConfigurationController;
 use App\Http\Controllers\ContentItemController;
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\Route;
 Route::view('/', 'home')->name('home');
 Route::get('/booking/availability/{service}', AvailabilityController::class)->middleware('throttle:60,1')->name('booking.availability');
 Route::get('/content/{contentKey}/{locale}', [ContentItemController::class, 'show'])->where('locale', 'fa|en')->name('content.show');
+Route::post('/api/assistant', AssistantController::class)->middleware('throttle:20,1')->name('assistant');
 
 Route::middleware('guest:staff')->group(function (): void {
     Route::get('/staff/login', [StaffAuthController::class, 'create'])->name('staff.login');

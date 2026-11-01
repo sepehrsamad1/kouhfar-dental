@@ -18,9 +18,11 @@ final class DispatchDueNotifications extends Command
 
     public function handle(): int
     {
-        // Read Carbon's explicit test clock when present so feature tests and
-        // production use the same deterministic time source.
-        $now = (Carbon::getTestNow()?->toImmutable() ?? CarbonImmutable::now('UTC'))->setTimezone('UTC');
+        // Explicitly honor Carbon's test clock when feature tests provide one.
+        $now = Carbon::hasTestNow()
+            ? Carbon::getTestNow()->toImmutable()->setTimezone('UTC')
+            : CarbonImmutable::now('UTC');
+
         $timezone = (string) config('notifications.sms.timezone', 'Asia/Tehran');
         $localNow = $now->setTimezone($timezone);
 

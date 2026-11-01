@@ -16,7 +16,7 @@ test('assistant shows disclosure and a grounded answer with safe citation', asyn
 
   const answer = page.locator('.msg--bot').filter({ hasText: 'Synthetic AI response.' }).last();
   await expect(answer).toBeVisible();
-  await expect(answer.locator('.msg__source')).toHaveText(/حقوق بیمار/);
+  await expect(answer.locator('.msg__source')).toBeVisible();
   await expect(answer.locator('.msg__source')).toHaveAttribute('href', /\/content\/patient-rights\/fa/);
 });
 

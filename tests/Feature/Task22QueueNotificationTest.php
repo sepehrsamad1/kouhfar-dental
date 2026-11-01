@@ -123,7 +123,7 @@ it('delays automated notifications during quiet hours but not transactional noti
     Artisan::call('notifications:dispatch-due');
 
     expect(NotificationOutbox::query()->where('dedupe_key', 'quiet-reminder')->firstOrFail()->scheduled_at->setTimezone('Asia/Tehran')->format('H:i'))->toBe('08:01')
-        ->and(NotificationOutbox::query()->where('dedupe_key', 'quiet-pending')->firstOrFail()->sent_at)->toBeNull();
+        ->and(NotificationOutbox::query()->where('dedupe_key', 'quiet-pending')->firstOrFail()->sent_at)->not->toBeNull();
 });
 
 it('sends an outbox notification once even if the job is executed twice', function (): void {

@@ -14,6 +14,7 @@ use App\Notifications\SmsChannel;
 use App\Practitioner;
 use App\Resource;
 use App\Service;
+use App\Services\Clock;
 use App\WorkingHour;
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -24,6 +25,16 @@ uses(RefreshDatabase::class);
 
 beforeEach(function (): void {
     CarbonImmutable::setTestNow('2026-10-27T18:00:00Z');
+    app()->instance(Clock::class, new class implements Clock {
+        public function __construct(
+            public CarbonImmutable $nowValue,
+        ) {}
+
+        public function now(): CarbonImmutable
+        {
+            return $this->nowValue;
+        }
+    }(CarbonImmutable::parse('2026-10-27T18:00:00Z')));
     config(['notifications.sms.driver' => 'null']);
 });
 
@@ -111,6 +122,7 @@ it('delays automated notifications during quiet hours but not transactional noti
     [$appointment] = task22Booking();
 
     CarbonImmutable::setTestNow('2026-10-27T20:00:00Z'); // 23:30 Asia/Tehran
+    app(Clock::class)->nowValue = CarbonImmutable::parse('2026-10-27T20:00:00Z');
     NotificationOutbox::enqueue($appointment->getKey(), AppointmentNotificationType::Reminder, now('UTC'), 'quiet-reminder');
     NotificationOutbox::enqueue($appointment->getKey(), AppointmentNotificationType::Pending, now('UTC'), 'quiet-pending');
 

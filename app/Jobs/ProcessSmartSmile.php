@@ -1,0 +1,82 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Jobs;
+
+use App\Services\AIProviderManager;
+use App\SmartSmileSession;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
+use Throwable;
+
+final class ProcessSmartSmile implements ShouldQueue
+{
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+
+    public int $tries = 2;
+    public int $timeout = 60;
+
+    public function __construct(public string $sessionId) {}
+
+    public function backoff(): array
+    {
+        return [30];
+    }
+
+    public function handle(AIProviderManager $ai): void
+    {
+        $session = SmartSmileSession::query()->with('mediaAsset')->find($this->sessionId);
+
+        if ($session === null || $session->revoked_at !== null || $session->mediaAsset === null) {
+            return;
+        }
+
+        $session->forceFill(['status' => 'processing'])->save();
+
+        try {
+            if (! Storage::disk('media')->exists($session->mediaAsset->storage_key)) {
+                $session->forceFill([
+                    'status' => 'failed',
+                    'result' => ['message' => 'تصویر در دسترس نیست. لطفاً دوباره تلاش کنید.'],
+                ])->save();
+
+                return;
+            }
+
+            $response = $ai->analyzeImage(
+                'smart-smile',
+                $session->mediaAsset->storage_key,
+                ['feature_variant' => 'non_diagnostic_simulation'],
+            );
+
+            if ($response['status'] !== 'succeeded') {
+                $session->forceFill([
+                    'status' => 'failed',
+                    'result' => ['message' => 'پردازش تصویر در حال حاضر در دسترس نیست. لطفاً بعداً دوباره تلاش کنید.'],
+                ])->save();
+
+                return;
+            }
+
+            $session->forceFill([
+                'status' => 'completed',
+                'result' => [
+                    'message' => 'این خروجی صرفاً یک شبیه‌سازی غیرتشخیصی است و نتیجه پزشکی یا پیشنهاد درمانی محسوب نمی‌شود.',
+                ],
+            ])->save();
+        } catch (Throwable) {
+            $session->forceFill([
+                'status' => 'failed',
+                'result' => ['message' => 'پردازش تصویر با خطا مواجه شد. لطفاً بعداً دوباره تلاش کنید.'],
+            ])->save();
+        }
+    }
+}

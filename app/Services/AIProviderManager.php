@@ -9,6 +9,8 @@ use App\AI\Contracts\ImageAnalysisProvider;
 use App\AI\Contracts\ImageTransformationProvider;
 use App\AI\Contracts\TextGenerationProvider;
 use App\AI\FakeAIProvider;
+use App\AIUsage;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
 use Throwable;
 
@@ -16,6 +18,7 @@ final class AIProviderManager
 {
     public function __construct(
         private readonly AIUsageRecorder $usage,
+        private readonly AIRequestRecorder $requests,
     ) {
     }
 
@@ -31,13 +34,19 @@ final class AIProviderManager
         }
 
         try {
-            $provider = $this->textProvider();
-            $result = $provider->generate($prompt, $this->boundedContext($context));
+            $result = $this->textProvider()->generate($prompt, $this->boundedContext($context));
             $this->record($feature, $result);
+            $this->requests->record($feature, 'succeeded', $this->contentIds($context));
 
-            return ['status' => 'succeeded', 'output' => $result['output'], 'input_tokens' => $result['input_tokens'], 'output_tokens' => $result['output_tokens']];
-        } catch (Throwable $e) {
-            report($e);
+            return [
+                'status' => 'succeeded',
+                'output' => $result['output'],
+                'input_tokens' => $result['input_tokens'],
+                'output_tokens' => $result['output_tokens'],
+            ];
+        } catch (Throwable) {
+            $this->safeFailureLog($feature, 'text');
+            $this->requests->record($feature, 'failed', $this->contentIds($context));
 
             return $this->fallback($feature, 'text');
         }
@@ -57,10 +66,17 @@ final class AIProviderManager
         try {
             $result = $this->imageAnalysisProvider()->analyze($imageReference, $this->boundedContext($context));
             $this->record($feature, $result);
+            $this->requests->record($feature, 'succeeded', $this->contentIds($context));
 
-            return ['status' => 'succeeded', 'result' => $result['result'], 'input_tokens' => $result['input_tokens'], 'output_tokens' => $result['output_tokens']];
-        } catch (Throwable $e) {
-            report($e);
+            return [
+                'status' => 'succeeded',
+                'result' => $result['result'],
+                'input_tokens' => $result['input_tokens'],
+                'output_tokens' => $result['output_tokens'],
+            ];
+        } catch (Throwable) {
+            $this->safeFailureLog($feature, 'image_analysis');
+            $this->requests->record($feature, 'failed', $this->contentIds($context));
 
             return ['status' => 'fallback', 'result' => null, 'input_tokens' => 0, 'output_tokens' => 0];
         }
@@ -80,10 +96,17 @@ final class AIProviderManager
         try {
             $result = $this->imageTransformationProvider()->transform($imageReference, $this->boundedContext($context));
             $this->record($feature, $result);
+            $this->requests->record($feature, 'succeeded', $this->contentIds($context));
 
-            return ['status' => 'succeeded', 'image_reference' => $result['image_reference'], 'input_tokens' => $result['input_tokens'], 'output_tokens' => $result['output_tokens']];
-        } catch (Throwable $e) {
-            report($e);
+            return [
+                'status' => 'succeeded',
+                'image_reference' => $result['image_reference'],
+                'input_tokens' => $result['input_tokens'],
+                'output_tokens' => $result['output_tokens'],
+            ];
+        } catch (Throwable) {
+            $this->safeFailureLog($feature, 'image_transformation');
+            $this->requests->record($feature, 'failed', $this->contentIds($context));
 
             return ['status' => 'fallback', 'image_reference' => null, 'input_tokens' => 0, 'output_tokens' => 0];
         }
@@ -96,29 +119,45 @@ final class AIProviderManager
 
     private function allowed(string $feature): bool
     {
-        $key = 'ai:'.$feature.':'.now('UTC')->format('Y-m-d-H-i');
+        $dailyLimit = (float) config('ai.rate_limits.daily_cost', 0);
+        if ($dailyLimit > 0) {
+            $spent = (float) (AIUsage::query()
+                ->whereDate('day', now('UTC')->toDateString())
+                ->sum('cost_estimate'));
+
+            if ($spent >= $dailyLimit) {
+                return false;
+            }
+        }
+
+        $key = 'ai:'.substr(hash('sha256', $feature), 0, 24).':'.now('UTC')->format('Y-m-d-H-i');
         $limit = max(1, (int) config('ai.rate_limits.per_minute', 10));
 
-        return ! RateLimiter::tooManyAttempts($key, $limit)
-            && tap(true, fn () => RateLimiter::hit($key, 60));
+        if (RateLimiter::tooManyAttempts($key, $limit)) {
+            return false;
+        }
+
+        RateLimiter::hit($key, 60);
+
+        return true;
     }
 
     private function textProvider(): TextGenerationProvider
     {
-        return $this->provider(config('ai.capabilities.text.provider', 'fake'), TextGenerationProvider::class);
+        return $this->provider(config('ai.capabilities.text.provider', 'fake'));
     }
 
     private function imageAnalysisProvider(): ImageAnalysisProvider
     {
-        return $this->provider(config('ai.capabilities.image_analysis.provider', 'fake'), ImageAnalysisProvider::class);
+        return $this->provider(config('ai.capabilities.image_analysis.provider', 'fake'));
     }
 
     private function imageTransformationProvider(): ImageTransformationProvider
     {
-        return $this->provider(config('ai.capabilities.image_transformation.provider', 'fake'), ImageTransformationProvider::class);
+        return $this->provider(config('ai.capabilities.image_transformation.provider', 'fake'));
     }
 
-    private function provider(string $name, string $contract): object
+    private function provider(string $name): FakeAIProvider
     {
         if ($name === 'fake') {
             return app(FakeAIProvider::class);
@@ -143,10 +182,30 @@ final class AIProviderManager
         $this->usage->record($feature, $input, $output, $cost);
     }
 
+    /** @param array<string, mixed> $context @return array<int, string> */
+    private function contentIds(array $context): array
+    {
+        $ids = $context['content_ids'] ?? [];
+
+        if (! is_array($ids)) {
+            return [];
+        }
+
+        return array_values(array_filter($ids, static fn (mixed $id): bool => is_string($id) && strlen($id) <= 100));
+    }
+
+    private function safeFailureLog(string $feature, string $capability): void
+    {
+        Log::warning('AI provider failure', [
+            'feature' => $feature,
+            'capability' => $capability,
+        ]);
+    }
+
     /** @return array{status:string,output:?string,input_tokens:int,output_tokens:int} */
     private function fallback(string $feature, string $capability): array
     {
-        $fallback = config("ai.capabilities.{$capability}.fallback", null);
+        $fallback = config("ai.capabilities.{$capability}.fallback");
 
         return [
             'status' => 'fallback',

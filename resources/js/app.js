@@ -559,60 +559,144 @@ const Results=(()=>{
   return{}})();
 
 /* ============================================================
-   AI ASSISTANT — simulated, script-driven
+   AI ASSISTANT — Laravel Task 24 endpoint
    ============================================================ */
 const AI=(()=>{
   const panel=$('#ai'),fab=$('#fab'),log=$('#aiLog'),quick=$('#aiQuick'),
         form=$('#aiForm'),input=$('#aiInput');
   let open=false,booted=false,busy=false;
 
+  const apiUrl='/api/v1/assistant';
+  const csrf=()=>document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')||'';
+
   AK_DATA.ai.quick.forEach(q=>{const b=el('button',null,q);b.type='button';b.dataset.q=q;quick.appendChild(b)});
 
   const scroll=()=>log.scrollTo({top:log.scrollHeight,behavior:'smooth'});
-  function me(t){log.appendChild(el('div','msg msg--me',t));scroll()}
-  function bot(html,acts){
-    const n=el('div','msg msg--bot',html);
-    if(acts&&acts.length){
-      const w=el('div','msg__act');
-      acts.forEach(a=>{
-        const b=el('button',null,a.t);b.type='button';
-        if(a.s)b.dataset.service=a.s;
-        if(a.n)b.dataset.nav=a.n;
-        if(a.b!==undefined)b.dataset.book=a.b;
-        w.appendChild(b);
-      });
-      n.appendChild(w);
-    }
-    log.appendChild(n);scroll();
+  function me(t){
+    const n=el('div','msg msg--me');
+    n.textContent=t;
+    log.appendChild(n);
+    scroll();
   }
-  function typing(){const n=el('div','typing','<i></i><i></i><i></i>');log.appendChild(n);scroll();return n}
-  function answer(text){
-    if(busy)return;busy=true;
+  function safeSourceUrl(url){
+    try{
+      const parsed=new URL(url,window.location.origin);
+      if(parsed.origin!==window.location.origin)return null;
+      if(!parsed.pathname.startsWith('/content/'))return null;
+      return parsed.href;
+    }catch{return null}
+  }
+  function bot(text,sources=[],status='succeeded'){
+    const n=el('div','msg msg--bot');
+    const body=el('div','msg__body');
+    body.textContent=String(text||'');
+    n.appendChild(body);
+
+    if(status==='refused'||status==='emergency'||status==='fallback'||status==='disabled'||status==='rate_limited'||status==='unavailable'){
+      n.classList.add('msg--status',`msg--${status.replace('_','-')}`);
+    }
+
+    if(Array.isArray(sources)&&sources.length){
+      const list=el('div','msg__sources');
+      const label=el('div','msg__sourcesLabel','منابع تأییدشده');
+      list.appendChild(label);
+      sources.slice(0,5).forEach(source=>{
+        const url=safeSourceUrl(source?.url);
+        if(!url)return;
+        const a=document.createElement('a');
+        a.className='msg__source';
+        a.href=url;
+        a.target='_blank';
+        a.rel='noopener noreferrer';
+        a.textContent=`${String(source.title||source.content_key||'منبع')} · نسخه ${Number(source.version)||1}`;
+        list.appendChild(a);
+      });
+      if(list.children.length>1)n.appendChild(list);
+    }
+
+    log.appendChild(n);
+    scroll();
+  }
+  function typing(){
+    const n=el('div','typing','<i></i><i></i><i></i>');
+    log.appendChild(n);
+    scroll();
+    return n;
+  }
+  function stateMessage(status){
+    const messages={
+      disabled:'دستیار هوشمند فعلاً غیرفعال است. لطفاً برای اطلاعات بیشتر با کلینیک تماس بگیرید.',
+      rate_limited:'تعداد درخواست‌ها در این بازه زیاد است. لطفاً کمی بعد دوباره تلاش کنید.',
+      fallback:'پاسخ‌گویی هوش مصنوعی موقتاً در دسترس نیست. لطفاً کمی بعد دوباره تلاش کنید.',
+      unavailable:'اطلاعات تأییدشده کافی برای پاسخ ایمن به این سؤال در دسترس نیست.'
+    };
+    return messages[status]||messages.unavailable;
+  }
+  async function answer(text){
+    if(busy)return;
+    busy=true;
     const t=typing();
-    const q=text.toLowerCase();
-    const hit=AK_DATA.ai.intents.find(i=>i.keys.some(k=>q.includes(k.toLowerCase())))||AK_DATA.ai.fallback;
-    const delay=700+Math.min(text.length*18,900);
-    setTimeout(()=>{t.remove();bot(hit.a,hit.act);busy=false;
-      if(hit.id==='book')setTimeout(()=>Booking.open(''),600);},delay);
+    try{
+      const response=await fetch(apiUrl,{
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json',
+          'Accept':'application/json',
+          'X-CSRF-TOKEN':csrf(),
+          'X-Requested-With':'XMLHttpRequest'
+        },
+        credentials:'same-origin',
+        body:JSON.stringify({message:text,locale:document.documentElement.lang==='en'?'en':'fa'})
+      });
+      let data=null;
+      try{data=await response.json()}catch{}
+      if(!response.ok){
+        const status=response.status===429?'rate_limited':'fallback';
+        t.remove();
+        bot(stateMessage(status),[],status);
+        return;
+      }
+      const status=typeof data?.status==='string'?data.status:'fallback';
+      t.remove();
+      bot(data?.answer||stateMessage(status),Array.isArray(data?.sources)?data.sources:[],status);
+    }catch{
+      t.remove();
+      bot(stateMessage('fallback'),[],'fallback');
+    }finally{
+      busy=false;
+    }
   }
   function boot(){
-    if(booted)return;booted=true;
-    const t=typing();
-    setTimeout(()=>{t.remove();bot(AK_DATA.ai.open);},650);
+    if(booted)return;
+    booted=true;
+    answer('سلام');
   }
   function set(v){
-    open=v;panel.classList.toggle('is-open',v);fab.setAttribute('aria-expanded',String(v));
+    open=v;
+    panel.classList.toggle('is-open',v);
+    fab.setAttribute('aria-expanded',String(v));
     fab.classList.toggle('is-hidden',v);
     if(v){boot();setTimeout(()=>{if(matchMedia('(min-width:768px)').matches)input.focus({preventScroll:true})},420)}
   }
   fab.addEventListener('click',()=>set(!open));
   $('#aiClose').addEventListener('click',()=>set(false));
-  quick.addEventListener('click',e=>{const b=e.target.closest('button[data-q]');if(!b)return;
-    me(b.dataset.q);answer(b.dataset.q)});
-  form.addEventListener('submit',e=>{e.preventDefault();
-    const v=input.value.trim();if(!v)return;input.value='';me(v);answer(v)});
+  quick.addEventListener('click',e=>{
+    const b=e.target.closest('button[data-q]');
+    if(!b)return;
+    me(b.dataset.q);
+    answer(b.dataset.q);
+  });
+  form.addEventListener('submit',e=>{
+    e.preventDefault();
+    const v=input.value.trim();
+    if(!v)return;
+    input.value='';
+    me(v);
+    answer(v);
+  });
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&open&&!$('#bk').open&&!$('#sheet').open)set(false)});
-  return{open:()=>set(true),ask(q){set(true);setTimeout(()=>{me(q);answer(q)},700)}}})();
+  return{open:()=>set(true),ask(q){set(true);setTimeout(()=>{me(q);answer(q)},700)}};
+})();
 
 /* Booking is now API-backed; preserves the existing modal, selectors, and step markup. */
 const Booking = initBookingWizard({ toast: Toast, goto });

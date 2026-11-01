@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Enums\AppointmentNotificationType;
 use App\Jobs\SendAppointmentNotification;
 use App\NotificationOutbox;
 use Carbon\CarbonImmutable;
@@ -30,7 +31,9 @@ final class DispatchDueNotifications extends Command
             ->limit(200)
             ->get()
             ->each(function (NotificationOutbox $outbox) use ($localNow, &$count): void {
-                if ($outbox->type->isAutomated() && $this->isQuietHour($localNow)) {
+                $type = AppointmentNotificationType::tryFrom((string) $outbox->getRawOriginal('type'));
+
+                if ($type?->isAutomated() === true && $this->isQuietHour($localNow)) {
                     $outbox->update(['scheduled_at' => $this->nextRelease($localNow)->setTimezone('UTC')]);
 
                     return;

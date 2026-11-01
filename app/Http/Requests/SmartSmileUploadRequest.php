@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace AppHttpRequests;
+namespace App\Http\Requests;
 
-use IlluminateFoundationHttpFormRequest;
+use Illuminate\Foundation\Http\FormRequest;
 
 final class SmartSmileUploadRequest extends FormRequest
 {

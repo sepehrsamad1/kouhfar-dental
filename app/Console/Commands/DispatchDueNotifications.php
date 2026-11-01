@@ -35,7 +35,7 @@ final class DispatchDueNotifications extends Command
                 $type = $outbox->type;
 
                 if ($type->isAutomated() && $this->isQuietHour($localNow)) {
-                    $outbox->update(['scheduled_at' => $this->nextRelease($localNow)->setTimezone('UTC')]);
+                    $outbox->forceFill(['scheduled_at' => $this->nextRelease($localNow)->setTimezone('UTC')])->save();
 
                     return;
                 }

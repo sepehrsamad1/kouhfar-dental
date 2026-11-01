@@ -704,42 +704,92 @@ const AI=(()=>{
 const Booking = initBookingWizard({ toast: Toast, goto });
 
 /* ============================================================
-   SMART SMILE ASSESSMENT — frontend-only demo
-   No API · no backend · no upload · no image analysis.
-   The selected image is previewed locally only; the result is
-   always the same predefined demo content.
+   SMART SMILE — Task 26 consent-controlled backend flow
+   Non-diagnostic simulation only. No generated HTML is trusted.
    ============================================================ */
-
-/* Smart Smile Assessment v2 — self-contained visual demonstration, no API request */
 const SmileAssessment=(()=>{
-  const models={
-    gallery:{label:'نمونه انتخاب‌شده از گالری',before:'assets/a-022.png',after:'assets/a-023.png',findings:[
-      {title:'رسوبات سطحی قابل مشاهده',desc:'در این مدل نمایشی، ناحیه‌ی مشخص‌شده برای نمایش تفاوت‌های سطحی و رسوبات احتمالی علامت‌گذاری شده است.',x:43,y:61,w:20,h:10,cx:53,cy:63},
-      {title:'ناهمگونی رنگ دندان‌ها',desc:'تفاوت تون رنگ در محدوده‌ی دندان‌های پیشین به‌صورت بصری نمایش داده شده است.',x:45,y:39,w:25,h:15,cx:62,cy:43},
-      {title:'بی‌نظمی خفیف تراز لبه‌ها',desc:'این محدوده برای نمایش احتمال تفاوت در تراز ظاهری لبه‌ی دندان‌ها انتخاب شده است.',x:27,y:41,w:19,h:15,cx:34,cy:39}
-    ]},
-    camera:{label:'نمونه انتخاب‌شده از دوربین',before:'assets/a-024.jpg',after:'assets/a-025.jpg',findings:[
-      {title:'بی‌نظمی چیدمان دندان‌های پیشین',desc:'در این نمونه، منطقه‌ی مشخص‌شده برای نشان‌دادن تفاوت در راستای ظاهری دندان‌های بالایی طراحی شده است.',x:29,y:37,w:36,h:20,cx:46,cy:35},
-      {title:'ازدحام ظاهری دندان‌های پایین',desc:'ناحیه‌ی پایین تصویر به‌صورت نمادین برای نمایش تراکم و هم‌پوشانی احتمالی دندان‌ها مشخص شده است.',x:33,y:58,w:31,h:13,cx:54,cy:67},
-      {title:'عدم تقارن نسبی خط لبخند',desc:'این نشانه برای نمایش بررسی بصری تراز و تقارن کلی خط لبخند در مدل آماده استفاده می‌شود.',x:43,y:42,w:18,h:13,cx:63,cy:48}
-    ]}
-  };
-  const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)],fa=v=>String(v).replace(/[0-9]/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
-  const dlg=$('#smileModal'),body=$('.smile-modal__body',dlg),stages=$$('[data-ssa-stage]',dlg),chosen=$('#ssaChosenImage'),source=$('#ssaChosenSource'),scanImage=$('#ssaScanImage'),beforeImage=$('#ssaBeforeImage'),compareBefore=$('#ssaCompareBefore'),compareAfter=$('#ssaCompareAfter'),zones=$('#ssaZones'),hotspots=$('#ssaHotspots'),findings=$('#ssaFindings'),detail=$('#ssaDetail'),resultStage=$('[data-ssa-stage="result"]',dlg);
-  let active=null,activeFinding=0,scanTimer=null,scanFrame=null;
+  const $=(s,r=document)=>r.querySelector(s);
+  const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+  const fa=v=>String(v).replace(/[0-9]/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
+  const dlg=$('#smileModal'),body=$('.smile-modal__body',dlg),stages=$$('[data-ssa-stage]',dlg);
+  const fileInput=$('#ssaFile'),consent=$('#ssaConsent'),pick=$('#ssaPickImage'),use=$('#ssaUseImage');
+  const fileName=$('#ssaFileName'),status=$('#ssaStatus'),progress=$('#ssaProgress'),percent=$('#ssaPercent'),resultText=$('#ssaResultText');
+  let token=null,pollTimer=null;
+
   const stage=name=>{stages.forEach(node=>node.classList.toggle('is-now',node.dataset.ssaStage===name));body.scrollTop=0};
-  const close=()=>{clearTimeout(scanTimer);cancelAnimationFrame(scanFrame);dlg.classList.remove('is-on');document.body.classList.remove('is-locked');setTimeout(()=>{if(dlg.open)dlg.close()},420)};
-  const open=()=>{clearTimeout(scanTimer);cancelAnimationFrame(scanFrame);stage('choose');if(!dlg.open)dlg.showModal();requestAnimationFrame(()=>dlg.classList.add('is-on'));document.body.classList.add('is-locked')};
-  const choose=key=>{active=models[key];chosen.src=active.before;scanImage.src=active.before;source.textContent=active.label;stage('confirm')};
-  const selectFinding=index=>{if(!active)return;activeFinding=index;const item=active.findings[index];$$('.ssa-zone',zones).forEach((node,i)=>node.classList.toggle('is-active',i===index));$$('.ssa-hotspot',hotspots).forEach((node,i)=>node.classList.toggle('is-active',i===index));$$('.ssa-finding',findings).forEach((node,i)=>node.classList.toggle('is-active',i===index));setTrustedHTML(detail,`<b></b><p></p>`);detail.firstElementChild.textContent=`${fa(index+1)}. ${item.title}`;detail.lastElementChild.textContent=item.desc};
-  const buildResult=()=>{beforeImage.src=active.before;compareBefore.src=active.before;compareAfter.src=active.after;zones.replaceChildren();hotspots.replaceChildren();findings.replaceChildren();active.findings.forEach((item,index)=>{const zone=document.createElement('span');zone.className='ssa-zone';zone.style.cssText=`left:${item.x}%;top:${item.y}%;width:${item.w}%;height:${item.h}%`;zones.appendChild(zone);const spot=document.createElement('button');spot.type='button';spot.className='ssa-hotspot';spot.style.cssText=`left:${item.cx}%;top:${item.cy}%`;spot.textContent=fa(index+1);spot.setAttribute('aria-label',item.title);spot.addEventListener('click',()=>selectFinding(index));hotspots.appendChild(spot);const card=document.createElement('button');card.type='button';card.className='ssa-finding';setTrustedHTML(card,`<span class="ssa-finding__number"></span><span><span class="ssa-finding__title"></span><span class="ssa-finding__desc"></span></span>`);card.querySelector('.ssa-finding__number').textContent=fa(index+1);card.querySelector('.ssa-finding__title').textContent=item.title;card.querySelector('.ssa-finding__desc').textContent=item.desc;card.addEventListener('click',()=>selectFinding(index));findings.appendChild(card)});selectFinding(0)};
-  const startScan=()=>{stage('scan');const bar=$('#ssaProgress'),percent=$('#ssaPercent'),title=$('#ssaProcessTitle'),text=$('#ssaProcessText'),steps=[['در حال شناسایی محدوده‌ی لبخند…','اسکن نمایشی خطوط و محدوده‌های اصلی تصویر'],['در حال علامت‌گذاری نواحی قابل توجه…','چیدمان نشانه‌های بصری روی مدل آماده'],['در حال آماده‌سازی گزارش تعاملی…','ساخت مقایسه قبل و بعد و کارت‌های توضیحی']];const started=performance.now(),duration=3400;const animate=now=>{const progress=Math.min((now-started)/duration,1),value=Math.round(progress*100),step=steps[Math.min(steps.length-1,Math.floor(progress*steps.length))];bar.style.width=value+'%';percent.textContent=fa(value)+'٪';title.textContent=step[0];text.textContent=step[1];if(progress<1){scanFrame=requestAnimationFrame(animate)}else{scanTimer=setTimeout(()=>{buildResult();stage('result');resultStage.classList.add('is-revealed')},260)}};bar.style.width='0';resultStage.classList.remove('is-revealed');scanFrame=requestAnimationFrame(animate)};
-  $$('[data-ssa-choice]',dlg).forEach(button=>button.addEventListener('click',()=>choose(button.dataset.ssaChoice)));$('#ssaChangeModel').addEventListener('click',()=>stage('choose'));$('#ssaStartScan').addEventListener('click',startScan);$('#ssaRestart').addEventListener('click',()=>stage('choose'));$('#smileClose').addEventListener('click',close);dlg.addEventListener('cancel',event=>{event.preventDefault();close()});dlg.addEventListener('click',event=>{if(event.target===dlg)close()});$('#ssaConsult').addEventListener('click',()=>close());$$('[data-ssa-view]',dlg).forEach(button=>button.addEventListener('click',()=>{const compare=button.dataset.ssaView==='compare';$$('[data-ssa-view]',dlg).forEach(node=>{node.classList.toggle('is-active',node===button);node.setAttribute('aria-selected',String(node===button))});$('#ssaAnalysisPhoto').style.display=compare?'none':'';$('#ssaCompare').classList.toggle('is-active',compare)}));
+  const message=text=>{status.textContent=text};
+  const csrf=()=>document.querySelector('meta[name="csrf-token"]')?.content||'';
+
+  const api=async(url,options={})=>{
+    const headers={'Accept':'application/json','X-CSRF-TOKEN':csrf(),...(options.headers||{})};
+    const response=await fetch(url,{...options,headers});
+    let data={}; try{data=await response.json()}catch{}
+    if(!response.ok){const error=new Error(data.status||'request_failed');error.status=response.status;error.data=data;throw error}
+    return data;
+  };
+
+  const reset=()=>{
+    clearTimeout(pollTimer);token=null;fileInput.value='';consent.checked=false;use.disabled=true;
+    fileName.textContent='هیچ تصویری انتخاب نشده است.';message('');progress.style.width='0%';percent.textContent='۰٪';stage('choose');
+  };
+
+  const open=async()=>{
+    if(!dlg.open)dlg.showModal();
+    requestAnimationFrame(()=>dlg.classList.add('is-on'));document.body.classList.add('is-locked');reset();
+    message('برای ادامه، رضایت آگاهانه را تأیید کنید و سپس تصویر را انتخاب کنید.')
+  };
+
+  const close=()=>{
+    clearTimeout(pollTimer);dlg.classList.remove('is-on');document.body.classList.remove('is-locked');
+    setTimeout(()=>{if(dlg.open)dlg.close()},420);
+  };
+
+  const grantConsent=async()=>{
+    const data=await api('/api/v1/smart-smile/consent',{method:'POST'});
+    token=data.consent_token;return data;
+  };
+
+  const upload=async()=>{
+    if(!consent.checked){message('برای پردازش تصویر ابتدا رضایت آگاهانه را تأیید کنید.');return}
+    if(!fileInput.files[0]){message('ابتدا یک تصویر انتخاب کنید.');return}
+    use.disabled=true;stage('scan');$('#ssaProcessTitle').textContent='در حال بارگذاری و پردازش…';$('#ssaProcessText').textContent='تصویر به‌صورت خصوصی ذخیره و پردازش صفی می‌شود.';
+    progress.style.width='25%';percent.textContent=fa(25)+'٪';
+    try{
+      if(!token)await grantConsent();
+      const form=new FormData();form.append('consent_token',token);form.append('media',fileInput.files[0]);
+      await api('/api/v1/smart-smile/upload',{method:'POST',body:form});
+      progress.style.width='60%';percent.textContent=fa(60)+'٪';poll();
+    }catch(error){
+      stage('choose');use.disabled=false;message(error.status===403?'رضایت معتبر نیست. لطفاً دوباره رضایت دهید.':'تصویر پردازش نشد. لطفاً تصویر دیگری انتخاب کنید.');
+    }
+  };
+
+  const poll=async()=>{
+    try{
+      const data=await api('/api/v1/smart-smile/status',{method:'POST',body:JSON.stringify({consent_token:token}),headers:{'Content-Type':'application/json'}});
+      if(data.status==='completed'){progress.style.width='100%';percent.textContent=fa(100)+'٪';resultText.textContent=data.result?.message||'این خروجی صرفاً یک شبیه‌سازی غیرتشخیصی است.';stage('result');return}
+      if(data.status==='failed'){stage('choose');use.disabled=false;message(data.result?.message||'پردازش تصویر در دسترس نیست. لطفاً بعداً دوباره تلاش کنید.');return}
+      if(data.status==='deleted'){reset();message('تصویر و نتیجه حذف شد.');return}
+      progress.style.width='80%';percent.textContent=fa(80)+'٪';pollTimer=setTimeout(poll,700);
+    }catch{stage('choose');use.disabled=false;message('وضعیت پردازش قابل دریافت نیست. لطفاً بعداً دوباره تلاش کنید.')}
+  };
+
+  pick.addEventListener('click',()=>{if(!consent.checked){message('ابتدا رضایت آگاهانه را تأیید کنید.');return}fileInput.click()});
+  consent.addEventListener('change',()=>{message('');use.disabled=!consent.checked||!fileInput.files[0]});
+  fileInput.addEventListener('change',()=>{const file=fileInput.files[0];if(!file)return;fileName.textContent=file.name;use.disabled=!consent.checked;message('تصویر انتخاب شد. برای ادامه «شروع شبیه‌سازی» را بزنید.')});
+  use.addEventListener('click',upload);
+  $('#ssaDelete').addEventListener('click',async()=>{
+    if(!token)return;
+    try{await api('/api/v1/smart-smile',{method:'DELETE',body:JSON.stringify({consent_token:token}),headers:{'Content-Type':'application/json'}});reset();message('تصویر و نتیجه حذف شد.')}
+    catch{message('حذف تصویر انجام نشد. لطفاً دوباره تلاش کنید.')}
+  });
+  $('#ssaRestart').addEventListener('click',reset);
+  $('#smileClose').addEventListener('click',close);
+  dlg.addEventListener('cancel',event=>{event.preventDefault();close()});
+  dlg.addEventListener('click',event=>{if(event.target===dlg)close()});
   document.addEventListener('click',event=>{const trigger=event.target.closest('#smileStart,#smilePreview');if(!trigger)return;event.preventDefault();event.stopImmediatePropagation();open()},true);
-  const previewBefore=$('#smilePrevBefore'),previewAfter=$('#smilePrevAfter');if(previewBefore)previewBefore.src=models.gallery.before;if(previewAfter)previewAfter.src=models.gallery.after;
   return{open,close};
 })();
-
 
 /* ============================================================
    GLOBAL DELEGATION — no dead buttons

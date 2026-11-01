@@ -41,6 +41,10 @@ jobs:
       MAIL_MAILER: array
       PULSE_ENABLED: false
       TELESCOPE_ENABLED: false
+      SMART_SMILE_ENABLED: true
+      SMART_SMILE_RELEASE_GATE: true
+      AI_ENABLED: true
+      AI_IMAGE_ANALYSIS_ENABLED: true
 
     steps:
       - name: Checkout
@@ -132,4 +136,12 @@ jobs:
         with:
           name: task20-content-responsive-screenshots
           path: test-results/task20-content-*.png
+          if-no-files-found: ignore
+
+      - name: Upload Task 26 Smart Smile responsive screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: task26-smart-smile-responsive-screenshots
+          path: test-results/task26-smart-smile-*.png
           if-no-files-found: ignore

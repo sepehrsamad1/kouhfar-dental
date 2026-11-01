@@ -72,3 +72,19 @@ test('handles a status failure without exposing server errors', async ({ page })
   await expect(page.locator('#ssaStatus')).toContainText('وضعیت پردازش قابل دریافت نیست', { timeout: 10000 });
   await expect(page.locator('#ssaStatus')).not.toContainText('internal database secret');
 });
+
+for (const viewport of [
+  [375, 812],
+  [768, 900],
+  [1440, 1000],
+]) {
+  test(`Smart Smile responsive layout ${viewport[0]}px`, async ({ page }) => {
+    await page.setViewportSize({ width: viewport[0], height: viewport[1] });
+    await openSmartSmile(page);
+    await expect(page.locator('.smile-modal__panel')).toBeVisible();
+    await page.locator('.smile-modal__panel').screenshot({
+      path: `test-results/task26-smart-smile-${viewport[0]}.png`,
+      animations: 'disabled',
+    });
+  });
+}

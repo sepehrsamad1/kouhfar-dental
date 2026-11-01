@@ -110,7 +110,9 @@ final class AssistantService
                 $haystack = mb_strtolower($item['title'].' '.$item['text']);
                 $score = 0;
                 foreach ($terms as $term) {
-                    if ($term !== '' && mb_strlen($term) >= 3 && mb_stripos($haystack, $term) !== false) $score++;
+                    if ($term !== '' && mb_strlen($term) >= 3 && mb_stripos($haystack, $term) !== false) {
+                        $score++;
+                    }
                 }
                 $item['_score'] = $score;
                 return $item;

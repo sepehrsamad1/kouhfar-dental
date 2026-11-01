@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\ContentItem;
 use Illuminate\Support\Collection;
 
 final class AssistantService
@@ -16,7 +15,8 @@ final class AssistantService
     public function __construct(
         private readonly PublishedContentProvider $knowledge,
         private readonly AIProviderManager $ai,
-    ) {}
+    ) {
+    }
 
     /** @return array{status:string,answer:string,sources:array<int,array<string,mixed>>} */
     public function respond(string $message, string $locale = 'fa'): array

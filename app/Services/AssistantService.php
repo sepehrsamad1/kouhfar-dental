@@ -80,7 +80,7 @@ final class AssistantService
             'feature_variant' => 'task24-grounded-assistant',
         ]);
 
-        if ($result['status'] !== 'succeeded' || !is_string($result['output']) || trim($result['output']) === '') {
+        if ($result['status'] !== 'succeeded' || ! is_string($result['output']) || trim($result['output']) === '') {
             return ['status' => $result['status'], 'answer' => $this->unavailableText($locale), 'sources' => $sources];
         }
 

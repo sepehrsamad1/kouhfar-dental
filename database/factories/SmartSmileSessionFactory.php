@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace DatabaseFactories;
+namespace Database\Factories;
 
-use AppSmartSmileSession;
-use IlluminateDatabaseEloquentFactoriesFactory;
+use App\SmartSmileSession;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /** @extends Factory<SmartSmileSession> */
 class SmartSmileSessionFactory extends Factory

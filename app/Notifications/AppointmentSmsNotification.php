@@ -14,8 +14,8 @@ final class AppointmentSmsNotification extends Notification implements SmsNotifi
     public function __construct(
         private readonly Appointment $appointment,
         private readonly AppointmentNotificationType $type,
-    ) {
-    }
+    ) {}
+
 
     public function via(object $notifiable): array
     {

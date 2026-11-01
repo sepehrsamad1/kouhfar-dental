@@ -9,7 +9,6 @@ use App\Jobs\ProcessSmartSmile;
 use App\MediaAsset;
 use App\SmartSmileSession;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 

@@ -25,7 +25,12 @@ final class ProcessSmartSmile implements ShouldQueue
 
     public int $timeout = 60;
 
-    public function __construct(public string $sessionId) {}
+    public string $sessionId;
+
+    public function __construct(string $sessionId)
+    {
+        $this->sessionId = $sessionId;
+    }
 
     public function backoff(): array
     {

@@ -21,7 +21,7 @@ Route::get('/content/{contentKey}/{locale}', [ContentItemController::class, 'sho
 Route::post('/api/v1/assistant', AssistantController::class)->middleware('throttle:20,1')->name('assistant');
 Route::post('/api/v1/smart-smile/consent', [SmartSmileController::class, 'consent'])->middleware('throttle:10,1')->name('smart-smile.consent');
 Route::post('/api/v1/smart-smile/upload', [SmartSmileController::class, 'upload'])->middleware('throttle:5,1')->name('smart-smile.upload');
-Route::get('/api/v1/smart-smile/status', [SmartSmileController::class, 'status'])->middleware('throttle:30,1')->name('smart-smile.status');
+Route::post('/api/v1/smart-smile/status', [SmartSmileController::class, 'status'])->middleware('throttle:30,1')->name('smart-smile.status');
 Route::delete('/api/v1/smart-smile', [SmartSmileController::class, 'delete'])->middleware('throttle:10,1')->name('smart-smile.delete');
 
 Route::middleware('guest:staff')->group(function (): void {

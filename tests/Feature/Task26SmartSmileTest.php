@@ -99,7 +99,7 @@ it('processes through the fake provider and never exposes clinical findings', fu
 
     expect($session->status)->toBe('completed')
         ->and($session->result['message'])->toContain('غیرتشخیصی')
-        ->and($session->result['message'])->not->toContain('تشخیص');
+        ->and($session->result['message'])->not->toContain('بیماری');
 });
 
 it('allows deletion through the consent token and soft-deletes the private image', function (): void {
@@ -121,7 +121,7 @@ it('rejects revoked consent and cannot access session data without the token', f
     $granted = app(SmartSmileService::class)->grantConsent();
     app(SmartSmileService::class)->delete($granted['session']);
 
-    $this->getJson('/api/v1/smart-smile/status?consent_token=wrong-token')
+    $this->postJson('/api/v1/smart-smile/status', ['consent_token' => 'wrong-token'])
         ->assertNotFound();
 
     $this->postJson('/api/v1/smart-smile/consent')

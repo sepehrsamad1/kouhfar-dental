@@ -8,7 +8,7 @@ use App\AI\Contracts\ImageAnalysisProvider;
 use App\AI\Contracts\ImageTransformationProvider;
 use App\AI\Contracts\TextGenerationProvider;
 
-final class FakeAIProvider implements TextGenerationProvider, ImageAnalysisProvider, ImageTransformationProvider
+final class FakeAIProvider implements ImageAnalysisProvider, ImageTransformationProvider, TextGenerationProvider
 {
     public function generate(string $prompt, array $context = []): array
     {

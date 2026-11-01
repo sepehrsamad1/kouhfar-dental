@@ -1,11 +1,11 @@
 <?php
 
-use AppAIFakeAIProvider;
-use AppJobsProcessSmartSmile;
-use AppServicesSmartSmileService;
-use IlluminateFoundationTestingRefreshDatabase;
-use IlluminateHttpUploadedFile;
-use IlluminateSupportFacadesStorage;
+use App\Jobs\ProcessSmartSmile;
+use App\Services\AIProviderManager;
+use App\Services\SmartSmileService;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 uses(RefreshDatabase::class);
 
@@ -28,7 +28,7 @@ it('fails safely when the private image disappears before processing', function 
 
     Storage::disk('media')->delete($session->mediaAsset->storage_key);
 
-    (new ProcessSmartSmile($session->id))->handle(app(AppServicesAIProviderManager::class));
+    (new ProcessSmartSmile($session->id))->handle(app(AIProviderManager::class));
 
     expect($session->refresh()->status)->toBe('failed');
 });

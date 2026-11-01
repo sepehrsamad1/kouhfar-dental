@@ -1,6 +1,18 @@
 # Task 25 — Laravel AI assistant UI integration
 
-Status: IMPLEMENTED — pending CI verification.
+Status: VERIFIED — CI run 521 passed.
+
+## Verified evidence
+
+- GitHub Actions CI run 521 (`41338729650`) passed all required steps.
+- JavaScript lint passed.
+- JavaScript typecheck passed.
+- Vite frontend build passed.
+- PHP formatting passed.
+- PHP static analysis passed.
+- PostgreSQL migrations passed.
+- Laravel test suite passed: 227 tests, 23,857 assertions.
+- Browser smoke suite passed: 25 tests.
 
 ## Implemented
 

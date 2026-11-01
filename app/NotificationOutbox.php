@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App;
 
 use App\Enums\AppointmentNotificationType;
+use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,7 +16,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $appointment_id
  * @property AppointmentNotificationType $type
  * @property string $dedupe_key
- * @property \Carbon\CarbonImmutable $scheduled_at
+ * @property CarbonImmutable $scheduled_at
  * @property \Carbon\CarbonImmutable|null $sent_at
  * @property int $attempts
  * @property string|null $last_error

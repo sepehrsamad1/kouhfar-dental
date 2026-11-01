@@ -51,7 +51,7 @@ test('provides a deletion path for the uploaded image', async ({ page }) => {
 
 test('handles a status failure without exposing server errors', async ({ page }) => {
   let intercepted = false;
-  await page.route('**/api/v1/smart-smile/status**', async route => {
+  await page.route('**/api/v1/smart-smile/status*', async route => {
     if (!intercepted) {
       intercepted = true;
       await route.fulfill({

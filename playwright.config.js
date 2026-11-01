@@ -11,6 +11,12 @@ export default defineConfig({
     },
     workers: 1,
     webServer: {
+        env: {
+            AI_ENABLED: 'true',
+            AI_TEXT_ENABLED: 'true',
+            AI_TEXT_PROVIDER: 'fake',
+            AI_RATE_LIMIT_PER_MINUTE: '100',
+        },
         command: 'php artisan serve --host=127.0.0.1 --port=8000',
         url: 'http://127.0.0.1:8000',
         reuseExistingServer: true,

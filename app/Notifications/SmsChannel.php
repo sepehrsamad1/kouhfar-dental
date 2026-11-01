@@ -21,10 +21,6 @@ final class SmsChannel
 
         $message = $notification->toSms($notifiable);
 
-        if (! $message instanceof SmsMessage) {
-            throw new LogicException('SMS notifications must return an SmsMessage.');
-        }
-
         $this->provider->send($message);
     }
 }

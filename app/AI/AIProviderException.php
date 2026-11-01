@@ -6,6 +6,4 @@ namespace App\AI;
 
 use RuntimeException;
 
-final class AIProviderException extends RuntimeException
-{
-}
+final class AIProviderException extends RuntimeException {}

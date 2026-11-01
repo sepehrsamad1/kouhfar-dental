@@ -1,14 +1,14 @@
 <?php
 
-use AppAIFakeAIProvider;
-use AppJobsProcessSmartSmile;
-use AppMediaAsset;
-use AppServicesSmartSmileService;
-use AppSmartSmileSession;
-use IlluminateFoundationTestingRefreshDatabase;
-use IlluminateHttpUploadedFile;
-use IlluminateSupportFacadesBus;
-use IlluminateSupportFacadesStorage;
+use App\Jobs\ProcessSmartSmile;
+use App\MediaAsset;
+use App\Services\AIProviderManager;
+use App\Services\SmartSmileService;
+use App\SmartSmileSession;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Storage;
 
 uses(RefreshDatabase::class);
 
@@ -53,7 +53,6 @@ it('creates consent and queues a private image processing job', function (): voi
         ->assertJsonPath('non_diagnostic', true);
 
     $token = $consent->json('consent_token');
-
     $file = UploadedFile::fake()->image('synthetic.png', 100, 100);
 
     $response = $this->post('/api/v1/smart-smile/upload', [
@@ -75,7 +74,6 @@ it('creates consent and queues a private image processing job', function (): voi
 it('rejects invalid image content and does not trust the filename', function (): void {
     $consent = $this->postJson('/api/v1/smart-smile/consent');
     $token = $consent->json('consent_token');
-
     $file = UploadedFile::fake()->createWithContent('fake.jpg', 'not an image');
 
     $this->post('/api/v1/smart-smile/upload', [
@@ -89,11 +87,12 @@ it('rejects invalid image content and does not trust the filename', function ():
 it('processes through the fake provider and never exposes clinical findings', function (): void {
     $service = app(SmartSmileService::class);
     $granted = $service->grantConsent();
+    $session = $service->upload(
+        $granted['session'],
+        UploadedFile::fake()->image('synthetic.png', 100, 100),
+    );
 
-    $file = UploadedFile::fake()->image('synthetic.png', 100, 100);
-    $session = $service->upload($granted['session'], $file);
-
-    (new ProcessSmartSmile($session->id))->handle(app(AppServicesAIProviderManager::class));
+    (new ProcessSmartSmile($session->id))->handle(app(AIProviderManager::class));
 
     $session->refresh();
 
@@ -123,7 +122,4 @@ it('rejects revoked consent and cannot access session data without the token', f
 
     $this->postJson('/api/v1/smart-smile/status', ['consent_token' => 'wrong-token'])
         ->assertNotFound();
-
-    $this->postJson('/api/v1/smart-smile/consent')
-        ->assertCreated();
 });

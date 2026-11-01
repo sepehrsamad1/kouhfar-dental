@@ -49,9 +49,15 @@ final class AssistantService
         }
 
         $sources = $this->sources($items);
-        $contextText = $items->map(static fn (array $item): string =>
-            sprintf('[%s v%s] %s\n%s', $item['content_key'], $item['version'], $item['title'], $item['text'])
-        )->implode("\n\n");
+        $contextText = $items->map(function (array $item): string {
+            return sprintf(
+                '[%s v%s] %s\n%s',
+                $item['content_key'],
+                $item['version'],
+                $item['title'],
+                $item['text'],
+            );
+        })->implode("\n\n");
 
         $prompt = "You are the public dental clinic information assistant.\n"
             ."Language: ".$locale."\n"

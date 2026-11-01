@@ -76,7 +76,7 @@ it('rejects invalid image content and does not trust the filename', function ():
     $token = $consent->json('consent_token');
     $file = UploadedFile::fake()->createWithContent('fake.jpg', 'not an image');
 
-    $this->post('/api/v1/smart-smile/upload', [
+    $this->withHeader('Accept', 'application/json')->post('/api/v1/smart-smile/upload', [
         'consent_token' => $token,
         'media' => $file,
     ])->assertStatus(422);

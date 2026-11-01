@@ -4,6 +4,7 @@ async function openAssistant(page) {
   await page.goto('/');
   await page.locator('#fab').click();
   await expect(page.locator('#ai')).toHaveClass(/is-open/);
+  await expect(page.locator('.msg--bot').first()).toBeVisible();
 }
 
 test('assistant shows disclosure and a grounded answer with safe citation', async ({ page }) => {
@@ -85,25 +86,18 @@ test('assistant treats hostile model output as text and cannot execute HTML', as
 test('assistant exposes rate limiting as a safe state', async ({ page }) => {
   await openAssistant(page);
 
-  const responses = await page.evaluate(async () => {
-    const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-    const results = [];
-    for (let i = 0; i < 21; i += 1) {
-      const response = await fetch('/api/v1/assistant', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-          'X-CSRF-TOKEN': csrf,
-          'X-Requested-With': 'XMLHttpRequest',
-        },
-        credentials: 'same-origin',
-        body: JSON.stringify({ message: 'حریم خصوصی بیمار چیست؟', locale: 'fa' }),
-      });
-      results.push(response.status);
-    }
-    return results;
+  await page.route('**/api/v1/assistant', async route => {
+    await route.fulfill({
+      status: 429,
+      contentType: 'application/json',
+      body: JSON.stringify({ message: 'rate limit details should never be shown' }),
+    });
   });
 
-  expect(responses.filter(status => status === 429).length).toBeGreaterThan(0);
+  await page.locator('#aiInput').fill('حریم خصوصی بیمار چیست؟');
+  await page.locator('#aiForm').press('Enter');
+
+  const limited = page.locator('.msg--rate-limited').last();
+  await expect(limited).toContainText('تعداد درخواست‌ها');
+  await expect(limited).not.toContainText('rate limit details');
 });

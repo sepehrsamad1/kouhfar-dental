@@ -153,6 +153,7 @@ final class AssistantService
             'content_key' => $item['content_key'],
             'version' => (int) $item['version'],
             'title' => $item['title'],
+            'url' => route('content.show', ['contentKey' => $item['content_key'], 'locale' => $item['locale']]),
         ])->values()->all();
     }
 

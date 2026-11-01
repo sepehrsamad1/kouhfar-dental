@@ -24,7 +24,9 @@ final class AssistantService
         $message = trim($message);
         $locale = in_array($locale, ['fa', 'en'], true) ? $locale : 'fa';
 
-        if ($message === '') return $this->unavailable($locale);
+        if ($message === '') {
+            return $this->unavailable($locale);
+        }
 
         $message = mb_substr($message, 0, self::MAX_MESSAGE_LENGTH);
 
@@ -51,13 +53,14 @@ final class AssistantService
         $sources = $this->sources($items);
         $contextText = $items->map(function (array $item): string {
             return sprintf(
-                '[%s v%s] %s\n%s',
+                '[%s v%s] %s%s%s',
                 $item['content_key'],
                 $item['version'],
                 $item['title'],
+                PHP_EOL,
                 $item['text'],
             );
-        })->implode("\n\n");
+        })->implode(PHP_EOL.PHP_EOL);
 
         $prompt = "You are the public dental clinic information assistant.\n"
             ."Language: ".$locale."\n"

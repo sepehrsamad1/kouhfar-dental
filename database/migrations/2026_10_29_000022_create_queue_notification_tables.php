@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -65,8 +66,8 @@ return new class extends Migration
             return;
         }
 
-        // Extend the pre-existing notification outbox scaffold instead of
-        // silently leaving it incompatible with the Task 22 contract.
+        // Task 7 already created this table with a legacy notification shape.
+        // Keep that schema/data intact while extending it for Task 22.
         Schema::table('notification_outbox', function (Blueprint $table): void {
             if (! Schema::hasColumn('notification_outbox', 'appointment_id')) {
                 $table->uuid('appointment_id')->nullable()->index();
@@ -89,12 +90,22 @@ return new class extends Migration
             }
         });
 
-        Schema::table('notification_outbox', function (Blueprint $table): void {
-            $table->foreign('appointment_id')
-                ->references('id')
-                ->on('appointments')
-                ->cascadeOnDelete();
-        });
+        // Legacy columns remain for backwards compatibility, but Task 22
+        // records do not populate them. They therefore must accept NULL.
+        foreach (['channel', 'recipient_hash', 'template', 'payload_ref', 'status', 'created_at'] as $column) {
+            if (Schema::hasColumn('notification_outbox', $column)) {
+                DB::statement(sprintf(
+                    'ALTER TABLE notification_outbox ALTER COLUMN %s DROP NOT NULL',
+                    $column,
+                ));
+            }
+        }
+
+        if (Schema::hasColumn('notification_outbox', 'appointment_id')) {
+            DB::statement(
+                'ALTER TABLE notification_outbox ADD CONSTRAINT notification_outbox_appointment_id_foreign FOREIGN KEY (appointment_id) REFERENCES appointments(id) ON DELETE CASCADE',
+            );
+        }
     }
 
     public function down(): void

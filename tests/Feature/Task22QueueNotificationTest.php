@@ -15,8 +15,8 @@ use App\Practitioner;
 use App\Resource;
 use App\Service;
 use App\WorkingHour;
-use Illuminate\Support\Facades\Date;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Artisan;
 use Tests\Support\FakeSmsProvider;
 

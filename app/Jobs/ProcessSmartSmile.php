@@ -66,7 +66,7 @@ final class ProcessSmartSmile implements ShouldQueue
 
             $response = $ai->analyzeImage(
                 'smart-smile',
-                $session->mediaAsset->storage_key,
+                $asset->storage_key,
                 ['feature_variant' => 'non_diagnostic_simulation'],
             );
 

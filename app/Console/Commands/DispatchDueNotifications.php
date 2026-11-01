@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
-use App\Enums\AppointmentNotificationType;
 use App\Jobs\SendAppointmentNotification;
 use App\NotificationOutbox;
 use Carbon\CarbonImmutable;
@@ -33,7 +32,7 @@ final class DispatchDueNotifications extends Command
             ->each(function (NotificationOutbox $outbox) use ($localNow, &$count): void {
                 $type = $outbox->type;
 
-                if ($type instanceof AppointmentNotificationType && $type->isAutomated() && $this->isQuietHour($localNow)) {
+                if ($type->isAutomated() && $this->isQuietHour($localNow)) {
                     $outbox->update(['scheduled_at' => $this->nextRelease($localNow)->setTimezone('UTC')]);
 
                     return;

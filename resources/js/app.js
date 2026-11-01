@@ -736,8 +736,7 @@ const SmileAssessment=(()=>{
   const open=async()=>{
     if(!dlg.open)dlg.showModal();
     requestAnimationFrame(()=>dlg.classList.add('is-on'));document.body.classList.add('is-locked');reset();
-    try{await grantConsent();message('برای ادامه، رضایت خود را تأیید کنید و سپس تصویر را انتخاب کنید.')}
-    catch(error){stage(error.status===503?'disabled':'choose');message(error.status===503?'این قابلیت فعلاً در دسترس نیست.':'ارتباط با سامانه برقرار نشد. لطفاً بعداً دوباره تلاش کنید.')}
+    message('برای ادامه، رضایت آگاهانه را تأیید کنید و سپس تصویر را انتخاب کنید.')
   };
 
   const close=()=>{

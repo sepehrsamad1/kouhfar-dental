@@ -22,7 +22,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property CarbonImmutable $end_at
  * @property CarbonImmutable|null $expires_at
  * @property int $version
- * @property-read Patient $patient
+ * @property-read Patient|null $patient
  * @property-read Collection<int, Practitioner> $practitioners
  */
 class Appointment extends Model

@@ -16,8 +16,8 @@ use App\Resource;
 use App\Service;
 use App\WorkingHour;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Date;
 use Tests\Support\FakeSmsProvider;
 
 uses(RefreshDatabase::class);

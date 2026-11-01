@@ -7,6 +7,7 @@ use App\Http\Controllers\AvailabilityController;
 use App\Http\Controllers\ClinicConfigurationController;
 use App\Http\Controllers\ContentItemController;
 use App\Http\Controllers\MediaAssetController;
+use App\Http\Controllers\SmartSmileController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\StaffAppointmentController;
 use App\Http\Controllers\StaffAuthController;
@@ -18,6 +19,10 @@ Route::view('/', 'home')->name('home');
 Route::get('/booking/availability/{service}', AvailabilityController::class)->middleware('throttle:60,1')->name('booking.availability');
 Route::get('/content/{contentKey}/{locale}', [ContentItemController::class, 'show'])->where('locale', 'fa|en')->name('content.show');
 Route::post('/api/v1/assistant', AssistantController::class)->middleware('throttle:20,1')->name('assistant');
+Route::post('/api/v1/smart-smile/consent', [SmartSmileController::class, 'consent'])->middleware('throttle:10,1')->name('smart-smile.consent');
+Route::post('/api/v1/smart-smile/upload', [SmartSmileController::class, 'upload'])->middleware('throttle:5,1')->name('smart-smile.upload');
+Route::get('/api/v1/smart-smile/status', [SmartSmileController::class, 'status'])->middleware('throttle:30,1')->name('smart-smile.status');
+Route::delete('/api/v1/smart-smile', [SmartSmileController::class, 'delete'])->middleware('throttle:10,1')->name('smart-smile.delete');
 
 Route::middleware('guest:staff')->group(function (): void {
     Route::get('/staff/login', [StaffAuthController::class, 'create'])->name('staff.login');

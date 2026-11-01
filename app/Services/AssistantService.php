@@ -153,6 +153,7 @@ final class AssistantService
             'content_key' => $item['content_key'],
             'version' => (int) $item['version'],
             'title' => $item['title'],
+            'url' => sprintf('/content/%s/%s', rawurlencode($item['content_key']), rawurlencode($item['locale'])),
         ])->values()->all();
     }
 

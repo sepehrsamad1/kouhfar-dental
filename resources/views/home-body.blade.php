@@ -326,11 +326,12 @@
 <aside class="ai" id="ai" aria-label="دستیار هوشمند کلینیک">
   <div class="ai__bar">
     <span class="ai__avatar" aria-hidden="true">AK</span>
-    <span class="ai__id"><b>دستیار هوشمند کلینیک</b><span><i aria-hidden="true"></i>آنلاین · پاسخ‌های نمونه</span></span>
+    <span class="ai__id"><b>دستیار هوشمند کلینیک</b><span><i aria-hidden="true"></i>دستیار اطلاعاتی · نه جایگزین دندانپزشک</span></span>
     <button class="ai__close" id="aiClose" aria-label="بستن">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6L6 18"/></svg>
     </button>
   </div>
+  <div class="ai__notice" role="note">این دستیار با هوش مصنوعی برای اطلاعات عمومی و تأییدشده است و جایگزین دندانپزشک نیست. تشخیص، تجویز و تصمیم درمانی فردی ارائه نمی‌کند.</div>
   <div class="ai__log" id="aiLog" role="log" aria-live="polite"></div>
   <div class="ai__quick" id="aiQuick"></div>
   <form class="ai__form" id="aiForm">

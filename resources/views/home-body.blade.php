@@ -128,7 +128,7 @@
   </div>
 </section>
 
-<!-- ===================== SMILE ASSESSMENT (DEMO) ===================== -->
+<!-- ===================== SMILE ASSESSMENT ===================== -->
 <section class="section section--ink smile" id="smile">
   <div class="container">
     <div class="smile__grid">
@@ -144,10 +144,10 @@
             </span>
             شروع ارزیابی لبخند
           </button>
-          <p class="smile__note"><span class="diamond" aria-hidden="true"></span>نسخه نمایشی — تصویری ارسال یا ذخیره نمی‌شود</p>
+          <p class="smile__note"><span class="diamond" aria-hidden="true"></span>شبیه‌سازی غیرتشخیصی — تصویر فقط با رضایت شما پردازش می‌شود و مسیر حذف دارد</p>
         </div>
       </div>
-      <button class="smile__preview reveal" style="--i:2" id="smilePreview" type="button" aria-haspopup="dialog" aria-label="شروع ارزیابی هوشمند لبخند — نسخه نمایشی">
+      <button class="smile__preview reveal" style="--i:2" id="smilePreview" type="button" aria-haspopup="dialog" aria-label="شروع شبیه‌سازی غیرتشخیصی هوشمند لبخند">
         <span class="smile__previewTop">
           <span class="smile__chip">نسخه نمایشی</span>
           <span class="smile__previewLabel">ارزیابی هوشمند لبخند</span>

@@ -10,6 +10,7 @@ use Illuminate\Support\Collection;
 final class AssistantService
 {
     private const MAX_MESSAGE_LENGTH = 2000;
+
     private const MAX_SOURCES = 5;
 
     public function __construct(

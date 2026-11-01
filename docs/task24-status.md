@@ -15,7 +15,7 @@ The knowledge deliberately avoids Kouhfar-specific prices, credentials, hours, g
 ## Implemented
 
 - PublishedContentProvider is the only public AI knowledge source.
-- Public assistant endpoint: POST /api/assistant.
+- Public assistant endpoint: POST /api/v1/assistant.
 - Persian and English responses.
 - Source references use approved content_key and version.
 - Prompt-injection/internal-data requests are refused before model invocation.

@@ -22,6 +22,7 @@ final class ProcessSmartSmile implements ShouldQueue
     use SerializesModels;
 
     public int $tries = 2;
+
     public int $timeout = 60;
 
     public function __construct(public string $sessionId) {}

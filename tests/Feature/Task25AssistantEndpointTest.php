@@ -58,6 +58,23 @@ it('rejects malformed assistant input server-side', function (): void {
     ])->assertUnprocessable();
 });
 
+it('returns a safe fallback when the provider fails', function (): void {
+    task25ApiKnowledge();
+    config([
+        'ai.capabilities.text.provider' => 'not-approved',
+    ]);
+
+    $response = $this->postJson('/api/v1/assistant', [
+        'message' => 'حریم خصوصی بیمار چیست؟',
+        'locale' => 'fa',
+    ]);
+
+    $response
+        ->assertOk()
+        ->assertJsonPath('status', 'fallback')
+        ->assertJsonPath('answer', 'AI service is temporarily unavailable.');
+});
+
 it('returns an explicit disabled state without exposing provider details', function (): void {
     task25ApiKnowledge();
     config([

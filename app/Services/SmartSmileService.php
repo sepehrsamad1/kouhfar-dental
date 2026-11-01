@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace AppServices;
+namespace App\Services;
 
-use AppEnumsMediaAssetKind;
-use AppJobsProcessSmartSmile;
-use AppMediaAsset;
-use AppSmartSmileSession;
-use IlluminateHttpUploadedFile;
-use IlluminateSupportFacadesHash;
-use IlluminateSupportStr;
-use IlluminateValidationValidationException;
+use App\Enums\MediaAssetKind;
+use App\Jobs\ProcessSmartSmile;
+use App\MediaAsset;
+use App\SmartSmileSession;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 final class SmartSmileService
 {
@@ -75,6 +75,7 @@ final class SmartSmileService
     {
         if ($session->media_asset_id !== null) {
             $asset = MediaAsset::withTrashed()->find($session->media_asset_id);
+
             if ($asset !== null && $asset->deleted_at === null) {
                 app(MediaAssetService::class)->softDelete($asset);
             }

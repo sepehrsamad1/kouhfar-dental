@@ -9,7 +9,7 @@ use App\AIRequest;
 final class AIRequestRecorder
 {
     /**
-     * @param array<int, string> $contentIds
+     * @param  array<int, string>  $contentIds
      */
     public function record(string $feature, string $status, array $contentIds = []): void
     {

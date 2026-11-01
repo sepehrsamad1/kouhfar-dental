@@ -43,7 +43,7 @@ final class ProcessSmartSmile implements ShouldQueue
         $session->forceFill(['status' => 'processing'])->save();
 
         try {
-            if (! Storage::disk('media')->exists($session->mediaAsset->storage_key)) {
+            if (Storage::disk('media')->exists($session->mediaAsset->storage_key) === false) {
                 $session->forceFill([
                     'status' => 'failed',
                     'result' => ['message' => 'تصویر در دسترس نیست. لطفاً دوباره تلاش کنید.'],

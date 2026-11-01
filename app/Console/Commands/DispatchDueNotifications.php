@@ -7,8 +7,8 @@ namespace App\Console\Commands;
 use App\Jobs\SendAppointmentNotification;
 use App\NotificationOutbox;
 use Carbon\CarbonImmutable;
-use Illuminate\Support\Facades\Date;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Date;
 
 final class DispatchDueNotifications extends Command
 {

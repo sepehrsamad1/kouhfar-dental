@@ -766,7 +766,7 @@ const SmileAssessment=(()=>{
 
   const poll=async()=>{
     try{
-      const data=await api('/api/v1/smart-smile/status?consent_token='+encodeURIComponent(token));
+      const data=await api('/api/v1/smart-smile/status',{method:'POST',body:JSON.stringify({consent_token:token}),headers:{'Content-Type':'application/json'}});
       if(data.status==='completed'){progress.style.width='100%';percent.textContent=fa(100)+'٪';resultText.textContent=data.result?.message||'این خروجی صرفاً یک شبیه‌سازی غیرتشخیصی است.';stage('result');return}
       if(data.status==='failed'){stage('choose');use.disabled=false;message(data.result?.message||'پردازش تصویر در دسترس نیست. لطفاً بعداً دوباره تلاش کنید.');return}
       if(data.status==='deleted'){reset();message('تصویر و نتیجه حذف شد.');return}

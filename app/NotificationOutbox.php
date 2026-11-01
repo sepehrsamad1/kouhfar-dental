@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property AppointmentNotificationType $type
  * @property string $dedupe_key
  * @property CarbonImmutable $scheduled_at
- * @property \Carbon\CarbonImmutable|null $sent_at
+ * @property CarbonImmutable|null $sent_at
  * @property int $attempts
  * @property string|null $last_error
  */

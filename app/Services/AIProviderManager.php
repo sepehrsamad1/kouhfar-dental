@@ -25,11 +25,11 @@ final class AIProviderManager
     /** @return array{status: string, output: ?string, input_tokens: int, output_tokens: int} */
     public function generateText(string $feature, string $prompt, array $context = []): array
     {
-        if (! $this->enabled('text')) {
+        if ($this->enabled('text') === false) {
             return $this->disabled();
         }
 
-        if (! $this->allowed($feature)) {
+        if ($this->allowed($feature) === false) {
             return $this->limited();
         }
 
@@ -55,11 +55,11 @@ final class AIProviderManager
     /** @return array{status: string, result: array<string, mixed>|null, input_tokens: int, output_tokens: int} */
     public function analyzeImage(string $feature, string $imageReference, array $context = []): array
     {
-        if (! $this->enabled('image_analysis')) {
+        if ($this->enabled('image_analysis') === false) {
             return ['status' => 'disabled', 'result' => null, 'input_tokens' => 0, 'output_tokens' => 0];
         }
 
-        if (! $this->allowed($feature)) {
+        if ($this->allowed($feature) === false) {
             return ['status' => 'rate_limited', 'result' => null, 'input_tokens' => 0, 'output_tokens' => 0];
         }
 
@@ -85,11 +85,11 @@ final class AIProviderManager
     /** @return array{status: string, image_reference: ?string, input_tokens: int, output_tokens: int} */
     public function transformImage(string $feature, string $imageReference, array $context = []): array
     {
-        if (! $this->enabled('image_transformation')) {
+        if ($this->enabled('image_transformation') === false) {
             return ['status' => 'disabled', 'image_reference' => null, 'input_tokens' => 0, 'output_tokens' => 0];
         }
 
-        if (! $this->allowed($feature)) {
+        if ($this->allowed($feature) === false) {
             return ['status' => 'rate_limited', 'image_reference' => null, 'input_tokens' => 0, 'output_tokens' => 0];
         }
 
@@ -187,7 +187,7 @@ final class AIProviderManager
     {
         $ids = $context['content_ids'] ?? [];
 
-        if (! is_array($ids)) {
+        if (is_array($ids) === false) {
             return [];
         }
 

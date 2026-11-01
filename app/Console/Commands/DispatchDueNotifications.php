@@ -16,15 +16,9 @@ final class DispatchDueNotifications extends Command
 
     protected $description = 'Dispatch due appointment notification outbox entries without bypassing approved quiet hours.';
 
-    public function __construct(
-        private readonly Clock $clock,
-    ) {
-        parent::__construct();
-    }
-
     public function handle(): int
     {
-        $now = $this->clock->now();
+        $now = app(Clock::class)->now();
 
         $timezone = (string) config('notifications.sms.timezone', 'Asia/Tehran');
         $localNow = $now->setTimezone($timezone);

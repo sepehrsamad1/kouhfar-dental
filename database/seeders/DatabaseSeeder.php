@@ -39,6 +39,8 @@ class DatabaseSeeder extends Seeder
         $this->upsertStaff($receptionId, 'seed-reception@example.invalid', 'Synthetic Reception', 'reception');
         $this->upsertStaff($practitionerUserId, 'seed-practitioner@example.invalid', 'Synthetic Practitioner User', 'practitioner');
 
+        $this->call(ApprovedKnowledgeSeeder::class);
+
         Patient::query()->updateOrCreate(['id' => $patientId], [
             'full_name' => 'Synthetic Test Patient',
             'mobile_normalized' => '09000000001',

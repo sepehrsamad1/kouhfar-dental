@@ -41,6 +41,10 @@ jobs:
       MAIL_MAILER: array
       PULSE_ENABLED: false
       TELESCOPE_ENABLED: false
+      SMART_SMILE_ENABLED: true
+      SMART_SMILE_RELEASE_GATE: true
+      AI_ENABLED: true
+      AI_IMAGE_ANALYSIS_ENABLED: true
 
     steps:
       - name: Checkout

@@ -29,6 +29,10 @@ final class BrowserTestSeeder extends Seeder
 
         ContentItem::query()->updateOrCreate(['content_key' => 'browser-public-content', 'locale' => 'fa', 'version' => 1], ['kind' => ContentKind::Faq, 'body' => ['title' => 'محتوای مرورگر', 'text' => 'محتوای منتشرشده برای تست مرورگر.'], 'status' => ContentItemStatus::Published, 'approval_scope' => 'general', 'published_at' => now('UTC')]);
 
+        ContentItem::query()->updateOrCreate(['content_key' => 'patient-rights', 'locale' => 'fa', 'version' => 1], ['kind' => ContentKind::ClinicInfo, 'body' => ['title' => 'حقوق بیمار', 'text' => 'حریم خصوصی و دریافت اطلاعات کافی از حقوق بیمار است.'], 'status' => ContentItemStatus::Published, 'approval_scope' => 'general', 'published_at' => now('UTC')]);
+
+        ContentItem::query()->updateOrCreate(['content_key' => 'dental-emergency-response', 'locale' => 'fa', 'version' => 1], ['kind' => ContentKind::ClinicInfo, 'body' => ['title' => 'پاسخ اورژانسی', 'text' => 'برای علائم اورژانسی فوراً از خدمات پزشکی استفاده کنید.'], 'status' => ContentItemStatus::Published, 'approval_scope' => 'clinical', 'owner_approved_by' => null, 'owner_approved_at' => null, 'published_at' => now('UTC')]);
+
         $staff = StaffUser::query()->firstOrNew(['email' => 'browser-admin@example.invalid']);
         $staff->forceFill([
             'display_name' => 'Browser Test Admin',

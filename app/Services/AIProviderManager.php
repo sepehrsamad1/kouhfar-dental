@@ -55,11 +55,11 @@ final class AIProviderManager
     /** @return array{status: string, result: array<string, mixed>|null, input_tokens: int, output_tokens: int} */
     public function analyzeImage(string $feature, string $imageReference, array $context = []): array
     {
-        if (!$this->enabled('image_analysis')) {
+        if (! $this->enabled('image_analysis')) {
             return ['status' => 'disabled', 'result' => null, 'input_tokens' => 0, 'output_tokens' => 0];
         }
 
-        if (!$this->allowed($feature)) {
+        if (! $this->allowed($feature)) {
             return ['status' => 'rate_limited', 'result' => null, 'input_tokens' => 0, 'output_tokens' => 0];
         }
 
@@ -85,11 +85,11 @@ final class AIProviderManager
     /** @return array{status: string, image_reference: ?string, input_tokens: int, output_tokens: int} */
     public function transformImage(string $feature, string $imageReference, array $context = []): array
     {
-        if (!$this->enabled('image_transformation')) {
+        if (! $this->enabled('image_transformation')) {
             return ['status' => 'disabled', 'image_reference' => null, 'input_tokens' => 0, 'output_tokens' => 0];
         }
 
-        if (!$this->allowed($feature)) {
+        if (! $this->allowed($feature)) {
             return ['status' => 'rate_limited', 'image_reference' => null, 'input_tokens' => 0, 'output_tokens' => 0];
         }
 

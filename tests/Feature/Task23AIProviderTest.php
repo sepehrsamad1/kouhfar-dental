@@ -1,6 +1,5 @@
 <?php
 
-use App\AI\FakeAIProvider;
 use App\AIRequest;
 use App\AIUsage;
 use App\Services\AIProviderManager;

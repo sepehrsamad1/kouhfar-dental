@@ -62,6 +62,7 @@ it('returns a safe fallback when the provider fails', function (): void {
     task25ApiKnowledge();
     config([
         'ai.capabilities.text.provider' => 'not-approved',
+        'ai.capabilities.text.fallback' => 'AI service is temporarily unavailable.',
     ]);
 
     $response = $this->postJson('/api/v1/assistant', [

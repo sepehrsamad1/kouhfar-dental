@@ -60,8 +60,8 @@ it('allows an administrator to view and update the AI budget and emergency switc
         'emergency_disabled' => true,
     ]);
 
-    expect(app(\\App\\AIControlSetting::class)->provider_token_limits)->toBe(['fake-v1' => 1_000_000])
-        ->and(app(\\App\\AIControlSetting::class)->model_budget_limits_irr)->toBe(['fake-v1' => 5_000_000]);
+    expect(\\App\\AIControlSetting::query()->firstOrFail()->provider_token_limits)->toBe(['fake-v1' => 1_000_000])
+        ->and(\\App\\AIControlSetting::query()->firstOrFail()->model_budget_limits_irr)->toBe(['fake-v1' => 5_000_000]);
 
     expect(AuditLog::query()->where('action', 'ai.controls_updated')->count())->toBe(1);
 });

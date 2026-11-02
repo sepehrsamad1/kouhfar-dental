@@ -30,7 +30,7 @@ final class AIControlService
     public function allowsRequests(): bool
     {
         $settings = $this->settings();
-        return ! $settings->emergency_disabled
+        return !$settings->emergency_disabled
             && $this->monthlySpendIrr() < $settings->monthly_budget_irr;
     }
 

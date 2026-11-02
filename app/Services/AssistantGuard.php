@@ -30,7 +30,7 @@ final class AssistantGuard
             return 'medical_refusal';
         }
 
-        if ($this->hasAny($text, ['دندان', 'دندانپزشک', 'دندان‌پزشک', 'دندان‌پزشکی', 'دهان', 'لثه', 'ایمپلنت', 'لمینیت', 'کامپوزیت', 'روکش', 'بلیچینگ', 'عصب‌کشی', 'درمان ریشه', 'جرم‌گیری', 'ارتودنسی', 'دندان عقل', 'پوسیدگی', 'پرکردگی', 'نوبت', 'کلینیک', 'سلامت دهان', 'tooth', 'teeth', 'dental', 'dentist', 'dentistry', 'oral health', 'gum', 'implant', 'veneer', 'composite', 'crown', 'whitening', 'root canal', 'filling', 'braces', 'wisdom tooth', 'clinic', 'patient rights', 'toothache', 'tooth pain', 'dental treatment', 'mouth pain', 'breath', 'how much does dental treatment cost', 'is this dental problem dangerous', 'dry mouth', 'tooth pain', 'toothache', 'dental treatment', 'مسواک', 'نخ دندان', 'معاینه', 'brush', 'floss', 'mouthwash', 'orthodontic treatment', 'cavity', 'cavities', 'scaling', 'decay'])) {
+        if ($this->hasAny($text, ['دندان', 'دندانپزشک', 'دندان‌پزشک', 'دندان‌پزشکی', 'دهان', 'لثه', 'ایمپلنت', 'لمینیت', 'کامپوزیت', 'روکش', 'بلیچینگ', 'عصب‌کشی', 'درمان ریشه', 'روت کانال', 'پرکردن', 'جرم‌گیری', 'ارتودنسی', 'دندان عقل', 'پوسیدگی', 'پرکردگی', 'نوبت', 'کلینیک', 'سلامت دهان', 'tooth', 'teeth', 'dental', 'dentist', 'dentistry', 'oral health', 'gum', 'implant', 'veneer', 'composite', 'crown', 'whitening', 'root canal', 'filling', 'braces', 'wisdom tooth', 'clinic', 'patient rights', 'toothache', 'tooth pain', 'dental treatment', 'mouth pain', 'breath', 'how much does dental treatment cost', 'is this dental problem dangerous', 'dry mouth', 'tooth pain', 'toothache', 'dental treatment', 'مسواک', 'نخ دندان', 'معاینه', 'brush', 'floss', 'mouthwash', 'orthodontic treatment', 'cavity', 'cavities', 'scaling', 'decay'])) {
             return 'in_scope';
         }
 

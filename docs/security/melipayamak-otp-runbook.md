@@ -24,6 +24,7 @@ Do not store the full token-bearing endpoint in source control, logs, tickets, s
 - Persist only a keyed hash of the provider code in a future OTP challenge record, compare it server-side, and enforce expiry, attempt limits, resend throttling and phone/account/IP abuse controls.
 - Normalize Iranian phone numbers before calling the adapter.
 - Keep the provider token out of Git and rotate it if it is ever exposed outside approved secret handling.
+- Because the token is a path segment, obtain provider confirmation of access-log retention/redaction and review any reverse-proxy/network logs before enabling live sends. The repository cannot verify provider-side logging or retention.
 
 ## Current implementation boundary
 

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\AIAdminController;
 use App\Http\Controllers\AssistantController;
 use App\Http\Controllers\AvailabilityController;
 use App\Http\Controllers\ClinicConfigurationController;
@@ -31,6 +32,8 @@ Route::middleware('guest:staff')->group(function (): void {
 
 Route::middleware(['auth:staff', 'staff.session.fresh', PreventStoreCache::class])->group(function (): void {
     Route::view('/staff', 'staff.dashboard')->name('staff.dashboard');
+    Route::get('/staff/ai', [AIAdminController::class, 'index'])->name('staff.ai.index');
+    Route::patch('/staff/ai', [AIAdminController::class, 'update'])->name('staff.ai.update');
     Route::post('/staff/media', [MediaAssetController::class, 'store'])->name('staff.media.store');
     Route::get('/staff/media/{mediaAsset}/download', [MediaAssetController::class, 'download'])->middleware('signed')->name('staff.media.download');
     Route::delete('/staff/media/{mediaAsset}', [MediaAssetController::class, 'delete'])->name('staff.media.delete');

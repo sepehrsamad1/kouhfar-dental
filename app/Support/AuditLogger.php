@@ -33,6 +33,10 @@ final class AuditLogger
         'timezone',
         'kind',
         'version',
+        'monthly_budget_irr',
+        'emergency_disabled',
+        'provider',
+        'model',
     ];
 
     public static function record(

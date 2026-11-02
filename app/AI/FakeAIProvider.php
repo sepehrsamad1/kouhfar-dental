@@ -12,10 +12,22 @@ final class FakeAIProvider implements ImageAnalysisProvider, ImageTransformation
 {
     public function generate(string $prompt, array $context = []): array
     {
+        $output = 'Synthetic AI response.';
+        $knowledgeStart = strpos($prompt, 'APPROVED KNOWLEDGE:');
+        $questionStart = strpos($prompt, 'USER QUESTION:');
+
+        if ($knowledgeStart !== false && $questionStart !== false && $questionStart > $knowledgeStart) {
+            $knowledge = substr($prompt, $knowledgeStart, $questionStart - $knowledgeStart);
+
+            if (preg_match('/\]\s*[^\r\n]*\R([^\r\n]+)/u', $knowledge, $matches) === 1) {
+                $output = trim($matches[1]);
+            }
+        }
+
         return [
-            'output' => 'Synthetic AI response.',
+            'output' => $output,
             'input_tokens' => $this->boundedTokenCount($prompt),
-            'output_tokens' => 4,
+            'output_tokens' => max(1, (int) ceil(mb_strlen($output) / 4)),
         ];
     }
 

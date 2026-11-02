@@ -20,9 +20,14 @@ class AIUsage extends Model
     protected $fillable = [
         'day',
         'feature',
+        'provider',
+        'model',
+        'capability',
         'input_tokens',
         'output_tokens',
         'cost_estimate',
+        'estimated_cost_irr',
+        'actual_cost_irr',
         'request_count',
     ];
 
@@ -33,6 +38,8 @@ class AIUsage extends Model
             'input_tokens' => 'integer',
             'output_tokens' => 'integer',
             'request_count' => 'integer',
+            'estimated_cost_irr' => 'decimal:2',
+            'actual_cost_irr' => 'decimal:2',
         ];
     }
 }

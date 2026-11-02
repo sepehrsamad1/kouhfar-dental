@@ -1,5 +1,9 @@
 name: CI
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
     branches:
@@ -44,6 +48,7 @@ jobs:
       SMART_SMILE_ENABLED: true
       SMART_SMILE_RELEASE_GATE: true
       AI_ENABLED: true
+      AI_TEXT_ENABLED: true
       AI_IMAGE_ANALYSIS_ENABLED: true
 
     steps:
@@ -86,6 +91,8 @@ jobs:
         run: npm run build
 
       - name: Check PHP formatting
+        env:
+          COLUMNS: 300
         run: vendor/bin/pint --test
 
       - name: Run PHP static analysis
@@ -96,6 +103,19 @@ jobs:
 
       - name: Run Laravel tests
         run: php artisan test
+
+      - name: Run Task 27 deterministic release evaluation
+        run: |
+          php artisan db:seed --class=DentalFaqTestingSeeder
+          php artisan ai:evaluate
+
+      - name: Upload Task 27 AI evaluation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: task27-ai-evaluation-report
+          path: storage/app/private/ai-evaluations/**/*.json
+          if-no-files-found: ignore
 
       - name: Seed guarded browser-only fixtures
         run: php artisan db:seed --class=BrowserTestSeeder
@@ -144,4 +164,12 @@ jobs:
         with:
           name: task26-smart-smile-responsive-screenshots
           path: test-results/task26-smart-smile-*.png
+          if-no-files-found: ignore
+
+      - name: Upload Task 27 AI admin responsive screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: task27-ai-admin-responsive-screenshots
+          path: test-results/task27-ai-admin-*.png
           if-no-files-found: ignore

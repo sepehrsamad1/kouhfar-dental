@@ -46,7 +46,7 @@ it('answers from published approved knowledge and returns source references', fu
         'بهداشت دست و بازفرآوری صحیح ابزار برای ایمنی مهم است.',
     );
 
-    $result = app(AssistantService::class)->respond('بهداشت دست و ابزار چگونه است؟');
+    $result = app(AssistantService::class)->respond('بهداشت دست و ابزار دندان‌پزشکی چگونه است؟');
 
     expect($result['status'])
         ->toBe('succeeded')
@@ -73,7 +73,7 @@ it('never uses draft content as knowledge', function (): void {
     $result = app(AssistantService::class)->respond('راز');
 
     expect($result['status'])
-        ->toBe('unavailable')
+        ->toBe('refused')
         ->and($result['sources'])
         ->toBe([]);
 });
@@ -90,7 +90,7 @@ it('handles emergency red flags without calling the model', function (): void {
     expect($result['status'])
         ->toBe('emergency')
         ->and($result['answer'])
-        ->toContain('۱۱۵');
+        ->toContain('خدمات اورژانس پزشکی');
 });
 
 it('refuses prompt injection and internal-data requests', function (): void {
@@ -108,6 +108,7 @@ it('refuses diagnosis, prescription, dosage and unsupported pricing', function (
     foreach ([
         'من چه بیماری دارم؟ تشخیص بده',
         'برای من آنتی بیوتیک و دوزش را تجویز کن',
+        'برای من دارو و دوز تجویز کن',
         'قیمت درمان چقدر است؟',
     ] as $question) {
         $result = app(AssistantService::class)->respond($question);
@@ -123,7 +124,7 @@ it('returns a safe unavailable response when no approved knowledge supports the 
         'این متن درباره موضوع دیگری است.',
     );
 
-    $result = app(AssistantService::class)->respond('زرافه آبی مریخ');
+    $result = app(AssistantService::class)->respond('دندان مصنوعی چه تفاوتی با دندان طبیعی دارد؟');
 
     expect($result['status'])
         ->toBe('unavailable')

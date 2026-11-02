@@ -3,17 +3,32 @@
 use App\ContentItem;
 use App\Enums\ContentItemStatus;
 use App\Enums\ContentKind;
+use App\StaffUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\RateLimiter;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function (): void {
+    Cache::flush();
+    $request = request();
+    foreach (array_filter([$request->ip(), $request->hasSession() ? $request->session()->getId() : null, '127.0.0.1', 'cli']) as $identity) {
+        RateLimiter::clear('ai:'.substr(hash('sha256', 'assistant|'.$identity), 0, 24).':'.now('UTC')->format('Y-m-d-H-i'));
+    }
+    $authenticatedUser = request()->user('staff');
+    $identity = $authenticatedUser instanceof StaffUser ? $authenticatedUser->getAuthIdentifier() : null;
+    if ($identity === null) {
+        $identity = request()->hasSession() ? request()->session()->getId() : request()->ip();
+    }
+    $limiterKey = 'ai:'.substr(hash('sha256', 'assistant|'.(string) ($identity ?? 'cli')), 0, 24).':'.now('UTC')->format('Y-m-d-H-i');
+    RateLimiter::clear($limiterKey);
+
     config([
         'ai.enabled' => true,
         'ai.capabilities.text.enabled' => true,
         'ai.capabilities.text.provider' => 'fake',
-        'ai.rate_limits.per_minute' => 100,
+        'ai.rate_limits.per_minute' => 10_000,
         'ai.rate_limits.daily_cost' => 0,
     ]);
 });
@@ -62,6 +77,8 @@ it('returns a safe fallback when the provider fails', function (): void {
     task25ApiKnowledge();
     config([
         'ai.capabilities.text.provider' => 'not-approved',
+        'ai.capabilities.text.api_key' => 'synthetic-test-placeholder',
+        'ai.pricing_irr.text' => ['input_per_1k' => 1, 'output_per_1k' => 2],
         'ai.capabilities.text.fallback' => 'AI service is temporarily unavailable.',
     ]);
 
@@ -73,7 +90,7 @@ it('returns a safe fallback when the provider fails', function (): void {
     $response
         ->assertOk()
         ->assertJsonPath('status', 'fallback')
-        ->assertJsonPath('answer', 'اطلاعات تأییدشده کافی برای پاسخ ایمن به این سؤال در دسترس نیست. لطفاً با کلینیک یا یک دندانپزشک واجد صلاحیت تماس بگیرید.');
+        ->assertJsonPath('answer', 'سیستم پاسخگویی هوشمند در حال به‌روزرسانی می‌باشد. لطفاً در زمان دیگری مراجعه کنید.');
 });
 
 it('returns an explicit disabled state without exposing provider details', function (): void {

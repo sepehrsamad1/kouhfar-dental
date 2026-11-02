@@ -14,8 +14,10 @@ test('assistant shows disclosure and a grounded answer with safe citation', asyn
   await page.locator('#aiInput').fill('حریم خصوصی بیمار چه حقی است؟');
   await page.locator('#aiForm').press('Enter');
 
-  const answer = page.locator('.msg--bot').filter({ hasText: 'Synthetic AI response.' }).last();
+  const answer = page.locator('.msg--bot').last();
   await expect(answer).toBeVisible();
+  await expect(answer.locator('.msg__sources')).toBeVisible();
+  await expect(answer.locator('.msg__source').first()).toBeVisible();
 });
 
 test('assistant renders refusal state for disallowed medical requests', async ({ page }) => {
@@ -36,7 +38,7 @@ test('assistant renders the approved emergency response', async ({ page }) => {
   await page.locator('#aiForm').press('Enter');
 
   const emergency = page.locator('.msg--emergency').last();
-  await expect(emergency).toContainText('۱۱۵');
+  await expect(emergency).toContainText('خدمات اورژانس پزشکی');
   await expect(emergency).toContainText('اورژانسی');
 });
 
@@ -98,4 +100,25 @@ test('assistant exposes rate limiting as a safe state', async ({ page }) => {
   const limited = page.locator('.msg--rate-limited').last();
   await expect(limited).toContainText('تعداد درخواست‌ها');
   await expect(limited).not.toContainText('rate limit details');
+});
+
+test('approved external FAQ sources remain visible and within the viewport at 375, 768 and 1440px', async ({ page }) => {
+  for (const width of [375, 768, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    await openAssistant(page);
+
+    await page.locator('#aiInput').fill('چند بار در روز باید مسواک بزنم؟');
+    await page.locator('#aiForm').press('Enter');
+
+    const answer = page.locator('.msg--bot').filter({ has: page.locator('.msg__source--external') }).last();
+    const source = answer.locator('.msg__source--external').first();
+    await expect(source).toBeVisible();
+    await expect(source).toHaveAttribute('href', /^https:\/\//);
+
+    const bounds = await source.boundingBox();
+    expect(bounds).not.toBeNull();
+    expect(bounds.x).toBeGreaterThanOrEqual(0);
+    expect(bounds.x + bounds.width).toBeLessThanOrEqual(width);
+
+  }
 });

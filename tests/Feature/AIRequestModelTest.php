@@ -16,6 +16,13 @@ it('disables automatic timestamps and casts request metadata', function () {
             'actor_id',
             'status',
             'created_at',
+            'provider',
+            'model',
+            'capability',
+            'input_tokens',
+            'output_tokens',
+            'estimated_cost_irr',
+            'actual_cost_irr',
             'content_ids',
         ])
         ->and($request->getCasts())

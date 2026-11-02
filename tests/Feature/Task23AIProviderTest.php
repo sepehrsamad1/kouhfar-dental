@@ -3,11 +3,31 @@
 use App\AIRequest;
 use App\AIUsage;
 use App\Services\AIProviderManager;
+use App\StaffUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
 
 uses(RefreshDatabase::class);
+
+function clearTask23AiRateLimits(): void
+{
+    $request = request();
+    $identities = array_filter([
+        $request->ip(),
+        $request->hasSession() ? $request->session()->getId() : null,
+        '127.0.0.1',
+        'cli',
+    ]);
+
+    foreach (['assistant', 'smart-smile-simulation', 'limited-feature', 'cost-limited'] as $feature) {
+        foreach ($identities as $identity) {
+            $key = 'ai:'.substr(hash('sha256', $feature.'|'.$identity), 0, 24).':'.now('UTC')->format('Y-m-d-H-i');
+            RateLimiter::clear($key);
+        }
+    }
+}
 
 beforeEach(function (): void {
     config([
@@ -19,13 +39,22 @@ beforeEach(function (): void {
         'ai.capabilities.image_analysis.provider' => 'fake',
         'ai.capabilities.image_transformation.enabled' => true,
         'ai.capabilities.image_transformation.provider' => 'fake',
-        'ai.rate_limits.per_minute' => 10,
+        'ai.rate_limits.per_minute' => 10_000,
         'ai.rate_limits.daily_cost' => 0,
         'ai.pricing.input_per_1k' => 1.0,
         'ai.pricing.output_per_1k' => 2.0,
     ]);
 
-    RateLimiter::clear('ai:'.substr(hash('sha256', 'task23'), 0, 24).':'.now('UTC')->format('Y-m-d-H-i'));
+    Cache::flush();
+    clearTask23AiRateLimits();
+    $authenticatedUser = request()->user('staff');
+    $identity = $authenticatedUser instanceof StaffUser ? $authenticatedUser->getAuthIdentifier() : null;
+    if ($identity === null) {
+        $identity = request()->hasSession() ? request()->session()->getId() : request()->ip();
+    }
+    $limiterKey = 'ai:'.substr(hash('sha256', 'assistant|'.(string) ($identity ?? 'cli')), 0, 24).':'.now('UTC')->format('Y-m-d-H-i');
+    RateLimiter::clear($limiterKey);
+    RateLimiter::clear('ai:'.substr(hash('sha256', 'assistant|127.0.0.1'), 0, 24).':'.now('UTC')->format('Y-m-d-H-i'));
 });
 
 it('keeps AI disabled by default', function (): void {
@@ -34,7 +63,8 @@ it('keeps AI disabled by default', function (): void {
     $result = app(AIProviderManager::class)->generateText('assistant', 'sensitive patient prompt');
 
     expect($result['status'])->toBe('disabled')
-        ->and(AIRequest::query()->count())->toBe(0)
+        ->and(AIRequest::query()->count())->toBe(1)
+        ->and(AIRequest::query()->sole()->status)->toBe('disabled')
         ->and(AIUsage::query()->count())->toBe(0);
 });
 
@@ -71,6 +101,8 @@ it('falls back safely when an unapproved provider is selected', function (): voi
     Log::spy();
     config([
         'ai.capabilities.text.provider' => 'unapproved-provider',
+        'ai.capabilities.text.api_key' => 'synthetic-test-placeholder',
+        'ai.pricing_irr.text' => ['input_per_1k' => 1, 'output_per_1k' => 2],
         'ai.capabilities.text.fallback' => 'safe synthetic fallback',
     ]);
 
@@ -102,7 +134,8 @@ it('blocks calls after the configured per-minute limit', function (): void {
 
     expect($first['status'])->toBe('succeeded')
         ->and($second['status'])->toBe('rate_limited')
-        ->and(AIRequest::query()->count())->toBe(1);
+        ->and(AIRequest::query()->count())->toBe(2)
+        ->and(AIRequest::query()->where('status', 'blocked')->count())->toBe(1);
 });
 
 it('enforces the configured daily cost ceiling before invoking a provider', function (): void {
@@ -118,5 +151,6 @@ it('enforces the configured daily cost ceiling before invoking a provider', func
     $result = app(AIProviderManager::class)->generateText('cost-limited', 'should not run');
 
     expect($result['status'])->toBe('rate_limited')
-        ->and(AIRequest::query()->count())->toBe(0);
+        ->and(AIRequest::query()->count())->toBe(1)
+        ->and(AIRequest::query()->sole()->status)->toBe('blocked');
 });

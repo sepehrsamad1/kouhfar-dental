@@ -19,6 +19,7 @@
                 @endcan
                 @can('manage-configuration')
                     <a href="{{ route('staff.configuration.index') }}">تنظیمات کلینیک</a>
+                    <a href="{{ route('staff.ai.index') }}">مدیریت دستیار هوشمند</a>
                 @endcan
                 @can('view-audit-log')
                     <a href="{{ route('staff.admin.audit') }}">گزارش حسابرسی</a>
@@ -36,6 +37,32 @@
     </nav>
 
     <main class="staff-main">
+        @if (!empty($aiControlSummary['alerts']))
+            <div class="staff-alert staff-alert--error" role="alert">
+                هشدار مصرف API: {{ collect($aiControlSummary['alerts'])->last() }}٪ از سقف بودجه ماهانه مصرف شده است. هزینه ثبت‌شده (واقعی در صورت دسترسی، در غیر این صورت تخمینی) {{ number_format($aiControlSummary['monthly_spend_irr']) }} از {{ number_format($aiControlSummary['monthly_budget_irr']) }} ریال.
+            </div>
+        @endif
+        @if (!empty($aiControlSummary['blocked']))
+            <div class="staff-alert staff-alert--error" role="alert">درخواست‌های جدید دستیار هوشمند به دلیل رسیدن به سقف بودجه یا غیرفعال‌سازی اضطراری متوقف شده‌اند.</div>
+        @endif
+
+        @foreach (($aiControlSummary['model_limits'] ?? []) as $model => $limits)
+            @if (!empty($limits['token_alerts']))
+                <div class="staff-alert staff-alert--error" role="alert">
+                    هشدار مصرف توکن مدل {{ $model }}: {{ collect($limits['token_alerts'])->last() }}٪ از سقف داخلی ماهانه مصرف شده است.
+                </div>
+            @endif
+            @if (!empty($limits['budget_alerts']))
+                <div class="staff-alert staff-alert--error" role="alert">
+                    هشدار بودجه مدل {{ $model }}: {{ collect($limits['budget_alerts'])->last() }}٪ از سقف مالی مستقل مصرف شده است.
+                </div>
+            @endif
+            @if (!empty($limits['blocked']))
+                <div class="staff-alert staff-alert--error" role="alert">
+                    درخواست‌های مدل {{ $model }} به دلیل رسیدن به سقف مستقل توکن یا بودجه متوقف شده‌اند.
+                </div>
+            @endif
+        @endforeach
         @if (session('success'))
             <div class="staff-alert staff-alert--status" role="status">{{ session('success') }}</div>
         @endif

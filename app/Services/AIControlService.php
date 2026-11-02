@@ -103,9 +103,11 @@ final class AIControlService
             $configuredRates = (array) ($modelPricing[$model] ?? []);
             $pricingConfigured = (float) ($configuredRates['input_per_1k'] ?? 0) + (float) ($configuredRates['output_per_1k'] ?? 0) > 0;
 
-            foreach ($capabilities as $capability) {
-                $capabilityRates = (array) config("ai.pricing_irr.{$capability}", []);
-                $pricingConfigured = $pricingConfigured || ((float) ($capabilityRates['input_per_1k'] ?? 0) + (float) ($capabilityRates['output_per_1k'] ?? 0) > 0);
+            if (! array_key_exists($model, $modelPricing)) {
+                foreach ($capabilities as $capability) {
+                    $capabilityRates = (array) config("ai.pricing_irr.{$capability}", []);
+                    $pricingConfigured = $pricingConfigured || ((float) ($capabilityRates['input_per_1k'] ?? 0) + (float) ($capabilityRates['output_per_1k'] ?? 0) > 0);
+                }
             }
 
             $modelLimits[$model] = [

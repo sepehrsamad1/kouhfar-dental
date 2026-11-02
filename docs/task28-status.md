@@ -1,6 +1,6 @@
 # Task 28 — Security and Privacy Audit
 
-**Status: CURRENT BRANCH CI-PASSED; TASK ACCEPTANCE BLOCKED — CI run #843 passed on commit `38e412e4e7bd8cea2bc3a5635aa22879d541c9f1`. Task 28 remains blocked by high findings SEC-28-003 (retention/purge) and SEC-28-012 (staff MFA), plus owner/deployment decisions and open verification scope.**
+**Status: APPLICATION CODE AND CI CONFIGURATION PASSED — CI run #843 passed on code commit `38e412e4e7bd8cea2bc3a5635aa22879d541c9f1`; subsequent audit-document/register updates are being checked by CI run #858 on the documentation revision. TASK ACCEPTANCE REMAINS BLOCKED. Task 28 remains blocked by high findings SEC-28-003 (retention/purge) and SEC-28-012 (staff MFA), plus owner/deployment decisions and open verification scope.**
 
 ## Task identity
 
@@ -49,7 +49,7 @@
 - Pint, PHPStan, JavaScript lint, typecheck and production build passed.
 - Full-history Gitleaks scan passed.
 
-This proves the code revision at commit `38e412e4e7bd8cea2bc3a5635aa22879d541c9f1` and its synthetic tests only. The latest branch commit includes the `__Secure-` cookie-prefix change and its passing regression test. It is not a production penetration test, live Kavenegar/AI provider test, GitHub secret-alert review, or infrastructure verification.
+This proves the code revision at commit `38e412e4e7bd8cea2bc3a5635aa22879d541c9f1` and its synthetic tests only. The tested code commit includes the `__Secure-` cookie-prefix change and its passing regression test. Later changes to audit documentation and the ASVS evidence CSV do not change application code; their CI validation is tracked separately. It is not a production penetration test, live Kavenegar/AI provider test, GitHub secret-alert review, or infrastructure verification.
 
 Required CI commands are recorded above. Gitleaks scans the full repository history; any future finding requires investigation and credential rotation/revocation, not merely deleting the current file.
 

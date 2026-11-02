@@ -13,6 +13,7 @@
 ## Implemented on this branch
 
 - Hardened staff login intended-redirect validation to reject schemes, hosts, protocol-relative paths, backslashes and control characters.
+- Restricted patient edits and full mobile-number reveal to admin/reception; practitioners retain masked access to assigned patients and can complete their own appointments. Added endpoint and rendered-control regression coverage.
 - Changed session cookie Secure default to true outside local/testing; retained HttpOnly and SameSite=Lax.
 - Added regression tests for malicious intended redirects and Secure/HttpOnly/SameSite cookie flags.
 - Added patient search SQL-looking input and hostile mass-assignment regression tests.

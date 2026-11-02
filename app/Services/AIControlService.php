@@ -99,8 +99,18 @@ final class AIControlService
             $tokenPercentage = $tokenLimit > 0 ? (int) floor(($tokensUsed / $tokenLimit) * 100) : null;
             $budgetPercentage = $budgetLimit > 0 ? (int) floor(($modelSpend / $budgetLimit) * 100) : null;
 
+            $modelPricing = (array) config('ai.pricing_irr.models', []);
+            $configuredRates = (array) ($modelPricing[$model] ?? []);
+            $pricingConfigured = (float) ($configuredRates['input_per_1k'] ?? 0) + (float) ($configuredRates['output_per_1k'] ?? 0) > 0;
+
+            foreach ($capabilities as $capability) {
+                $capabilityRates = (array) config("ai.pricing_irr.{$capability}", []);
+                $pricingConfigured = $pricingConfigured || ((float) ($capabilityRates['input_per_1k'] ?? 0) + (float) ($capabilityRates['output_per_1k'] ?? 0) > 0);
+            }
+
             $modelLimits[$model] = [
                 'capabilities' => $capabilities,
+                'pricing_configured' => $pricingConfigured,
                 'tokens_used' => $tokensUsed,
                 'token_limit' => $tokenLimit > 0 ? $tokenLimit : null,
                 'token_percentage' => $tokenPercentage,

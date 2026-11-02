@@ -8,8 +8,8 @@ use App\ClinicWorkingHour;
 use App\Enums\AppointmentStatus;
 use App\Http\Middleware\EnsureStaffSessionIsFresh;
 use App\Patient;
-use App\Resource;
 use App\Practitioner;
+use App\Resource;
 use App\ScheduleBreak;
 use App\ScheduleException;
 use App\Service;
@@ -575,4 +575,3 @@ it('denies non-admin staff from changing a resource by direct object route while
         ->and($resource->is_active)->toBeTrue()
         ->and($resource->version)->toBe($originalVersion + 1);
 });
-

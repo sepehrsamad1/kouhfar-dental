@@ -98,7 +98,7 @@ class StaffAuthController
         ]);
     }
 
-    public function completeSetup(Request $request, TotpService $totp): RedirectResponse
+    public function completeSetup(Request $request, TotpService $totp): RedirectResponse|Response
     {
         $request->validate(['code' => ['required', 'digits:6']]);
         $staff = $this->pendingStaff($request);
@@ -221,15 +221,9 @@ class StaffAuthController
         return $this->completeLogin($request, $staff);
     }
 
-    public function recoveryCodes(Request $request): View|RedirectResponse
+    public function recoveryCodes(): RedirectResponse
     {
-        $codes = $request->session()->pull('staff_mfa_recovery_codes');
-
-        if (! is_array($codes) || $codes === []) {
-            return redirect()->route('staff.dashboard');
-        }
-
-        return view('staff.auth.mfa-recovery-codes', ['codes' => $codes]);
+        return redirect()->route('staff.dashboard');
     }
 
     public function destroy(Request $request): RedirectResponse
@@ -274,7 +268,7 @@ class StaffAuthController
         return $staff;
     }
 
-    private function completeLogin(Request $request, StaffUser $staff, array $recoveryCodes = []): RedirectResponse
+    private function completeLogin(Request $request, StaffUser $staff, array $recoveryCodes = []): RedirectResponse|Response
     {
         $request->session()->forget(['staff_mfa_pending_user_id', 'staff_mfa_pending_at']);
         Auth::guard('staff')->login($staff);
@@ -298,9 +292,9 @@ class StaffAuthController
         $this->recordAttempt($staff->email, $request, true);
 
         if ($recoveryCodes !== []) {
-            $request->session()->put('staff_mfa_recovery_codes', $recoveryCodes);
-
-            return redirect()->route('staff.mfa.recovery-codes');
+            return response()->view('staff.auth.mfa-recovery-codes', ['codes' => $recoveryCodes])
+                ->header('Cache-Control', 'no-store, private')
+                ->header('Pragma', 'no-cache');
         }
 
         return redirect()->to($this->safeIntendedUrl());

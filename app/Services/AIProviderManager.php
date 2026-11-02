@@ -38,7 +38,7 @@ final class AIProviderManager
             return $this->disabled();
         }
 
-        if ($this->allowed($feature) === false) {
+        if ($this->allowed($feature, 'text') === false) {
             $this->recordBlocked($feature, 'text');
 
             return $this->limited();
@@ -72,7 +72,7 @@ final class AIProviderManager
             return ['status' => 'disabled', 'result' => null, 'input_tokens' => 0, 'output_tokens' => 0];
         }
 
-        if ($this->allowed($feature) === false) {
+        if ($this->allowed($feature, 'image_analysis') === false) {
             $this->recordBlocked($feature, 'image_analysis');
 
             return ['status' => 'rate_limited', 'result' => null, 'input_tokens' => 0, 'output_tokens' => 0];
@@ -106,7 +106,7 @@ final class AIProviderManager
             return ['status' => 'disabled', 'image_reference' => null, 'input_tokens' => 0, 'output_tokens' => 0];
         }
 
-        if ($this->allowed($feature) === false) {
+        if ($this->allowed($feature, 'image_transformation') === false) {
             $this->recordBlocked($feature, 'image_transformation');
 
             return ['status' => 'rate_limited', 'image_reference' => null, 'input_tokens' => 0, 'output_tokens' => 0];
@@ -153,9 +153,9 @@ final class AIProviderManager
         return (bool) config('ai.enabled', false) && (bool) config("ai.capabilities.{$capability}.enabled", false);
     }
 
-    private function allowed(string $feature): bool
+    private function allowed(string $feature, string $capability): bool
     {
-        if ($this->controls->allowsRequests() === false) {
+        if ($this->controls->allowsRequests($this->configuredModel($capability)) === false) {
             return false;
         }
 

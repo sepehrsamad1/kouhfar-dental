@@ -13,6 +13,7 @@ See task27-owner-decisions.md. Approved: 100 Persian + 100 English evaluation ca
 - Fixed assistant persona prompt, standard domain refusal and owner-approved outage/budget fallback text.
 - 100 distinct bilingual FAQ questions and answers in resources/knowledge/dental-faq-v1.json, with 23 source references from ADA, NHS, CDC, NIDCR, AAOMS and Iranian dental-hospital/pediatric-dentistry sources; confidence labels, emergency warnings and explicit draft-for-clinician-review status.
 - DentalFaqDraftSeeder imports 200 locale records into the existing content workflow as unpublished clinical drafts. DentalFaqTestingSeeder can publish these only in the testing environment for deterministic evaluation.
+- Published FAQ answers carry their external evidence references through the assistant API; the browser renders only HTTPS links from the reviewed ADA, NHS, CDC, NIDCR, AAOMS, and Iranian-source host allowlist.
 - AIReleaseGate calculates citation, lexical source-grounding, refusal, emergency and forbidden-output metrics; known-bad-answer regression test verifies the gate fails.
 - AssistantEvaluationRunner and php artisan ai:evaluate generate a versioned JSON release report with dataset/prompt/provider/model and explicit provider/model version metadata; CI uploads the report artifact.
 - IRR budget settings table, per-provider/model/capability token and cost aggregates, per-request success/failure metadata, model-specific IRR pricing configuration, monthly 10,000,000 IRR ceiling, 50/80/100 financial alerts, and request blocking at the ceiling.

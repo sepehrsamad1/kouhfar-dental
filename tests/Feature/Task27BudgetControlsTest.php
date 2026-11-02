@@ -99,6 +99,21 @@ it('uses actual provider billing instead of an estimate when actual cost is avai
         ->and(app(AIControlService::class)->summary()['blocked'])->toBeTrue();
 });
 
+it('uses actual provider billing for an independent model budget when available', function (): void {
+    $settings = app(AIControlService::class)->settings();
+    $settings->update(['model_budget_limits_irr' => ['fake-task27-model' => 5_000]]);
+
+    AIUsage::factory()->create([
+        'day' => now('UTC')->toDateString(),
+        'model' => 'fake-task27-model',
+        'estimated_cost_irr' => 2_000,
+        'actual_cost_irr' => 5_500,
+    ]);
+
+    expect(app(AIControlService::class)->monthlySpendForModel('fake-task27-model'))->toBe(5_500)
+        ->and(app(AIControlService::class)->summary()['model_limits']['fake-task27-model']['blocked'])->toBeTrue();
+});
+
 it('reports provider quota as unknown when the fake provider exposes no billing API', function (): void {
     $summary = app(AIControlService::class)->summary();
 

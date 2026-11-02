@@ -42,7 +42,12 @@ final class AIControlService
         $budget = max(1, (int) $settings->monthly_budget_irr);
         $percentage = (int) floor(($spend / $budget) * 100);
 
+        $provider = (string) config('ai.capabilities.text.provider', 'fake');
+
         return [
+            'provider' => $provider,
+            'model' => (string) config('ai.capabilities.text.model', 'fake-v1'),
+            'provider_connection_status' => $provider === 'fake' ? 'fake' : 'unverified',
             'monthly_spend_irr' => $spend,
             'monthly_budget_irr' => $settings->monthly_budget_irr,
             'percentage' => $percentage,

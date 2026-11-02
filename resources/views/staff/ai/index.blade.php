@@ -42,6 +42,7 @@
                         <input type="number" name="model_budget_limits_irr[{{ $model }}]" min="1000" max="1000000000000" value="{{ old('model_budget_limits_irr.'.$model, data_get($settings->model_budget_limits_irr, $model, '')) }}" placeholder="بدون سقف مستقل">
                     </label>
                     <p>مصرف توکن: {{ number_format($limits['tokens_used']) }} / {{ $limits['token_limit'] === null ? 'سقف مستقل تنظیم نشده' : number_format($limits['token_limit']) }} | مصرف مالی: {{ number_format($limits['spend_irr']) }} / {{ $limits['budget_limit_irr'] === null ? 'سقف مستقل تنظیم نشده' : number_format($limits['budget_limit_irr']) }} ریال</p>
+                    <p>وضعیت این مدل: {{ $limits['blocked'] ? 'متوقف‌شده به‌دلیل رسیدن به سقف مستقل' : 'مجاز طبق سقف‌های فعلی' }}</p>
                     @foreach ($limits['token_alerts'] as $level)
                         <p role="alert">هشدار سقف داخلی توکن مدل {{ $model }}: {{ $level }}٪ مصرف شده است.</p>
                     @endforeach

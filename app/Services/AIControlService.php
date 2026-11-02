@@ -99,6 +99,21 @@ final class AIControlService
             $tokenPercentage = $tokenLimit > 0 ? (int) floor(($tokensUsed / $tokenLimit) * 100) : null;
             $budgetPercentage = $budgetLimit > 0 ? (int) floor(($modelSpend / $budgetLimit) * 100) : null;
 
+            $providers = array_values(array_unique(array_map(
+                static fn (string $capability): string => (string) config("ai.capabilities.{$capability}.provider", 'fake'),
+                $capabilities,
+            )));
+            $modelCredentialsConfigured = true;
+
+            foreach ($capabilities as $capability) {
+                $capabilityProvider = (string) config("ai.capabilities.{$capability}.provider", 'fake');
+                $capabilityKey = config("ai.capabilities.{$capability}.api_key");
+
+                if ($capabilityProvider !== 'fake' && (! is_string($capabilityKey) || trim($capabilityKey) === '')) {
+                    $modelCredentialsConfigured = false;
+                }
+            }
+
             $modelPricing = (array) config('ai.pricing_irr.models', []);
             $configuredRates = (array) ($modelPricing[$model] ?? []);
             $pricingConfigured = (float) ($configuredRates['input_per_1k'] ?? 0) + (float) ($configuredRates['output_per_1k'] ?? 0) > 0;
@@ -112,6 +127,8 @@ final class AIControlService
 
             $modelLimits[$model] = [
                 'capabilities' => $capabilities,
+                'providers' => $providers,
+                'credentials_configured' => $modelCredentialsConfigured,
                 'pricing_configured' => $pricingConfigured,
                 'tokens_used' => $tokensUsed,
                 'token_limit' => $tokenLimit > 0 ? $tokenLimit : null,

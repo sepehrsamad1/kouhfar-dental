@@ -179,6 +179,37 @@ final class AssistantService
         return preg_match('/(?:ignore\\s+(?:all\\s+)?(?:previous|prior)\\s+instructions|ignore\\s+all\\s+instructions|(?:تمام|همه)\\s+(?:دستورالعمل(?:های)?|دستورات)\\s+(?:قبلی|پیشین)\\s+را\\s+نادیده|system\\s+prompt|developer\\s+message|reveal\\s+(?:the|your)\\s+(?:prompt|secret|api\\s*key)|api[_ -]?key\\s*[:=]|password\\s*[:=]|BEGIN [A-Z ]*PRIVATE KEY|دستور(?:ات)?\\s*(?:سیستم|پنهان)|پرامپت\\s*(?:اصلی|مخفی)|کلید\\s*API|رمز عبور\\s*[:=]|اطلاعات\\s*(?:داخلی|محرمانه))/iu', $content) !== 1;
     }
 
+    /**
+     * @param array<int, array<string, mixed>> $references
+     * @return array<int, array<string, mixed>>
+     */
+    private function safeSourceReferences(array $references): array
+    {
+        $allowedHosts = [
+            'www.mouthhealthy.org',
+            'www.ada.org',
+            'www.nhs.uk',
+            'www.cdc.gov',
+            'www.nidcr.nih.gov',
+            'aaoms.org',
+            'www.kapd.ir',
+            'app.shdh.ir',
+        ];
+
+        return array_values(array_filter($references, static function (array $reference) use ($allowedHosts): bool {
+            $url = $reference['url'] ?? null;
+
+            if (! is_string($url)) {
+                return false;
+            }
+
+            $parts = parse_url($url);
+
+            return ($parts['scheme'] ?? null) === 'https'
+                && in_array($parts['host'] ?? null, $allowedHosts, true);
+        }));
+    }
+
     private function normalizeQuestion(string $text): string
     {
         $text = mb_strtolower(str_replace(["\u{200C}", 'ي', 'ك'], ['', 'ی', 'ک'], $text));
@@ -219,7 +250,7 @@ final class AssistantService
             'version' => (int) $item['version'],
             'title' => $item['title'],
             'url' => sprintf('/content/%s/%s', rawurlencode($item['content_key']), rawurlencode($item['locale'])),
-            'references' => $item['source_references'] ?? [],
+            'references' => $this->safeSourceReferences($item['source_references'] ?? []),
         ])->values()->all();
     }
 

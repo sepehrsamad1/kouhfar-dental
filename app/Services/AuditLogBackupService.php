@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use Illuminate\Database\Connection;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
 use Throwable;
@@ -292,7 +293,7 @@ final class AuditLogBackupService
         $this->writeAll($output, $nonce.pack('N', $length).$ciphertext.$tag);
     }
 
-    private function decryptAndRestore(string $path, string $key, int $chunkBytes, \Illuminate\Database\Connection $connection, string $table): int
+    private function decryptAndRestore(string $path, string $key, int $chunkBytes, Connection $connection, string $table): int
     {
         $input = fopen($path, 'rb');
 
@@ -397,7 +398,7 @@ final class AuditLogBackupService
         }
     }
 
-    private function restoreRecord(string $line, \Illuminate\Database\Connection $connection, string $table): void
+    private function restoreRecord(string $line, Connection $connection, string $table): void
     {
         $record = json_decode($line, true, 512, JSON_THROW_ON_ERROR);
 

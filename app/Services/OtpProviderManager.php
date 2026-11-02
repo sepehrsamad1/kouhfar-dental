@@ -6,6 +6,7 @@ namespace App\Services;
 
 use App\Notifications\Otp\MeliPayamakOtpProvider;
 use App\Notifications\Otp\OtpProvider;
+use App\Notifications\Otp\NullOtpProvider;
 use InvalidArgumentException;
 
 final class OtpProviderManager

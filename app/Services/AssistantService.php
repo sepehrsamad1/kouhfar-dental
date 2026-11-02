@@ -196,7 +196,11 @@ final class AssistantService
             'app.shdh.ir',
         ];
 
-        return array_values(array_filter($references, static function (array $reference) use ($allowedHosts): bool {
+        return array_values(array_filter($references, static function ($reference) use ($allowedHosts): bool {
+            if (!is_array($reference)) {
+                return false;
+            }
+
             $url = $reference['url'] ?? null;
 
             if (!is_string($url)) {
@@ -204,6 +208,10 @@ final class AssistantService
             }
 
             $parts = parse_url($url);
+
+            if (!is_array($parts)) {
+                return false;
+            }
 
             return ($parts['scheme'] ?? null) === 'https'
                 && in_array($parts['host'] ?? null, $allowedHosts, true);

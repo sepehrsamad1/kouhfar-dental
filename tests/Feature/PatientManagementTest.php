@@ -136,7 +136,7 @@ it('treats SQL-looking patient search input as a bound value', function (): void
     Patient::factory()->create(['full_name' => 'Visible Patient']);
 
     $response = $this->actingAs($admin, 'staff')
-        ->getJson(route('staff.patients.index', ['q' => "' OR 1=1 --"]));
+        ->getJson(route('staff.patients.index', ['q' => "' OR true --"]));
 
     $response->assertOk()->assertJsonCount(0, 'data');
 });

@@ -2,6 +2,7 @@
 
 use App\AIRequest;
 use App\AIUsage;
+use App\StaffUser;
 use App\Services\AIProviderManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
@@ -44,7 +45,8 @@ beforeEach(function (): void {
 
     Cache::flush();
     clearTask23AiRateLimits();
-    $identity = request()->user('staff')?->getAuthIdentifier();
+    $authenticatedUser = request()->user('staff');
+    $identity = $authenticatedUser instanceof StaffUser ? $authenticatedUser->getAuthIdentifier() : null;
     if ($identity === null) {
         $identity = request()->hasSession() ? request()->session()->getId() : request()->ip();
     }

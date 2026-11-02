@@ -16,7 +16,7 @@ See task27-owner-decisions.md. Approved: 100 Persian + 100 English evaluation ca
 - AIReleaseGate calculates citation, lexical source-grounding, refusal, emergency and forbidden-output metrics; known-bad-answer regression test verifies the gate fails.
 - AssistantEvaluationRunner and php artisan ai:evaluate generate a versioned JSON release report with dataset/prompt/provider/model and explicit provider/model version metadata; CI uploads the report artifact.
 - IRR budget settings table, per-provider/model/capability token and cost aggregates, per-request success/failure metadata, model-specific IRR pricing configuration, monthly 10,000,000 IRR ceiling, 50/80/100 financial alerts, and request blocking at the ceiling.
-- Admin-only AI usage and budget page, budget that administrators may reduce but cannot raise above the owner-approved 10,000,000 IRR ceiling, emergency disable, model usage summary, timestamped requests, audit logging, and staff-layout budget alerts.
+- Admin-only AI usage and budget page, administrator-editable monthly budget initialized at 10,000,000 IRR, with authorization and audit logging, emergency disable, model usage summary, timestamped requests, audit logging, and staff-layout budget alerts.
 - Standard fallback is returned without an additional model request when AI is disabled, rate-limited, over budget, or provider processing fails.
 
 ## Important accounting and safety limits

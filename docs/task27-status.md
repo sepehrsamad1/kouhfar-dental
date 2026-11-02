@@ -31,6 +31,7 @@ See task27-owner-decisions.md. Approved: 100 Persian + 100 English evaluation ca
 - The FAQ set is draft clinical content and is not published to public users by this task. It requires clinician review and the existing content approval workflow before production publication.
 - No real AI provider, API key, patient data, patient image, external billing API, or production service is activated.
 - Provider/model identifiers and API-key values are backend environment-configurable; `.env.example` contains blank API-key placeholders only. No credential is committed or exposed to the browser.
+- Non-fake provider calls fail closed unless model-specific or capability-level IRR pricing is configured; per-model pricing can be supplied through the backend `AI_MODEL_PRICING_IRR` environment setting.
 - The assistant uses the existing published-content retrieval/ranking layer; this is bounded retrieval, not a vector-embedding database.
 
 ## Verification still required

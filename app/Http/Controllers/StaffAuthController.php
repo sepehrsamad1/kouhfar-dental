@@ -73,7 +73,7 @@ class StaffAuthController
         return redirect()->route('staff.mfa.challenge');
     }
 
-    public function setup(Request $request, TotpService $totp): View|RedirectResponse
+    public function setup(Request $request, TotpService $totp): View|RedirectResponse|Response
     {
         $staff = $this->pendingStaff($request);
 
@@ -89,14 +89,15 @@ class StaffAuthController
             $staff->forceFill(['mfa_totp_secret' => $totp->generateSecret()])->save();
         }
 
-        return view('staff.auth.mfa-setup', [
+        return response()->view('staff.auth.mfa-setup', [
             'secret' => $staff->mfa_totp_secret,
             'provisioningUri' => $totp->provisioningUri(
                 $staff->mfa_totp_secret,
                 $staff->email,
                 (string) config('app.name'),
             ),
-        ]);
+        ])->header('Cache-Control', 'no-store, private')
+            ->header('Pragma', 'no-cache');
     }
 
     public function completeSetup(Request $request, TotpService $totp): RedirectResponse|Response
@@ -111,6 +112,8 @@ class StaffAuthController
         $throttleKey = $this->mfaThrottleKey($staff);
 
         if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $this->recordAttempt($staff->email, $request, false);
+
             return back()->withErrors(['code' => 'کد واردشده معتبر نیست.']);
         }
 
@@ -152,6 +155,7 @@ class StaffAuthController
 
         if ($enrollment === null) {
             RateLimiter::hit($throttleKey, 300);
+            $this->recordAttempt($staff->email, $request, false);
 
             return back()->withErrors(['code' => 'کد واردشده معتبر نیست.']);
         }
@@ -161,7 +165,7 @@ class StaffAuthController
         return $this->completeLogin($request, $enrollment['staff'], $enrollment['recovery_codes']);
     }
 
-    public function challenge(Request $request): View|RedirectResponse
+    public function challenge(Request $request): View|RedirectResponse|Response
     {
         $staff = $this->pendingStaff($request);
 
@@ -173,7 +177,9 @@ class StaffAuthController
             return redirect()->route('staff.mfa.setup');
         }
 
-        return view('staff.auth.mfa-challenge');
+        return response()->view('staff.auth.mfa-challenge')
+            ->header('Cache-Control', 'no-store, private')
+            ->header('Pragma', 'no-cache');
     }
 
     public function verify(Request $request, TotpService $totp): RedirectResponse|Response
@@ -239,6 +245,7 @@ class StaffAuthController
 
         if (! $verification['verified']) {
             RateLimiter::hit($throttleKey, 300);
+            $this->recordAttempt($staff->email, $request, false);
 
             return back()->withErrors(['code' => 'کد واردشده معتبر نیست.']);
         }

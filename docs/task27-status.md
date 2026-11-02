@@ -1,6 +1,6 @@
 # Task 27 — AI evaluation, safety gates, dental knowledge and cost controls
 
-Status: IMPLEMENTATION IN PROGRESS — final CI and release-gate evidence pending.
+Status: CI-VERIFIED — production activation remains gated.
 
 ## Owner-approved decisions
 
@@ -37,8 +37,64 @@ See task27-owner-decisions.md. Approved: 100 Persian + 100 English evaluation ca
 - Non-fake provider calls fail closed unless model-specific or capability-level IRR pricing is configured; per-model pricing can be supplied through the backend `AI_MODEL_PRICING_IRR` environment setting.
 - The assistant uses the existing published-content retrieval/ranking layer; this is bounded retrieval, not a vector-embedding database.
 
-## Verification still required
 
-- CI must pass Pint, PHPStan, migrations, all Pest tests, browser tests, and the new ai:evaluate command.
-- The evaluation runner must meet all owner-approved thresholds on the synthetic testing knowledge base.
-- A separate approved live-provider evaluation, clinician review, provider quota/billing adapter and production release approval are required before any real model is enabled.
+
+## CI verification — 2026-11-02
+
+<badge>CI PASS</badge> [GitHub Actions run #778](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41436715873) verified code commit `02737dd47274f990dd7e297979fb46c00c9f3973`.
+
+### Automated evidence
+
+- Laravel/Pest: **262 passed**, **24,432 assertions**.
+- Versioned evaluation dataset: **200 cases** (100 Persian, 100 English).
+- Evaluation result: **passed**; no critical, blocking, case, or threshold failures.
+- Citation presence: **100%** (release threshold 95%).
+- Grounding: **100%** (release threshold 95%).
+- Refusal correctness: **100%**.
+- Emergency response: **100%**.
+- Forbidden-content prevention: **100%**.
+- Playwright: **36 passed**.
+- Responsive AI-admin checks: **375px, 768px, 1440px**; screenshot artifacts uploaded.
+- JavaScript lint, type-check, production build, Pint, PHPStan, PostgreSQL migrations and browser smoke tests passed.
+
+### Exact CI commands
+
+```bash
+npm run lint
+npm run typecheck
+npm run build
+vendor/bin/pint --test
+vendor/bin/phpstan analyse
+php artisan migrate --force
+php artisan test
+php artisan db:seed --class=DentalFaqTestingSeeder
+php artisan ai:evaluate
+php artisan db:seed --class=BrowserTestSeeder
+npx playwright install --with-deps chromium
+npm run test:browser
+```
+
+### Reproducible evaluation metadata
+
+- Evaluation run ID: `56f58090-a8c4-45f1-90a2-024626c51d23`
+- Dataset: `1.0.0`
+- Prompt: `task27-persona-v1`
+- Provider/model: `fake` / `fake-v1`
+- Provider/model version: `fake-contract-v1` / `fake-v1`
+- Environment: `testing`
+- Monthly budget configured: `10,000,000 IRR`
+- Test-run spend: `0 IRR`
+- Provider credentials: not configured
+- Provider quota status: `unknown`
+
+The deterministic report proves that the policy and release-gate implementation passes the defined synthetic scenarios. It does **not** establish the accuracy or safety of a future live provider. The report artifact is attached to CI run #778 as `task27-ai-evaluation-report`; responsive screenshots are attached as separate artifacts.
+
+## Production release gates still open
+
+- The 100 bilingual FAQ entries are drafts. A qualified clinic reviewer must review and approve clinical content through the existing content workflow before public publication.
+- The clinic must separately approve a real AI provider/model and configure its server-side credentials and model-specific IRR pricing. No provider has been connected by this task.
+- Provider credit/token quota remains explicitly unknown until an approved provider exposes authenticated quota/billing telemetry. The 80%/95% provider-quota alerts cannot report real values before that integration.
+- A provider-backed evaluation must be run against the approved model before enabling the public AI feature. The fake-provider evaluation is not a substitute.
+- Production activation remains behind the existing AI feature flags and requires clinic release approval.
+
+No production command, destructive database operation, real patient data, real API key, or external provider connection was used.

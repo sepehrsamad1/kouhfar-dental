@@ -8,10 +8,13 @@ use App\Services\AIProviderManager;
 use App\Services\AssistantService;
 use Database\Seeders\DentalFaqTestingSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function (): void {
+    Cache::flush();
+
     config([
         'ai.enabled' => true,
         'ai.capabilities.text.enabled' => true,
@@ -255,7 +258,7 @@ it('enforces independent per-model token and IRR ceilings with separate warning 
     $tokenLimited = app(AIProviderManager::class)->generateText('per-model-token-cap', 'must not reach provider');
 
     expect($tokenLimited['status'])->toBe('rate_limited')
-        ->and(AIRequest::query()->latest('created_at')->first()->status)->toBe('blocked');
+        ->and(AIRequest::query()->where('status', 'blocked')->count())->toBe(1);
 
     $settings->update([
         'provider_token_limits' => ['fake-task27-model' => 200],

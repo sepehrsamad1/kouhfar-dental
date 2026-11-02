@@ -381,7 +381,7 @@
       "id": "KDF-017",
       "category": "implant",
       "question_fa": "ایمپلنت دندان چیست؟",
-      "question_en": "What is dental implant?",
+      "question_en": "What is a dental implant?",
       "answer_fa": "پس از قرارگیری پایه و ترمیم مناسب، قطعه اتصال و روکش سفارشی روی ایمپلنت نصب می‌شود؛ زمان‌بندی به وضعیت استخوان و طرح درمان بستگی دارد.",
       "answer_en": "After implant placement and suitable healing, an abutment and custom crown are attached; timing depends on bone condition and the treatment plan.",
       "sources": [
@@ -476,8 +476,8 @@
     {
       "id": "KDF-023",
       "category": "implant",
-      "question_fa": "عوارض احتمالی ایمپلنت چیست؟",
-      "question_en": "What is possible implant complications?",
+      "question_fa": "عوارض احتمالی ایمپلنت دندان چیست؟",
+      "question_en": "What complications can occur with dental implants?",
       "answer_fa": "تورم رو به افزایش، ترشح، تب، درد شدید یا لق‌شدن قطعه باید به تیم درمان گزارش شود.",
       "answer_en": "Report increasing swelling, discharge, fever, severe pain, or a loose component to the dental team.",
       "sources": [
@@ -508,8 +508,8 @@
     {
       "id": "KDF-025",
       "category": "veneer",
-      "question_fa": "لمینیت دندان چیست؟",
-      "question_en": "What is dental veneers?",
+      "question_fa": "لمینیت یا ونیر دندان چیست؟",
+      "question_en": "What are dental veneers?",
       "answer_fa": "ونیر معمولاً سطح جلویی دندان را می‌پوشاند، درحالی‌که روکش تمام بخش قابل‌مشاهده دندان را احاطه می‌کند.",
       "answer_en": "A veneer usually covers the front surface of a tooth, while a crown covers the visible tooth all around.",
       "sources": [
@@ -697,7 +697,7 @@
       "id": "KDF-037",
       "category": "crown",
       "question_fa": "روکش دندان چیست؟",
-      "question_en": "What is dental crown?",
+      "question_en": "What is a dental crown?",
       "answer_fa": "محل دندان، نیروهای جویدن، فضای موجود، زیبایی و شرایط فردی در انتخاب ماده مؤثرند.",
       "answer_en": "Tooth location, chewing forces, available space, aesthetics, and individual factors influence material choice.",
       "sources": [
@@ -728,8 +728,8 @@
     {
       "id": "KDF-039",
       "category": "crown",
-      "question_fa": "روکش موقت چیست؟",
-      "question_en": "What is temporary crown?",
+      "question_fa": "روکش موقت دندان چیست؟",
+      "question_en": "What is a temporary crown?",
       "answer_fa": "تا نصب روکش نهایی، از جویدن خوراکی‌های بسیار سفت یا چسبنده با آن سمت پرهیز کنید.",
       "answer_en": "Until the final crown is fitted, avoid chewing very hard or sticky foods on that side.",
       "sources": [
@@ -758,8 +758,8 @@
     {
       "id": "KDF-041",
       "category": "crown",
-      "question_fa": "مراقبت از روکش چیست؟",
-      "question_en": "What is crown care?",
+      "question_fa": "چگونه از روکش دندان مراقبت کنم؟",
+      "question_en": "How should I care for a dental crown?",
       "answer_fa": "بله؛ روکش پوسیدگی لبه دندان را ناممکن نمی‌کند. تمیزکردن حاشیه روکش و معاینه دوره‌ای مهم است.",
       "answer_en": "Yes. A crown does not make decay at its margins impossible. Cleaning around the crown and routine checks matter.",
       "sources": [
@@ -850,8 +850,8 @@
     {
       "id": "KDF-047",
       "category": "whitening",
-      "question_fa": "بلیچینگ و ترمیم‌های دندانی چیست؟",
-      "question_en": "What is whitening and dental restorations?",
+      "question_fa": "بلیچینگ چه اثری بر روکش و ترمیم‌های دندانی دارد؟",
+      "question_en": "How does whitening affect crowns and dental restorations?",
       "answer_fa": "بلیچینگ رنگ دندان طبیعی را تغییر می‌دهد، نه روکش، ونیر یا پرکردگی همرنگ را؛ بنابراین ممکن است تفاوت رنگ دیده شود.",
       "answer_en": "Whitening changes natural tooth colour, not crowns, veneers, or tooth-coloured fillings, so a mismatch may appear.",
       "sources": [
@@ -912,8 +912,8 @@
     {
       "id": "KDF-051",
       "category": "root_canal",
-      "question_fa": "بی‌حسی هنگام عصب‌کشی چیست؟",
-      "question_en": "What is anaesthesia during root canal treatment?",
+      "question_fa": "آیا برای عصب‌کشی از بی‌حسی استفاده می‌شود؟",
+      "question_en": "Is anaesthesia used during root canal treatment?",
       "answer_fa": "درمان ریشه معمولاً با بی‌حسی موضعی انجام می‌شود؛ بیمار بیدار است اما ناحیه درمان بی‌حس می‌شود.",
       "answer_en": "Root canal treatment is usually performed with local anaesthesia; the patient is awake while the treated area is numbed.",
       "sources": [
@@ -942,8 +942,8 @@
     {
       "id": "KDF-053",
       "category": "root_canal",
-      "question_fa": "مراقبت پس از عصب‌کشی چیست؟",
-      "question_en": "What is care after root canal treatment?",
+      "question_fa": "پس از درمان ریشه چه مراقبت‌هایی لازم است؟",
+      "question_en": "What care is needed after root canal treatment?",
       "answer_fa": "تا زمانی که ترمیم نهایی انجام نشده، از جویدن خوراکی‌های سفت با دندان درمان‌شده پرهیز کنید.",
       "answer_en": "Until the final restoration is placed, avoid chewing hard foods with the treated tooth.",
       "sources": [
@@ -972,8 +972,8 @@
     {
       "id": "KDF-055",
       "category": "root_canal",
-      "question_fa": "روکش پس از درمان ریشه چیست؟",
-      "question_en": "What is crown after root canal treatment?",
+      "question_fa": "پس از عصب‌کشی چه نوع ترمیمی ممکن است لازم باشد؟",
+      "question_en": "What restoration may be needed after root canal treatment?",
       "answer_fa": "اگر ساختار دندان ضعیف یا بخش زیادی از آن تخریب شده باشد، روکش می‌تواند از دندان محافظت کند؛ نیاز به آن برای همه یکسان نیست.",
       "answer_en": "If the tooth is weakened or much of its structure is lost, a crown may help protect it; it is not required for every tooth.",
       "sources": [
@@ -1005,7 +1005,7 @@
       "id": "KDF-057",
       "category": "filling",
       "question_fa": "پرکردگی دندان چیست؟",
-      "question_en": "What is dental filling?",
+      "question_en": "What is a dental filling?",
       "answer_fa": "اندازه و محل حفره، فشار جویدن، ظاهر مورد انتظار و شرایط فرد در انتخاب ماده اثر دارند.",
       "answer_en": "Cavity size and location, chewing forces, desired appearance, and individual factors influence material choice.",
       "sources": [
@@ -1132,8 +1132,8 @@
     {
       "id": "KDF-065",
       "category": "cleaning",
-      "question_fa": "پلاک و جرم دندان چیست؟",
-      "question_en": "What is plaque and tartar?",
+      "question_fa": "پلاک و جرم دندان چه تفاوتی دارند؟",
+      "question_en": "What are plaque and tartar?",
       "answer_fa": "اگر پلاک با مسواک و تمیزکردن بین دندان‌ها برداشته نشود، می‌تواند سخت شود و به جرم تبدیل گردد.",
       "answer_en": "If plaque is not removed by brushing and interdental cleaning, it can harden into tartar.",
       "sources": [
@@ -1197,7 +1197,7 @@
       "id": "KDF-069",
       "category": "wisdom",
       "question_fa": "دندان عقل چیست؟",
-      "question_en": "What is wisdom tooth?",
+      "question_en": "What is a wisdom tooth?",
       "answer_fa": "خیر؛ دندان عقل سالم و قابل تمیزکردن ممکن است تحت پایش بماند. عفونت یا آسیب به دندان مجاور می‌تواند دلیل درمان باشد.",
       "answer_en": "No. A healthy, cleanable wisdom tooth may be monitored. Infection or damage to a neighbouring tooth may warrant treatment.",
       "sources": [
@@ -1229,7 +1229,7 @@
       "id": "KDF-071",
       "category": "wisdom",
       "question_fa": "دندان عقل نهفته چیست؟",
-      "question_en": "What is impacted wisdom tooth?",
+      "question_en": "What is an impacted wisdom tooth?",
       "answer_fa": "بله؛ نبود درد الزاماً به معنی نبود بیماری نیست. دندان عقل نهفته ممکن است بدون علامت باشد و به پایش نیاز داشته باشد.",
       "answer_en": "Yes. Absence of pain does not necessarily mean absence of disease. An impacted wisdom tooth may be symptom-free and need monitoring.",
       "sources": [
@@ -1322,8 +1322,8 @@
     {
       "id": "KDF-077",
       "category": "orthodontics",
-      "question_fa": "مدت درمان ارتودنسی چیست؟",
-      "question_en": "What is orthodontic treatment duration?",
+      "question_fa": "مدت درمان ارتودنسی چقدر است؟",
+      "question_en": "How long does orthodontic treatment take?",
       "answer_fa": "پیچیدگی ناهنجاری، همکاری در استفاده از دستگاه، شکستن براکت‌ها و پاسخ زیستی دندان‌ها می‌توانند بر مدت درمان اثر بگذارند.",
       "answer_en": "Case complexity, appliance adherence, broken brackets, and biological tooth response can affect treatment duration.",
       "sources": [
@@ -1416,8 +1416,8 @@
     {
       "id": "KDF-083",
       "category": "gum",
-      "question_fa": "خونریزی لثه چیست؟",
-      "question_en": "What is bleeding gums?",
+      "question_fa": "علت خونریزی لثه چیست؟",
+      "question_en": "Why do gums bleed?",
       "answer_fa": "بهداشت دهان را کاملاً متوقف نکنید؛ با مسواک نرم و روش ملایم ادامه دهید و برای بررسی خونریزی مکرر مراجعه کنید.",
       "answer_en": "Do not stop oral hygiene altogether; continue gently with a soft brush and seek assessment for repeated bleeding.",
       "sources": [
@@ -1448,8 +1448,8 @@
     {
       "id": "KDF-085",
       "category": "gum",
-      "question_fa": "درمان التهاب لثه چیست؟",
-      "question_en": "What is gum inflammation treatment?",
+      "question_fa": "التهاب لثه چگونه درمان می‌شود؟",
+      "question_en": "How is gum inflammation treated?",
       "answer_fa": "پاک‌سازی عمیق برای برداشتن پلاک و جرم زیر لثه و تمیزکردن سطح ریشه انجام می‌شود؛ نیاز به آن به شدت بیماری بستگی دارد.",
       "answer_en": "Deep cleaning removes plaque and tartar below the gumline and cleans root surfaces; need depends on disease severity.",
       "sources": [
@@ -1480,8 +1480,8 @@
     {
       "id": "KDF-087",
       "category": "emergency",
-      "question_fa": "تورم شدید دهان و گردن چیست؟",
-      "question_en": "What is severe mouth or neck swelling?",
+      "question_fa": "تورم شدید دهان یا گردن چه زمانی خطرناک است؟",
+      "question_en": "When is severe mouth or neck swelling dangerous?",
       "answer_fa": "تورم شدید یا سریع، به‌ویژه همراه مشکل تنفس یا بلع، نیازمند کمک اورژانسی است؛ برای نوبت معمول منتظر نمانید.",
       "answer_en": "Severe or rapidly increasing swelling, especially with breathing or swallowing difficulty, needs emergency help; do not wait for a routine appointment.",
       "sources": [
@@ -1510,8 +1510,8 @@
     {
       "id": "KDF-089",
       "category": "emergency",
-      "question_fa": "خونریزی کنترل‌نشده دهان چیست؟",
-      "question_en": "What is uncontrolled oral bleeding?",
+      "question_fa": "خونریزی کنترل‌نشده دهان به چه معناست؟",
+      "question_en": "What counts as uncontrolled oral bleeding?",
       "answer_fa": "خونریزی شدید یا کنترل‌نشده، به‌ویژه اگر با فشار مستقیم متوقف نمی‌شود، نیازمند رسیدگی فوری است.",
       "answer_en": "Severe or uncontrolled bleeding, especially when it does not stop with direct pressure, requires urgent care.",
       "sources": [
@@ -1541,7 +1541,7 @@
       "id": "KDF-091",
       "category": "emergency",
       "question_fa": "دندان دائمی کنده‌شده چیست؟",
-      "question_en": "What is knocked-out permanent tooth?",
+      "question_en": "What is a knocked-out permanent tooth?",
       "answer_fa": "دندان را از تاج بگیرید و ریشه را لمس نکنید؛ اگر جاگذاری آسان نیست، آن را در شیر یا بزاق نگه دارید و فوراً مراجعه کنید.",
       "answer_en": "Hold the tooth by its crown and avoid touching the root; if it cannot be gently repositioned, keep it in milk or saliva and seek care immediately.",
       "sources": [
@@ -1574,8 +1574,8 @@
     {
       "id": "KDF-093",
       "category": "emergency",
-      "question_fa": "درد شدید دندان چیست؟",
-      "question_en": "What is severe toothache?",
+      "question_fa": "چه زمانی درد دندان شدید محسوب می‌شود؟",
+      "question_en": "When is toothache considered severe?",
       "answer_fa": "درد شدید، درد بیش از دو روز یا درد همراه تب، تورم یا درد هنگام گاززدن باید توسط دندان‌پزشک بررسی شود.",
       "answer_en": "Severe pain, pain lasting more than two days, or pain with fever, swelling, or pain on biting should be assessed by a dentist.",
       "sources": [
@@ -1606,8 +1606,8 @@
     {
       "id": "KDF-095",
       "category": "pre_post",
-      "question_fa": "اطلاعات پزشکی پیش از درمان چیست؟",
-      "question_en": "What is medical information before treatment?",
+      "question_fa": "پیش از درمان چه اطلاعات پزشکی باید به دندان‌پزشک بدهم؟",
+      "question_en": "What medical information should I share before dental treatment?",
       "answer_fa": "بله؛ بارداری، حساسیت دارویی، بیماری‌ها و داروهای مصرفی را پیش از درمان به تیم دندان‌پزشکی اطلاع دهید.",
       "answer_en": "Yes. Tell the dental team about pregnancy, medicine allergies, health conditions, and medicines before treatment.",
       "sources": [
@@ -1636,8 +1636,8 @@
     {
       "id": "KDF-097",
       "category": "pre_post",
-      "question_fa": "مراقبت پس از کشیدن دندان چیست؟",
-      "question_en": "What is care after tooth extraction?",
+      "question_fa": "پس از کشیدن دندان چه مراقبت‌هایی لازم است؟",
+      "question_en": "What care is needed after a tooth extraction?",
       "answer_fa": "دستور اختصاصی جراح را رعایت کنید و از دستکاری محل زخم یا فعالیت‌هایی که درمانگر منع کرده است پرهیز کنید.",
       "answer_en": "Follow the surgeon's specific instructions and avoid disturbing the socket or activities restricted by the clinician.",
       "sources": [
@@ -1668,8 +1668,8 @@
     {
       "id": "KDF-099",
       "category": "pre_post",
-      "question_fa": "مراجعه پس از درمان دندان‌پزشکی چیست؟",
-      "question_en": "What is follow-up after dental treatment?",
+      "question_fa": "چرا باید پس از درمان برای پیگیری مراجعه کنم؟",
+      "question_en": "Why is follow-up after dental treatment important?",
       "answer_fa": "اگر درد یا تورم رو به افزایش، تب، خونریزی کنترل‌نشده، ترشح یا مشکل در ترمیم ایجاد شد، تماس بگیرید.",
       "answer_en": "Contact the clinic for increasing pain or swelling, fever, uncontrolled bleeding, discharge, or a problem with the restoration.",
       "sources": [

@@ -19,6 +19,8 @@
 - Added regression tests for malicious intended redirects and Secure/HttpOnly/SameSite cookie flags.
 - Added patient search SQL-looking input and hostile mass-assignment regression tests.
 - Restricted dormant Kavenegar egress to the approved HTTPS host/path, rejected userinfo/query/fragment/other origins, disabled redirects and prevented transport exceptions from exposing the API-key URL; added synthetic SSRF/redirect regression tests.
+- Added production/staging `__Secure-` session-cookie naming to satisfy ASVS V3.3.1; the new configuration regression test awaits CI retest.
+- Added ASVS Level 2 MFA finding: staff authentication is currently password-only; owner must approve the second factor and recovery flow before this can be implemented.
 - Added Composer lockfile audit and npm lockfile audit to CI.
 - Added Gitleaks full-history secret scan to CI using a full checkout.
 - Added threat model, ASVS checklist, preliminary privacy impact assessment, data inventory/retention register, third-party flow inventory, findings register and clinic-owner decision register.
@@ -53,7 +55,9 @@ Required CI commands are recorded above. Gitleaks scans the full repository hist
 
 ## Open release blockers
 
+- **High — staff MFA missing (ASVS V6.3.3):** staff login currently uses only email/password. The clinic owner must approve the second factor and recovery policy; Task 15 provider integration is not activated.
 - **High — retention/privacy policy incomplete:** the 2-year clinical-record and Task 21 media periods remain recorded; however, retention/purge behavior for login-attempt hashes, session registry, audit logs, consent records, Smart Smile session/result metadata, AI usage/request rows, queue/failed-job payloads, notification outbox, idempotency snapshots, deletion requests, application logs and backups is still unapproved or unimplemented. See [clinic-owner decisions](security/task28-owner-decisions.md).
+- **Medium — Kavenegar API key remains in the provider URL path:** the adapter is dormant and outbound host/redirect controls are hardened, but provider/network log redaction or an alternative header-auth provider must be approved before activation.
 - **Medium — Smart Smile consent token has no expiry:** owner must approve TTL and post-expiry behavior before implementation.
 - **Medium — staff idle/absolute session timeout values are unset:** owner policy required; registry expiry currently defaults to ten years if unset.
 - **Medium — production controls unverified:** TLS/proxy, database runtime privileges, private storage ACLs, secret injection, backup/log access and retention are deployment evidence not present in the repository.

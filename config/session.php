@@ -1,5 +1,12 @@
 <?php
 
+$localEnvironment = in_array(env('APP_ENV', 'production'), ['local', 'testing'], true);
+$cookieName = env('SESSION_COOKIE', 'kouhfar-session');
+
+if (! $localEnvironment && ! str_starts_with($cookieName, '__Secure-')) {
+    $cookieName = '__Secure-'.$cookieName;
+}
+
 return [
     'driver' => env('SESSION_DRIVER', 'file'),
     'lifetime' => (int) env('SESSION_LIFETIME', 120),
@@ -10,12 +17,10 @@ return [
     'table' => env('SESSION_TABLE', 'sessions'),
     'store' => env('SESSION_STORE'),
     'lottery' => [2, 100],
-    'cookie' => env('SESSION_COOKIE', 'kouhfar-session'),
+    'cookie' => $cookieName,
     'path' => '/',
     'domain' => env('SESSION_DOMAIN'),
-    'secure' => in_array(env('APP_ENV', 'production'), ['local', 'testing'], true)
-        ? env('SESSION_SECURE_COOKIE', false)
-        : true,
+    'secure' => $localEnvironment ? env('SESSION_SECURE_COOKIE', false) : true,
     'http_only' => true,
     'same_site' => 'lax',
     'partitioned' => false,

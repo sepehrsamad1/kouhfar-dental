@@ -65,7 +65,7 @@ The CI workflow sets `STAFF_MFA_REQUIRED=false` only for legacy browser screensh
 - **Medium — MFA recovery operations:** enrollment and one-time recovery codes are implemented, but a controlled, audited lost-authenticator/recovery-code reset process and identity-proofing procedure must be defined before staff rollout.
 - **Medium — SEC-28-006 production controls:** TLS/proxy, database runtime privileges, private storage ACLs, secret injection, backup/log access and retention need deployment evidence.
 - **Medium — SEC-28-008 verification scope:** full route-by-route IDOR matrix, production-like CSRF negative tests, browser DOM-XSS corpus and distributed rate-limit behavior remain open.
-- **Medium — SEC-28-014 Kavenegar:** its API key remains in the request URL path. Keep the adapter dormant until the clinic approves residual exposure and provider/network log redaction, or selects a header-auth provider.
+- **Medium — SEC-28-014 Kavenegar / SEC-28-015 MeliPayamak:** both provider credentials are carried in URL paths. Keep both live adapters disabled until provider/network access-log retention and redaction are reviewed and the clinic approves residual exposure or selects a header-auth provider.
 - **Medium — supplementary secret review:** automated Gitleaks and dependency audits passed; review GitHub secret alerts and external log/artifact surfaces separately.
 - **Open owner decision — OD-28-10:** staff/practitioner profile retention and patient-match flag policy.
 

@@ -1,0 +1,1546 @@
+{
+  "version": "1.0.0",
+  "locale_pairs": 100,
+  "publication_status": "draft_for_clinician_review",
+  "last_researched": "2026-11-02",
+  "disclaimer": "Educational information only. Not diagnosis, prescription or an individualized treatment plan. These records must pass clinical review and the existing content approval workflow before publication.",
+  "sources": {
+    "ADA_MOUTHHEALTHY": {
+      "title": "ADA MouthHealthy — Dental health topics",
+      "url": "https://www.mouthhealthy.org/all-topics-a-z",
+      "organization": "American Dental Association"
+    },
+    "ADA_ORAL_HEALTH_TOPICS": {
+      "title": "ADA Oral Health Topics",
+      "url": "https://www.ada.org/resources/ada-library/oral-health-topics",
+      "organization": "American Dental Association"
+    },
+    "NHS_DENTAL_TREATMENTS": {
+      "title": "NHS Dental treatments",
+      "url": "https://www.nhs.uk/live-well/healthy-teeth-and-gums/dental-treatments/",
+      "organization": "NHS"
+    },
+    "NHS_ROOT_CANAL": {
+      "title": "NHS Root canal treatment",
+      "url": "https://www.nhs.uk/tests-and-treatments/root-canal-treatment/",
+      "organization": "NHS"
+    },
+    "NHS_EMERGENCY": {
+      "title": "NHS Emergency dental care",
+      "url": "https://www.nhs.uk/nhs-services/dentists/how-to-find-an-nhs-dentist-in-an-emergency/",
+      "organization": "NHS"
+    },
+    "CDC_ORAL_HEALTH": {
+      "title": "CDC Oral health tips for adults",
+      "url": "https://www.cdc.gov/oral-health/prevention/oral-health-tips-for-adults.html",
+      "organization": "Centers for Disease Control and Prevention"
+    },
+    "ADA_WHITENING": {
+      "title": "ADA Whitening",
+      "url": "https://www.ada.org/resources/ada-library/oral-health-topics/whitening/",
+      "organization": "American Dental Association"
+    }
+  },
+  "faqs": [
+    {
+      "id": "KDF-001",
+      "category": "general",
+      "question_fa": "بهداشت روزانه دهان چیست؟",
+      "question_en": "What is daily oral hygiene?",
+      "answer_fa": "بهداشت منظم شامل مسواک‌زدن دو بار در روز با خمیردندان فلورایددار و تمیزکردن روزانه بین دندان‌هاست. برنامه دقیق باید با توجه به سن و وضعیت فرد تنظیم شود.",
+      "answer_en": "Good daily care includes brushing twice a day with fluoride toothpaste and cleaning between teeth daily. Advice should be adapted to age and individual needs.",
+      "sources": [
+        "CDC_ORAL_HEALTH"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-002",
+      "category": "general",
+      "question_fa": "چه نکته‌ای درباره بهداشت روزانه دهان باید بدانم؟",
+      "question_en": "What should I know about daily oral hygiene?",
+      "answer_fa": "بهداشت منظم شامل مسواک‌زدن دو بار در روز با خمیردندان فلورایددار و تمیزکردن روزانه بین دندان‌هاست. برنامه دقیق باید با توجه به سن و وضعیت فرد تنظیم شود.",
+      "answer_en": "Good daily care includes brushing twice a day with fluoride toothpaste and cleaning between teeth daily. Advice should be adapted to age and individual needs.",
+      "sources": [
+        "CDC_ORAL_HEALTH"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-003",
+      "category": "general",
+      "question_fa": "پوسیدگی دندان چیست؟",
+      "question_en": "What is tooth decay?",
+      "answer_fa": "بهداشت منظم شامل مسواک‌زدن دو بار در روز با خمیردندان فلورایددار و تمیزکردن روزانه بین دندان‌هاست. برنامه دقیق باید با توجه به سن و وضعیت فرد تنظیم شود.",
+      "answer_en": "Good daily care includes brushing twice a day with fluoride toothpaste and cleaning between teeth daily. Advice should be adapted to age and individual needs.",
+      "sources": [
+        "CDC_ORAL_HEALTH"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-004",
+      "category": "general",
+      "question_fa": "چه نکته‌ای درباره پوسیدگی دندان باید بدانم؟",
+      "question_en": "What should I know about tooth decay?",
+      "answer_fa": "بهداشت منظم شامل مسواک‌زدن دو بار در روز با خمیردندان فلورایددار و تمیزکردن روزانه بین دندان‌هاست. برنامه دقیق باید با توجه به سن و وضعیت فرد تنظیم شود.",
+      "answer_en": "Good daily care includes brushing twice a day with fluoride toothpaste and cleaning between teeth daily. Advice should be adapted to age and individual needs.",
+      "sources": [
+        "CDC_ORAL_HEALTH"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-005",
+      "category": "general",
+      "question_fa": "خمیردندان فلورایددار چیست؟",
+      "question_en": "What is fluoride toothpaste?",
+      "answer_fa": "بهداشت منظم شامل مسواک‌زدن دو بار در روز با خمیردندان فلورایددار و تمیزکردن روزانه بین دندان‌هاست. برنامه دقیق باید با توجه به سن و وضعیت فرد تنظیم شود.",
+      "answer_en": "Good daily care includes brushing twice a day with fluoride toothpaste and cleaning between teeth daily. Advice should be adapted to age and individual needs.",
+      "sources": [
+        "CDC_ORAL_HEALTH"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-006",
+      "category": "general",
+      "question_fa": "چه نکته‌ای درباره خمیردندان فلورایددار باید بدانم؟",
+      "question_en": "What should I know about fluoride toothpaste?",
+      "answer_fa": "بهداشت منظم شامل مسواک‌زدن دو بار در روز با خمیردندان فلورایددار و تمیزکردن روزانه بین دندان‌هاست. برنامه دقیق باید با توجه به سن و وضعیت فرد تنظیم شود.",
+      "answer_en": "Good daily care includes brushing twice a day with fluoride toothpaste and cleaning between teeth daily. Advice should be adapted to age and individual needs.",
+      "sources": [
+        "CDC_ORAL_HEALTH"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-007",
+      "category": "general",
+      "question_fa": "نخ دندان چیست؟",
+      "question_en": "What is dental floss?",
+      "answer_fa": "بهداشت منظم شامل مسواک‌زدن دو بار در روز با خمیردندان فلورایددار و تمیزکردن روزانه بین دندان‌هاست. برنامه دقیق باید با توجه به سن و وضعیت فرد تنظیم شود.",
+      "answer_en": "Good daily care includes brushing twice a day with fluoride toothpaste and cleaning between teeth daily. Advice should be adapted to age and individual needs.",
+      "sources": [
+        "CDC_ORAL_HEALTH"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-008",
+      "category": "general",
+      "question_fa": "چه نکته‌ای درباره نخ دندان باید بدانم؟",
+      "question_en": "What should I know about dental floss?",
+      "answer_fa": "بهداشت منظم شامل مسواک‌زدن دو بار در روز با خمیردندان فلورایددار و تمیزکردن روزانه بین دندان‌هاست. برنامه دقیق باید با توجه به سن و وضعیت فرد تنظیم شود.",
+      "answer_en": "Good daily care includes brushing twice a day with fluoride toothpaste and cleaning between teeth daily. Advice should be adapted to age and individual needs.",
+      "sources": [
+        "CDC_ORAL_HEALTH"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-009",
+      "category": "general",
+      "question_fa": "خشکی دهان چیست؟",
+      "question_en": "What is dry mouth?",
+      "answer_fa": "بهداشت منظم شامل مسواک‌زدن دو بار در روز با خمیردندان فلورایددار و تمیزکردن روزانه بین دندان‌هاست. برنامه دقیق باید با توجه به سن و وضعیت فرد تنظیم شود.",
+      "answer_en": "Good daily care includes brushing twice a day with fluoride toothpaste and cleaning between teeth daily. Advice should be adapted to age and individual needs.",
+      "sources": [
+        "CDC_ORAL_HEALTH"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-010",
+      "category": "general",
+      "question_fa": "چه نکته‌ای درباره خشکی دهان باید بدانم؟",
+      "question_en": "What should I know about dry mouth?",
+      "answer_fa": "بهداشت منظم شامل مسواک‌زدن دو بار در روز با خمیردندان فلورایددار و تمیزکردن روزانه بین دندان‌هاست. برنامه دقیق باید با توجه به سن و وضعیت فرد تنظیم شود.",
+      "answer_en": "Good daily care includes brushing twice a day with fluoride toothpaste and cleaning between teeth daily. Advice should be adapted to age and individual needs.",
+      "sources": [
+        "CDC_ORAL_HEALTH"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-011",
+      "category": "general",
+      "question_fa": "حساسیت دندان چیست؟",
+      "question_en": "What is tooth sensitivity?",
+      "answer_fa": "بهداشت منظم شامل مسواک‌زدن دو بار در روز با خمیردندان فلورایددار و تمیزکردن روزانه بین دندان‌هاست. برنامه دقیق باید با توجه به سن و وضعیت فرد تنظیم شود.",
+      "answer_en": "Good daily care includes brushing twice a day with fluoride toothpaste and cleaning between teeth daily. Advice should be adapted to age and individual needs.",
+      "sources": [
+        "CDC_ORAL_HEALTH"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-012",
+      "category": "general",
+      "question_fa": "چه نکته‌ای درباره حساسیت دندان باید بدانم؟",
+      "question_en": "What should I know about tooth sensitivity?",
+      "answer_fa": "بهداشت منظم شامل مسواک‌زدن دو بار در روز با خمیردندان فلورایددار و تمیزکردن روزانه بین دندان‌هاست. برنامه دقیق باید با توجه به سن و وضعیت فرد تنظیم شود.",
+      "answer_en": "Good daily care includes brushing twice a day with fluoride toothpaste and cleaning between teeth daily. Advice should be adapted to age and individual needs.",
+      "sources": [
+        "CDC_ORAL_HEALTH"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-013",
+      "category": "general",
+      "question_fa": "بوی بد دهان چیست؟",
+      "question_en": "What is bad breath?",
+      "answer_fa": "بهداشت منظم شامل مسواک‌زدن دو بار در روز با خمیردندان فلورایددار و تمیزکردن روزانه بین دندان‌هاست. برنامه دقیق باید با توجه به سن و وضعیت فرد تنظیم شود.",
+      "answer_en": "Good daily care includes brushing twice a day with fluoride toothpaste and cleaning between teeth daily. Advice should be adapted to age and individual needs.",
+      "sources": [
+        "CDC_ORAL_HEALTH"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-014",
+      "category": "general",
+      "question_fa": "چه نکته‌ای درباره بوی بد دهان باید بدانم؟",
+      "question_en": "What should I know about bad breath?",
+      "answer_fa": "بهداشت منظم شامل مسواک‌زدن دو بار در روز با خمیردندان فلورایددار و تمیزکردن روزانه بین دندان‌هاست. برنامه دقیق باید با توجه به سن و وضعیت فرد تنظیم شود.",
+      "answer_en": "Good daily care includes brushing twice a day with fluoride toothpaste and cleaning between teeth daily. Advice should be adapted to age and individual needs.",
+      "sources": [
+        "CDC_ORAL_HEALTH"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-015",
+      "category": "general",
+      "question_fa": "معاینه دوره‌ای چیست؟",
+      "question_en": "What is routine dental check-up?",
+      "answer_fa": "بهداشت منظم شامل مسواک‌زدن دو بار در روز با خمیردندان فلورایددار و تمیزکردن روزانه بین دندان‌هاست. برنامه دقیق باید با توجه به سن و وضعیت فرد تنظیم شود.",
+      "answer_en": "Good daily care includes brushing twice a day with fluoride toothpaste and cleaning between teeth daily. Advice should be adapted to age and individual needs.",
+      "sources": [
+        "CDC_ORAL_HEALTH"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-016",
+      "category": "general",
+      "question_fa": "چه نکته‌ای درباره معاینه دوره‌ای باید بدانم؟",
+      "question_en": "What should I know about routine dental check-up?",
+      "answer_fa": "بهداشت منظم شامل مسواک‌زدن دو بار در روز با خمیردندان فلورایددار و تمیزکردن روزانه بین دندان‌هاست. برنامه دقیق باید با توجه به سن و وضعیت فرد تنظیم شود.",
+      "answer_en": "Good daily care includes brushing twice a day with fluoride toothpaste and cleaning between teeth daily. Advice should be adapted to age and individual needs.",
+      "sources": [
+        "CDC_ORAL_HEALTH"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-017",
+      "category": "implant",
+      "question_fa": "ایمپلنت دندان چیست؟",
+      "question_en": "What is dental implant?",
+      "answer_fa": "ایمپلنت می‌تواند پایه‌ای برای روکش یا پروتز باشد، اما مناسب‌بودن آن به وضعیت استخوان و لثه، سلامت عمومی و ارزیابی دندان‌پزشک بستگی دارد.",
+      "answer_en": "An implant can support a crown or prosthesis, but suitability depends on bone and gum health, general health and a dentist's assessment.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-018",
+      "category": "implant",
+      "question_fa": "چه نکته‌ای درباره ایمپلنت دندان باید بدانم؟",
+      "question_en": "What should I know about dental implant?",
+      "answer_fa": "ایمپلنت می‌تواند پایه‌ای برای روکش یا پروتز باشد، اما مناسب‌بودن آن به وضعیت استخوان و لثه، سلامت عمومی و ارزیابی دندان‌پزشک بستگی دارد.",
+      "answer_en": "An implant can support a crown or prosthesis, but suitability depends on bone and gum health, general health and a dentist's assessment.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-019",
+      "category": "implant",
+      "question_fa": "ارزیابی استخوان برای ایمپلنت چیست؟",
+      "question_en": "What is bone assessment for implants?",
+      "answer_fa": "ایمپلنت می‌تواند پایه‌ای برای روکش یا پروتز باشد، اما مناسب‌بودن آن به وضعیت استخوان و لثه، سلامت عمومی و ارزیابی دندان‌پزشک بستگی دارد.",
+      "answer_en": "An implant can support a crown or prosthesis, but suitability depends on bone and gum health, general health and a dentist's assessment.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-020",
+      "category": "implant",
+      "question_fa": "چه نکته‌ای درباره ارزیابی استخوان برای ایمپلنت باید بدانم؟",
+      "question_en": "What should I know about bone assessment for implants?",
+      "answer_fa": "ایمپلنت می‌تواند پایه‌ای برای روکش یا پروتز باشد، اما مناسب‌بودن آن به وضعیت استخوان و لثه، سلامت عمومی و ارزیابی دندان‌پزشک بستگی دارد.",
+      "answer_en": "An implant can support a crown or prosthesis, but suitability depends on bone and gum health, general health and a dentist's assessment.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-021",
+      "category": "implant",
+      "question_fa": "مراقبت از ایمپلنت چیست؟",
+      "question_en": "What is implant care?",
+      "answer_fa": "ایمپلنت می‌تواند پایه‌ای برای روکش یا پروتز باشد، اما مناسب‌بودن آن به وضعیت استخوان و لثه، سلامت عمومی و ارزیابی دندان‌پزشک بستگی دارد.",
+      "answer_en": "An implant can support a crown or prosthesis, but suitability depends on bone and gum health, general health and a dentist's assessment.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-022",
+      "category": "implant",
+      "question_fa": "چه نکته‌ای درباره مراقبت از ایمپلنت باید بدانم؟",
+      "question_en": "What should I know about implant care?",
+      "answer_fa": "ایمپلنت می‌تواند پایه‌ای برای روکش یا پروتز باشد، اما مناسب‌بودن آن به وضعیت استخوان و لثه، سلامت عمومی و ارزیابی دندان‌پزشک بستگی دارد.",
+      "answer_en": "An implant can support a crown or prosthesis, but suitability depends on bone and gum health, general health and a dentist's assessment.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-023",
+      "category": "implant",
+      "question_fa": "عوارض احتمالی ایمپلنت چیست؟",
+      "question_en": "What is possible implant complications?",
+      "answer_fa": "ایمپلنت می‌تواند پایه‌ای برای روکش یا پروتز باشد، اما مناسب‌بودن آن به وضعیت استخوان و لثه، سلامت عمومی و ارزیابی دندان‌پزشک بستگی دارد.",
+      "answer_en": "An implant can support a crown or prosthesis, but suitability depends on bone and gum health, general health and a dentist's assessment.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-024",
+      "category": "implant",
+      "question_fa": "چه نکته‌ای درباره عوارض احتمالی ایمپلنت باید بدانم؟",
+      "question_en": "What should I know about possible implant complications?",
+      "answer_fa": "ایمپلنت می‌تواند پایه‌ای برای روکش یا پروتز باشد، اما مناسب‌بودن آن به وضعیت استخوان و لثه، سلامت عمومی و ارزیابی دندان‌پزشک بستگی دارد.",
+      "answer_en": "An implant can support a crown or prosthesis, but suitability depends on bone and gum health, general health and a dentist's assessment.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-025",
+      "category": "veneer",
+      "question_fa": "لمینیت دندان چیست؟",
+      "question_en": "What is dental veneers?",
+      "answer_fa": "ونیر لایه‌ای نازک برای پوشاندن سطح جلویی دندان است. میزان آماده‌سازی و مناسب‌بودن آن به شرایط دندان بستگی دارد و باید پیش از درمان بررسی شود.",
+      "answer_en": "A veneer is a thin facing for the front of a tooth. Preparation and suitability depend on the tooth and should be assessed before treatment.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-026",
+      "category": "veneer",
+      "question_fa": "چه نکته‌ای درباره لمینیت دندان باید بدانم؟",
+      "question_en": "What should I know about dental veneers?",
+      "answer_fa": "ونیر لایه‌ای نازک برای پوشاندن سطح جلویی دندان است. میزان آماده‌سازی و مناسب‌بودن آن به شرایط دندان بستگی دارد و باید پیش از درمان بررسی شود.",
+      "answer_en": "A veneer is a thin facing for the front of a tooth. Preparation and suitability depend on the tooth and should be assessed before treatment.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-027",
+      "category": "veneer",
+      "question_fa": "آماده‌سازی دندان برای ونیر چیست؟",
+      "question_en": "What is tooth preparation for veneers?",
+      "answer_fa": "ونیر لایه‌ای نازک برای پوشاندن سطح جلویی دندان است. میزان آماده‌سازی و مناسب‌بودن آن به شرایط دندان بستگی دارد و باید پیش از درمان بررسی شود.",
+      "answer_en": "A veneer is a thin facing for the front of a tooth. Preparation and suitability depend on the tooth and should be assessed before treatment.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-028",
+      "category": "veneer",
+      "question_fa": "چه نکته‌ای درباره آماده‌سازی دندان برای ونیر باید بدانم؟",
+      "question_en": "What should I know about tooth preparation for veneers?",
+      "answer_fa": "ونیر لایه‌ای نازک برای پوشاندن سطح جلویی دندان است. میزان آماده‌سازی و مناسب‌بودن آن به شرایط دندان بستگی دارد و باید پیش از درمان بررسی شود.",
+      "answer_en": "A veneer is a thin facing for the front of a tooth. Preparation and suitability depend on the tooth and should be assessed before treatment.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-029",
+      "category": "veneer",
+      "question_fa": "مراقبت از ونیر چیست؟",
+      "question_en": "What is veneer care?",
+      "answer_fa": "ونیر لایه‌ای نازک برای پوشاندن سطح جلویی دندان است. میزان آماده‌سازی و مناسب‌بودن آن به شرایط دندان بستگی دارد و باید پیش از درمان بررسی شود.",
+      "answer_en": "A veneer is a thin facing for the front of a tooth. Preparation and suitability depend on the tooth and should be assessed before treatment.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-030",
+      "category": "veneer",
+      "question_fa": "چه نکته‌ای درباره مراقبت از ونیر باید بدانم؟",
+      "question_en": "What should I know about veneer care?",
+      "answer_fa": "ونیر لایه‌ای نازک برای پوشاندن سطح جلویی دندان است. میزان آماده‌سازی و مناسب‌بودن آن به شرایط دندان بستگی دارد و باید پیش از درمان بررسی شود.",
+      "answer_en": "A veneer is a thin facing for the front of a tooth. Preparation and suitability depend on the tooth and should be assessed before treatment.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-031",
+      "category": "composite",
+      "question_fa": "کامپوزیت ونیر چیست؟",
+      "question_en": "What is composite bonding?",
+      "answer_fa": "کامپوزیت ماده‌ای همرنگ دندان است که برای برخی اصلاح‌های ظاهری یا ترمیم‌های محدود استفاده می‌شود. ممکن است در آینده به پولیش یا ترمیم نیاز پیدا کند.",
+      "answer_en": "Composite is a tooth-coloured material used for selected cosmetic changes or limited repairs. It may need polishing or repair over time.",
+      "sources": [
+        "ADA_MOUTHHEALTHY"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-032",
+      "category": "composite",
+      "question_fa": "چه نکته‌ای درباره کامپوزیت ونیر باید بدانم؟",
+      "question_en": "What should I know about composite bonding?",
+      "answer_fa": "کامپوزیت ماده‌ای همرنگ دندان است که برای برخی اصلاح‌های ظاهری یا ترمیم‌های محدود استفاده می‌شود. ممکن است در آینده به پولیش یا ترمیم نیاز پیدا کند.",
+      "answer_en": "Composite is a tooth-coloured material used for selected cosmetic changes or limited repairs. It may need polishing or repair over time.",
+      "sources": [
+        "ADA_MOUTHHEALTHY"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-033",
+      "category": "composite",
+      "question_fa": "ترمیم لب‌پریدگی با کامپوزیت چیست؟",
+      "question_en": "What is composite chip repair?",
+      "answer_fa": "کامپوزیت ماده‌ای همرنگ دندان است که برای برخی اصلاح‌های ظاهری یا ترمیم‌های محدود استفاده می‌شود. ممکن است در آینده به پولیش یا ترمیم نیاز پیدا کند.",
+      "answer_en": "Composite is a tooth-coloured material used for selected cosmetic changes or limited repairs. It may need polishing or repair over time.",
+      "sources": [
+        "ADA_MOUTHHEALTHY"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-034",
+      "category": "composite",
+      "question_fa": "چه نکته‌ای درباره ترمیم لب‌پریدگی با کامپوزیت باید بدانم؟",
+      "question_en": "What should I know about composite chip repair?",
+      "answer_fa": "کامپوزیت ماده‌ای همرنگ دندان است که برای برخی اصلاح‌های ظاهری یا ترمیم‌های محدود استفاده می‌شود. ممکن است در آینده به پولیش یا ترمیم نیاز پیدا کند.",
+      "answer_en": "Composite is a tooth-coloured material used for selected cosmetic changes or limited repairs. It may need polishing or repair over time.",
+      "sources": [
+        "ADA_MOUTHHEALTHY"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-035",
+      "category": "composite",
+      "question_fa": "نگهداری کامپوزیت چیست؟",
+      "question_en": "What is composite maintenance?",
+      "answer_fa": "کامپوزیت ماده‌ای همرنگ دندان است که برای برخی اصلاح‌های ظاهری یا ترمیم‌های محدود استفاده می‌شود. ممکن است در آینده به پولیش یا ترمیم نیاز پیدا کند.",
+      "answer_en": "Composite is a tooth-coloured material used for selected cosmetic changes or limited repairs. It may need polishing or repair over time.",
+      "sources": [
+        "ADA_MOUTHHEALTHY"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-036",
+      "category": "composite",
+      "question_fa": "چه نکته‌ای درباره نگهداری کامپوزیت باید بدانم؟",
+      "question_en": "What should I know about composite maintenance?",
+      "answer_fa": "کامپوزیت ماده‌ای همرنگ دندان است که برای برخی اصلاح‌های ظاهری یا ترمیم‌های محدود استفاده می‌شود. ممکن است در آینده به پولیش یا ترمیم نیاز پیدا کند.",
+      "answer_en": "Composite is a tooth-coloured material used for selected cosmetic changes or limited repairs. It may need polishing or repair over time.",
+      "sources": [
+        "ADA_MOUTHHEALTHY"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-037",
+      "category": "crown",
+      "question_fa": "روکش دندان چیست؟",
+      "question_en": "What is dental crown?",
+      "answer_fa": "روکش پوششی برای محافظت یا بازسازی دندان آسیب‌دیده است. انتخاب جنس و نیاز به روکش پس از معاینه و بررسی میزان بافت باقی‌مانده مشخص می‌شود.",
+      "answer_en": "A crown covers a tooth to protect or restore it. Material choice and need are determined after examination and assessment of remaining tooth structure.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-038",
+      "category": "crown",
+      "question_fa": "چه نکته‌ای درباره روکش دندان باید بدانم؟",
+      "question_en": "What should I know about dental crown?",
+      "answer_fa": "روکش پوششی برای محافظت یا بازسازی دندان آسیب‌دیده است. انتخاب جنس و نیاز به روکش پس از معاینه و بررسی میزان بافت باقی‌مانده مشخص می‌شود.",
+      "answer_en": "A crown covers a tooth to protect or restore it. Material choice and need are determined after examination and assessment of remaining tooth structure.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-039",
+      "category": "crown",
+      "question_fa": "روکش موقت چیست؟",
+      "question_en": "What is temporary crown?",
+      "answer_fa": "روکش پوششی برای محافظت یا بازسازی دندان آسیب‌دیده است. انتخاب جنس و نیاز به روکش پس از معاینه و بررسی میزان بافت باقی‌مانده مشخص می‌شود.",
+      "answer_en": "A crown covers a tooth to protect or restore it. Material choice and need are determined after examination and assessment of remaining tooth structure.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-040",
+      "category": "crown",
+      "question_fa": "چه نکته‌ای درباره روکش موقت باید بدانم؟",
+      "question_en": "What should I know about temporary crown?",
+      "answer_fa": "روکش پوششی برای محافظت یا بازسازی دندان آسیب‌دیده است. انتخاب جنس و نیاز به روکش پس از معاینه و بررسی میزان بافت باقی‌مانده مشخص می‌شود.",
+      "answer_en": "A crown covers a tooth to protect or restore it. Material choice and need are determined after examination and assessment of remaining tooth structure.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-041",
+      "category": "crown",
+      "question_fa": "مراقبت از روکش چیست؟",
+      "question_en": "What is crown care?",
+      "answer_fa": "روکش پوششی برای محافظت یا بازسازی دندان آسیب‌دیده است. انتخاب جنس و نیاز به روکش پس از معاینه و بررسی میزان بافت باقی‌مانده مشخص می‌شود.",
+      "answer_en": "A crown covers a tooth to protect or restore it. Material choice and need are determined after examination and assessment of remaining tooth structure.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-042",
+      "category": "crown",
+      "question_fa": "چه نکته‌ای درباره مراقبت از روکش باید بدانم؟",
+      "question_en": "What should I know about crown care?",
+      "answer_fa": "روکش پوششی برای محافظت یا بازسازی دندان آسیب‌دیده است. انتخاب جنس و نیاز به روکش پس از معاینه و بررسی میزان بافت باقی‌مانده مشخص می‌شود.",
+      "answer_en": "A crown covers a tooth to protect or restore it. Material choice and need are determined after examination and assessment of remaining tooth structure.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-043",
+      "category": "whitening",
+      "question_fa": "بلیچینگ دندان چیست؟",
+      "question_en": "What is teeth whitening?",
+      "answer_fa": "بلیچینگ رنگ دندان طبیعی را روشن می‌کند، اما معمولاً رنگ روکش‌ها و ترمیم‌ها را تغییر نمی‌دهد. معاینه پیش از شروع برای بررسی سلامت دندان‌ها مهم است.",
+      "answer_en": "Whitening lightens natural tooth colour but generally does not change crowns or restorations. A pre-treatment examination is important.",
+      "sources": [
+        "ADA_WHITENING"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-044",
+      "category": "whitening",
+      "question_fa": "چه نکته‌ای درباره بلیچینگ دندان باید بدانم؟",
+      "question_en": "What should I know about teeth whitening?",
+      "answer_fa": "بلیچینگ رنگ دندان طبیعی را روشن می‌کند، اما معمولاً رنگ روکش‌ها و ترمیم‌ها را تغییر نمی‌دهد. معاینه پیش از شروع برای بررسی سلامت دندان‌ها مهم است.",
+      "answer_en": "Whitening lightens natural tooth colour but generally does not change crowns or restorations. A pre-treatment examination is important.",
+      "sources": [
+        "ADA_WHITENING"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-045",
+      "category": "whitening",
+      "question_fa": "حساسیت پس از بلیچینگ چیست؟",
+      "question_en": "What is sensitivity after whitening?",
+      "answer_fa": "بلیچینگ رنگ دندان طبیعی را روشن می‌کند، اما معمولاً رنگ روکش‌ها و ترمیم‌ها را تغییر نمی‌دهد. معاینه پیش از شروع برای بررسی سلامت دندان‌ها مهم است.",
+      "answer_en": "Whitening lightens natural tooth colour but generally does not change crowns or restorations. A pre-treatment examination is important.",
+      "sources": [
+        "ADA_WHITENING"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-046",
+      "category": "whitening",
+      "question_fa": "چه نکته‌ای درباره حساسیت پس از بلیچینگ باید بدانم؟",
+      "question_en": "What should I know about sensitivity after whitening?",
+      "answer_fa": "بلیچینگ رنگ دندان طبیعی را روشن می‌کند، اما معمولاً رنگ روکش‌ها و ترمیم‌ها را تغییر نمی‌دهد. معاینه پیش از شروع برای بررسی سلامت دندان‌ها مهم است.",
+      "answer_en": "Whitening lightens natural tooth colour but generally does not change crowns or restorations. A pre-treatment examination is important.",
+      "sources": [
+        "ADA_WHITENING"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-047",
+      "category": "whitening",
+      "question_fa": "بلیچینگ و ترمیم‌های دندانی چیست؟",
+      "question_en": "What is whitening and dental restorations?",
+      "answer_fa": "بلیچینگ رنگ دندان طبیعی را روشن می‌کند، اما معمولاً رنگ روکش‌ها و ترمیم‌ها را تغییر نمی‌دهد. معاینه پیش از شروع برای بررسی سلامت دندان‌ها مهم است.",
+      "answer_en": "Whitening lightens natural tooth colour but generally does not change crowns or restorations. A pre-treatment examination is important.",
+      "sources": [
+        "ADA_WHITENING"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-048",
+      "category": "whitening",
+      "question_fa": "چه نکته‌ای درباره بلیچینگ و ترمیم‌های دندانی باید بدانم؟",
+      "question_en": "What should I know about whitening and dental restorations?",
+      "answer_fa": "بلیچینگ رنگ دندان طبیعی را روشن می‌کند، اما معمولاً رنگ روکش‌ها و ترمیم‌ها را تغییر نمی‌دهد. معاینه پیش از شروع برای بررسی سلامت دندان‌ها مهم است.",
+      "answer_en": "Whitening lightens natural tooth colour but generally does not change crowns or restorations. A pre-treatment examination is important.",
+      "sources": [
+        "ADA_WHITENING"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-049",
+      "category": "root_canal",
+      "question_fa": "درمان ریشه چیست؟",
+      "question_en": "What is root canal treatment?",
+      "answer_fa": "درمان ریشه بافت پالپی آسیب‌دیده یا عفونی را خارج می‌کند؛ کانال‌ها تمیز و پر و دندان مهروموم می‌شود. تعداد جلسات به شرایط دندان بستگی دارد.",
+      "answer_en": "Root canal treatment removes damaged or infected pulp, cleans and fills the canals, and seals the tooth. The number of visits depends on the tooth.",
+      "sources": [
+        "NHS_ROOT_CANAL"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-050",
+      "category": "root_canal",
+      "question_fa": "چه نکته‌ای درباره درمان ریشه باید بدانم؟",
+      "question_en": "What should I know about root canal treatment?",
+      "answer_fa": "درمان ریشه بافت پالپی آسیب‌دیده یا عفونی را خارج می‌کند؛ کانال‌ها تمیز و پر و دندان مهروموم می‌شود. تعداد جلسات به شرایط دندان بستگی دارد.",
+      "answer_en": "Root canal treatment removes damaged or infected pulp, cleans and fills the canals, and seals the tooth. The number of visits depends on the tooth.",
+      "sources": [
+        "NHS_ROOT_CANAL"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-051",
+      "category": "root_canal",
+      "question_fa": "بی‌حسی هنگام عصب‌کشی چیست؟",
+      "question_en": "What is anaesthesia during root canal treatment?",
+      "answer_fa": "درمان ریشه بافت پالپی آسیب‌دیده یا عفونی را خارج می‌کند؛ کانال‌ها تمیز و پر و دندان مهروموم می‌شود. تعداد جلسات به شرایط دندان بستگی دارد.",
+      "answer_en": "Root canal treatment removes damaged or infected pulp, cleans and fills the canals, and seals the tooth. The number of visits depends on the tooth.",
+      "sources": [
+        "NHS_ROOT_CANAL"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-052",
+      "category": "root_canal",
+      "question_fa": "چه نکته‌ای درباره بی‌حسی هنگام عصب‌کشی باید بدانم؟",
+      "question_en": "What should I know about anaesthesia during root canal treatment?",
+      "answer_fa": "درمان ریشه بافت پالپی آسیب‌دیده یا عفونی را خارج می‌کند؛ کانال‌ها تمیز و پر و دندان مهروموم می‌شود. تعداد جلسات به شرایط دندان بستگی دارد.",
+      "answer_en": "Root canal treatment removes damaged or infected pulp, cleans and fills the canals, and seals the tooth. The number of visits depends on the tooth.",
+      "sources": [
+        "NHS_ROOT_CANAL"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-053",
+      "category": "root_canal",
+      "question_fa": "مراقبت پس از عصب‌کشی چیست؟",
+      "question_en": "What is care after root canal treatment?",
+      "answer_fa": "درمان ریشه بافت پالپی آسیب‌دیده یا عفونی را خارج می‌کند؛ کانال‌ها تمیز و پر و دندان مهروموم می‌شود. تعداد جلسات به شرایط دندان بستگی دارد.",
+      "answer_en": "Root canal treatment removes damaged or infected pulp, cleans and fills the canals, and seals the tooth. The number of visits depends on the tooth.",
+      "sources": [
+        "NHS_ROOT_CANAL"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-054",
+      "category": "root_canal",
+      "question_fa": "چه نکته‌ای درباره مراقبت پس از عصب‌کشی باید بدانم؟",
+      "question_en": "What should I know about care after root canal treatment?",
+      "answer_fa": "درمان ریشه بافت پالپی آسیب‌دیده یا عفونی را خارج می‌کند؛ کانال‌ها تمیز و پر و دندان مهروموم می‌شود. تعداد جلسات به شرایط دندان بستگی دارد.",
+      "answer_en": "Root canal treatment removes damaged or infected pulp, cleans and fills the canals, and seals the tooth. The number of visits depends on the tooth.",
+      "sources": [
+        "NHS_ROOT_CANAL"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-055",
+      "category": "root_canal",
+      "question_fa": "روکش پس از درمان ریشه چیست؟",
+      "question_en": "What is crown after root canal treatment?",
+      "answer_fa": "درمان ریشه بافت پالپی آسیب‌دیده یا عفونی را خارج می‌کند؛ کانال‌ها تمیز و پر و دندان مهروموم می‌شود. تعداد جلسات به شرایط دندان بستگی دارد.",
+      "answer_en": "Root canal treatment removes damaged or infected pulp, cleans and fills the canals, and seals the tooth. The number of visits depends on the tooth.",
+      "sources": [
+        "NHS_ROOT_CANAL"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-056",
+      "category": "root_canal",
+      "question_fa": "چه نکته‌ای درباره روکش پس از درمان ریشه باید بدانم؟",
+      "question_en": "What should I know about crown after root canal treatment?",
+      "answer_fa": "درمان ریشه بافت پالپی آسیب‌دیده یا عفونی را خارج می‌کند؛ کانال‌ها تمیز و پر و دندان مهروموم می‌شود. تعداد جلسات به شرایط دندان بستگی دارد.",
+      "answer_en": "Root canal treatment removes damaged or infected pulp, cleans and fills the canals, and seals the tooth. The number of visits depends on the tooth.",
+      "sources": [
+        "NHS_ROOT_CANAL"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-057",
+      "category": "filling",
+      "question_fa": "پرکردگی دندان چیست؟",
+      "question_en": "What is dental filling?",
+      "answer_fa": "پرکردگی بخش آسیب‌دیده دندان را بازسازی می‌کند. حساسیت خفیف و گذرا ممکن است رخ دهد؛ درد شدید یا ماندگار باید بررسی شود.",
+      "answer_en": "A filling restores a damaged part of a tooth. Mild temporary sensitivity may occur; severe or persistent pain should be assessed.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-058",
+      "category": "filling",
+      "question_fa": "چه نکته‌ای درباره پرکردگی دندان باید بدانم؟",
+      "question_en": "What should I know about dental filling?",
+      "answer_fa": "پرکردگی بخش آسیب‌دیده دندان را بازسازی می‌کند. حساسیت خفیف و گذرا ممکن است رخ دهد؛ درد شدید یا ماندگار باید بررسی شود.",
+      "answer_en": "A filling restores a damaged part of a tooth. Mild temporary sensitivity may occur; severe or persistent pain should be assessed.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-059",
+      "category": "filling",
+      "question_fa": "حساسیت پس از پرکردن چیست؟",
+      "question_en": "What is sensitivity after a filling?",
+      "answer_fa": "پرکردگی بخش آسیب‌دیده دندان را بازسازی می‌کند. حساسیت خفیف و گذرا ممکن است رخ دهد؛ درد شدید یا ماندگار باید بررسی شود.",
+      "answer_en": "A filling restores a damaged part of a tooth. Mild temporary sensitivity may occur; severe or persistent pain should be assessed.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-060",
+      "category": "filling",
+      "question_fa": "چه نکته‌ای درباره حساسیت پس از پرکردن باید بدانم؟",
+      "question_en": "What should I know about sensitivity after a filling?",
+      "answer_fa": "پرکردگی بخش آسیب‌دیده دندان را بازسازی می‌کند. حساسیت خفیف و گذرا ممکن است رخ دهد؛ درد شدید یا ماندگار باید بررسی شود.",
+      "answer_en": "A filling restores a damaged part of a tooth. Mild temporary sensitivity may occur; severe or persistent pain should be assessed.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-061",
+      "category": "filling",
+      "question_fa": "تعویض پرکردگی چیست؟",
+      "question_en": "What is filling replacement?",
+      "answer_fa": "پرکردگی بخش آسیب‌دیده دندان را بازسازی می‌کند. حساسیت خفیف و گذرا ممکن است رخ دهد؛ درد شدید یا ماندگار باید بررسی شود.",
+      "answer_en": "A filling restores a damaged part of a tooth. Mild temporary sensitivity may occur; severe or persistent pain should be assessed.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-062",
+      "category": "filling",
+      "question_fa": "چه نکته‌ای درباره تعویض پرکردگی باید بدانم؟",
+      "question_en": "What should I know about filling replacement?",
+      "answer_fa": "پرکردگی بخش آسیب‌دیده دندان را بازسازی می‌کند. حساسیت خفیف و گذرا ممکن است رخ دهد؛ درد شدید یا ماندگار باید بررسی شود.",
+      "answer_en": "A filling restores a damaged part of a tooth. Mild temporary sensitivity may occur; severe or persistent pain should be assessed.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-063",
+      "category": "cleaning",
+      "question_fa": "جرم‌گیری دندان چیست؟",
+      "question_en": "What is dental scaling?",
+      "answer_fa": "جرم‌گیری حرفه‌ای پلاک سخت‌شده و رسوبات را برمی‌دارد. فاصله جلسات به سلامت لثه و میزان تشکیل جرم بستگی دارد.",
+      "answer_en": "Professional scaling removes hardened plaque and deposits. The interval depends on gum health and tartar formation.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-064",
+      "category": "cleaning",
+      "question_fa": "چه نکته‌ای درباره جرم‌گیری دندان باید بدانم؟",
+      "question_en": "What should I know about dental scaling?",
+      "answer_fa": "جرم‌گیری حرفه‌ای پلاک سخت‌شده و رسوبات را برمی‌دارد. فاصله جلسات به سلامت لثه و میزان تشکیل جرم بستگی دارد.",
+      "answer_en": "Professional scaling removes hardened plaque and deposits. The interval depends on gum health and tartar formation.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-065",
+      "category": "cleaning",
+      "question_fa": "پلاک و جرم دندان چیست؟",
+      "question_en": "What is plaque and tartar?",
+      "answer_fa": "جرم‌گیری حرفه‌ای پلاک سخت‌شده و رسوبات را برمی‌دارد. فاصله جلسات به سلامت لثه و میزان تشکیل جرم بستگی دارد.",
+      "answer_en": "Professional scaling removes hardened plaque and deposits. The interval depends on gum health and tartar formation.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-066",
+      "category": "cleaning",
+      "question_fa": "چه نکته‌ای درباره پلاک و جرم دندان باید بدانم؟",
+      "question_en": "What should I know about plaque and tartar?",
+      "answer_fa": "جرم‌گیری حرفه‌ای پلاک سخت‌شده و رسوبات را برمی‌دارد. فاصله جلسات به سلامت لثه و میزان تشکیل جرم بستگی دارد.",
+      "answer_en": "Professional scaling removes hardened plaque and deposits. The interval depends on gum health and tartar formation.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-067",
+      "category": "cleaning",
+      "question_fa": "مراقبت پس از جرم‌گیری چیست؟",
+      "question_en": "What is care after scaling?",
+      "answer_fa": "جرم‌گیری حرفه‌ای پلاک سخت‌شده و رسوبات را برمی‌دارد. فاصله جلسات به سلامت لثه و میزان تشکیل جرم بستگی دارد.",
+      "answer_en": "Professional scaling removes hardened plaque and deposits. The interval depends on gum health and tartar formation.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-068",
+      "category": "cleaning",
+      "question_fa": "چه نکته‌ای درباره مراقبت پس از جرم‌گیری باید بدانم؟",
+      "question_en": "What should I know about care after scaling?",
+      "answer_fa": "جرم‌گیری حرفه‌ای پلاک سخت‌شده و رسوبات را برمی‌دارد. فاصله جلسات به سلامت لثه و میزان تشکیل جرم بستگی دارد.",
+      "answer_en": "Professional scaling removes hardened plaque and deposits. The interval depends on gum health and tartar formation.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-069",
+      "category": "wisdom",
+      "question_fa": "دندان عقل چیست؟",
+      "question_en": "What is wisdom tooth?",
+      "answer_fa": "دندان عقل سالم و بدون مشکل لزوماً نیاز به خارج‌کردن ندارد. درد، التهاب یا آسیب به دندان مجاور باید با معاینه و در صورت نیاز تصویربرداری بررسی شود.",
+      "answer_en": "A healthy, problem-free wisdom tooth does not automatically need removal. Pain, inflammation or damage to nearby teeth should be assessed.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-070",
+      "category": "wisdom",
+      "question_fa": "چه نکته‌ای درباره دندان عقل باید بدانم؟",
+      "question_en": "What should I know about wisdom tooth?",
+      "answer_fa": "دندان عقل سالم و بدون مشکل لزوماً نیاز به خارج‌کردن ندارد. درد، التهاب یا آسیب به دندان مجاور باید با معاینه و در صورت نیاز تصویربرداری بررسی شود.",
+      "answer_en": "A healthy, problem-free wisdom tooth does not automatically need removal. Pain, inflammation or damage to nearby teeth should be assessed.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-071",
+      "category": "wisdom",
+      "question_fa": "دندان عقل نهفته چیست؟",
+      "question_en": "What is impacted wisdom tooth?",
+      "answer_fa": "دندان عقل سالم و بدون مشکل لزوماً نیاز به خارج‌کردن ندارد. درد، التهاب یا آسیب به دندان مجاور باید با معاینه و در صورت نیاز تصویربرداری بررسی شود.",
+      "answer_en": "A healthy, problem-free wisdom tooth does not automatically need removal. Pain, inflammation or damage to nearby teeth should be assessed.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-072",
+      "category": "wisdom",
+      "question_fa": "چه نکته‌ای درباره دندان عقل نهفته باید بدانم؟",
+      "question_en": "What should I know about impacted wisdom tooth?",
+      "answer_fa": "دندان عقل سالم و بدون مشکل لزوماً نیاز به خارج‌کردن ندارد. درد، التهاب یا آسیب به دندان مجاور باید با معاینه و در صورت نیاز تصویربرداری بررسی شود.",
+      "answer_en": "A healthy, problem-free wisdom tooth does not automatically need removal. Pain, inflammation or damage to nearby teeth should be assessed.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-073",
+      "category": "wisdom",
+      "question_fa": "خارج کردن دندان عقل چیست؟",
+      "question_en": "What is wisdom tooth removal?",
+      "answer_fa": "دندان عقل سالم و بدون مشکل لزوماً نیاز به خارج‌کردن ندارد. درد، التهاب یا آسیب به دندان مجاور باید با معاینه و در صورت نیاز تصویربرداری بررسی شود.",
+      "answer_en": "A healthy, problem-free wisdom tooth does not automatically need removal. Pain, inflammation or damage to nearby teeth should be assessed.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-074",
+      "category": "wisdom",
+      "question_fa": "چه نکته‌ای درباره خارج کردن دندان عقل باید بدانم؟",
+      "question_en": "What should I know about wisdom tooth removal?",
+      "answer_fa": "دندان عقل سالم و بدون مشکل لزوماً نیاز به خارج‌کردن ندارد. درد، التهاب یا آسیب به دندان مجاور باید با معاینه و در صورت نیاز تصویربرداری بررسی شود.",
+      "answer_en": "A healthy, problem-free wisdom tooth does not automatically need removal. Pain, inflammation or damage to nearby teeth should be assessed.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-075",
+      "category": "orthodontics",
+      "question_fa": "ارتودنسی چیست؟",
+      "question_en": "What is orthodontic treatment?",
+      "answer_fa": "ارتودنسی برای مرتب‌کردن دندان‌ها و اصلاح برخی مشکلات بایت به‌کار می‌رود. مدت درمان به پیچیدگی مشکل و شرایط فرد بستگی دارد.",
+      "answer_en": "Orthodontics aligns teeth and corrects some bite problems. Treatment duration depends on complexity and individual factors.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-076",
+      "category": "orthodontics",
+      "question_fa": "چه نکته‌ای درباره ارتودنسی باید بدانم؟",
+      "question_en": "What should I know about orthodontic treatment?",
+      "answer_fa": "ارتودنسی برای مرتب‌کردن دندان‌ها و اصلاح برخی مشکلات بایت به‌کار می‌رود. مدت درمان به پیچیدگی مشکل و شرایط فرد بستگی دارد.",
+      "answer_en": "Orthodontics aligns teeth and corrects some bite problems. Treatment duration depends on complexity and individual factors.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-077",
+      "category": "orthodontics",
+      "question_fa": "مدت درمان ارتودنسی چیست؟",
+      "question_en": "What is orthodontic treatment duration?",
+      "answer_fa": "ارتودنسی برای مرتب‌کردن دندان‌ها و اصلاح برخی مشکلات بایت به‌کار می‌رود. مدت درمان به پیچیدگی مشکل و شرایط فرد بستگی دارد.",
+      "answer_en": "Orthodontics aligns teeth and corrects some bite problems. Treatment duration depends on complexity and individual factors.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-078",
+      "category": "orthodontics",
+      "question_fa": "چه نکته‌ای درباره مدت درمان ارتودنسی باید بدانم؟",
+      "question_en": "What should I know about orthodontic treatment duration?",
+      "answer_fa": "ارتودنسی برای مرتب‌کردن دندان‌ها و اصلاح برخی مشکلات بایت به‌کار می‌رود. مدت درمان به پیچیدگی مشکل و شرایط فرد بستگی دارد.",
+      "answer_en": "Orthodontics aligns teeth and corrects some bite problems. Treatment duration depends on complexity and individual factors.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-079",
+      "category": "orthodontics",
+      "question_fa": "ارتودنسی بزرگسالان چیست؟",
+      "question_en": "What is adult orthodontics?",
+      "answer_fa": "ارتودنسی برای مرتب‌کردن دندان‌ها و اصلاح برخی مشکلات بایت به‌کار می‌رود. مدت درمان به پیچیدگی مشکل و شرایط فرد بستگی دارد.",
+      "answer_en": "Orthodontics aligns teeth and corrects some bite problems. Treatment duration depends on complexity and individual factors.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-080",
+      "category": "orthodontics",
+      "question_fa": "چه نکته‌ای درباره ارتودنسی بزرگسالان باید بدانم؟",
+      "question_en": "What should I know about adult orthodontics?",
+      "answer_fa": "ارتودنسی برای مرتب‌کردن دندان‌ها و اصلاح برخی مشکلات بایت به‌کار می‌رود. مدت درمان به پیچیدگی مشکل و شرایط فرد بستگی دارد.",
+      "answer_en": "Orthodontics aligns teeth and corrects some bite problems. Treatment duration depends on complexity and individual factors.",
+      "sources": [
+        "NHS_DENTAL_TREATMENTS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-081",
+      "category": "gum",
+      "question_fa": "بیماری لثه چیست؟",
+      "question_en": "What is gum disease?",
+      "answer_fa": "خونریزی، قرمزی، تورم یا تحلیل لثه می‌تواند نشانه بیماری لثه باشد. تشخیص و انتخاب درمان به معاینه دندان‌پزشک نیاز دارد.",
+      "answer_en": "Bleeding, redness, swelling or gum recession may indicate gum disease. Diagnosis and treatment selection require a dental examination.",
+      "sources": [
+        "ADA_ORAL_HEALTH_TOPICS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-082",
+      "category": "gum",
+      "question_fa": "چه نکته‌ای درباره بیماری لثه باید بدانم؟",
+      "question_en": "What should I know about gum disease?",
+      "answer_fa": "خونریزی، قرمزی، تورم یا تحلیل لثه می‌تواند نشانه بیماری لثه باشد. تشخیص و انتخاب درمان به معاینه دندان‌پزشک نیاز دارد.",
+      "answer_en": "Bleeding, redness, swelling or gum recession may indicate gum disease. Diagnosis and treatment selection require a dental examination.",
+      "sources": [
+        "ADA_ORAL_HEALTH_TOPICS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-083",
+      "category": "gum",
+      "question_fa": "خونریزی لثه چیست؟",
+      "question_en": "What is bleeding gums?",
+      "answer_fa": "خونریزی، قرمزی، تورم یا تحلیل لثه می‌تواند نشانه بیماری لثه باشد. تشخیص و انتخاب درمان به معاینه دندان‌پزشک نیاز دارد.",
+      "answer_en": "Bleeding, redness, swelling or gum recession may indicate gum disease. Diagnosis and treatment selection require a dental examination.",
+      "sources": [
+        "ADA_ORAL_HEALTH_TOPICS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-084",
+      "category": "gum",
+      "question_fa": "چه نکته‌ای درباره خونریزی لثه باید بدانم؟",
+      "question_en": "What should I know about bleeding gums?",
+      "answer_fa": "خونریزی، قرمزی، تورم یا تحلیل لثه می‌تواند نشانه بیماری لثه باشد. تشخیص و انتخاب درمان به معاینه دندان‌پزشک نیاز دارد.",
+      "answer_en": "Bleeding, redness, swelling or gum recession may indicate gum disease. Diagnosis and treatment selection require a dental examination.",
+      "sources": [
+        "ADA_ORAL_HEALTH_TOPICS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-085",
+      "category": "gum",
+      "question_fa": "درمان التهاب لثه چیست؟",
+      "question_en": "What is gum inflammation treatment?",
+      "answer_fa": "خونریزی، قرمزی، تورم یا تحلیل لثه می‌تواند نشانه بیماری لثه باشد. تشخیص و انتخاب درمان به معاینه دندان‌پزشک نیاز دارد.",
+      "answer_en": "Bleeding, redness, swelling or gum recession may indicate gum disease. Diagnosis and treatment selection require a dental examination.",
+      "sources": [
+        "ADA_ORAL_HEALTH_TOPICS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-086",
+      "category": "gum",
+      "question_fa": "چه نکته‌ای درباره درمان التهاب لثه باید بدانم؟",
+      "question_en": "What should I know about gum inflammation treatment?",
+      "answer_fa": "خونریزی، قرمزی، تورم یا تحلیل لثه می‌تواند نشانه بیماری لثه باشد. تشخیص و انتخاب درمان به معاینه دندان‌پزشک نیاز دارد.",
+      "answer_en": "Bleeding, redness, swelling or gum recession may indicate gum disease. Diagnosis and treatment selection require a dental examination.",
+      "sources": [
+        "ADA_ORAL_HEALTH_TOPICS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-087",
+      "category": "emergency",
+      "question_fa": "تورم شدید دهان و گردن چیست؟",
+      "question_en": "What is severe mouth or neck swelling?",
+      "answer_fa": "مشکل شدید تنفس یا بلع، تورم سریع دهان یا گردن، خونریزی شدید کنترل‌نشده یا بیهوشی نیازمند خدمات اورژانسی فوری است. در ایران با ۱۱۵ تماس بگیرید و منتظر پاسخ چت‌بات نمانید.",
+      "answer_en": "Severe breathing or swallowing difficulty, rapidly increasing mouth or neck swelling, uncontrolled heavy bleeding or loss of consciousness require immediate emergency care. In Iran call 115; do not wait for a chatbot.",
+      "sources": [
+        "NHS_EMERGENCY"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": "در علائم هشداردهنده فوراً خدمات اورژانسی دریافت کنید.",
+      "warning_en": "Seek emergency care immediately for red-flag symptoms."
+    },
+    {
+      "id": "KDF-088",
+      "category": "emergency",
+      "question_fa": "چه نکته‌ای درباره تورم شدید دهان و گردن باید بدانم؟",
+      "question_en": "What should I know about severe mouth or neck swelling?",
+      "answer_fa": "مشکل شدید تنفس یا بلع، تورم سریع دهان یا گردن، خونریزی شدید کنترل‌نشده یا بیهوشی نیازمند خدمات اورژانسی فوری است. در ایران با ۱۱۵ تماس بگیرید و منتظر پاسخ چت‌بات نمانید.",
+      "answer_en": "Severe breathing or swallowing difficulty, rapidly increasing mouth or neck swelling, uncontrolled heavy bleeding or loss of consciousness require immediate emergency care. In Iran call 115; do not wait for a chatbot.",
+      "sources": [
+        "NHS_EMERGENCY"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": "در علائم هشداردهنده فوراً خدمات اورژانسی دریافت کنید.",
+      "warning_en": "Seek emergency care immediately for red-flag symptoms."
+    },
+    {
+      "id": "KDF-089",
+      "category": "emergency",
+      "question_fa": "خونریزی کنترل‌نشده دهان چیست؟",
+      "question_en": "What is uncontrolled oral bleeding?",
+      "answer_fa": "مشکل شدید تنفس یا بلع، تورم سریع دهان یا گردن، خونریزی شدید کنترل‌نشده یا بیهوشی نیازمند خدمات اورژانسی فوری است. در ایران با ۱۱۵ تماس بگیرید و منتظر پاسخ چت‌بات نمانید.",
+      "answer_en": "Severe breathing or swallowing difficulty, rapidly increasing mouth or neck swelling, uncontrolled heavy bleeding or loss of consciousness require immediate emergency care. In Iran call 115; do not wait for a chatbot.",
+      "sources": [
+        "NHS_EMERGENCY"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": "در علائم هشداردهنده فوراً خدمات اورژانسی دریافت کنید.",
+      "warning_en": "Seek emergency care immediately for red-flag symptoms."
+    },
+    {
+      "id": "KDF-090",
+      "category": "emergency",
+      "question_fa": "چه نکته‌ای درباره خونریزی کنترل‌نشده دهان باید بدانم؟",
+      "question_en": "What should I know about uncontrolled oral bleeding?",
+      "answer_fa": "مشکل شدید تنفس یا بلع، تورم سریع دهان یا گردن، خونریزی شدید کنترل‌نشده یا بیهوشی نیازمند خدمات اورژانسی فوری است. در ایران با ۱۱۵ تماس بگیرید و منتظر پاسخ چت‌بات نمانید.",
+      "answer_en": "Severe breathing or swallowing difficulty, rapidly increasing mouth or neck swelling, uncontrolled heavy bleeding or loss of consciousness require immediate emergency care. In Iran call 115; do not wait for a chatbot.",
+      "sources": [
+        "NHS_EMERGENCY"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": "در علائم هشداردهنده فوراً خدمات اورژانسی دریافت کنید.",
+      "warning_en": "Seek emergency care immediately for red-flag symptoms."
+    },
+    {
+      "id": "KDF-091",
+      "category": "emergency",
+      "question_fa": "دندان دائمی کنده‌شده چیست؟",
+      "question_en": "What is knocked-out permanent tooth?",
+      "answer_fa": "مشکل شدید تنفس یا بلع، تورم سریع دهان یا گردن، خونریزی شدید کنترل‌نشده یا بیهوشی نیازمند خدمات اورژانسی فوری است. در ایران با ۱۱۵ تماس بگیرید و منتظر پاسخ چت‌بات نمانید.",
+      "answer_en": "Severe breathing or swallowing difficulty, rapidly increasing mouth or neck swelling, uncontrolled heavy bleeding or loss of consciousness require immediate emergency care. In Iran call 115; do not wait for a chatbot.",
+      "sources": [
+        "NHS_EMERGENCY"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": "در علائم هشداردهنده فوراً خدمات اورژانسی دریافت کنید.",
+      "warning_en": "Seek emergency care immediately for red-flag symptoms."
+    },
+    {
+      "id": "KDF-092",
+      "category": "emergency",
+      "question_fa": "چه نکته‌ای درباره دندان دائمی کنده‌شده باید بدانم؟",
+      "question_en": "What should I know about knocked-out permanent tooth?",
+      "answer_fa": "مشکل شدید تنفس یا بلع، تورم سریع دهان یا گردن، خونریزی شدید کنترل‌نشده یا بیهوشی نیازمند خدمات اورژانسی فوری است. در ایران با ۱۱۵ تماس بگیرید و منتظر پاسخ چت‌بات نمانید.",
+      "answer_en": "Severe breathing or swallowing difficulty, rapidly increasing mouth or neck swelling, uncontrolled heavy bleeding or loss of consciousness require immediate emergency care. In Iran call 115; do not wait for a chatbot.",
+      "sources": [
+        "NHS_EMERGENCY"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": "در علائم هشداردهنده فوراً خدمات اورژانسی دریافت کنید.",
+      "warning_en": "Seek emergency care immediately for red-flag symptoms."
+    },
+    {
+      "id": "KDF-093",
+      "category": "emergency",
+      "question_fa": "درد شدید دندان چیست؟",
+      "question_en": "What is severe toothache?",
+      "answer_fa": "مشکل شدید تنفس یا بلع، تورم سریع دهان یا گردن، خونریزی شدید کنترل‌نشده یا بیهوشی نیازمند خدمات اورژانسی فوری است. در ایران با ۱۱۵ تماس بگیرید و منتظر پاسخ چت‌بات نمانید.",
+      "answer_en": "Severe breathing or swallowing difficulty, rapidly increasing mouth or neck swelling, uncontrolled heavy bleeding or loss of consciousness require immediate emergency care. In Iran call 115; do not wait for a chatbot.",
+      "sources": [
+        "NHS_EMERGENCY"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": "در علائم هشداردهنده فوراً خدمات اورژانسی دریافت کنید.",
+      "warning_en": "Seek emergency care immediately for red-flag symptoms."
+    },
+    {
+      "id": "KDF-094",
+      "category": "emergency",
+      "question_fa": "چه نکته‌ای درباره درد شدید دندان باید بدانم؟",
+      "question_en": "What should I know about severe toothache?",
+      "answer_fa": "مشکل شدید تنفس یا بلع، تورم سریع دهان یا گردن، خونریزی شدید کنترل‌نشده یا بیهوشی نیازمند خدمات اورژانسی فوری است. در ایران با ۱۱۵ تماس بگیرید و منتظر پاسخ چت‌بات نمانید.",
+      "answer_en": "Severe breathing or swallowing difficulty, rapidly increasing mouth or neck swelling, uncontrolled heavy bleeding or loss of consciousness require immediate emergency care. In Iran call 115; do not wait for a chatbot.",
+      "sources": [
+        "NHS_EMERGENCY"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": "در علائم هشداردهنده فوراً خدمات اورژانسی دریافت کنید.",
+      "warning_en": "Seek emergency care immediately for red-flag symptoms."
+    },
+    {
+      "id": "KDF-095",
+      "category": "pre_post",
+      "question_fa": "اطلاعات پزشکی پیش از درمان چیست؟",
+      "question_en": "What is medical information before treatment?",
+      "answer_fa": "داروها، حساسیت‌ها، بیماری‌های زمینه‌ای و بارداری احتمالی را پیش از درمان اعلام کنید. پس از درمان، دستورهای اختصاصی تیم درمان را دنبال کنید و علائم شدید یا رو به افزایش را سریع گزارش دهید.",
+      "answer_en": "Tell the dental team about medicines, allergies, medical conditions and possible pregnancy. Follow aftercare instructions and promptly report severe or worsening symptoms.",
+      "sources": [
+        "ADA_ORAL_HEALTH_TOPICS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-096",
+      "category": "pre_post",
+      "question_fa": "چه نکته‌ای درباره اطلاعات پزشکی پیش از درمان باید بدانم؟",
+      "question_en": "What should I know about medical information before treatment?",
+      "answer_fa": "داروها، حساسیت‌ها، بیماری‌های زمینه‌ای و بارداری احتمالی را پیش از درمان اعلام کنید. پس از درمان، دستورهای اختصاصی تیم درمان را دنبال کنید و علائم شدید یا رو به افزایش را سریع گزارش دهید.",
+      "answer_en": "Tell the dental team about medicines, allergies, medical conditions and possible pregnancy. Follow aftercare instructions and promptly report severe or worsening symptoms.",
+      "sources": [
+        "ADA_ORAL_HEALTH_TOPICS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-097",
+      "category": "pre_post",
+      "question_fa": "مراقبت پس از کشیدن دندان چیست؟",
+      "question_en": "What is care after tooth extraction?",
+      "answer_fa": "داروها، حساسیت‌ها، بیماری‌های زمینه‌ای و بارداری احتمالی را پیش از درمان اعلام کنید. پس از درمان، دستورهای اختصاصی تیم درمان را دنبال کنید و علائم شدید یا رو به افزایش را سریع گزارش دهید.",
+      "answer_en": "Tell the dental team about medicines, allergies, medical conditions and possible pregnancy. Follow aftercare instructions and promptly report severe or worsening symptoms.",
+      "sources": [
+        "ADA_ORAL_HEALTH_TOPICS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-098",
+      "category": "pre_post",
+      "question_fa": "چه نکته‌ای درباره مراقبت پس از کشیدن دندان باید بدانم؟",
+      "question_en": "What should I know about care after tooth extraction?",
+      "answer_fa": "داروها، حساسیت‌ها، بیماری‌های زمینه‌ای و بارداری احتمالی را پیش از درمان اعلام کنید. پس از درمان، دستورهای اختصاصی تیم درمان را دنبال کنید و علائم شدید یا رو به افزایش را سریع گزارش دهید.",
+      "answer_en": "Tell the dental team about medicines, allergies, medical conditions and possible pregnancy. Follow aftercare instructions and promptly report severe or worsening symptoms.",
+      "sources": [
+        "ADA_ORAL_HEALTH_TOPICS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-099",
+      "category": "pre_post",
+      "question_fa": "مراجعه پس از درمان دندان‌پزشکی چیست؟",
+      "question_en": "What is follow-up after dental treatment?",
+      "answer_fa": "داروها، حساسیت‌ها، بیماری‌های زمینه‌ای و بارداری احتمالی را پیش از درمان اعلام کنید. پس از درمان، دستورهای اختصاصی تیم درمان را دنبال کنید و علائم شدید یا رو به افزایش را سریع گزارش دهید.",
+      "answer_en": "Tell the dental team about medicines, allergies, medical conditions and possible pregnancy. Follow aftercare instructions and promptly report severe or worsening symptoms.",
+      "sources": [
+        "ADA_ORAL_HEALTH_TOPICS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    },
+    {
+      "id": "KDF-100",
+      "category": "pre_post",
+      "question_fa": "چه نکته‌ای درباره مراجعه پس از درمان دندان‌پزشکی باید بدانم؟",
+      "question_en": "What should I know about follow-up after dental treatment?",
+      "answer_fa": "داروها، حساسیت‌ها، بیماری‌های زمینه‌ای و بارداری احتمالی را پیش از درمان اعلام کنید. پس از درمان، دستورهای اختصاصی تیم درمان را دنبال کنید و علائم شدید یا رو به افزایش را سریع گزارش دهید.",
+      "answer_en": "Tell the dental team about medicines, allergies, medical conditions and possible pregnancy. Follow aftercare instructions and promptly report severe or worsening symptoms.",
+      "sources": [
+        "ADA_ORAL_HEALTH_TOPICS"
+      ],
+      "confidence": "high_for_general_educational_information",
+      "review_status": "draft_for_clinician_review",
+      "warning_fa": null,
+      "warning_en": null
+    }
+  ]
+}

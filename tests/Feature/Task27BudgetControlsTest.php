@@ -2,8 +2,11 @@
 
 use App\AIRequest;
 use App\AIUsage;
+use App\ContentItem;
 use App\Services\AIControlService;
 use App\Services\AIProviderManager;
+use App\Services\AssistantService;
+use Database\Seeders\DentalFaqTestingSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

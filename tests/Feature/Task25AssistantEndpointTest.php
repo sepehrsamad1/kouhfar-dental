@@ -15,7 +15,12 @@ beforeEach(function (): void {
     foreach (array_filter([$request->ip(), $request->hasSession() ? $request->session()->getId() : null]) as $identity) {
         RateLimiter::clear('ai:'.substr(hash('sha256', 'assistant|'.$identity), 0, 24).':'.now('UTC')->format('Y-m-d-H-i'));
     }
-    RateLimiter::clear('ai:'.substr(hash('sha256', 'assistant|127.0.0.1'), 0, 24).':'.now('UTC')->format('Y-m-d-H-i'));
+    $identity = request()->user('staff')?->getAuthIdentifier();
+    if ($identity === null) {
+        $identity = request()->hasSession() ? request()->session()->getId() : request()->ip();
+    }
+    $limiterKey = 'ai:'.substr(hash('sha256', 'assistant|'.(string) ($identity ?? 'cli')), 0, 24).':'.now('UTC')->format('Y-m-d-H-i');
+    RateLimiter::clear($limiterKey);
 
     config([
         'ai.enabled' => true,

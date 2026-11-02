@@ -36,7 +36,7 @@ beforeEach(function (): void {
         'ai.capabilities.image_analysis.provider' => 'fake',
         'ai.capabilities.image_transformation.enabled' => true,
         'ai.capabilities.image_transformation.provider' => 'fake',
-        'ai.rate_limits.per_minute' => 10,
+        'ai.rate_limits.per_minute' => 10_000,
         'ai.rate_limits.daily_cost' => 0,
         'ai.pricing.input_per_1k' => 1.0,
         'ai.pricing.output_per_1k' => 2.0,

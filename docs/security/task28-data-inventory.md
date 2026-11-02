@@ -31,22 +31,30 @@ This is an application-level inventory, not a legal determination. It identifies
 | Application logs | Framework/application messages; potential request metadata depends on code and deployment | Local single-file logger by default; deployed log destination unknown. AI failure logging uses only feature/capability metadata. | Log redaction and retention at production sink not verified. Never log request bodies, cookies, OTPs, bearer tokens, image bytes, names, mobiles or clinical notes. **OPEN.** |
 | Backups / snapshots | Potentially all database and media data | Production backup configuration not supplied. | Retention, encryption, restore access and deletion propagation are unknown. **OPEN — release blocker.** |
 
-## Owner-approved policy already recorded
+## Owner-approved policy and current implementation boundary
 
-- Task 21 media retention: 90 days for unconverted Smart Smile/pre-consultation uploads; 2 years for patient/clinical media anchored to the later of media creation and last historical appointment; early soft-delete; hard purge after applicable window or 30 days after soft-delete.
-- A prior owner instruction also specified 2-year clinical-record retention from creation/last appointment. The repository does not yet contain a complete approved data-retention register and purge implementation for the patient/appointment records themselves. Treat this as an owner decision to be formally recorded and scoped, not as evidence of completed deletion.
+- Patient/CRM records: the clinic owner instructed on 2026-11-03 that patient data is to be retained indefinitely for CRM and future clinic use. No automatic deletion/anonymization of patient or appointment records is authorized by that instruction. This is not a legal determination and does not override applicable law or a valid legal hold.
+- Audit logs: original audit-log rows are to be retained indefinitely; no automatic purge is authorized.
+- Audit-log backups: daily encrypted backups, at least 90 days of backup-copy retention, storage separate from the primary application/database storage, administrator-restricted access, and a monthly restore/integrity test. These are approved requirements, not evidence that the backup infrastructure or job is implemented. The separate destination and encryption key remain deployment configuration.
+- Application logs: local storage is approved for now. Log retention/rotation and production access still require deployment verification.
+- Staff sessions: approved 15-minute idle and 8-hour absolute timeouts.
+- Cookies: Secure and HttpOnly enabled; SameSite=Lax unless compatibility tests justify Strict.
+- AI: provider-independent architecture is required; real credentials are to be supplied securely later. Keep AI disabled until provider/model, pricing and safety gates are verified.
+- SMS/OTP: an SMS service has been purchased and OTP is ready for backend integration, but the provider identity is not recorded here. Do not activate a live provider based on this statement alone.
+- Rate limits: strict for staff login and OTP, flexible for public read-only pages, and appropriate booking limits with IP/account anti-abuse controls.
 
-## Owner decisions still required — do not invent
+Task 21 media retention remains separate and unchanged: 90 days for unconverted Smart Smile/pre-consultation uploads; 2 years for patient/clinical media anchored to the later of media creation and the patient's last historical appointment; early soft-delete and hard purge after the applicable window or 30 days after soft-delete.
 
-1. Retention and purge period for login-attempt hashes and staff session-registry rows.
-2. Retention period for audit logs, including patient/appointment target UUIDs.
-3. Retention for consent records and Smart Smile session/result rows; approve a consent-token TTL.
-4. Retention for queue payloads, failed jobs, notification outbox rows and provider error metadata.
-5. Confirm retention and purge behavior for idempotency snapshots (24-hour expiry is designed, but cleanup is not evidenced).
-6. Retention for AI operational request/usage records and content references.
-7. Backup retention, encryption, access and deletion propagation.
-8. Confirm the scope and approved implementation for 2-year clinical-record retention, including patient/appointment records and any exception/hold process.
+## Owner decisions still open — do not invent
 
-Clinic-owner decision register: [task28-owner-decisions.md](task28-owner-decisions.md). The previously approved Task 21 media retention schedule is unchanged; the remaining retention decisions are separate.
+1. Retention/purge period for login-attempt hashes.
+2. Retention for consent evidence and Smart Smile session/result metadata; consent-token TTL and post-expiry behavior.
+3. Retention for queue/failed-job payloads, notification outbox/error metadata, deletion requests and idempotency snapshots.
+4. Retention for AI operational request/usage records and content references.
+5. Application-log rotation/retention duration and production access evidence.
+6. Deployment evidence for separate backup storage, encryption-key provisioning, scheduled execution, monitoring and monthly restore tests.
+7. Staff/practitioner profile retention and the purpose/access/reason-code policy for patient-match flags.
+8. Whether staff MFA is required and, if so, factor enrollment, recovery and outage policy. A purchased SMS service does not itself settle these decisions.
+9. Kavenegar URL-path API-key exposure approval or selection of a header-auth provider.
 
-**Task 28 acceptance is blocked until these decisions are approved and the resulting controls are implemented or explicitly scoped out by the clinic owner.**
+Clinic-owner decisions are recorded in [task28-owner-decisions.md](task28-owner-decisions.md). The inventory must still be checked against the deployed database, object store, backups, provider consoles and log sinks before production.

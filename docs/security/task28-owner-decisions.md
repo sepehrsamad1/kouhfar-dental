@@ -1,37 +1,50 @@
-# Task 28 — Clinic-owner decisions required for security and privacy closure
+# Task 28 — Clinic-owner decisions for security and privacy closure
 
-**Status: OPEN — this document records decisions that engineering must not invent.**
+**Status: PARTIALLY APPROVED — decisions below are recorded from the clinic owner's instructions on 2026-11-03. This is an engineering decision record, not legal advice or production approval.**
 
-Task 21's already-approved media policy remains unchanged:
+## Approved decisions
+
+| ID | Area | Owner decision | Engineering consequence / boundary |
+|---|---|---|---|
+| OD-28-01 | Patient and clinical data retention | Retain patient data indefinitely for CRM and future clinic use. | Do not automatically delete or anonymize patient, appointment, or related CRM records. This does not override applicable law, a valid legal hold, or a later written owner instruction. No destructive purge job is authorized by this decision. |
+| OD-28-02 | Staff session lifetime | 15-minute idle timeout and 8-hour absolute timeout. | Configure both values server-side. A staff session must be revoked when either limit is exceeded. |
+| OD-28-04 | Audit-log retention | Retain original audit logs indefinitely. | Do not purge original audit-log rows automatically. Audit logs remain access-controlled and must not contain patient names, mobile numbers, clinical notes, secrets, or raw request bodies. |
+| OD-28-08 | Application log destination | Store application logs locally for now. | Do not add an external SIEM/logging provider. Production log access, redaction and rotation still require deployment verification. |
+| OD-28-09 | Audit-log backup | Back up audit logs daily; keep backup copies for at least 90 days; store them separately from the primary application/database storage; encrypt them; restrict access to authorized administrators; and perform a restore/integrity test monthly. | The 90-day period applies only to backup copies. It does not authorize deletion of original audit logs. The separate storage location and encryption key must be supplied through deployment secrets/configuration, never committed. Verify that the configured destination is a genuinely separate storage volume/service, not merely another folder on the same disk. |
+| OD-28-11 (partial) | SMS/OTP capability | An SMS service has already been purchased and OTP is ready for backend integration. | The provider name and credentials have not been supplied in this decision record. Keep live sending disabled until the exact provider, data flow, credential handling and relevant OTP use case are verified. This decision alone does not approve staff MFA or its recovery policy. |
+| OD-28-12 | AI architecture | AI models will be added. The architecture must remain provider-independent. The API key will be supplied later through a secure channel. | Keep provider adapters/configuration abstracted and credentials server-side. Do not commit real API keys. AI remains disabled until the chosen provider/model, pricing, safety evaluation and deployment configuration are verified and explicitly activated. |
+| OD-28-13 | Session cookies | Secure and HttpOnly must be enabled. SameSite=Lax is the default unless compatibility tests demonstrate that Strict works without breaking required flows. | Keep Secure enforced outside local/testing, HttpOnly enabled, and SameSite=Lax for now. Do not switch to Strict without regression evidence. |
+| OD-28-14 | Rate limiting | Use endpoint-specific limits: strict for staff login and OTP, flexible for public read-only pages, and appropriate limits for booking. Apply IP/account-based throttling and anti-abuse controls where appropriate. | Keep limits server-side and test them. OTP limits must prevent SMS abuse and unexpected cost. Distributed multi-node enforcement remains a deployment verification item. |
+
+## Decisions still open
+
+| ID | Area | Still required |
+|---|---|---|
+| OD-28-03 | Login-attempt hashes | Retention and purge policy for hashed email/IP login-attempt metadata. |
+| OD-28-05 | Consent and Smart Smile | Consent-token TTL, post-expiry behavior, retention of consent evidence and Smart Smile session/result metadata, and revocation behavior. |
+| OD-28-06 | Queue and operational records | Retention for queue/failed-job payloads, notification outbox/error metadata, deletion requests, and idempotency snapshots. The existing 24-hour idempotency expiry design still needs an implemented cleanup policy. |
+| OD-28-07 | AI operational metadata | Retention period for AI request/usage records and content references. |
+| OD-28-08 (partial) | Application logs | Local destination is approved; log rotation/retention duration and production access controls still need deployment confirmation. |
+| OD-28-09 (deployment) | Backup implementation | The policy is approved, but the actual separate storage destination, encryption key provisioning, backup execution evidence, monitoring and restore-test evidence are not yet present in the repository. |
+| OD-28-10 | Staff/practitioner profiles and patient-match flags | Account/profile retention after deactivation and whether patient-match flags are required; if retained, approve access roles and a controlled reason-code vocabulary. |
+| OD-28-11 (partial) | Staff MFA | Confirm whether staff MFA is required, which factor applies to each role, enrollment, lost-device/account recovery, backup codes, administrator reset authority and provider-outage behavior. A purchased SMS service is not by itself approval of an MFA recovery policy. |
+| OD-28-15 | Kavenegar URL-path credential exposure | Before activating the existing Kavenegar adapter, approve the residual risk and confirm provider/network log redaction, or select a provider that supports header-based authentication. |
+
+## Existing approved media policy remains unchanged
+
 - Unconverted Smart Smile / pre-consultation uploads: 90 days from upload.
 - Patient / clinical media: 2 years, anchored to the later of media creation and the patient's last historical appointment.
 - Authorized early soft-delete; hard purge after the applicable retention window or 30 days after soft-delete.
 
-The decisions below are separate from that approved media policy. No real patient data is in use; these decisions are required before production use with real patient data.
+This media policy is separate from the owner's decision to retain patient/CRM records indefinitely. Retaining patient records does not mean retaining every media object indefinitely.
 
-## Decisions needed
+## Engineering guardrails
 
-| ID | Data / control | Existing evidence | Owner decision required |
-|---|---|---|---|
-| OD-28-01 | Clinical-record scope and deletion behavior | A prior owner instruction specifies 2-year clinical-record retention from creation / last appointment. Patient and appointment records currently do not have a complete purge/anonymization workflow. | Confirm whether the 2-year period applies to patient identity, appointments, appointment events, patient-match flags and consent evidence. For records linked by foreign keys, choose deletion, irreversible anonymization, or another approved disposition. Define any legal/clinical hold exception. Do not re-approve the already-set 2-year period unless its scope changes. |
-| OD-28-02 | Staff session lifetime | Staff idle and absolute timeouts are unset; session registry expiry currently falls back to 10 years. Deactivated staff sessions are now revoked immediately. | Approve idle timeout and absolute timeout values, and how long revoked/expired registry rows are retained before purge. |
-| OD-28-03 | Login-attempt metadata | login_attempts stores hashed email/IP identifiers, outcome and timestamp. No purge schedule exists. | Approve retention period and purge timing for these hashes. |
-| OD-28-04 | Audit logs | Audit rows contain actor/target UUIDs, action, request ID, timestamp and allow-listed metadata; target UUIDs may remain linkable to patients. | Approve retention period and whether identifiers should be pseudonymized after the operational audit period. |
-| OD-28-05 | Consent and Smart Smile records | Consent evidence has no approved retention period. Smart Smile bearer tokens are hashed but do not expire; session/result rows have no expiry or purge job. | Approve consent-token TTL; behavior after expiry; retention for Smart Smile session/result metadata; retention for consent evidence/document references; and whether revocation triggers immediate media/session deletion or only blocks access. |
-| OD-28-06 | Queue, notification and idempotency data | Queue/failed-job payloads, job batches, notification outbox/error metadata and deletion requests have no approved retention. Idempotency rows have a 24-hour expiry field/design but no purge job. | Approve retention after job completion/failure and after notification delivery; approve deletion-request retention; confirm whether idempotency responses should be purged after the existing 24-hour expiry. |
-| OD-28-07 | AI operational metadata | AI request/usage rows store provider/model/feature, token/cost metrics and approved content IDs, not raw prompts. No purge schedule exists. | Approve retention for AI request and usage metadata, including content references. |
-| OD-28-08 | Application and infrastructure logs | Application log sink is deployment-dependent; production destination, access, redaction and retention are unknown. | Approve log retention and access roles, and provide the intended log sink/configuration for review. Confirm request bodies, identifiers, tokens, OTPs and clinical notes must never be logged. |
-| OD-28-09 | Backups | Production database/media backup provider, encryption, access and retention are unknown. | Approve backup retention, encryption/access requirements, restore testing ownership and deletion propagation after source-record purge. |
-| OD-28-10 | Staff/practitioner profiles and patient-match flags | Staff/practitioner identifiers, names and schedules are stored. patient_match_flags.reason is free text and may contain patient-identifying or clinical detail; no dedicated route/controller was found. | Approve account/profile retention after deactivation and whether patient-match flags are required. If retained, approve access roles and a minimal reason-code vocabulary rather than free-text clinical notes. |
-| OD-28-11 | Staff multi-factor authentication | OWASP ASVS v5.0.0 Level 2 requirement `v5.0.0-V6.3.3` requires MFA or an equivalent combination of authentication mechanisms. Current staff login uses email/password only; no second factor is implemented. | Approve the required second factor (clinic-approved SMS OTP, authenticator-app TOTP, or another mechanism), whether it applies to every staff role, enrollment, lost-device recovery, account recovery, backup codes (if any), administrator reset authority, and behavior when the factor provider is unavailable. Task 15 provider integration is pending; do not enable a real provider until vendor/data-flow approval and secure credential setup are complete. |
+- Do not automatically delete original audit logs or patient/CRM records under the decisions above.
+- The indefinite-retention decisions do not override applicable legal requirements, regulatory obligations, valid legal holds, or future written owner instructions. Obtain legal review where required.
+- Do not invent retention periods for the still-open data categories.
+- Never commit real credentials, encryption keys, .env files, database dumps, real patient data or patient images.
+- Keep live AI/SMS integrations disabled until provider identity, secrets, data flows and required approval are verified.
+- Record implementation and test evidence separately from policy approval. A documented policy is not proof that a backup job, separate storage volume, or restore process is operational.
 
-
-## Engineering guardrails while decisions are pending
-
-- Keep real patient data disabled in production and staging until this register is approved and implemented.
-- Do not invent TTLs, retention periods, anonymization behavior or legal-hold rules.
-- Do not purge records or run destructive database operations based on draft assumptions.
-- Continue to enforce access controls, private storage, minimal logging and feature/provider disablement.
-- Once decisions are approved, implement idempotent purge/anonymization jobs with audit-safe behavior and regression tests, then re-run the security suite.
-
-**Approval record:** placeholder — clinic owner to confirm each OD-28 decision, the approver identity/role and approval date. Do not put patient data or personal credentials in this document.
+**Approval record:** Owner decisions recorded from the clinic owner's explicit instructions dated 2026-11-03. Approver identity/signature and formal legal review remain outside this engineering record.

@@ -42,9 +42,9 @@ final class AIControlService
 
     public function monthlySpendForModel(string $model): int
     {
-        $spend = AIUsage::query()
+        $spend = AIRequest::query()
             ->where('model', $model)
-            ->whereBetween('day', [now('UTC')->startOfMonth()->toDateString(), now('UTC')->endOfMonth()->toDateString()])
+            ->whereBetween('created_at', [now('UTC')->startOfMonth(), now('UTC')->endOfMonth()])
             ->selectRaw('COALESCE(SUM(COALESCE(actual_cost_irr, estimated_cost_irr)), 0) AS spend')
             ->value('spend');
 

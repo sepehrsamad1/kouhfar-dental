@@ -1,5 +1,6 @@
 <?php
 
+use App\AIRequest;
 use App\AIUsage;
 use App\AIControlSetting;
 use App\Services\AIControlService;
@@ -35,6 +36,18 @@ it('allows an administrator to view and update the AI budget and emergency switc
         'output_tokens' => 5,
         'estimated_cost_irr' => 2500,
         'request_count' => 1,
+    ]);
+
+    AIRequest::factory()->create([
+        'status' => 'succeeded',
+        'feature' => 'assistant',
+        'provider' => 'fake',
+        'model' => 'fake-v1',
+        'capability' => 'text',
+        'created_at' => now('UTC')->toImmutable(),
+        'input_tokens' => 10,
+        'output_tokens' => 5,
+        'estimated_cost_irr' => 2_500,
     ]);
 
     app(AIControlService::class)->settings()->update([

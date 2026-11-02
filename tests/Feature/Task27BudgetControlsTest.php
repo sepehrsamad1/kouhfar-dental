@@ -302,3 +302,15 @@ it('blocks a non-fake provider when its backend API key is missing even if prici
         ->and(AIUsage::query()->count())->toBe(0)
         ->and(app(AIControlService::class)->summary()['provider_connection_status'])->toBe('missing_credentials');
 });
+
+it('blocks Iranian patient phone numbers written with Persian digits', function (): void {
+    $response = app(AssistantService::class)->respond(
+        'برای درد دندان راهنمایی می‌خواهم. شماره تماس من ۰۹۱۲۳۴۵۶۷۸۹ است.',
+        'fa',
+    );
+
+    expect($response['status'])->toBe('refused')
+        ->and($response['answer'])->toContain('حریم خصوصی')
+        ->and(AIRequest::query()->count())->toBe(0)
+        ->and(AIUsage::query()->count())->toBe(0);
+});

@@ -92,8 +92,9 @@ final class AIControlService
         foreach ($this->configuredModels() as $model => $capabilities) {
             $tokenLimit = (int) ($tokenLimits[$model] ?? 0);
             $budgetLimit = (int) ($budgetLimits[$model] ?? 0);
-            $tokensUsed = $this->monthlyTokensForModel($model);
-            $modelSpend = $this->monthlySpendForModel($model);
+            $usage = $modelUsage->get($model);
+            $tokensUsed = (int) ($usage?->tokens_used ?? 0);
+            $modelSpend = (int) round((float) ($usage?->spend_irr ?? 0));
             $tokenPercentage = $tokenLimit > 0 ? (int) floor(($tokensUsed / $tokenLimit) * 100) : null;
             $budgetPercentage = $budgetLimit > 0 ? (int) floor(($modelSpend / $budgetLimit) * 100) : null;
 
@@ -146,6 +147,19 @@ final class AIControlService
                 'model_budget_limits_irr' => $modelBudgetLimitsIrr,
             ])->save();
         });
+    }
+
+    /**
+     * @return Collection<string, object{tokens_used: int, spend_irr: float}>
+     */
+    private function monthlyModelUsage(): Collection
+    {
+        return AIUsage::query()
+            ->selectRaw('model, COALESCE(SUM(input_tokens + output_tokens), 0) AS tokens_used, COALESCE(SUM(estimated_cost_irr), 0) AS spend_irr')
+            ->whereBetween('day', [now('UTC')->startOfMonth()->toDateString(), now('UTC')->endOfMonth()->toDateString()])
+            ->groupBy('model')
+            ->get()
+            ->keyBy('model');
     }
 
     /** @return array<string, list<string>> */

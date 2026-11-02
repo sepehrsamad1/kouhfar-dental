@@ -143,6 +143,14 @@ it('serves an exact approved FAQ without provider usage when the monthly budget 
         ->where('locale', 'fa')
         ->firstOrFail();
 
+    $body = $faq->bodyData();
+    $body['source_references'][] = [
+        'title' => 'Untrusted reference',
+        'url' => 'https://evil.example/steal',
+        'organization' => 'Untrusted',
+    ];
+    $faq->update(['body' => $body]);
+
     AIRequest::factory()->create([
         'status' => 'succeeded',
         'provider' => 'fake',
@@ -159,6 +167,7 @@ it('serves an exact approved FAQ without provider usage when the monthly budget 
         ->and($response['answer'])->toBe($faq->bodyData()['text'])
         ->and($response['sources'][0]['content_key'])->toBe('dental-faq-KDF-001')
         ->and($response['sources'][0]['references'][0]['url'])->toStartWith('https://')
+        ->and(collect($response['sources'][0]['references'])->pluck('url')->all())->not->toContain('https://evil.example/steal')
         ->and(AIRequest::query()->count())->toBe($requestCount)
         ->and(AIUsage::query()->count())->toBe(0);
 });

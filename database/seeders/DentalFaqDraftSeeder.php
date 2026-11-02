@@ -61,6 +61,10 @@ final class DentalFaqDraftSeeder extends Seeder
                                 'title' => $faq[$questionKey],
                                 'text' => $faq[$answerKey],
                                 'sources' => $faq['sources'],
+                                'source_references' => array_map(
+                                    static fn (string $sourceId): array => ['id' => $sourceId, ...$document['sources'][$sourceId]],
+                                    $faq['sources'],
+                                ),
                                 'confidence' => $faq['confidence'],
                                 'review_status' => $faq['review_status'],
                                 'warning' => $locale === 'fa' ? $faq['warning_fa'] : $faq['warning_en'],

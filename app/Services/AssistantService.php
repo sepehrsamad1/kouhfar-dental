@@ -248,7 +248,7 @@ final class AssistantService
     private function sources(Collection $items): array
     {
 
-        return $items->map(static fn (array $item): array => [
+        return $items->map(fn (array $item): array => [
             'content_key' => $item['content_key'],
             'version' => (int) $item['version'],
             'title' => $item['title'],
@@ -322,7 +322,6 @@ final class AssistantService
 
     private function unavailableText(string $locale): string
     {
-
         return $locale === 'en'
             ? 'I do not have enough approved clinic information to answer that safely. Please contact the clinic or a qualified dentist.'
             : 'اطلاعات تأییدشده کافی برای پاسخ ایمن به این سؤال در دسترس نیست. لطفاً با کلینیک یا یک دندانپزشک واجد صلاحیت تماس بگیرید.';
@@ -330,7 +329,6 @@ final class AssistantService
 
     private function unavailable(string $locale): array
     {
-
         return ['status' => 'unavailable', 'answer' => $this->unavailableText($locale), 'sources' => []];
     }
 }

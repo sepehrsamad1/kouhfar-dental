@@ -50,7 +50,7 @@
 | Mass assignment | Form Requests, validated payloads, explicit patient field assignment; new hostile-field regression test | Audit all remaining write paths; CI pending. |
 | Open redirect after staff login | Local-path allowlist strengthened to reject schemes, hosts, backslashes and control characters; regression test added | CI pending; verify reverse-proxy/path normalization in deployed environment. |
 | CSRF on staff mutations | Laravel web middleware; appointment API route explicitly includes web middleware | Production-browser negative test and proxy/cookie behavior not verified. |
-| Session theft/fixation | Session ID regenerated at login; logout revokes registry; HttpOnly/SameSite; Secure default-on outside local/testing | Timeout values unset; production HTTPS and cookie behavior not tested against deployment. |
+| Session theft/fixation | Session ID regenerated at login; logout revokes registry; middleware now also revokes a live registry immediately when the staff account is deactivated; HttpOnly/SameSite; Secure default-on outside local/testing. Regression test added. | Timeout values unset; production HTTPS and cookie behavior not tested against deployment. |
 | Brute force | Per-email+IP login throttling; generic error; failed-attempt hashes | Distributed/global IP throttling and alerting not verified. |
 | SQL injection | Eloquent/query builder binding; new SQL-looking search regression test | No external DAST/fuzz run; full raw-query inventory and dynamic query review remain open. |
 | Stored XSS | Blade escaping; sanitization allowlist; existing regression test for script markup | Full DOM/reflected payload corpus and browser CSP review remain open. |

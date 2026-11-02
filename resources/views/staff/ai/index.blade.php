@@ -26,6 +26,10 @@
         <form method="post" action="{{ route('staff.ai.update') }}">
             @csrf
             @method('PATCH')
+            @php
+                $tokenLimitValues = old('provider_token_limits', (array) $settings->provider_token_limits);
+                $modelBudgetValues = old('model_budget_limits_irr', (array) $settings->model_budget_limits_irr);
+            @endphp
             <label>سقف بودجه ماهانه (ریال)
                 <input type="number" name="monthly_budget_irr" min="1000" max="1000000000000" value="{{ old('monthly_budget_irr', $settings->monthly_budget_irr) }}" required>
             </label>
@@ -34,10 +38,10 @@
                     <h3>محدودیت مستقل مدل: {{ $model }}</h3>
                     <p>ارائه‌دهنده‌ها: {{ implode(', ', $limits['providers']) }} | وضعیت کلید Backend: {{ $limits['credentials_configured'] ? 'تنظیم شده یا برای ارائه‌دهنده آزمایشی لازم نیست' : 'تنظیم نشده' }}</p>
                     <label>سقف داخلی توکن ماهانه
-                        <input type="number" name="provider_token_limits[{{ $model }}]" min="1" max="1000000000000" value="{{ old('provider_token_limits.'.$model, data_get($settings->provider_token_limits, $model, '')) }}" placeholder="بدون سقف مستقل">
+                        <input type="number" name="provider_token_limits[{{ $model }}]" min="1" max="1000000000000" value="{{ ($tokenLimitValues[$model] ?? '') }}" placeholder="بدون سقف مستقل">
                     </label>
                     <label>سقف مالی ماهانه مدل (ریال)
-                        <input type="number" name="model_budget_limits_irr[{{ $model }}]" min="1000" max="1000000000000" value="{{ old('model_budget_limits_irr.'.$model, data_get($settings->model_budget_limits_irr, $model, '')) }}" placeholder="بدون سقف مستقل">
+                        <input type="number" name="model_budget_limits_irr[{{ $model }}]" min="1000" max="1000000000000" value="{{ ($modelBudgetValues[$model] ?? '') }}" placeholder="بدون سقف مستقل">
                     </label>
                     <p>مصرف توکن: {{ number_format($limits['tokens_used']) }} / {{ $limits['token_limit'] === null ? 'سقف مستقل تنظیم نشده' : number_format($limits['token_limit']) }} | مصرف مالی: {{ number_format($limits['spend_irr']) }} / {{ $limits['budget_limit_irr'] === null ? 'سقف مستقل تنظیم نشده' : number_format($limits['budget_limit_irr']) }} ریال</p>
                     <p>وضعیت این مدل: {{ $limits['blocked'] ? 'متوقف‌شده به‌دلیل رسیدن به سقف مستقل' : 'مجاز طبق سقف‌های فعلی' }}</p>

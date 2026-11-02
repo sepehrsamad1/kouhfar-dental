@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Notifications\Otp\MeliPayamakOtpProvider;
-use App\Notifications\Otp\OtpProvider;
 use App\Notifications\Otp\NullOtpProvider;
+use App\Notifications\Otp\OtpProvider;
 use InvalidArgumentException;
 
 final class OtpProviderManager

@@ -6,8 +6,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StaffLoginRequest;
 use App\LoginAttempt;
-use App\Session as StaffSession;
 use App\Services\TotpService;
+use App\Session as StaffSession;
 use App\StaffUser;
 use App\Support\AuditLogger;
 use Illuminate\Http\RedirectResponse;

@@ -7,7 +7,9 @@ namespace App\Services;
 final class TotpService
 {
     private const BASE32_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+
     private const PERIOD_SECONDS = 30;
+
     private const DIGITS = 6;
 
     public function generateSecret(int $bytes = 20): string
@@ -60,10 +62,10 @@ final class TotpService
 
     private function codeForCounter(string $key, int $counter): string
     {
-        $message = pack('N2', ($counter >> 32) & 0xffffffff, $counter & 0xffffffff);
+        $message = pack('N2', ($counter >> 32) & 0xFFFFFFFF, $counter & 0xFFFFFFFF);
         $hash = hash_hmac('sha1', $message, $key, true);
-        $offset = ord($hash[strlen($hash) - 1]) & 0x0f;
-        $binary = unpack('N', substr($hash, $offset, 4))[1] & 0x7fffffff;
+        $offset = ord($hash[strlen($hash) - 1]) & 0x0F;
+        $binary = unpack('N', substr($hash, $offset, 4))[1] & 0x7FFFFFFF;
 
         return str_pad((string) ($binary % (10 ** self::DIGITS)), self::DIGITS, '0', STR_PAD_LEFT);
     }

@@ -27,10 +27,10 @@ function task28TotpCode(string $secret, int $timestamp): string
     }
 
     $counter = intdiv($timestamp, 30);
-    $message = pack('N2', ($counter >> 32) & 0xffffffff, $counter & 0xffffffff);
+    $message = pack('N2', ($counter >> 32) & 0xFFFFFFFF, $counter & 0xFFFFFFFF);
     $hash = hash_hmac('sha1', $message, $key, true);
-    $offset = ord($hash[strlen($hash) - 1]) & 0x0f;
-    $binary = unpack('N', substr($hash, $offset, 4))[1] & 0x7fffffff;
+    $offset = ord($hash[strlen($hash) - 1]) & 0x0F;
+    $binary = unpack('N', substr($hash, $offset, 4))[1] & 0x7FFFFFFF;
 
     return str_pad((string) ($binary % 1_000_000), 6, '0', STR_PAD_LEFT);
 }

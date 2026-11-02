@@ -1,6 +1,6 @@
 # Task 28 — Security and Privacy Audit
 
-**Status: LATEST BRANCH REVISION CI-PASSED — CI run #862 passed on commit `dcea4e623065571d8669b9e098e9680077dfbb83`. TASK ACCEPTANCE REMAINS BLOCKED by SEC-28-003 and SEC-28-012 plus owner/deployment decisions and open verification scope. Task 28 remains blocked by high findings SEC-28-003 (retention/purge) and SEC-28-012 (staff MFA), plus owner/deployment decisions and open verification scope.**
+**Status: IMPLEMENTATION ADDED — CI PENDING for the latest commit. TASK ACCEPTANCE REMAINS BLOCKED by SEC-28-003 and SEC-28-012 plus deployment decisions and open verification scope.**
 
 ## Task identity
 
@@ -21,6 +21,9 @@
 - Restricted dormant Kavenegar egress to the approved HTTPS host/path, rejected userinfo/query/fragment/other origins, disabled redirects and prevented transport exceptions from exposing the API-key URL; added synthetic SSRF/redirect regression tests.
 - Added production/staging `__Secure-` session-cookie naming to satisfy ASVS V3.3.1; the configuration regression test passed in CI run #843.
 - Added ASVS Level 2 MFA finding: staff authentication is currently password-only; owner must approve the second factor and recovery flow before this can be implemented.
+- Recorded owner-approved patient/CRM and original audit-log indefinite retention; no automatic deletion of these records is authorized by the owner decision.
+- Added Laravel-native audit-log backup commands using a consistent database snapshot, AES-256-GCM authenticated chunk encryption, an explicitly configured absolute backup path, 90-day minimum backup-copy retention, and no database-specific dump utility.
+- Scheduled encrypted audit-log backups daily at 02:00 Asia/Tehran and file-level recovery verification monthly at 04:00 on day 1. Added an operational runbook and regression tests for encryption, tamper detection, missing configuration and backup-copy retention.
 - Added Composer lockfile audit and npm lockfile audit to CI.
 - Added Gitleaks full-history secret scan to CI using a full checkout.
 - Added threat model, ASVS checklist, preliminary privacy impact assessment, data inventory/retention register, third-party flow inventory, findings register and clinic-owner decision register.
@@ -39,7 +42,7 @@
 
 ## Automated verification status
 
-[CI run #862](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41489395349) passed on branch commit `c06720ddc041ad42786d47f7d74dbbc99b21bab0`.
+The implementation in the latest commit is awaiting its own CI run. The preceding revision passed [CI run #862](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41489395349) passed on branch commit `c06720ddc041ad42786d47f7d74dbbc99b21bab0`.
 
 - 280 Laravel/Pest tests passed (24,493 assertions), including the new patient authorization, staff deactivation and mocked Kavenegar egress regression tests.
 - 36 Playwright browser tests passed.
@@ -56,16 +59,16 @@ Required CI commands are recorded above. Gitleaks scans the full repository hist
 ## Open release blockers
 
 - **High — staff MFA missing (ASVS V6.3.3):** staff login currently uses only email/password. The clinic owner must approve the second factor and recovery policy; Task 15 provider integration is not activated.
-- **High — retention/privacy policy incomplete:** the 2-year clinical-record and Task 21 media periods remain recorded; however, retention/purge behavior for login-attempt hashes, session registry, audit logs, consent records, Smart Smile session/result metadata, AI usage/request rows, queue/failed-job payloads, notification outbox, idempotency snapshots, deletion requests, application logs and backups is still unapproved or unimplemented. See [clinic-owner decisions](security/task28-owner-decisions.md).
+- **High — retention/backup controls incomplete:** patient/CRM records and original audit logs are owner-approved for indefinite retention and are not automatically purged. The backup pipeline and schedule are implemented in this branch, but separate physical storage, key/ACL provisioning, monitoring and operational recovery evidence are not yet supplied. Retention for login-attempt hashes, consent/Smart Smile metadata, AI usage/request rows, queue/failed-job payloads, notification outbox, idempotency snapshots, deletion requests and application logs remains partly open. See [clinic-owner decisions](security/task28-owner-decisions.md) and the [backup runbook](security/audit-log-backup-runbook.md).
 - **Medium — Kavenegar API key remains in the provider URL path:** the adapter is dormant and outbound host/redirect controls are hardened, but provider/network log redaction or an alternative header-auth provider must be approved before activation.
 - **Medium — Smart Smile consent token has no expiry:** owner must approve TTL and post-expiry behavior before implementation.
-- **Medium — staff idle/absolute session timeout values are unset:** owner policy required; registry expiry currently defaults to ten years if unset.
+- **Medium — staff idle/absolute session timeout values:** owner approved 15-minute idle and 8-hour absolute limits; configuration defaults are set in this branch. Verify production configuration and registry behavior at deployment.
 - **Medium — production controls unverified:** TLS/proxy, database runtime privileges, private storage ACLs, secret injection, backup/log access and retention are deployment evidence not present in the repository.
 - **Medium — verification scope incomplete:** full route-by-route IDOR matrix, production-like CSRF negative test, browser DOM-XSS corpus and distributed rate-limit behavior remain open.
 - **CI scans passed:** Composer/npm audits and full-history Gitleaks passed in run #820. Supplementary review of GitHub secret alerts, binary images/artifacts and external log sinks remains open.
 
 ## Stop condition
 
-Task 28 must not be merged as complete or marked verified while any high finding remains open or required privacy/retention decisions are unapproved. The next action is to obtain the clinic owner's decisions in [task28-owner-decisions.md](security/task28-owner-decisions.md), implement the approved MFA and retention/purge controls with regression tests, and close the remaining medium findings using deployment evidence and a route-by-route verification matrix.
+Task 28 must not be merged as complete or marked verified while any high finding remains open or required privacy/retention decisions are unapproved. The next action is to resolve the remaining owner decisions, approve and implement staff MFA, provision the separate backup volume and encryption key, collect operational backup/recovery evidence, and close the remaining medium findings using deployment evidence and a route-by-route verification matrix.
 
 No real patient data, patient images, real credentials, production commands, destructive database operations, live AI provider or live SMS provider were used.

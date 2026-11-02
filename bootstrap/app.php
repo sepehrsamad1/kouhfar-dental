@@ -17,6 +17,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $schedule->command('appointments:expire-pending')->everyMinute()->withoutOverlapping(5);
         $schedule->command('notifications:dispatch-due')->everyMinute()->withoutOverlapping(5);
         $schedule->command('media:purge-expired')->dailyAt('03:15')->timezone('Asia/Tehran')->withoutOverlapping(30);
+        $schedule->command('audit-logs:backup')->dailyAt('02:00')->timezone('Asia/Tehran')->withoutOverlapping(120);
+        $schedule->command('audit-logs:verify-latest')->monthlyOn(1, '04:00')->timezone('Asia/Tehran')->withoutOverlapping(60);
     })
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->redirectGuestsTo(fn (): string => route('staff.login'));

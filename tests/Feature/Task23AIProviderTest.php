@@ -4,6 +4,7 @@ use App\AIRequest;
 use App\AIUsage;
 use App\Services\AIProviderManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
 
@@ -25,7 +26,7 @@ beforeEach(function (): void {
         'ai.pricing.output_per_1k' => 2.0,
     ]);
 
-    RateLimiter::clear('ai:'.substr(hash('sha256', 'task23'), 0, 24).':'.now('UTC')->format('Y-m-d-H-i'));
+    Cache::flush();
 });
 
 it('keeps AI disabled by default', function (): void {

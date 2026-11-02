@@ -56,6 +56,9 @@ final class KavenegarSmsProvider implements SmsProvider
             && strtolower((string) ($parts['host'] ?? '')) === 'api.kavenegar.com'
             && (! isset($parts['port']) || $parts['port'] === 443)
             && rtrim((string) ($parts['path'] ?? ''), '/') === '/v1'
-            && ! isset($parts['user'], $parts['pass'], $parts['query'], $parts['fragment']);
+            && ! isset($parts['user'])
+            && ! isset($parts['pass'])
+            && ! isset($parts['query'])
+            && ! isset($parts['fragment']);
     }
 }

@@ -21,6 +21,7 @@ See task27-owner-decisions.md. Approved: 100 Persian + 100 English evaluation ca
 - Obvious identifiers (email, Iranian mobile and common +1 phone formats, national-ID patterns, explicit patient names/records) are blocked before provider prompts; retrieved knowledge containing common prompt-injection or secret-exfiltration instructions is excluded.
 - Assistant request throttling is applied by IP at the public route and by authenticated-user/public-session identity in the provider manager.
 - Admin usage view includes monthly per-model totals, daily per-feature usage, request statuses/timestamps, configured provider/model, and explicit unknown quota/connection status when no real provider telemetry exists.
+- Authorized administrators can configure independent monthly internal token caps (80%/95% alerts) and IRR budgets (50%/80%/100% alerts) per configured model; hitting a model cap blocks only that model, while the global budget blocks all model calls.
 - Standard fallback is returned without an additional model request when AI is disabled, rate-limited, over budget, or provider processing fails.
 
 ## Important accounting and safety limits

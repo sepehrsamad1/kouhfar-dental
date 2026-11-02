@@ -33,6 +33,8 @@ final class AIProviderManager
     public function generateText(string $feature, string $prompt, array $context = []): array
     {
         if ($this->enabled('text') === false) {
+            $this->recordDenied($feature, 'text', 'disabled');
+
             return $this->disabled();
         }
 
@@ -65,6 +67,8 @@ final class AIProviderManager
     public function analyzeImage(string $feature, string $imageReference, array $context = []): array
     {
         if ($this->enabled('image_analysis') === false) {
+            $this->recordDenied($feature, 'image_analysis', 'disabled');
+
             return ['status' => 'disabled', 'result' => null, 'input_tokens' => 0, 'output_tokens' => 0];
         }
 
@@ -97,6 +101,8 @@ final class AIProviderManager
     public function transformImage(string $feature, string $imageReference, array $context = []): array
     {
         if ($this->enabled('image_transformation') === false) {
+            $this->recordDenied($feature, 'image_transformation', 'disabled');
+
             return ['status' => 'disabled', 'image_reference' => null, 'input_tokens' => 0, 'output_tokens' => 0];
         }
 
@@ -127,9 +133,14 @@ final class AIProviderManager
 
     private function recordBlocked(string $feature, string $capability): void
     {
+        $this->recordDenied($feature, $capability, 'blocked');
+    }
+
+    private function recordDenied(string $feature, string $capability, string $status): void
+    {
         $this->requests->record(
             $feature,
-            'blocked',
+            $status,
             [],
             $this->configuredProvider($capability),
             $this->configuredModel($capability),

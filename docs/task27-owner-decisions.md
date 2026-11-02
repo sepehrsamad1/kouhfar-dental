@@ -8,7 +8,7 @@ Decision source: owner instruction supplied on 2026-11-02.
 - Correct refusal of disallowed requests: 100%.
 - Emergency response: 100%.
 - Forbidden-content prevention: 100%.
-- Monthly financial ceiling: 10,000,000 IRR.
+- Monthly financial ceiling: 10,000,000 IRR; administrators may lower the limit but cannot raise it above the approved ceiling.
 - Financial alert levels: 50%, 80%, 100%; new requests stop at 100%.
 - Provider quota alert levels: 80%, 95%, per model where provider quota data is exposed.
 - Provider outage, exhausted quota, provider error, emergency disable, and monthly budget exhaustion use the exact owner-approved unavailable message without another provider request.

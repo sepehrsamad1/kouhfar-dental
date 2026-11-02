@@ -1,53 +1,46 @@
-# Project status
+# Task 27 — AI evaluation, safety gates, and cost controls
 
-Last updated: 2026-11-01.
+Status: IMPLEMENTATION IN PROGRESS — not verified.
 
-| Package | Status | Notes |
-|---|---|---|
-| 1 Shell audit | Done (docs only) | Original browser screenshots were not taken. |
-| 2 Requirements | Draft, partially superseded by later owner decisions | See `docs/product-spec.md`. |
-| 3 Architecture and contract | Done (design) | Original OpenAPI draft has planned endpoints that differ from the current Task 13/14 routes. |
-| 4 Repo setup | Scaffold done | Repository is active; settings still need owner verification. |
-| 5 Modularize UI | VERIFIED | See task 05 documentation. |
-| 6 CI, testing, and developer tooling | VERIFIED | PR #1 merged; CI passed. |
-| 7 Core Eloquent data model | Complete for approved scope (OTP deferred) | OTP and VerificationChallenge remain deferred to Task 15. |
-| 8 Database migrations, seeders, and constraints | VERIFIED | PostgreSQL schema and tests implemented; see Task 08 status. |
-| 9 Staff authentication | VERIFIED | See Task 09 status; CI passed. |
-| 10 Authorization and audit controls | VERIFIED | See Task 10 status; CI passed. |
-| 11 Staff patient management | VERIFIED | CI passed on main. |
-| 12 Services, practitioners, resources, and working hours | MERGED; CI VERIFIED | PR #13 merged to main. |
-| 13 Availability engine and timezone-correct slot generation | MERGED; CI VERIFIED | PR #14 merged to main; post-merge CI passed. |
-| 14 Transactional appointment creation | MERGED; CI VERIFIED | PR #15 merged to main as `9920f2b9dc80352412921bff20c8241f61c7f49e`; post-merge CI passed. |
-| 15 Public booking verification/tracking | DEFERRED | Owner confirmed mobile OTP is required. SMS provider/subscription, budget, privacy consent wording/version, and operational verification policy are still being gathered. Do not implement the unresolved provider/policy layer yet. |
-| 16 Connect existing booking UI to real API | MERGED; CI VERIFIED | PR #17 merged to main as `2ad1e590e93eaaa38965cfbfeff660c0a9f47cf2`. CI run `40740015793` passed after merge. |
-| 17 Staff portal shell | MERGED; CI VERIFIED | PR #18 merged; staff shell, cache protection, isolated assets, Gate-controlled navigation and staff authentication safeguards implemented. |
-| 18 Staff management UI | MERGED; CI VERIFIED | PR #20 merged; staff configuration/patient management UI completed, version-aware forms and tests added. Full PR CI passed before merge. |
-| 19 Staff appointment calendar and lifecycle | MERGED; CI VERIFIED | PR #21 merged to `main` as `a9c9a230eff975f09c9c67e9741fb1baf89c465b`. PR CI run `40771222818` passed: 184 Laravel tests / 23,704 assertions, PHPStan, migrations, 16 Playwright browser tests, and Task 19 responsive screenshots at 375/768/1440px. |
-| 20 Content workflow and publication boundary | MERGED; CI VERIFIED | PR #22 merged to `main` as `e55392434bcbfc854a3eea971e61ef9e08084b33`. Final PR CI run `40775032725` passed: 191 Laravel tests / 23,753 assertions, PHPStan, migrations, 19 Playwright browser tests, and Task 20 responsive screenshots at 375/768/1440px. |
-| 21 Secure image and media system | MERGED; CI VERIFIED | PR #23 merged to `main`; secure private storage, content validation, re-encoding, signed access, soft delete, purge job and Task 22 scheduler hook implemented. Final PR CI run `40891958186` passed: 203 Laravel tests / 23,787 assertions, PHPStan, Pint, PostgreSQL migrations, Playwright smoke tests and responsive artifacts. |
+## Owner-approved values
 
-## Decisions still requiring owner confirmation
+See task27-owner-decisions.md. Dataset v1.0.0 contains 100 Persian and 100 English cases. Thresholds: 95% citation presence, 95% grounding, and 100% for refusal correctness, emergency response, and forbidden-content prevention. Monthly budget ceiling: 10,000,000 IRR.
 
-- Practitioner identities, qualifications, and practitioner-to-service assignments.
-- Exact recurring breaks and holiday dates; public holidays are not automatically clinic closures.
-- Task 15 SMS provider/subscription, budget, privacy notice text/version, verification-grant policy, anti-abuse policy and tracking/status verification policy.
-- Task 21 broader reception/practitioner media access matrix remains unapproved; current policy is admin-only.
+## Existing implementation inspected
 
-Confirmed: two dental units shared between practitioners and one consultation space; clinic hours 12:00-20:00 Saturday-Thursday in `Asia/Tehran`; cross-midnight working periods prohibited.
+- Task 23 provider abstraction, usage aggregation, rate limits, fake provider, and disabled-by-default flags.
+- Task 24 published-content-only assistant, emergency bypass, refusal behavior, and source references.
+- Task 25 versioned assistant API and safe frontend rendering.
+- Task 26 Smart Smile remains behind its release gate.
 
-Task 19 owner decisions:
-- Cancellation and rescheduling cutoff: 24 hours before appointment start.
-- Staff appointment permissions approved: admin/reception handle scheduling logistics; practitioners view their own appointments and may mark started appointments completed or no-show.
+## Evaluation dataset
 
-Task 13/14 booking policies:
-- Pending appointment hold: 1 hour.
-- Minimum booking notice: 24 hours.
-- Booking horizon: through the end of the local date 14 days after the current local date.
+The versioned dataset is tests/Fixtures/AI/task27-evaluation-v1.json and contains 200 cases across normal dental questions, specialist treatment questions, off-domain requests, diagnosis/prescription requests, emergency red flags, prompt injection, secret exfiltration, harmful requests, ambiguous requests, and citation-required questions.
 
-Task 16 boundary:
-- Public booking UI is connected to the real Task 13/14 APIs.
-- OTP remains fail-closed/default-on until Task 15 supplies the approved verification implementation.
-- No SMS provider, real message, provider credential, privacy notice, or real patient data was introduced.
+## Research sources for FAQ curation
 
-| 22 Queues, scheduler, and notifications | MERGED; CI VERIFIED | PR #24 merged after CI run `41325374368` passed. See `docs/task22-status.md`. |
-| 23 AI provider abstraction and cost controls | IMPLEMENTED; pending CI | Deterministic fake provider, bounded text/image contracts, centralized configuration, privacy-safe request/usage accounting, rate/cost limits, safe fallback behavior, and disabled-by-default release gate. See `docs/task23-status.md`. |
+- ADA MouthHealthy: https://www.mouthhealthy.org/all-topics-a-z
+- ADA Oral Health Topics: https://www.ada.org/resources/ada-library/oral-health-topics
+- NHS dental treatments: https://www.nhs.uk/live-well/healthy-teeth-and-gums/dental-treatments/
+- NHS root canal treatment: https://www.nhs.uk/tests-and-treatments/root-canal-treatment/
+- NHS emergency dental care: https://www.nhs.uk/nhs-services/dentists/how-to-find-an-nhs-dentist-in-an-emergency/
+- NHS toothache and abscess: https://www.nhs.uk/symptoms/toothache/ and https://www.nhs.uk/conditions/dental-abscess/
+- CDC adult oral health: https://www.cdc.gov/oral-health/prevention/oral-health-tips-for-adults.html
+- CDC dental infection prevention: https://www.cdc.gov/dental-infection-control/hcp/summary/standard-precautions.html
+- ADA whitening review: https://www.ada.org/resources/ada-library/oral-health-topics/whitening/
+
+## Limitations before VERIFIED
+
+- CI must execute the evaluation runner and prove the approved thresholds.
+- Provider-specific live billing and quota status cannot be asserted while only the fake provider is configured; unknown must remain explicit.
+- FAQ material must remain reviewable and must not be silently auto-published as clinic-approved clinical advice.
+- Admin budget controls, model-level usage visibility, audit logging, emergency disable, and safe fallback must be implemented and tested.
+- No real provider, API key, patient data, or production system is activated by this task.
+
+
+## Task 27
+
+- Status: IN PROGRESS — implementation and CI verification pending.
+- Owner-approved evaluation size: 100 Persian + 100 English; monthly budget: 10,000,000 IRR.
+- Branch: task/27-ai-evaluation-cost-safety.
+- See docs/task27-status.md and docs/task27-owner-decisions.md for implementation details and release limitations.

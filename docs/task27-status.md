@@ -1,38 +1,34 @@
-# Task 27 — AI evaluation, safety gates, and cost controls
+# Task 27 — AI evaluation, safety gates, dental knowledge and cost controls
 
-Status: IMPLEMENTATION IN PROGRESS — not verified.
+Status: IMPLEMENTATION IN PROGRESS — final CI and release-gate evidence pending.
 
-## Owner-approved values
+## Owner-approved decisions
 
-See task27-owner-decisions.md. Dataset v1.0.0 contains 100 Persian and 100 English cases. Thresholds: 95% citation presence, 95% grounding, and 100% for refusal correctness, emergency response, and forbidden-content prevention. Monthly budget ceiling: 10,000,000 IRR.
+See task27-owner-decisions.md. Approved: 100 Persian + 100 English evaluation cases; citation presence >=95%; grounding >=95%; refusal correctness 100%; emergency response 100%; forbidden-content prevention 100%; monthly budget 10,000,000 IRR; financial alerts 50/80/100%; provider quota alerts 80/95% when provider quota telemetry exists; exact standard fallback message; Dr. Kouhfar assistant identity; dental-only public domain.
 
-## Existing implementation inspected
+## Implemented in this branch
 
-- Task 23 provider abstraction, usage aggregation, rate limits, fake provider, and disabled-by-default flags.
-- Task 24 published-content-only assistant, emergency bypass, refusal behavior, and source references.
-- Task 25 versioned assistant API and safe frontend rendering.
-- Task 26 Smart Smile remains behind its release gate.
+- Versioned v1.0.0 bilingual evaluation dataset with normal and specialist dental questions, off-domain cases, diagnosis/prescription refusals, emergencies, prompt injection, secret exfiltration, harmful requests, ambiguity, identity override, adversarial retrieved-content instructions, and citation-required cases.
+- Deterministic Persian/English guard with text normalization, domain restriction, emergency routing, medical refusal, fixed identity, and prompt-injection/secret-exfiltration checks.
+- Fixed assistant persona prompt, standard domain refusal and owner-approved outage/budget fallback text.
+- 100 bilingual FAQ entries in resources/knowledge/dental-faq-v1.json, with seven source references, confidence labels, warnings and explicit draft-for-clinician-review status.
+- DentalFaqDraftSeeder imports 200 locale records into the existing content workflow as unpublished clinical drafts. DentalFaqTestingSeeder can publish these only in the testing environment for deterministic evaluation.
+- AIReleaseGate calculates citation, lexical source-grounding, refusal, emergency and forbidden-output metrics; known-bad-answer regression test verifies the gate fails.
+- AssistantEvaluationRunner and php artisan ai:evaluate generate a versioned JSON release report with dataset/prompt/provider/model metadata.
+- IRR budget settings table, per-provider/model/capability token and cost aggregates, per-request success/failure metadata, model-specific IRR pricing configuration, monthly 10,000,000 IRR ceiling, 50/80/100 financial alerts, and request blocking at the ceiling.
+- Admin-only AI usage and budget page, editable budget, emergency disable, model usage summary, timestamped requests, audit logging, and staff-layout budget alerts.
+- Standard fallback is returned without an additional model request when AI is disabled, rate-limited, over budget, or provider processing fails.
 
-## Evaluation dataset
+## Important accounting and safety limits
 
-The versioned dataset is tests/Fixtures/AI/task27-evaluation-v1.json and contains 200 cases across normal dental questions, specialist treatment questions, off-domain requests, diagnosis/prescription requests, emergency red flags, prompt injection, secret exfiltration, harmful requests, ambiguous requests, and citation-required questions.
+- Actual provider billing is nullable and is never fabricated. The fake provider exposes no authenticated provider billing or quota API, so provider credit/token quota is explicitly reported as unknown. 80%/95% provider-quota alerts cannot be activated until an approved provider supplies telemetry.
+- The fake provider returns a source excerpt for assistant evaluation. This makes the deterministic run reproducible but does not prove a future live model's clinical accuracy. Grounding is a lexical source-overlap proxy, not an independent clinical review.
+- The FAQ set is draft clinical content and is not published to public users by this task. It requires clinician review and the existing content approval workflow before production publication.
+- No real AI provider, API key, patient data, patient image, external billing API, or production service is activated.
+- The assistant uses the existing published-content retrieval/ranking layer; this is bounded retrieval, not a vector-embedding database.
 
-## Research sources for FAQ curation
+## Verification still required
 
-- ADA MouthHealthy: https://www.mouthhealthy.org/all-topics-a-z
-- ADA Oral Health Topics: https://www.ada.org/resources/ada-library/oral-health-topics
-- NHS dental treatments: https://www.nhs.uk/live-well/healthy-teeth-and-gums/dental-treatments/
-- NHS root canal treatment: https://www.nhs.uk/tests-and-treatments/root-canal-treatment/
-- NHS emergency dental care: https://www.nhs.uk/nhs-services/dentists/how-to-find-an-nhs-dentist-in-an-emergency/
-- NHS toothache and abscess: https://www.nhs.uk/symptoms/toothache/ and https://www.nhs.uk/conditions/dental-abscess/
-- CDC adult oral health: https://www.cdc.gov/oral-health/prevention/oral-health-tips-for-adults.html
-- CDC dental infection prevention: https://www.cdc.gov/dental-infection-control/hcp/summary/standard-precautions.html
-- ADA whitening review: https://www.ada.org/resources/ada-library/oral-health-topics/whitening/
-
-## Limitations before VERIFIED
-
-- CI must execute the evaluation runner and prove the approved thresholds.
-- Provider-specific live billing and quota status cannot be asserted while only the fake provider is configured; unknown must remain explicit.
-- FAQ material must remain reviewable and must not be silently auto-published as clinic-approved clinical advice.
-- Admin budget controls, model-level usage visibility, audit logging, emergency disable, and safe fallback must be implemented and tested.
-- No real provider, API key, patient data, or production system is activated by this task.
+- CI must pass Pint, PHPStan, migrations, all Pest tests, browser tests, and the new ai:evaluate command.
+- The evaluation runner must meet all owner-approved thresholds on the synthetic testing knowledge base.
+- A separate approved live-provider evaluation, clinician review, provider quota/billing adapter and production release approval are required before any real model is enabled.

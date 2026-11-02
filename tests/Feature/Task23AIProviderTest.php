@@ -44,7 +44,12 @@ beforeEach(function (): void {
 
     Cache::flush();
     clearTask23AiRateLimits();
-    RateLimiter::clear('ai:'.substr(hash('sha256', 'assistant|127.0.0.1'), 0, 24).':'.now('UTC')->format('Y-m-d-H-i'));
+    $identity = request()->user('staff')?->getAuthIdentifier();
+    if ($identity === null) {
+        $identity = request()->hasSession() ? request()->session()->getId() : request()->ip();
+    }
+    $limiterKey = 'ai:'.substr(hash('sha256', 'assistant|'.(string) ($identity ?? 'cli')), 0, 24).':'.now('UTC')->format('Y-m-d-H-i');
+    RateLimiter::clear($limiterKey);
     RateLimiter::clear('ai:'.substr(hash('sha256', 'assistant|127.0.0.1'), 0, 24).':'.now('UTC')->format('Y-m-d-H-i'));
 });
 

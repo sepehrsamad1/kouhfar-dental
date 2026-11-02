@@ -53,8 +53,10 @@ final class AIControlService
         }
 
         if ($model !== null) {
-            $tokenLimit = (int) ($settings->provider_token_limits[$model] ?? 0);
-            $budgetLimit = (int) ($settings->model_budget_limits_irr[$model] ?? 0);
+            $tokenLimits = (array) $settings->provider_token_limits;
+            $budgetLimits = (array) $settings->model_budget_limits_irr;
+            $tokenLimit = (int) ($tokenLimits[$model] ?? 0);
+            $budgetLimit = (int) ($budgetLimits[$model] ?? 0);
 
             if ($tokenLimit > 0 && $this->monthlyTokensForModel($model) >= $tokenLimit) {
                 return false;
@@ -78,9 +80,12 @@ final class AIControlService
         $provider = (string) config('ai.capabilities.text.provider', 'fake');
         $modelLimits = [];
 
+        $tokenLimits = (array) $settings->provider_token_limits;
+        $budgetLimits = (array) $settings->model_budget_limits_irr;
+
         foreach ($this->configuredModels() as $model => $capabilities) {
-            $tokenLimit = (int) ($settings->provider_token_limits[$model] ?? 0);
-            $budgetLimit = (int) ($settings->model_budget_limits_irr[$model] ?? 0);
+            $tokenLimit = (int) ($tokenLimits[$model] ?? 0);
+            $budgetLimit = (int) ($budgetLimits[$model] ?? 0);
             $tokensUsed = $this->monthlyTokensForModel($model);
             $modelSpend = $this->monthlySpendForModel($model);
             $tokenPercentage = $tokenLimit > 0 ? (int) floor(($tokensUsed / $tokenLimit) * 100) : null;

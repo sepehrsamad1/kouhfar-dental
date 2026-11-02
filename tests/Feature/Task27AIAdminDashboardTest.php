@@ -46,7 +46,9 @@ it('allows an administrator to view and update the AI budget and emergency switc
         ->assertSee('10,000,000')
         ->assertSee('مصرف روزانه به تفکیک قابلیت')
         ->assertSee('assistant')
-        ->assertSee('سرویس خارجی متصل نیست');
+        ->assertSee('سرویس خارجی متصل نیست')
+        ->assertSee('سقف داخلی توکن ماهانه')
+        ->assertSee('سقف مالی ماهانه مدل');
 
     $this->patch(route('staff.ai.update'), [
         'monthly_budget_irr' => 15_000_000,

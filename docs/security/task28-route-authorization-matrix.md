@@ -52,12 +52,12 @@ The public booking POST in `routes/api.php` explicitly adds `web` middleware and
 | CSRF | Web middleware for staff mutations and explicit web middleware for public booking POST; no production-browser negative test recorded | PARTIAL |
 | SQL injection | Eloquent/query-builder bindings in inspected paths; SQL-looking patient-search regression test | PARTIAL — raw-query inventory and DAST/fuzz not complete |
 | Stored XSS | Blade escaped rendering; content workflow script-markup regression test | PARTIAL — no full DOM/reflected payload corpus |
-| Open redirect | Intended URL parser rejects external schemes/hosts, protocol-relative paths, backslashes and control chars; regression test passed in CI #843 | PASS for reviewed staff-login redirect path |
+| Open redirect | Intended URL parser rejects external schemes/hosts, protocol-relative paths, backslashes and control chars; regression test passed in CI #862 | PASS for reviewed staff-login redirect path |
 | Session lifecycle | Rotation, logout revocation, deactivated-account revocation, optional idle/absolute timeout tests; production/staging timeout values not approved | PARTIAL |
 | Rate limiting | Route throttles and per-email+IP login throttling; shared distributed backend behavior not verified | PARTIAL |
 | Upload abuse | MIME sniffing, decode/re-encode, size/pixel bounds, private storage and signed downloads; automated tests passed | PASS for tested application-level image controls |
-| SSRF | No user-controlled URL fetch found; dormant Kavenegar adapter has fixed HTTPS allowlist, redirect disabled, synthetic negative tests passed in CI #843 | PARTIAL — provider credential URL-path residual risk |
-| Secret scanning | Full-history Gitleaks passed in CI #843; GitHub secret alerts and non-text artifact/log review not accessible through repository CI evidence | PARTIAL |
+| SSRF | No user-controlled URL fetch found; dormant Kavenegar adapter has fixed HTTPS allowlist, redirect disabled, synthetic negative tests passed in CI #862 | PARTIAL — provider credential URL-path residual risk |
+| Secret scanning | Full-history Gitleaks passed in CI #862; GitHub secret alerts and non-text artifact/log review not accessible through repository CI evidence | PARTIAL |
 
 ## Explicitly unverified
 

@@ -39,7 +39,7 @@
 
 ## Automated verification status
 
-[CI run #843](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41480042377) passed on code commit `653e6d45e960edf391d97d0d1b63030daf4a3399`.
+[CI run #843](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41480042377) passed on code commit `38e412e4e7bd8cea2bc3a5635aa22879d541c9f1`.
 
 - 280 Laravel/Pest tests passed (24,493 assertions), including the new patient authorization, staff deactivation and mocked Kavenegar egress regression tests.
 - 36 Playwright browser tests passed.
@@ -56,12 +56,10 @@ Required CI commands are recorded above. Gitleaks scans the full repository hist
 ## Open release blockers
 
 - **High — staff MFA missing (ASVS V6.3.3):** staff login currently uses only email/password. The clinic owner must approve the second factor and recovery policy; Task 15 provider integration is not activated.
-- **High — staff MFA missing (ASVS V6.3.3):** staff login currently uses only email/password. The clinic owner must approve the second factor and recovery policy; Task 15 provider integration is not activated.
 - **High — retention/privacy policy incomplete:** the 2-year clinical-record and Task 21 media periods remain recorded; however, retention/purge behavior for login-attempt hashes, session registry, audit logs, consent records, Smart Smile session/result metadata, AI usage/request rows, queue/failed-job payloads, notification outbox, idempotency snapshots, deletion requests, application logs and backups is still unapproved or unimplemented. See [clinic-owner decisions](security/task28-owner-decisions.md).
 - **Medium — Kavenegar API key remains in the provider URL path:** the adapter is dormant and outbound host/redirect controls are hardened, but provider/network log redaction or an alternative header-auth provider must be approved before activation.
 - **Medium — Smart Smile consent token has no expiry:** owner must approve TTL and post-expiry behavior before implementation.
 - **Medium — staff idle/absolute session timeout values are unset:** owner policy required; registry expiry currently defaults to ten years if unset.
-- **Medium — Kavenegar API key remains in the provider URL path:** the adapter is dormant and outbound host/redirect controls are hardened, but provider/network log redaction or an alternative header-auth provider must be approved before activation.
 - **Medium — production controls unverified:** TLS/proxy, database runtime privileges, private storage ACLs, secret injection, backup/log access and retention are deployment evidence not present in the repository.
 - **Medium — verification scope incomplete:** full route-by-route IDOR matrix, production-like CSRF negative test, browser DOM-XSS corpus and distributed rate-limit behavior remain open.
 - **CI scans passed:** Composer/npm audits and full-history Gitleaks passed in run #820. Supplementary review of GitHub secret alerts, binary images/artifacts and external log sinks remains open.

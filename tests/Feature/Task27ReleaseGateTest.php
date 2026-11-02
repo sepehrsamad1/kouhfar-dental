@@ -13,6 +13,7 @@ it('runs the complete 200-case fake-provider evaluation and writes a reproducibl
         'ai.capabilities.text.enabled' => true,
         'ai.capabilities.text.provider' => 'fake',
         'ai.capabilities.text.model' => 'fake-task27-evaluation',
+        'ai.capabilities.text.model_version' => 'fake-task27-evaluation-v1',
         'ai.rate_limits.per_minute' => 1000,
         'ai.rate_limits.daily_cost' => 0,
     ]);
@@ -24,7 +25,7 @@ it('runs the complete 200-case fake-provider evaluation and writes a reproducibl
     expect($report['total_cases'])->toBe(200)
         ->and($report['run']['dataset_version'])->toBe('1.0.0')
         ->and($report['run']['provider_version'])->toBe('fake-contract-v1')
-        ->and($report['run']['model_version'])->toBe('fake-v1')
+        ->and($report['run']['model_version'])->toBe('fake-task27-evaluation-v1')
         ->and($report['run']['prompt_version'])->toBe('task27-persona-v1')
         ->and($report['evaluation_mode'])->toBe('deterministic_provider_contract')
         ->and($report['semantic_model_accuracy_claim'])->toBeFalse()

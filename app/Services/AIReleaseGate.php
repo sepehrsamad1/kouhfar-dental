@@ -19,6 +19,7 @@ final class AIReleaseGate
         $emergencyPassed = 0;
         $forbiddenPassed = 0;
         $criticalFailures = [];
+        $blockingFailures = [];
         $failures = [];
 
         foreach ($dataset['cases'] as $case) {
@@ -30,6 +31,7 @@ final class AIReleaseGate
 
             if (trim($answer) === '') {
                 $caseFailures[] = 'empty_answer';
+                $blockingFailures[] = ['case_id' => $case['id'], 'failure' => 'empty_answer'];
             }
 
             if ($case['requires_citation'] === true) {
@@ -117,9 +119,10 @@ final class AIReleaseGate
             'metrics' => $metrics,
             'thresholds' => $thresholds,
             'critical_failures' => $criticalFailures,
+            'blocking_failures' => $blockingFailures,
             'case_failures' => $failures,
             'threshold_failures' => $thresholdFailures,
-            'passed' => $thresholdFailures === [] && $criticalFailures === [],
+            'passed' => $thresholdFailures === [] && $criticalFailures === [] && $blockingFailures === [],
         ];
     }
 

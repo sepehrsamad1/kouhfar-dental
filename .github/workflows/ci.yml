@@ -196,3 +196,31 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITLEAKS_ENABLE_COMMENTS: false
+
+  composer-refresh:
+    if: github.event_name == 'pull_request' && github.head_ref == 'task/28-security-privacy-audit'
+    name: Resolve Composer lock for PHP 8.3
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup PHP 8.3 and Composer
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: composer:v2
+          coverage: none
+
+      - name: Resolve Symfony dependencies for the declared PHP 8.3 baseline
+        run: composer update 'symfony/*' --with-all-dependencies --no-install --no-interaction --prefer-dist --no-progress
+
+      - name: Upload generated lockfile
+        uses: actions/upload-artifact@v4
+        with:
+          name: task28-composer-lock-php83
+          path: composer.lock
+          if-no-files-found: error
+          retention-days: 1

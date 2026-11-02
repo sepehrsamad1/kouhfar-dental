@@ -30,7 +30,7 @@ it('allows an administrator to view and update the AI budget and emergency switc
 
     $this->get(route('staff.ai.index'))->assertOk()
         ->assertSee('مدیریت دستیار هوشمند')
-        ->assertSee('۱۰٬۰۰۰٬۰۰۰');
+        ->assertSee('10,000,000');
 
     $this->patch(route('staff.ai.update'), [
         'monthly_budget_irr' => 15_000_000,

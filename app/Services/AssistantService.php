@@ -168,7 +168,7 @@ final class AssistantService
     private function isDisallowedMedicalRequest(string $message): bool
     {
 
-        return preg_match('/(تشخیص\s*(بیماری|من)|من\s*چه\s*بیماری|what\s+(disease|condition)\s+do\s+i\s+have|diagnos(e|is|ing)|prescri(be|ption)|نسخه|دوز|مقدار\s*(دارو|آنتی.?بیوتیک)|آنتی.?بیوتیک\s*(بخور|مصرف)|antibiotic\s+dose|medication\s+dose|قیمت|هزینه|price|competitor|مقایسه\s*(با|با کلینیک)|ضمانت\s*(درمان|نتیجه))/iu', $message) === 1;
+        return preg_match('/(تشخیص\s*(بیماری|من)|من\s*چه\s*بیماری|what\s+(disease|condition)\s+do\s+i\s+have|diagnos(e|is|ing)|prescri(be|ption)|نسخه|(?:^|[\s،])دوز(?:[\s،]|$)|مقدار\s*(دارو|آنتی.?بیوتیک)|آنتی.?بیوتیک\s*(بخور|مصرف)|antibiotic\s+dose|medication\s+dose|قیمت|هزینه|price|competitor|مقایسه\s*(با|با کلینیک)|ضمانت\s*(درمان|نتیجه))/iu', $message) === 1;
     }
 
     private function isSafeKnowledgeItem(array $item): bool

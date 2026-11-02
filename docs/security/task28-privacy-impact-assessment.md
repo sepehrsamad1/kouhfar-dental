@@ -62,7 +62,7 @@ Media retention is owner-approved and implemented in the Task 21 service/command
 - Patient/clinical media: 2 years anchored to the later of media creation and last historical appointment.
 - Early soft-delete allowed; hard purge after the applicable retention window or 30 days after soft-delete.
 
-The following are not yet approved or evidenced: patient/appointment record deletion lifecycle, audit logs, login-attempt hashes, staff session-registry rows, consent records, Smart Smile session/result rows, AI request/usage rows, notification outbox, failed jobs, queue payloads, idempotency snapshots, deletion requests, application logs and backups. See `task28-data-inventory.md`.
+The following are not yet approved or evidenced: patient/appointment record deletion lifecycle, audit logs, login-attempt hashes, staff session-registry rows, consent records, Smart Smile session/result rows, AI request/usage rows, notification outbox, failed jobs, queue payloads, idempotency snapshots, deletion requests, application logs and backups. See `task28-data-inventory.md` and the [clinic-owner decision register](task28-owner-decisions.md).
 
 ## Risks and mitigations
 

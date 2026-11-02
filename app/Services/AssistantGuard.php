@@ -14,15 +14,15 @@ final class AssistantGuard
             return 'prompt_injection';
         }
 
-        if ($this->hasAny($text, ['نمی‌توانم نفس', 'نمی توانم نفس', 'مشکل تنفس', 'مشکل بلع', 'خونریزی شدید', 'خونریزی کنترل‌نشده', 'تورم شدید', 'تورم سریع', 'بیهوش', 'uncontrolled heavy bleeding', 'difficulty breathing', 'difficulty swallowing', 'severe swelling', 'airway', 'unconscious', 'serious facial trauma'])) {
+        if ($this->hasAny($text, ['نمی‌توانم نفس', 'نمی توانم نفس', 'مشکل تنفس', 'مشکل بلع', 'خونریزی شدید', 'خونریزی کنترل‌نشده', 'تورم شدید', 'تورم سریع', 'بیهوش', 'uncontrolled heavy bleeding', 'difficulty breathing', 'difficulty swallowing', 'severe swelling', 'airway', 'unconscious', 'serious facial trauma', 'lost consciousness', 'loss of consciousness', 'swelling rapidly', 'rapidly swelling', 'seriously injured', 'uncontrolled bleeding', 'double vision', 'cannot swallow saliva', 'cannot swallow my saliva'])) {
             return 'emergency';
         }
 
-        if ($this->hasAny($text, ['hurt myself', 'self-harm', 'harm someone', 'آسیب زدن به خود', 'مواد خطرناک', 'break into the booking', 'جعل گواهی', 'دستکاری پرونده'])) {
+        if ($this->hasAny($text, ['hurt myself', 'self-harm', 'harm someone', 'آسیب زدن به خود', 'مواد خطرناک', 'break into the booking', 'جعل گواهی', 'دستکاری پرونده', 'alter a medical record', 'medical record', 'controlled medicine without a prescription', 'fake treatment certificate'])) {
             return 'prompt_injection';
         }
 
-        if ($this->hasAny($text, ['اسم تو چیست', 'اسم تو چیه', 'تو کی هستی', 'چه کسی هستی', 'چه کسی ساخته', 'خودت را chatgpt', 'what is your name', 'who are you', 'who created you', 'introduce yourself as', 'which ai model'])) {
+        if ($this->hasAny($text, ['اسم تو چیست', 'اسم تو چیه', 'تو کی هستی', 'چه کسی هستی', 'چه کسی ساخته', 'خودت را chatgpt', 'what is your name', 'who are you', 'who created you', 'introduce yourself as', 'which ai model', 'act as my doctor', 'claim to be dr.', 'claim to be doctor'])) {
             return 'identity';
         }
 
@@ -30,7 +30,7 @@ final class AssistantGuard
             return 'medical_refusal';
         }
 
-        if ($this->hasAny($text, ['دندان', 'دندانپزشک', 'دندان‌پزشک', 'دندان‌پزشکی', 'دهان', 'لثه', 'ایمپلنت', 'لمینیت', 'کامپوزیت', 'روکش', 'بلیچینگ', 'عصب‌کشی', 'درمان ریشه', 'جرم‌گیری', 'ارتودنسی', 'دندان عقل', 'پوسیدگی', 'پرکردگی', 'نوبت', 'کلینیک', 'سلامت دهان', 'tooth', 'teeth', 'dental', 'dentist', 'dentistry', 'oral health', 'gum', 'implant', 'veneer', 'composite', 'crown', 'whitening', 'root canal', 'filling', 'braces', 'wisdom tooth', 'clinic', 'patient rights'])) {
+        if ($this->hasAny($text, ['دندان', 'دندانپزشک', 'دندان‌پزشک', 'دندان‌پزشکی', 'دهان', 'لثه', 'ایمپلنت', 'لمینیت', 'کامپوزیت', 'روکش', 'بلیچینگ', 'عصب‌کشی', 'درمان ریشه', 'جرم‌گیری', 'ارتودنسی', 'دندان عقل', 'پوسیدگی', 'پرکردگی', 'نوبت', 'کلینیک', 'سلامت دهان', 'tooth', 'teeth', 'dental', 'dentist', 'dentistry', 'oral health', 'gum', 'implant', 'veneer', 'composite', 'crown', 'whitening', 'root canal', 'filling', 'braces', 'wisdom tooth', 'clinic', 'patient rights', 'toothache', 'tooth pain', 'dental treatment', 'mouth pain', 'breath', 'how much does dental treatment cost', 'is this dental problem dangerous'])) {
             return 'in_scope';
         }
 

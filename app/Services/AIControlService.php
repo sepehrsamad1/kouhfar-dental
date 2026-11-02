@@ -114,7 +114,7 @@ final class AIControlService
                 $capabilityProvider = (string) config("ai.capabilities.{$capability}.provider", 'fake');
                 $capabilityKey = config("ai.capabilities.{$capability}.api_key");
 
-                if ($capabilityProvider !== 'fake' && (! is_string($capabilityKey) || trim($capabilityKey) === '')) {
+                if ($capabilityProvider !== 'fake' && (is_string($capabilityKey) === false || trim($capabilityKey) === '')) {
                     $modelCredentialsConfigured = false;
                 }
             }

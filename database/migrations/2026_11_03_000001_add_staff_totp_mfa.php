@@ -12,7 +12,7 @@ return new class extends Migration
     {
         Schema::table('staff_users', function (Blueprint $table): void {
             $table->text('mfa_totp_secret')->nullable();
-            $table->jsonb('mfa_recovery_codes')->nullable();
+            $table->text('mfa_recovery_codes')->nullable();
             $table->timestampTz('mfa_enabled_at')->nullable();
         });
     }

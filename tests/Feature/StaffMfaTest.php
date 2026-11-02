@@ -67,7 +67,9 @@ it('requires TOTP enrollment before the first staff login and shows recovery cod
     $this->assertGuest('staff');
     $staff->refresh();
     expect($staff->mfa_enabled_at)->toBeNull()
-        ->and($staff->mfa_totp_secret)->not->toBeEmpty();
+        ->and($staff->mfa_totp_secret)->not->toBeEmpty()
+        ->and($staff->getRawOriginal('mfa_totp_secret'))->not->toBe($staff->mfa_totp_secret)
+        ->and($staff->toArray())->not->toHaveKey('mfa_totp_secret');
 
     $this->get(route('staff.mfa.setup'))->assertOk()->assertSee($staff->mfa_totp_secret);
 

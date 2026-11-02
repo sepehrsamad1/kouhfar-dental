@@ -10,6 +10,7 @@ use App\AI\Contracts\ImageTransformationProvider;
 use App\AI\Contracts\TextGenerationProvider;
 use App\AI\FakeAIProvider;
 use App\AIUsage;
+use App\StaffUser;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
 use Throwable;
@@ -176,7 +177,8 @@ final class AIProviderManager
         }
 
         $request = request();
-        $identity = $request->user()?->getAuthIdentifier();
+        $authenticatedUser = $request->user('staff');
+        $identity = $authenticatedUser instanceof StaffUser ? $authenticatedUser->getAuthIdentifier() : null;
 
         if ($identity === null) {
             $identity = $request->hasSession() ? $request->session()->getId() : $request->ip();

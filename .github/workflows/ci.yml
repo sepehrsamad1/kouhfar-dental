@@ -103,6 +103,14 @@ jobs:
           php artisan db:seed --class=DentalFaqTestingSeeder
           php artisan ai:evaluate
 
+      - name: Upload Task 27 AI evaluation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: task27-ai-evaluation-report
+          path: storage/app/private/ai-evaluations/**/*.json
+          if-no-files-found: ignore
+
       - name: Seed guarded browser-only fixtures
         run: php artisan db:seed --class=BrowserTestSeeder
 

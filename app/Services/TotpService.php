@@ -17,29 +17,36 @@ final class TotpService
 
     public function verify(string $secret, string $code, ?int $timestamp = null, int $window = 1): bool
     {
+        return $this->matchingCounter($secret, $code, $timestamp, $window) !== null;
+    }
+
+    public function matchingCounter(string $secret, string $code, ?int $timestamp = null, int $window = 1): ?int
+    {
         if (preg_match('/^[0-9]{6}$/D', $code) !== 1 || $window < 0 || $window > 2) {
-            return false;
+            return null;
         }
 
         $key = $this->base32Decode($secret);
 
         if ($key === null || $key === '') {
-            return false;
+            return null;
         }
 
         $counter = intdiv($timestamp ?? time(), self::PERIOD_SECONDS);
 
         for ($offset = -$window; $offset <= $window; $offset++) {
-            if ($counter + $offset < 0) {
+            $candidate = $counter + $offset;
+
+            if ($candidate < 0) {
                 continue;
             }
 
-            if (hash_equals($this->codeForCounter($key, $counter + $offset), $code)) {
-                return true;
+            if (hash_equals($this->codeForCounter($key, $candidate), $code)) {
+                return $candidate;
             }
         }
 
-        return false;
+        return null;
     }
 
     public function provisioningUri(string $secret, string $account, string $issuer): string

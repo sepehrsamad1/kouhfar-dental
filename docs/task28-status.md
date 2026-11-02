@@ -1,6 +1,6 @@
 # Task 28 — Security and Privacy Audit
 
-**Status: CI-VERIFIED FOR THE CURRENT CODE SCOPE; TASK ACCEPTANCE BLOCKED — CI run #820 passed on code commit `653e6d45e960edf391d97d0d1b63030daf4a3399`. Production release and Task 28 closure remain blocked by open high retention finding SEC-28-003 and required clinic-owner decisions.**
+**Status: CORE CODE SCOPE CI-VERIFIED; LATEST COOKIE-PREFIX CHANGE AWAITS RETEST; TASK ACCEPTANCE BLOCKED — CI run #820 passed on code commit `653e6d45e960edf391d97d0d1b63030daf4a3399`. The later `__Secure-` cookie-name change and its regression test are awaiting the latest branch CI run. Task 28 closure remains blocked by high findings SEC-28-003 and SEC-28-012 plus owner/deployment decisions.**
 
 ## Task identity
 
@@ -49,17 +49,19 @@
 - Pint, PHPStan, JavaScript lint, typecheck and production build passed.
 - Full-history Gitleaks scan passed.
 
-This proves the current repository/CI code paths and synthetic tests only. It is not a production penetration test, live Kavenegar/AI provider test, GitHub secret-alert review, or infrastructure verification.
+This proves the code revision at commit `653e6d45e960edf391d97d0d1b63030daf4a3399` and its synthetic tests only. The later cookie-prefix change is pending CI retest. It is not a production penetration test, live Kavenegar/AI provider test, GitHub secret-alert review, or infrastructure verification.
 
 Required CI commands are recorded above. Gitleaks scans the full repository history; any future finding requires investigation and credential rotation/revocation, not merely deleting the current file.
 
 ## Open release blockers
 
 - **High — staff MFA missing (ASVS V6.3.3):** staff login currently uses only email/password. The clinic owner must approve the second factor and recovery policy; Task 15 provider integration is not activated.
+- **High — staff MFA missing (ASVS V6.3.3):** staff login currently uses only email/password. The clinic owner must approve the second factor and recovery policy; Task 15 provider integration is not activated.
 - **High — retention/privacy policy incomplete:** the 2-year clinical-record and Task 21 media periods remain recorded; however, retention/purge behavior for login-attempt hashes, session registry, audit logs, consent records, Smart Smile session/result metadata, AI usage/request rows, queue/failed-job payloads, notification outbox, idempotency snapshots, deletion requests, application logs and backups is still unapproved or unimplemented. See [clinic-owner decisions](security/task28-owner-decisions.md).
 - **Medium — Kavenegar API key remains in the provider URL path:** the adapter is dormant and outbound host/redirect controls are hardened, but provider/network log redaction or an alternative header-auth provider must be approved before activation.
 - **Medium — Smart Smile consent token has no expiry:** owner must approve TTL and post-expiry behavior before implementation.
 - **Medium — staff idle/absolute session timeout values are unset:** owner policy required; registry expiry currently defaults to ten years if unset.
+- **Medium — Kavenegar API key remains in the provider URL path:** the adapter is dormant and outbound host/redirect controls are hardened, but provider/network log redaction or an alternative header-auth provider must be approved before activation.
 - **Medium — production controls unverified:** TLS/proxy, database runtime privileges, private storage ACLs, secret injection, backup/log access and retention are deployment evidence not present in the repository.
 - **Medium — verification scope incomplete:** full route-by-route IDOR matrix, production-like CSRF negative test, browser DOM-XSS corpus and distributed rate-limit behavior remain open.
 - **CI scans passed:** Composer/npm audits and full-history Gitleaks passed in run #820. Supplementary review of GitHub secret alerts, binary images/artifacts and external log sinks remains open.

@@ -23,9 +23,10 @@ class EnsureStaffSessionIsFresh
 
         $registryId = $request->session()->get('staff_registry_session_id');
         $registry = $registryId === null ? null : StaffSession::query()->find($registryId);
+        $staff = $guard->user();
 
-        if ($registry === null || $registry->revoked_at !== null) {
-            return $this->expire($request);
+        if ($registry === null || $registry->revoked_at !== null || $staff?->is_active !== true) {
+            return $this->expire($request, $registry);
         }
 
         $now = now('UTC');

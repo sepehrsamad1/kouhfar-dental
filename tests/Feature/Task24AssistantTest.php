@@ -46,7 +46,7 @@ it('answers from published approved knowledge and returns source references', fu
         'بهداشت دست و بازفرآوری صحیح ابزار برای ایمنی مهم است.',
     );
 
-    $result = app(AssistantService::class)->respond('بهداشت دست و ابزار چگونه است؟');
+    $result = app(AssistantService::class)->respond('بهداشت دست و ابزار دندان‌پزشکی چگونه است؟');
 
     expect($result['status'])
         ->toBe('succeeded')
@@ -123,7 +123,7 @@ it('returns a safe unavailable response when no approved knowledge supports the 
         'این متن درباره موضوع دیگری است.',
     );
 
-    $result = app(AssistantService::class)->respond('زرافه آبی مریخ');
+    $result = app(AssistantService::class)->respond('دندان مصنوعی چه تفاوتی با دندان طبیعی دارد؟');
 
     expect($result['status'])
         ->toBe('unavailable')

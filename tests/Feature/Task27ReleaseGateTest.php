@@ -23,6 +23,8 @@ it('runs the complete 200-case fake-provider evaluation and writes a reproducibl
 
     expect($report['total_cases'])->toBe(200)
         ->and($report['run']['dataset_version'])->toBe('1.0.0')
+        ->and($report['run']['provider_version'])->toBe('fake-contract-v1')
+        ->and($report['run']['model_version'])->toBe('fake-v1')
         ->and($report['run']['prompt_version'])->toBe('task27-persona-v1')
         ->and($report['evaluation_mode'])->toBe('deterministic_provider_contract')
         ->and($report['semantic_model_accuracy_claim'])->toBeFalse()

@@ -14,8 +14,10 @@ test('assistant shows disclosure and a grounded answer with safe citation', asyn
   await page.locator('#aiInput').fill('حریم خصوصی بیمار چه حقی است؟');
   await page.locator('#aiForm').press('Enter');
 
-  const answer = page.locator('.msg--bot').filter({ hasText: 'Synthetic AI response.' }).last();
+  const answer = page.locator('.msg--bot').last();
   await expect(answer).toBeVisible();
+  await expect(answer.locator('.msg__sources')).toBeVisible();
+  await expect(answer.locator('.msg__source').first()).toBeVisible();
 });
 
 test('assistant renders refusal state for disallowed medical requests', async ({ page }) => {

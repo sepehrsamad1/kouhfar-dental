@@ -77,6 +77,8 @@ it('returns a safe fallback when the provider fails', function (): void {
     task25ApiKnowledge();
     config([
         'ai.capabilities.text.provider' => 'not-approved',
+        'ai.capabilities.text.api_key' => 'synthetic-test-placeholder',
+        'ai.pricing_irr.text' => ['input_per_1k' => 1, 'output_per_1k' => 2],
         'ai.capabilities.text.fallback' => 'AI service is temporarily unavailable.',
     ]);
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Notifications\Sms\KavenegarSmsProvider;
 use App\Notifications\SmsMessage;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use RuntimeException;
@@ -61,7 +62,7 @@ it('does not follow provider redirects to another host', function (): void {
 });
 
 it('does not chain transport exceptions that could expose the API key URL', function (): void {
-    Http::fake(fn () => throw new Illuminate\Http\Client\ConnectionException('synthetic transport failure'));
+    Http::fake(fn () => throw new ConnectionException('synthetic transport failure'));
 
     try {
         (new KavenegarSmsProvider)->send(

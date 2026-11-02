@@ -221,11 +221,12 @@ class StaffAuthController
 
             if (! $verified && preg_match('/^[A-Za-z0-9]{12}$/D', $code) === 1) {
                 $normalized = Str::upper($code);
-                $recoveryHashes = (array) $lockedStaff->mfa_recovery_codes;
+                /** @var list<string> $recoveryHashes */
+                $recoveryHashes = (array) $lockedStaff->getAttribute('mfa_recovery_codes');
                 $matchedIndex = null;
 
                 foreach ($recoveryHashes as $index => $hash) {
-                    if (is_string($hash) && Hash::check($normalized, $hash)) {
+                    if (Hash::check($normalized, $hash)) {
                         $matchedIndex = $index;
                     }
                 }

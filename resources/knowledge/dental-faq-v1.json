@@ -1070,9 +1070,10 @@
       "category": "filling",
       "question_fa": "تعویض پرکردگی چیست؟",
       "question_en": "What is filling replacement?",
-      "answer_fa": "پرکردن دندان با پرکردگی بخش آسیب‌دیده را بازسازی می‌کند. حساسیت خفیف و گذرا ممکن است رخ دهد؛ درد شدید یا ماندگار باید بررسی شود.",
-      "answer_en": "A filling restores a damaged part of a tooth. Mild temporary sensitivity may occur; severe or persistent pain should be assessed.",
+      "answer_fa": "شکستگی، افتادن، گیرکردن مکرر غذا، لبه تیز یا درد هنگام جویدن می‌تواند نشانه نیاز به بررسی باشد.",
+      "answer_en": "A fracture, loss, repeated food trapping, sharp edge, or pain on chewing may warrant review.",
       "sources": [
+        "ADA_COMPOSITE",
         "NHS_DENTAL_TREATMENTS"
       ],
       "confidence": "high_for_general_educational_information",
@@ -1083,11 +1084,12 @@
     {
       "id": "KDF-062",
       "category": "filling",
-      "question_fa": "چه نکته‌ای درباره تعویض پرکردگی باید بدانم؟",
-      "question_en": "What should I know about filling replacement?",
-      "answer_fa": "پرکردن دندان با پرکردگی بخش آسیب‌دیده را بازسازی می‌کند. حساسیت خفیف و گذرا ممکن است رخ دهد؛ درد شدید یا ماندگار باید بررسی شود.",
-      "answer_en": "A filling restores a damaged part of a tooth. Mild temporary sensitivity may occur; severe or persistent pain should be assessed.",
+      "question_fa": "چطور بفهمم پرکردگی قدیمی آسیب دیده است؟",
+      "question_en": "How can I tell if an old filling is damaged?",
+      "answer_fa": "معاینه و در صورت نیاز تصویربرداری مشخص می‌کند ترمیم قابل تعمیر است یا باید تعویض شود.",
+      "answer_en": "Examination and, when needed, imaging determine whether a restoration can be repaired or replaced.",
       "sources": [
+        "ADA_COMPOSITE",
         "NHS_DENTAL_TREATMENTS"
       ],
       "confidence": "high_for_general_educational_information",
@@ -1100,9 +1102,10 @@
       "category": "cleaning",
       "question_fa": "جرم‌گیری دندان چیست؟",
       "question_en": "What is dental scaling?",
-      "answer_fa": "جرم‌گیری حرفه‌ای پلاک سخت‌شده و رسوبات را برمی‌دارد. فاصله جلسات به سلامت لثه و میزان تشکیل جرم بستگی دارد.",
-      "answer_en": "Professional scaling removes hardened plaque and deposits. The interval depends on gum health and tartar formation.",
+      "answer_fa": "خیر؛ مسواک پلاک نرم را کنترل می‌کند اما جرم سخت‌شده معمولاً به پاک‌سازی حرفه‌ای نیاز دارد.",
+      "answer_en": "No. Brushing controls soft plaque, but hardened tartar generally requires professional cleaning.",
       "sources": [
+        "NIDCR_GUM_DISEASE",
         "NHS_DENTAL_TREATMENTS"
       ],
       "confidence": "high_for_general_educational_information",
@@ -1113,11 +1116,12 @@
     {
       "id": "KDF-064",
       "category": "cleaning",
-      "question_fa": "چه نکته‌ای درباره جرم‌گیری دندان باید بدانم؟",
-      "question_en": "What should I know about dental scaling?",
-      "answer_fa": "جرم‌گیری حرفه‌ای پلاک سخت‌شده و رسوبات را برمی‌دارد. فاصله جلسات به سلامت لثه و میزان تشکیل جرم بستگی دارد.",
-      "answer_en": "Professional scaling removes hardened plaque and deposits. The interval depends on gum health and tartar formation.",
+      "question_fa": "آیا می‌توان جرم سخت‌شده را فقط با مسواک برداشت؟",
+      "question_en": "Can hardened tartar be removed by brushing alone?",
+      "answer_fa": "از ابزارهای فلزی یا وسایل خانگی برای تراشیدن جرم استفاده نکنید؛ ممکن است به دندان و لثه آسیب بزنند.",
+      "answer_en": "Do not use metal tools or household devices to scrape tartar; they may injure teeth and gums.",
       "sources": [
+        "NIDCR_GUM_DISEASE",
         "NHS_DENTAL_TREATMENTS"
       ],
       "confidence": "high_for_general_educational_information",
@@ -1130,10 +1134,11 @@
       "category": "cleaning",
       "question_fa": "پلاک و جرم دندان چیست؟",
       "question_en": "What is plaque and tartar?",
-      "answer_fa": "جرم‌گیری حرفه‌ای پلاک سخت‌شده و رسوبات را برمی‌دارد. فاصله جلسات به سلامت لثه و میزان تشکیل جرم بستگی دارد.",
-      "answer_en": "Professional scaling removes hardened plaque and deposits. The interval depends on gum health and tartar formation.",
+      "answer_fa": "اگر پلاک با مسواک و تمیزکردن بین دندان‌ها برداشته نشود، می‌تواند سخت شود و به جرم تبدیل گردد.",
+      "answer_en": "If plaque is not removed by brushing and interdental cleaning, it can harden into tartar.",
       "sources": [
-        "NHS_DENTAL_TREATMENTS"
+        "NIDCR_GUM_DISEASE",
+        "NHS_ORAL_CARE"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -1143,12 +1148,13 @@
     {
       "id": "KDF-066",
       "category": "cleaning",
-      "question_fa": "چه نکته‌ای درباره پلاک و جرم دندان باید بدانم؟",
-      "question_en": "What should I know about plaque and tartar?",
-      "answer_fa": "جرم‌گیری حرفه‌ای پلاک سخت‌شده و رسوبات را برمی‌دارد. فاصله جلسات به سلامت لثه و میزان تشکیل جرم بستگی دارد.",
-      "answer_en": "Professional scaling removes hardened plaque and deposits. The interval depends on gum health and tartar formation.",
+      "question_fa": "جرم دندان چگونه تشکیل می‌شود؟",
+      "question_en": "How does dental tartar form?",
+      "answer_fa": "پاک‌سازی روزانه پلاک از تشکیل جرم می‌کاهد، اما جرم موجود را نمی‌توان با مسواک معمولی به‌طور کامل برداشت.",
+      "answer_en": "Daily plaque removal helps limit tartar formation, but ordinary brushing cannot fully remove existing tartar.",
       "sources": [
-        "NHS_DENTAL_TREATMENTS"
+        "NIDCR_GUM_DISEASE",
+        "NHS_ORAL_CARE"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -1160,9 +1166,10 @@
       "category": "cleaning",
       "question_fa": "مراقبت پس از جرم‌گیری چیست؟",
       "question_en": "What is care after scaling?",
-      "answer_fa": "جرم‌گیری حرفه‌ای پلاک سخت‌شده و رسوبات را برمی‌دارد. فاصله جلسات به سلامت لثه و میزان تشکیل جرم بستگی دارد.",
-      "answer_en": "Professional scaling removes hardened plaque and deposits. The interval depends on gum health and tartar formation.",
+      "answer_fa": "حساسیت کوتاه‌مدت ممکن است رخ دهد، اما اگر شدید است یا برطرف نمی‌شود، با دندان‌پزشک تماس بگیرید.",
+      "answer_en": "Short-term sensitivity can occur, but contact your dentist if it is severe or does not settle.",
       "sources": [
+        "NIDCR_GUM_DISEASE",
         "NHS_DENTAL_TREATMENTS"
       ],
       "confidence": "high_for_general_educational_information",
@@ -1173,11 +1180,12 @@
     {
       "id": "KDF-068",
       "category": "cleaning",
-      "question_fa": "چه نکته‌ای درباره مراقبت پس از جرم‌گیری باید بدانم؟",
-      "question_en": "What should I know about care after scaling?",
-      "answer_fa": "جرم‌گیری حرفه‌ای پلاک سخت‌شده و رسوبات را برمی‌دارد. فاصله جلسات به سلامت لثه و میزان تشکیل جرم بستگی دارد.",
-      "answer_en": "Professional scaling removes hardened plaque and deposits. The interval depends on gum health and tartar formation.",
+      "question_fa": "اگر حساسیت پس از جرم‌گیری ادامه داشت چه کنم؟",
+      "question_en": "What should I do if sensitivity continues after scaling?",
+      "answer_fa": "تا زمان ارزیابی از مسواک نرم و فشار ملایم استفاده کنید و از محرک‌هایی که درد را تشدید می‌کنند پرهیز کنید.",
+      "answer_en": "Until reviewed, use a soft brush with gentle pressure and avoid triggers that worsen discomfort.",
       "sources": [
+        "NIDCR_GUM_DISEASE",
         "NHS_DENTAL_TREATMENTS"
       ],
       "confidence": "high_for_general_educational_information",
@@ -1190,10 +1198,11 @@
       "category": "wisdom",
       "question_fa": "دندان عقل چیست؟",
       "question_en": "What is wisdom tooth?",
-      "answer_fa": "دندان عقل سالم و بدون مشکل لزوماً نیاز به خارج‌کردن ندارد. درد، التهاب یا آسیب به دندان مجاور باید با معاینه و در صورت نیاز تصویربرداری بررسی شود.",
-      "answer_en": "A healthy, problem-free wisdom tooth does not automatically need removal. Pain, inflammation or damage to nearby teeth should be assessed.",
+      "answer_fa": "خیر؛ دندان عقل سالم و قابل تمیزکردن ممکن است تحت پایش بماند. عفونت یا آسیب به دندان مجاور می‌تواند دلیل درمان باشد.",
+      "answer_en": "No. A healthy, cleanable wisdom tooth may be monitored. Infection or damage to a neighbouring tooth may warrant treatment.",
       "sources": [
-        "NHS_DENTAL_TREATMENTS"
+        "NHS_DENTAL_TREATMENTS",
+        "AAOMS_WISDOM"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -1203,12 +1212,13 @@
     {
       "id": "KDF-070",
       "category": "wisdom",
-      "question_fa": "چه نکته‌ای درباره دندان عقل باید بدانم؟",
-      "question_en": "What should I know about wisdom tooth?",
-      "answer_fa": "دندان عقل سالم و بدون مشکل لزوماً نیاز به خارج‌کردن ندارد. درد، التهاب یا آسیب به دندان مجاور باید با معاینه و در صورت نیاز تصویربرداری بررسی شود.",
-      "answer_en": "A healthy, problem-free wisdom tooth does not automatically need removal. Pain, inflammation or damage to nearby teeth should be assessed.",
+      "question_fa": "آیا همه دندان‌های عقل باید کشیده شوند؟",
+      "question_en": "Do all wisdom teeth need to be removed?",
+      "answer_fa": "تصمیم بر اساس معاینه، تصویربرداری، خطرهای هر گزینه و امکان پیگیری منظم گرفته می‌شود.",
+      "answer_en": "The decision depends on examination, imaging, risks of each option, and the ability to monitor regularly.",
       "sources": [
-        "NHS_DENTAL_TREATMENTS"
+        "NHS_DENTAL_TREATMENTS",
+        "AAOMS_WISDOM"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -1220,9 +1230,10 @@
       "category": "wisdom",
       "question_fa": "دندان عقل نهفته چیست؟",
       "question_en": "What is impacted wisdom tooth?",
-      "answer_fa": "دندان عقل سالم و بدون مشکل لزوماً نیاز به خارج‌کردن ندارد. درد، التهاب یا آسیب به دندان مجاور باید با معاینه و در صورت نیاز تصویربرداری بررسی شود.",
-      "answer_en": "A healthy, problem-free wisdom tooth does not automatically need removal. Pain, inflammation or damage to nearby teeth should be assessed.",
+      "answer_fa": "بله؛ نبود درد الزاماً به معنی نبود بیماری نیست. دندان عقل نهفته ممکن است بدون علامت باشد و به پایش نیاز داشته باشد.",
+      "answer_en": "Yes. Absence of pain does not necessarily mean absence of disease. An impacted wisdom tooth may be symptom-free and need monitoring.",
       "sources": [
+        "AAOMS_WISDOM",
         "NHS_DENTAL_TREATMENTS"
       ],
       "confidence": "high_for_general_educational_information",
@@ -1233,11 +1244,12 @@
     {
       "id": "KDF-072",
       "category": "wisdom",
-      "question_fa": "چه نکته‌ای درباره دندان عقل نهفته باید بدانم؟",
-      "question_en": "What should I know about impacted wisdom tooth?",
-      "answer_fa": "دندان عقل سالم و بدون مشکل لزوماً نیاز به خارج‌کردن ندارد. درد، التهاب یا آسیب به دندان مجاور باید با معاینه و در صورت نیاز تصویربرداری بررسی شود.",
-      "answer_en": "A healthy, problem-free wisdom tooth does not automatically need removal. Pain, inflammation or damage to nearby teeth should be assessed.",
+      "question_fa": "آیا دندان عقل نهفته می‌تواند بدون درد باشد؟",
+      "question_en": "Can an impacted wisdom tooth be painless?",
+      "answer_fa": "معاینه و تصویربرداری در صورت نیاز به ارزیابی موقعیت دندان و اثر احتمالی آن بر دندان‌های مجاور کمک می‌کند.",
+      "answer_en": "Examination and imaging when indicated help assess tooth position and possible effects on neighbouring teeth.",
       "sources": [
+        "AAOMS_WISDOM",
         "NHS_DENTAL_TREATMENTS"
       ],
       "confidence": "high_for_general_educational_information",
@@ -1250,10 +1262,10 @@
       "category": "wisdom",
       "question_fa": "خارج کردن دندان عقل چیست؟",
       "question_en": "What is wisdom tooth removal?",
-      "answer_fa": "دندان عقل سالم و بدون مشکل لزوماً نیاز به خارج‌کردن ندارد. درد، التهاب یا آسیب به دندان مجاور باید با معاینه و در صورت نیاز تصویربرداری بررسی شود.",
-      "answer_en": "A healthy, problem-free wisdom tooth does not automatically need removal. Pain, inflammation or damage to nearby teeth should be assessed.",
+      "answer_fa": "عفونت، پوسیدگی، کیست یا آسیب به دندان مجاور از عوامل مهم‌اند؛ موقعیت دندان و خطرهای جراحی نیز بررسی می‌شوند.",
+      "answer_en": "Infection, decay, cysts, or damage to neighbouring teeth are important factors; tooth position and surgical risks are also assessed.",
       "sources": [
-        "NHS_DENTAL_TREATMENTS"
+        "AAOMS_WISDOM"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -1263,12 +1275,12 @@
     {
       "id": "KDF-074",
       "category": "wisdom",
-      "question_fa": "چه نکته‌ای درباره خارج کردن دندان عقل باید بدانم؟",
-      "question_en": "What should I know about wisdom tooth removal?",
-      "answer_fa": "دندان عقل سالم و بدون مشکل لزوماً نیاز به خارج‌کردن ندارد. درد، التهاب یا آسیب به دندان مجاور باید با معاینه و در صورت نیاز تصویربرداری بررسی شود.",
-      "answer_en": "A healthy, problem-free wisdom tooth does not automatically need removal. Pain, inflammation or damage to nearby teeth should be assessed.",
+      "question_fa": "چه عواملی بر تصمیم جراحی دندان عقل اثر می‌گذارند؟",
+      "question_en": "What factors affect the decision to remove a wisdom tooth?",
+      "answer_fa": "اگر دندان عقل بدون بیماری باقی بماند، ممکن است برنامه پایش شامل معاینه و تصویربرداری دوره‌ای باشد.",
+      "answer_en": "If a disease-free wisdom tooth is retained, monitoring may include periodic examinations and imaging.",
       "sources": [
-        "NHS_DENTAL_TREATMENTS"
+        "AAOMS_WISDOM"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -1280,10 +1292,11 @@
       "category": "orthodontics",
       "question_fa": "ارتودنسی چیست؟",
       "question_en": "What is orthodontic treatment?",
-      "answer_fa": "ارتودنسی برای مرتب‌کردن دندان‌ها و اصلاح برخی مشکلات بایت به‌کار می‌رود. مدت درمان به پیچیدگی مشکل و شرایط فرد بستگی دارد.",
-      "answer_en": "Orthodontics aligns teeth and corrects some bite problems. Treatment duration depends on complexity and individual factors.",
+      "answer_fa": "دستگاه ارتودنسی نیروی کنترل‌شده و تدریجی به دندان وارد می‌کند تا در طول زمان در موقعیت جدید قرار گیرد.",
+      "answer_en": "Orthodontic appliances apply controlled, gradual forces so teeth move into new positions over time.",
       "sources": [
-        "NHS_DENTAL_TREATMENTS"
+        "NHS_DENTAL_TREATMENTS",
+        "TUMS_DENTAL"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -1293,12 +1306,13 @@
     {
       "id": "KDF-076",
       "category": "orthodontics",
-      "question_fa": "چه نکته‌ای درباره ارتودنسی باید بدانم؟",
-      "question_en": "What should I know about orthodontic treatment?",
-      "answer_fa": "ارتودنسی برای مرتب‌کردن دندان‌ها و اصلاح برخی مشکلات بایت به‌کار می‌رود. مدت درمان به پیچیدگی مشکل و شرایط فرد بستگی دارد.",
-      "answer_en": "Orthodontics aligns teeth and corrects some bite problems. Treatment duration depends on complexity and individual factors.",
+      "question_fa": "براکت‌های ارتودنسی چگونه دندان‌ها را حرکت می‌دهند؟",
+      "question_en": "How do orthodontic braces move teeth?",
+      "answer_fa": "تنظیم‌های دوره‌ای برای بررسی حرکت دندان‌ها و سلامت لثه و اصلاح برنامه درمان انجام می‌شود.",
+      "answer_en": "Periodic adjustments monitor tooth movement and gum health and allow the plan to be refined.",
       "sources": [
-        "NHS_DENTAL_TREATMENTS"
+        "NHS_DENTAL_TREATMENTS",
+        "TUMS_DENTAL"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -1310,10 +1324,11 @@
       "category": "orthodontics",
       "question_fa": "مدت درمان ارتودنسی چیست؟",
       "question_en": "What is orthodontic treatment duration?",
-      "answer_fa": "ارتودنسی برای مرتب‌کردن دندان‌ها و اصلاح برخی مشکلات بایت به‌کار می‌رود. مدت درمان به پیچیدگی مشکل و شرایط فرد بستگی دارد.",
-      "answer_en": "Orthodontics aligns teeth and corrects some bite problems. Treatment duration depends on complexity and individual factors.",
+      "answer_fa": "پیچیدگی ناهنجاری، همکاری در استفاده از دستگاه، شکستن براکت‌ها و پاسخ زیستی دندان‌ها می‌توانند بر مدت درمان اثر بگذارند.",
+      "answer_en": "Case complexity, appliance adherence, broken brackets, and biological tooth response can affect treatment duration.",
       "sources": [
-        "NHS_DENTAL_TREATMENTS"
+        "NHS_DENTAL_TREATMENTS",
+        "TUMS_DENTAL"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -1323,12 +1338,13 @@
     {
       "id": "KDF-078",
       "category": "orthodontics",
-      "question_fa": "چه نکته‌ای درباره مدت درمان ارتودنسی باید بدانم؟",
-      "question_en": "What should I know about orthodontic treatment duration?",
-      "answer_fa": "ارتودنسی برای مرتب‌کردن دندان‌ها و اصلاح برخی مشکلات بایت به‌کار می‌رود. مدت درمان به پیچیدگی مشکل و شرایط فرد بستگی دارد.",
-      "answer_en": "Orthodontics aligns teeth and corrects some bite problems. Treatment duration depends on complexity and individual factors.",
+      "question_fa": "چه عواملی می‌تواند مدت ارتودنسی را طولانی‌تر کند؟",
+      "question_en": "What can make orthodontic treatment take longer?",
+      "answer_fa": "مراجعات تنظیمی را طبق برنامه انجام دهید و مدت استفاده از الاینر یا کش را بدون هماهنگی تغییر ندهید.",
+      "answer_en": "Attend adjustment visits as planned and do not change aligner or elastic wear time without guidance.",
       "sources": [
-        "NHS_DENTAL_TREATMENTS"
+        "NHS_DENTAL_TREATMENTS",
+        "TUMS_DENTAL"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -1340,10 +1356,11 @@
       "category": "orthodontics",
       "question_fa": "ارتودنسی بزرگسالان چیست؟",
       "question_en": "What is adult orthodontics?",
-      "answer_fa": "ارتودنسی برای مرتب‌کردن دندان‌ها و اصلاح برخی مشکلات بایت به‌کار می‌رود. مدت درمان به پیچیدگی مشکل و شرایط فرد بستگی دارد.",
-      "answer_en": "Orthodontics aligns teeth and corrects some bite problems. Treatment duration depends on complexity and individual factors.",
+      "answer_fa": "بله؛ ارتودنسی محدود به کودکان نیست، اما سلامت لثه، استخوان، ترمیم‌ها و نوع مشکل باید ارزیابی شود.",
+      "answer_en": "Yes. Orthodontics is not limited to children, but gum and bone health, restorations, and the problem must be assessed.",
       "sources": [
-        "NHS_DENTAL_TREATMENTS"
+        "NHS_DENTAL_TREATMENTS",
+        "TUMS_DENTAL"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -1353,12 +1370,13 @@
     {
       "id": "KDF-080",
       "category": "orthodontics",
-      "question_fa": "چه نکته‌ای درباره ارتودنسی بزرگسالان باید بدانم؟",
-      "question_en": "What should I know about adult orthodontics?",
-      "answer_fa": "ارتودنسی برای مرتب‌کردن دندان‌ها و اصلاح برخی مشکلات بایت به‌کار می‌رود. مدت درمان به پیچیدگی مشکل و شرایط فرد بستگی دارد.",
-      "answer_en": "Orthodontics aligns teeth and corrects some bite problems. Treatment duration depends on complexity and individual factors.",
+      "question_fa": "آیا بزرگسالان هم می‌توانند ارتودنسی انجام دهند؟",
+      "question_en": "Can adults have orthodontic treatment?",
+      "answer_fa": "در بزرگسالان، بیماری فعال لثه یا پوسیدگی باید پیش از شروع یا در کنار درمان مدیریت شود.",
+      "answer_en": "In adults, active gum disease or decay should be managed before or alongside orthodontic treatment.",
       "sources": [
-        "NHS_DENTAL_TREATMENTS"
+        "NHS_DENTAL_TREATMENTS",
+        "TUMS_DENTAL"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",

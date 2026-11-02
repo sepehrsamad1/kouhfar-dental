@@ -66,6 +66,9 @@ jobs:
       - name: Install PHP dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
 
+      - name: Audit PHP dependencies
+        run: composer audit --locked
+
       - name: Prepare Laravel environment
         run: cp .env.example .env
 
@@ -80,6 +83,9 @@ jobs:
 
       - name: Install JavaScript dependencies
         run: npm ci
+
+      - name: Audit JavaScript dependencies
+        run: npm audit --audit-level=high
 
       - name: Run JavaScript lint
         run: npm run lint
@@ -173,3 +179,20 @@ jobs:
           name: task27-ai-admin-responsive-screenshots
           path: test-results/task27-ai-admin-*.png
           if-no-files-found: ignore
+
+  secrets:
+    name: Full-history secret scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout full repository history
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Scan repository history with Gitleaks
+        uses: gitleaks/gitleaks-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_ENABLE_COMMENTS: false

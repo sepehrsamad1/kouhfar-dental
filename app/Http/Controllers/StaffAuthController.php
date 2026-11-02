@@ -198,6 +198,8 @@ class StaffAuthController
         $throttleKey = $this->mfaThrottleKey($staff);
 
         if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $this->recordAttempt($staff->email, $request, false);
+
             return back()->withErrors(['code' => 'کد واردشده معتبر نیست.']);
         }
 

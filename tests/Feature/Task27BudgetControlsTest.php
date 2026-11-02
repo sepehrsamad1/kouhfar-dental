@@ -177,3 +177,50 @@ it('never treats prompt-injection instructions inside published knowledge as exe
         ->and(AIRequest::query()->count())->toBe(0)
         ->and(AIUsage::query()->count())->toBe(0);
 });
+
+it('enforces independent per-model token and IRR ceilings with separate warning thresholds', function (): void {
+    $settings = app(AIControlService::class)->settings();
+    $settings->update([
+        'provider_token_limits' => ['fake-task27-model' => 100],
+        'model_budget_limits_irr' => ['fake-task27-model' => 5_000],
+    ]);
+
+    $usage = AIUsage::factory()->create([
+        'day' => now('UTC')->toDateString(),
+        'feature' => 'assistant',
+        'provider' => 'fake',
+        'model' => 'fake-task27-model',
+        'capability' => 'text',
+        'input_tokens' => 70,
+        'output_tokens' => 20,
+        'estimated_cost_irr' => 4_000,
+        'request_count' => 1,
+    ]);
+
+    $model = app(AIControlService::class)->summary()['model_limits']['fake-task27-model'];
+
+    expect($model['tokens_used'])->toBe(90)
+        ->and($model['token_percentage'])->toBe(90)
+        ->and($model['token_alerts'])->toBe([80])
+        ->and($model['budget_percentage'])->toBe(80)
+        ->and($model['budget_alerts'])->toBe([50, 80])
+        ->and($model['blocked'])->toBeFalse();
+
+    $usage->update(['input_tokens' => 80, 'output_tokens' => 20]);
+    $tokenLimited = app(AIProviderManager::class)->generateText('per-model-token-cap', 'must not reach provider');
+
+    expect($tokenLimited['status'])->toBe('rate_limited')
+        ->and(AIRequest::query()->latest('created_at')->first()->status)->toBe('blocked');
+
+    $settings->update([
+        'provider_token_limits' => ['fake-task27-model' => 200],
+        'model_budget_limits_irr' => ['fake-task27-model' => 5_000],
+    ]);
+    $usage->update(['estimated_cost_irr' => 5_000]);
+
+    $budgetLimited = app(AIProviderManager::class)->generateText('per-model-budget-cap', 'must not reach provider');
+
+    expect($budgetLimited['status'])->toBe('rate_limited')
+        ->and(AIRequest::query()->where('status', 'blocked')->count())->toBe(2)
+        ->and(AIUsage::query()->count())->toBe(1);
+});

@@ -47,4 +47,6 @@ This is an application-level inventory, not a legal determination. It identifies
 7. Backup retention, encryption, access and deletion propagation.
 8. Confirm the scope and approved implementation for 2-year clinical-record retention, including patient/appointment records and any exception/hold process.
 
+Clinic-owner decision register: [task28-owner-decisions.md](task28-owner-decisions.md). The previously approved Task 21 media retention schedule is unchanged; the remaining retention decisions are separate.
+
 **Task 28 acceptance is blocked until these decisions are approved and the resulting controls are implemented or explicitly scoped out by the clinic owner.**

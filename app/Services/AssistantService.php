@@ -40,19 +40,23 @@ final class AssistantService
 
         $guardDecision = app(AssistantGuard::class)->classify($message);
 
+        if ($guardDecision === 'emergency' || $this->isEmergency($message)) {
+            $items = $this->knowledge->forKnowledge($locale)
+                ->filter(fn (array $item): bool => $item['content_key'] === 'dental-emergency-response');
+
+            return ['status' => 'emergency', 'answer' => $this->emergencyResponse($locale), 'sources' => $this->sources($items)];
+        }
+
+        if ($this->containsSensitiveIdentifiers($message)) {
+            return ['status' => 'refused', 'answer' => $this->privacyNotice($locale), 'sources' => []];
+        }
+
         if ($guardDecision === 'identity') {
             return ['status' => 'succeeded', 'answer' => $this->identityResponse($locale, $message), 'sources' => []];
         }
 
         if ($guardDecision === 'out_of_domain') {
             return ['status' => 'refused', 'answer' => $this->domainRefusal($locale), 'sources' => []];
-        }
-
-        if ($guardDecision === 'emergency' || $this->isEmergency($message)) {
-            $items = $this->knowledge->forKnowledge($locale)
-                ->filter(fn (array $item): bool => $item['content_key'] === 'dental-emergency-response');
-
-            return ['status' => 'emergency', 'answer' => $this->emergencyResponse($locale), 'sources' => $this->sources($items)];
         }
 
         if ($guardDecision === 'prompt_injection' || $this->isPromptInjection($message)) {
@@ -134,6 +138,18 @@ final class AssistantService
         }
 
         return ['status' => 'succeeded', 'answer' => trim($result['output']), 'sources' => $sources];
+    }
+
+    private function containsSensitiveIdentifiers(string $message): bool
+    {
+        return preg_match('/(?:[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}|(?<!\\d)(?:\\+?98|0098|0)?9\\d{2}[\\s-]?\\d{3}[\\s-]?\\d{4}(?!\\d)|(?<!\\d)\\d{10}(?!\\d)|(?:کد\\s*ملی|شماره\\s*(?:پرونده|تماس))\\s*[:：]?\\s*[A-Z0-9-]{5,})/iu', $message) === 1;
+    }
+
+    private function privacyNotice(string $locale): string
+    {
+        return $locale === 'en'
+            ? 'For your privacy, please do not share names, phone numbers, national ID numbers, email addresses, or patient-record numbers here. Ask your dental question without identifying details.'
+            : 'برای حفظ حریم خصوصی، لطفاً نام، شماره تماس، کد ملی، نشانی ایمیل یا شماره پرونده را در گفت‌وگو ارسال نکنید. پرسش دندان‌پزشکی خود را بدون اطلاعات شناسایی مطرح کنید.';
     }
 
     private function isEmergency(string $message): bool

@@ -39,6 +39,16 @@
       "title": "ADA Whitening",
       "url": "https://www.ada.org/resources/ada-library/oral-health-topics/whitening/",
       "organization": "American Dental Association"
+    },
+    "NHS_TOOTHACHE": {
+      "title": "NHS Toothache",
+      "url": "https://www.nhs.uk/symptoms/toothache/",
+      "organization": "NHS"
+    },
+    "NHS_DENTAL_ABSCESS": {
+      "title": "NHS Dental abscess",
+      "url": "https://www.nhs.uk/conditions/dental-abscess/",
+      "organization": "NHS"
     }
   },
   "faqs": [
@@ -1340,7 +1350,9 @@
       "answer_fa": "مشکل شدید تنفس یا بلع، تورم سریع دهان یا گردن، خونریزی شدید کنترل‌نشده یا بیهوشی نیازمند خدمات اورژانسی فوری است. در ایران با ۱۱۵ تماس بگیرید و منتظر پاسخ چت‌بات نمانید.",
       "answer_en": "Severe breathing or swallowing difficulty, rapidly increasing mouth or neck swelling, uncontrolled heavy bleeding or loss of consciousness require immediate emergency care. In Iran call 115; do not wait for a chatbot.",
       "sources": [
-        "NHS_EMERGENCY"
+        "NHS_EMERGENCY",
+        "NHS_TOOTHACHE",
+        "NHS_DENTAL_ABSCESS"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -1355,7 +1367,9 @@
       "answer_fa": "مشکل شدید تنفس یا بلع، تورم سریع دهان یا گردن، خونریزی شدید کنترل‌نشده یا بیهوشی نیازمند خدمات اورژانسی فوری است. در ایران با ۱۱۵ تماس بگیرید و منتظر پاسخ چت‌بات نمانید.",
       "answer_en": "Severe breathing or swallowing difficulty, rapidly increasing mouth or neck swelling, uncontrolled heavy bleeding or loss of consciousness require immediate emergency care. In Iran call 115; do not wait for a chatbot.",
       "sources": [
-        "NHS_EMERGENCY"
+        "NHS_EMERGENCY",
+        "NHS_TOOTHACHE",
+        "NHS_DENTAL_ABSCESS"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -1370,7 +1384,9 @@
       "answer_fa": "مشکل شدید تنفس یا بلع، تورم سریع دهان یا گردن، خونریزی شدید کنترل‌نشده یا بیهوشی نیازمند خدمات اورژانسی فوری است. در ایران با ۱۱۵ تماس بگیرید و منتظر پاسخ چت‌بات نمانید.",
       "answer_en": "Severe breathing or swallowing difficulty, rapidly increasing mouth or neck swelling, uncontrolled heavy bleeding or loss of consciousness require immediate emergency care. In Iran call 115; do not wait for a chatbot.",
       "sources": [
-        "NHS_EMERGENCY"
+        "NHS_EMERGENCY",
+        "NHS_TOOTHACHE",
+        "NHS_DENTAL_ABSCESS"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -1385,7 +1401,9 @@
       "answer_fa": "مشکل شدید تنفس یا بلع، تورم سریع دهان یا گردن، خونریزی شدید کنترل‌نشده یا بیهوشی نیازمند خدمات اورژانسی فوری است. در ایران با ۱۱۵ تماس بگیرید و منتظر پاسخ چت‌بات نمانید.",
       "answer_en": "Severe breathing or swallowing difficulty, rapidly increasing mouth or neck swelling, uncontrolled heavy bleeding or loss of consciousness require immediate emergency care. In Iran call 115; do not wait for a chatbot.",
       "sources": [
-        "NHS_EMERGENCY"
+        "NHS_EMERGENCY",
+        "NHS_TOOTHACHE",
+        "NHS_DENTAL_ABSCESS"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -1400,7 +1418,9 @@
       "answer_fa": "مشکل شدید تنفس یا بلع، تورم سریع دهان یا گردن، خونریزی شدید کنترل‌نشده یا بیهوشی نیازمند خدمات اورژانسی فوری است. در ایران با ۱۱۵ تماس بگیرید و منتظر پاسخ چت‌بات نمانید.",
       "answer_en": "Severe breathing or swallowing difficulty, rapidly increasing mouth or neck swelling, uncontrolled heavy bleeding or loss of consciousness require immediate emergency care. In Iran call 115; do not wait for a chatbot.",
       "sources": [
-        "NHS_EMERGENCY"
+        "NHS_EMERGENCY",
+        "NHS_TOOTHACHE",
+        "NHS_DENTAL_ABSCESS"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -1415,7 +1435,9 @@
       "answer_fa": "مشکل شدید تنفس یا بلع، تورم سریع دهان یا گردن، خونریزی شدید کنترل‌نشده یا بیهوشی نیازمند خدمات اورژانسی فوری است. در ایران با ۱۱۵ تماس بگیرید و منتظر پاسخ چت‌بات نمانید.",
       "answer_en": "Severe breathing or swallowing difficulty, rapidly increasing mouth or neck swelling, uncontrolled heavy bleeding or loss of consciousness require immediate emergency care. In Iran call 115; do not wait for a chatbot.",
       "sources": [
-        "NHS_EMERGENCY"
+        "NHS_EMERGENCY",
+        "NHS_TOOTHACHE",
+        "NHS_DENTAL_ABSCESS"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -1430,7 +1452,9 @@
       "answer_fa": "مشکل شدید تنفس یا بلع، تورم سریع دهان یا گردن، خونریزی شدید کنترل‌نشده یا بیهوشی نیازمند خدمات اورژانسی فوری است. در ایران با ۱۱۵ تماس بگیرید و منتظر پاسخ چت‌بات نمانید.",
       "answer_en": "Severe breathing or swallowing difficulty, rapidly increasing mouth or neck swelling, uncontrolled heavy bleeding or loss of consciousness require immediate emergency care. In Iran call 115; do not wait for a chatbot.",
       "sources": [
-        "NHS_EMERGENCY"
+        "NHS_EMERGENCY",
+        "NHS_TOOTHACHE",
+        "NHS_DENTAL_ABSCESS"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -1445,7 +1469,9 @@
       "answer_fa": "مشکل شدید تنفس یا بلع، تورم سریع دهان یا گردن، خونریزی شدید کنترل‌نشده یا بیهوشی نیازمند خدمات اورژانسی فوری است. در ایران با ۱۱۵ تماس بگیرید و منتظر پاسخ چت‌بات نمانید.",
       "answer_en": "Severe breathing or swallowing difficulty, rapidly increasing mouth or neck swelling, uncontrolled heavy bleeding or loss of consciousness require immediate emergency care. In Iran call 115; do not wait for a chatbot.",
       "sources": [
-        "NHS_EMERGENCY"
+        "NHS_EMERGENCY",
+        "NHS_TOOTHACHE",
+        "NHS_DENTAL_ABSCESS"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",

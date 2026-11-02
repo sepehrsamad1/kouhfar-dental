@@ -14,6 +14,10 @@ it('imports the bilingual FAQ package as draft clinical content only', function 
     expect(ContentItem::query()->where('kind', ContentKind::Faq)->count())->toBe(200)
         ->and(ContentItem::query()->where('kind', ContentKind::Faq)->where('status', ContentItemStatus::Published)->count())->toBe(0)
         ->and(ContentItem::query()->where('kind', ContentKind::Faq)->where('approval_scope', 'clinical')->count())->toBe(200);
+
+    $first = ContentItem::query()->where('content_key', 'dental-faq-KDF-001')->where('locale', 'fa')->firstOrFail();
+    expect($first->bodyData()['source_references'][0]['url'])->toStartWith('https://')
+        ->and($first->bodyData()['review_status'])->toBe('draft_for_clinician_review');
 });
 
 it('contains 100 distinct bilingual questions and answers with valid sources', function (): void {

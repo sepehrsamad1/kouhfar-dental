@@ -12,6 +12,7 @@ it('contains exactly 100 Persian and 100 English cases across all required scena
         ->and($counts->get('fa'))->toBe(100)
         ->and($counts->get('en'))->toBe(100)
         ->and(collect($dataset['cases'])->pluck('id')->unique())->toHaveCount(200)
+        ->and(collect($dataset['cases'])->pluck('question')->unique())->toHaveCount(200)
         ->and($categories)->toContain('normal_dental', 'specialist_treatment', 'out_of_domain', 'diagnosis_refusal', 'emergency', 'prompt_injection', 'secret_exfiltration', 'harmful_forbidden', 'ambiguous', 'identity_override', 'adversarial', 'citation_required');
 });
 

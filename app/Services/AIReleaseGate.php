@@ -8,11 +8,6 @@ use App\ContentItem;
 
 final class AIReleaseGate
 {
-    /**
-     * @param array $dataset
-     * @param array $responses
-     * @return array
-     */
     public function evaluate(array $dataset, array $responses): array
     {
         $citationRequired = 0;

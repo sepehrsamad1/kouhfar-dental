@@ -85,7 +85,7 @@
                 <h3>{{ $row->day }} — {{ $row->feature }}</h3>
                 <p>{{ $row->provider }} / {{ $row->model }} / {{ $row->capability }}</p>
                 <p>توکن ورودی: {{ number_format((int) $row->input_tokens) }} | خروجی: {{ number_format((int) $row->output_tokens) }} | مجموع: {{ number_format((int) $row->input_tokens + (int) $row->output_tokens) }}</p>
-                <p>هزینه تخمینی: {{ number_format((float) $row->estimated_cost_irr, 2) }} ریال | هزینه واقعی: {{ $row->actual_cost_irr === null ? 'در دسترس نیست' : number_format((float) $row->actual_cost_irr, 2).' ریال' }}</p>
+                <p>هزینه تخمینی: {{ number_format((float) $row->estimated_cost_irr, 2) }} ریال | هزینه واقعی گزارش‌شده (در صورت دسترسی): {{ $row->actual_cost_irr === null ? 'در دسترس نیست' : number_format((float) $row->actual_cost_irr, 2).' ریال' }}</p>
                 <p>تعداد درخواست‌ها: {{ number_format((int) $row->request_count) }}</p>
             </article>
         @empty

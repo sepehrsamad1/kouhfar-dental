@@ -138,6 +138,7 @@ it('serves an exact approved FAQ without provider usage when the monthly budget 
     expect($response['status'])->toBe('succeeded')
         ->and($response['answer'])->toBe($faq->bodyData()['text'])
         ->and($response['sources'][0]['content_key'])->toBe('dental-faq-KDF-001')
+        ->and($response['sources'][0]['references'][0]['url'])->toStartWith('https://')
         ->and(AIRequest::query()->count())->toBe(0)
         ->and(AIUsage::query()->count())->toBe(1);
 });

@@ -90,7 +90,7 @@ it('handles emergency red flags without calling the model', function (): void {
     expect($result['status'])
         ->toBe('emergency')
         ->and($result['answer'])
-        ->toContain('۱۱۵');
+        ->toContain('خدمات اورژانس پزشکی');
 });
 
 it('refuses prompt injection and internal-data requests', function (): void {

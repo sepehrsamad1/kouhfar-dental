@@ -11,6 +11,7 @@ uses(RefreshDatabase::class);
 
 beforeEach(function (): void {
     Cache::flush();
+    RateLimiter::clear('ai:'.substr(hash('sha256', 'assistant|127.0.0.1'), 0, 24).':'.now('UTC')->format('Y-m-d-H-i'));
 
     config([
         'ai.enabled' => true,

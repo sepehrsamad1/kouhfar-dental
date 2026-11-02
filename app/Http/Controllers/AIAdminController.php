@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\AIRequest;
+use App\StaffUser;
 use App\AIUsage;
 use App\Services\AIControlService;
 use App\Support\AuditLogger;
@@ -66,7 +67,10 @@ final class AIAdminController
         ];
 
         $controls->update($after['monthly_budget_irr'], $after['emergency_disabled']);
-        AuditLogger::record($request->user('staff'), 'ai.controls_updated', $setting, $before, $after);
+        $actor = $request->user('staff');
+        abort_unless($actor instanceof StaffUser, 403);
+
+        AuditLogger::record($actor, 'ai.controls_updated', $setting, $before, $after);
 
         return back()->with('success', 'تنظیمات بودجه و وضعیت اضطراری دستیار هوشمند ذخیره شد.');
     }

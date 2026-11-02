@@ -55,6 +55,18 @@
     </section>
 
     <section>
+        <h2>آخرین درخواست‌ها با زمان ثبت</h2>
+        @forelse ($recentRequests as $request)
+            <article>
+                <p>{{ $request->created_at->setTimezone('Asia/Tehran')->format('Y-m-d H:i:s') }} — {{ $request->provider }} / {{ $request->model }} / {{ $request->capability }}</p>
+                <p>وضعیت: {{ $request->status }} | ورودی: {{ $request->input_tokens }} | خروجی: {{ $request->output_tokens }} | هزینه تخمینی: {{ number_format((float) $request->estimated_cost_irr, 2) }} ریال</p>
+            </article>
+        @empty
+            <p>درخواستی ثبت نشده است.</p>
+        @endforelse
+    </section>
+
+    <section>
         <h2>درخواست‌های موفق و ناموفق</h2>
         @forelse ($requests as $row)
             <p>{{ $row->provider }} / {{ $row->model }} / {{ $row->capability }} — {{ $row->status }}: {{ $row->request_count }}</p>

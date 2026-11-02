@@ -24,7 +24,7 @@ class StaffAuthController
         return view('staff.auth.login');
     }
 
-    public function store(StaffLoginRequest $request, TotpService $totp): RedirectResponse
+    public function store(StaffLoginRequest $request, TotpService $totp): RedirectResponse|Response
     {
         $email = mb_strtolower(trim($request->string('email')->toString()));
         $throttleKey = hash('sha256', $email.'|'.$request->ip());
@@ -161,7 +161,7 @@ class StaffAuthController
         return view('staff.auth.mfa-challenge');
     }
 
-    public function verify(Request $request, TotpService $totp): RedirectResponse
+    public function verify(Request $request, TotpService $totp): RedirectResponse|Response
     {
         $request->validate(['code' => ['required', 'string', 'min:6', 'max:64']]);
         $staff = $this->pendingStaff($request);

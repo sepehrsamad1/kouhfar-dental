@@ -81,6 +81,37 @@ it('emits secure HttpOnly SameSite cookies when secure session cookies are enabl
         ->and($cookie->getSameSite())->toBe('lax');
 });
 
+it('prefixes non-local session cookie names with __Secure-', function (): void {
+    $originalAppEnv = getenv('APP_ENV');
+    $originalSessionCookie = getenv('SESSION_COOKIE');
+    $originalEnvApp = $_ENV['APP_ENV'] ?? null;
+    $originalServerApp = $_SERVER['APP_ENV'] ?? null;
+    $originalEnvCookie = $_ENV['SESSION_COOKIE'] ?? null;
+    $originalServerCookie = $_SERVER['SESSION_COOKIE'] ?? null;
+
+    putenv('APP_ENV=production');
+    putenv('SESSION_COOKIE=custom-session');
+    $_ENV['APP_ENV'] = 'production';
+    $_SERVER['APP_ENV'] = 'production';
+    $_ENV['SESSION_COOKIE'] = 'custom-session';
+    $_SERVER['SESSION_COOKIE'] = 'custom-session';
+
+    try {
+        $settings = require config_path('session.php');
+    } finally {
+        $originalAppEnv === false ? putenv('APP_ENV') : putenv('APP_ENV='.$originalAppEnv);
+        $originalSessionCookie === false ? putenv('SESSION_COOKIE') : putenv('SESSION_COOKIE='.$originalSessionCookie);
+
+        $originalEnvApp === null ? unset($_ENV['APP_ENV']) : $_ENV['APP_ENV'] = $originalEnvApp;
+        $originalServerApp === null ? unset($_SERVER['APP_ENV']) : $_SERVER['APP_ENV'] = $originalServerApp;
+        $originalEnvCookie === null ? unset($_ENV['SESSION_COOKIE']) : $_ENV['SESSION_COOKIE'] = $originalEnvCookie;
+        $originalServerCookie === null ? unset($_SERVER['SESSION_COOKIE']) : $_SERVER['SESSION_COOKIE'] = $originalServerCookie;
+    }
+
+    expect($settings['cookie'])->toBe('__Secure-custom-session')
+        ->and($settings['secure'])->toBeTrue();
+});
+
 it('regenerates the session id after successful login', function (): void {
     $staff = makeStaffUser(['email' => 'fixation@example.invalid']);
     $this->get(route('staff.login'));

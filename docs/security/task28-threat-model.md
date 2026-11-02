@@ -55,7 +55,7 @@
 | SQL injection | Eloquent/query builder binding; new SQL-looking search regression test | No external DAST/fuzz run; full raw-query inventory and dynamic query review remain open. |
 | Stored XSS | Blade escaping; sanitization allowlist; existing regression test for script markup | Full DOM/reflected payload corpus and browser CSP review remain open. |
 | Malicious upload / image bomb | MIME sniffing, decode, byte/pixel/dimension bounds, re-encoding, private storage, signed authorized download | Production storage ACL, malware scanning decision and deployment limits not verified. |
-| SSRF | No arbitrary URL fetch or active external AI/SMS provider in current configuration | Reassess before enabling a network provider, webhook, URL preview or user-controlled remote import. |
+| SSRF | No arbitrary URL fetch is exposed to public request input. A dormant Kavenegar adapter uses an environment-configured endpoint, not request input; this is a configuration trust boundary. | Before activation, allow-list the approved HTTPS host, prohibit redirects to unapproved/internal destinations, and keep provider credentials out of logs/errors. |
 | Secret exfiltration | Blank `.env.example` placeholders; provider credentials not committed by current configuration | Full-history Gitleaks scan and credential-rotation evidence required. |
 | Privacy leakage in AI/logs | AI request recorder stores approved content IDs and aggregate metadata; safe failure logs; audit metadata allowlist | Queue/failed-job payloads, app log sinks, backup data and retention are not fully evidenced. |
 | Stale bearer token | Smart Smile token is high entropy and stored as a hash; route throttles apply | No token expiry field/TTL. Owner must approve TTL; do not invent it. |

@@ -52,7 +52,7 @@ Limitations:
 - Media access is admin-only in the current approved role matrix and requires a temporary signed URL plus authenticated authorization.
 - Public AI has no access to patient records, staff notes or internal IDs by design.
 - Public Smart Smile status/result access is based on possession of a bearer token; the token is high entropy and only its hash is stored, but no expiry is present.
-- A future SMS/AI provider would receive data according to its adapter payload. No live provider data flow is currently active. Kavenegar adapter exists but must remain disabled until clinic approval.
+- A future AI provider would receive prompts/images according to its adapter payload. The dormant Kavenegar adapter, if activated, sends the normalized patient mobile and SMS body; confirmed/rescheduled templates may include appointment date/time, practitioner display name, clinic address and map URL. No live provider data flow is currently active. Kavenegar must remain disabled until clinic approval.
 - GitHub Actions receives repository source, synthetic test data and build/test artifacts. CI must never use patient data or production secrets.
 
 ## Retention and deletion

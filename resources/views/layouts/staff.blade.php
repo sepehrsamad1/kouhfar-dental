@@ -39,7 +39,7 @@
     <main class="staff-main">
         @if (!empty($aiControlSummary['alerts']))
             <div class="staff-alert staff-alert--error" role="alert">
-                هشدار مصرف API: {{ collect($aiControlSummary['alerts'])->last() }}٪ از سقف بودجه ماهانه مصرف شده است. مصرف تخمینی {{ number_format($aiControlSummary['monthly_spend_irr']) }} از {{ number_format($aiControlSummary['monthly_budget_irr']) }} ریال.
+                هشدار مصرف API: {{ collect($aiControlSummary['alerts'])->last() }}٪ از سقف بودجه ماهانه مصرف شده است. هزینه ثبت‌شده (واقعی در صورت دسترسی، در غیر این صورت تخمینی) {{ number_format($aiControlSummary['monthly_spend_irr']) }} از {{ number_format($aiControlSummary['monthly_budget_irr']) }} ریال.
             </div>
         @endif
         @if (!empty($aiControlSummary['blocked']))

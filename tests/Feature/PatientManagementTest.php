@@ -189,6 +189,31 @@ it('restricts practitioner lookup and updates to their own patients', function (
     expect($unrelated->id)->not->toBe($patient->id);
 });
 
+it('denies practitioners patient edits and full-mobile reveal even for assigned patients', function (): void {
+    $practitionerUser = makePatientManagerStaff('practitioner');
+    $practitioner = Practitioner::factory()->create(['staff_user_id' => $practitionerUser->id]);
+    $patient = Patient::factory()->create(['mobile_normalized' => '09121234567']);
+    $appointment = Appointment::factory()->create(['patient_id' => $patient->id]);
+    attachPatientPractitioner($appointment, $practitioner);
+
+    $this->actingAs($practitionerUser, 'staff')
+        ->patchJson(route('staff.patients.update', $patient), [
+            'full_name' => 'Unauthorized edit',
+            'mobile' => '09121234567',
+            'version' => $patient->version,
+        ])->assertForbidden();
+
+    $this->actingAs($practitionerUser, 'staff')
+        ->get(route('staff.patients.reveal-mobile', $patient))
+        ->assertForbidden();
+
+    $this->actingAs($practitionerUser, 'staff')
+        ->get(route('staff.patients.index'))
+        ->assertOk()
+        ->assertDontSee('نمایش شماره')
+        ->assertSee('0912****4567');
+});
+
 it('uses optimistic concurrency and returns 409 without current patient data', function (): void {
     $reception = makePatientManagerStaff('reception');
     $patient = Patient::factory()->create([

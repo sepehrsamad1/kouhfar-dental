@@ -4,8 +4,13 @@ use App\Services\AIReleaseGate;
 use App\Services\AssistantEvaluationRunner;
 use Database\Seeders\DentalFaqTestingSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 
 uses(RefreshDatabase::class);
+
+beforeEach(function (): void {
+    Cache::flush();
+});
 
 it('runs the complete 200-case fake-provider evaluation and writes a reproducible report', function (): void {
     config([

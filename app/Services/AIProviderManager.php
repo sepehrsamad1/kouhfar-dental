@@ -125,7 +125,6 @@ final class AIProviderManager
         }
     }
 
-
     private function recordBlocked(string $feature, string $capability): void
     {
         $this->requests->record(

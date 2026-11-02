@@ -446,10 +446,11 @@
       "category": "implant",
       "question_fa": "مراقبت از ایمپلنت چیست؟",
       "question_en": "What is implant care?",
-      "answer_fa": "ایمپلنت می‌تواند پایه‌ای برای روکش یا پروتز باشد، اما مناسب‌بودن آن به وضعیت استخوان و لثه، سلامت عمومی و ارزیابی دندان‌پزشک بستگی دارد.",
-      "answer_en": "An implant can support a crown or prosthesis, but suitability depends on bone and gum health, general health and a dentist's assessment.",
+      "answer_fa": "اطراف روکش و خط لثه ایمپلنت را هر روز با مسواک و ابزار بین‌دندانی مناسب تمیز کنید.",
+      "answer_en": "Clean around the implant crown and gumline daily with a toothbrush and a suitable interdental aid.",
       "sources": [
-        "NHS_DENTAL_TREATMENTS"
+        "ADA_IMPLANTS",
+        "NIDCR_GUM_DISEASE"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -459,12 +460,13 @@
     {
       "id": "KDF-022",
       "category": "implant",
-      "question_fa": "چه نکته‌ای درباره مراقبت از ایمپلنت باید بدانم؟",
-      "question_en": "What should I know about implant care?",
-      "answer_fa": "ایمپلنت می‌تواند پایه‌ای برای روکش یا پروتز باشد، اما مناسب‌بودن آن به وضعیت استخوان و لثه، سلامت عمومی و ارزیابی دندان‌پزشک بستگی دارد.",
-      "answer_en": "An implant can support a crown or prosthesis, but suitability depends on bone and gum health, general health and a dentist's assessment.",
+      "question_fa": "چطور اطراف ایمپلنت را تمیز کنم؟",
+      "question_en": "How should I clean around a dental implant?",
+      "answer_fa": "ایمپلنت پوسیده نمی‌شود، اما لثه و استخوان اطراف آن ممکن است بیمار شوند؛ مراقبت و معاینه منظم ضروری است.",
+      "answer_en": "An implant itself does not decay, but the surrounding gum and bone can become diseased; ongoing care and review remain essential.",
       "sources": [
-        "NHS_DENTAL_TREATMENTS"
+        "ADA_IMPLANTS",
+        "NIDCR_GUM_DISEASE"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -476,10 +478,11 @@
       "category": "implant",
       "question_fa": "عوارض احتمالی ایمپلنت چیست؟",
       "question_en": "What is possible implant complications?",
-      "answer_fa": "ایمپلنت می‌تواند پایه‌ای برای روکش یا پروتز باشد، اما مناسب‌بودن آن به وضعیت استخوان و لثه، سلامت عمومی و ارزیابی دندان‌پزشک بستگی دارد.",
-      "answer_en": "An implant can support a crown or prosthesis, but suitability depends on bone and gum health, general health and a dentist's assessment.",
+      "answer_fa": "تورم رو به افزایش، ترشح، تب، درد شدید یا لق‌شدن قطعه باید به تیم درمان گزارش شود.",
+      "answer_en": "Report increasing swelling, discharge, fever, severe pain, or a loose component to the dental team.",
       "sources": [
-        "NHS_DENTAL_TREATMENTS"
+        "ADA_IMPLANTS",
+        "NHS_EMERGENCY"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -489,12 +492,13 @@
     {
       "id": "KDF-024",
       "category": "implant",
-      "question_fa": "چه نکته‌ای درباره عوارض احتمالی ایمپلنت باید بدانم؟",
-      "question_en": "What should I know about possible implant complications?",
-      "answer_fa": "ایمپلنت می‌تواند پایه‌ای برای روکش یا پروتز باشد، اما مناسب‌بودن آن به وضعیت استخوان و لثه، سلامت عمومی و ارزیابی دندان‌پزشک بستگی دارد.",
-      "answer_en": "An implant can support a crown or prosthesis, but suitability depends on bone and gum health, general health and a dentist's assessment.",
+      "question_fa": "چه تغییراتی پس از ایمپلنت باید به کلینیک گزارش شود؟",
+      "question_en": "Which changes after an implant should be reported to the clinic?",
+      "answer_fa": "اگر خونریزی کنترل نمی‌شود یا تورم با مشکل تنفس یا بلع همراه است، فوراً کمک اورژانسی بگیرید.",
+      "answer_en": "If bleeding cannot be controlled or swelling affects breathing or swallowing, seek emergency help immediately.",
       "sources": [
-        "NHS_DENTAL_TREATMENTS"
+        "ADA_IMPLANTS",
+        "NHS_EMERGENCY"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -506,9 +510,10 @@
       "category": "veneer",
       "question_fa": "لمینیت دندان چیست؟",
       "question_en": "What is dental veneers?",
-      "answer_fa": "ونیر لایه‌ای نازک برای پوشاندن سطح جلویی دندان است. میزان آماده‌سازی و مناسب‌بودن آن به شرایط دندان بستگی دارد و باید پیش از درمان بررسی شود.",
-      "answer_en": "A veneer is a thin facing for the front of a tooth. Preparation and suitability depend on the tooth and should be assessed before treatment.",
+      "answer_fa": "ونیر معمولاً سطح جلویی دندان را می‌پوشاند، درحالی‌که روکش تمام بخش قابل‌مشاهده دندان را احاطه می‌کند.",
+      "answer_en": "A veneer usually covers the front surface of a tooth, while a crown covers the visible tooth all around.",
       "sources": [
+        "ADA_VENEERS",
         "NHS_DENTAL_TREATMENTS"
       ],
       "confidence": "high_for_general_educational_information",
@@ -519,11 +524,12 @@
     {
       "id": "KDF-026",
       "category": "veneer",
-      "question_fa": "چه نکته‌ای درباره لمینیت دندان باید بدانم؟",
-      "question_en": "What should I know about dental veneers?",
-      "answer_fa": "ونیر لایه‌ای نازک برای پوشاندن سطح جلویی دندان است. میزان آماده‌سازی و مناسب‌بودن آن به شرایط دندان بستگی دارد و باید پیش از درمان بررسی شود.",
-      "answer_en": "A veneer is a thin facing for the front of a tooth. Preparation and suitability depend on the tooth and should be assessed before treatment.",
+      "question_fa": "تفاوت ونیر با روکش کامل دندان چیست؟",
+      "question_en": "How is a veneer different from a full crown?",
+      "answer_fa": "انتخاب بین ونیر و روکش به میزان آسیب، بافت باقی‌مانده و هدف درمان بستگی دارد.",
+      "answer_en": "The choice between a veneer and crown depends on damage, remaining tooth structure, and treatment goals.",
       "sources": [
+        "ADA_VENEERS",
         "NHS_DENTAL_TREATMENTS"
       ],
       "confidence": "high_for_general_educational_information",
@@ -536,10 +542,10 @@
       "category": "veneer",
       "question_fa": "آماده‌سازی دندان برای ونیر چیست؟",
       "question_en": "What is tooth preparation for veneers?",
-      "answer_fa": "ونیر لایه‌ای نازک برای پوشاندن سطح جلویی دندان است. میزان آماده‌سازی و مناسب‌بودن آن به شرایط دندان بستگی دارد و باید پیش از درمان بررسی شود.",
-      "answer_en": "A veneer is a thin facing for the front of a tooth. Preparation and suitability depend on the tooth and should be assessed before treatment.",
+      "answer_fa": "میزان آماده‌سازی به نوع ونیر و وضعیت دندان بستگی دارد؛ در برخی روش‌ها مینای سطح جلویی برداشته می‌شود و درمان برگشت‌ناپذیر است.",
+      "answer_en": "Preparation depends on veneer type and tooth condition; some techniques remove front-surface enamel and are irreversible.",
       "sources": [
-        "NHS_DENTAL_TREATMENTS"
+        "ADA_VENEERS"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -549,12 +555,12 @@
     {
       "id": "KDF-028",
       "category": "veneer",
-      "question_fa": "چه نکته‌ای درباره آماده‌سازی دندان برای ونیر باید بدانم؟",
-      "question_en": "What should I know about tooth preparation for veneers?",
-      "answer_fa": "ونیر لایه‌ای نازک برای پوشاندن سطح جلویی دندان است. میزان آماده‌سازی و مناسب‌بودن آن به شرایط دندان بستگی دارد و باید پیش از درمان بررسی شود.",
-      "answer_en": "A veneer is a thin facing for the front of a tooth. Preparation and suitability depend on the tooth and should be assessed before treatment.",
+      "question_fa": "برای ونیر چه مقدار از مینای دندان برداشته می‌شود؟",
+      "question_en": "How much enamel is removed for a veneer?",
+      "answer_fa": "پیش از درمان درباره میزان تراش، روش‌های کم‌تهاجمی‌تر و پیامدهای دائمی آن سؤال کنید.",
+      "answer_en": "Before treatment, ask about preparation, less invasive alternatives, and permanent implications.",
       "sources": [
-        "NHS_DENTAL_TREATMENTS"
+        "ADA_VENEERS"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -566,10 +572,11 @@
       "category": "veneer",
       "question_fa": "مراقبت از ونیر چیست؟",
       "question_en": "What is veneer care?",
-      "answer_fa": "ونیر لایه‌ای نازک برای پوشاندن سطح جلویی دندان است. میزان آماده‌سازی و مناسب‌بودن آن به شرایط دندان بستگی دارد و باید پیش از درمان بررسی شود.",
-      "answer_en": "A veneer is a thin facing for the front of a tooth. Preparation and suitability depend on the tooth and should be assessed before treatment.",
+      "answer_fa": "بله؛ ونیر از دندان در برابر پوسیدگی محافظت کامل نمی‌کند. تمیزکردن لبه‌ها و معاینه دوره‌ای همچنان لازم است.",
+      "answer_en": "Yes. A veneer does not fully protect the tooth from decay. Cleaning its margins and routine check-ups remain important.",
       "sources": [
-        "NHS_DENTAL_TREATMENTS"
+        "ADA_VENEERS",
+        "NHS_ORAL_CARE"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -579,12 +586,13 @@
     {
       "id": "KDF-030",
       "category": "veneer",
-      "question_fa": "چه نکته‌ای درباره مراقبت از ونیر باید بدانم؟",
-      "question_en": "What should I know about veneer care?",
-      "answer_fa": "ونیر لایه‌ای نازک برای پوشاندن سطح جلویی دندان است. میزان آماده‌سازی و مناسب‌بودن آن به شرایط دندان بستگی دارد و باید پیش از درمان بررسی شود.",
-      "answer_en": "A veneer is a thin facing for the front of a tooth. Preparation and suitability depend on the tooth and should be assessed before treatment.",
+      "question_fa": "آیا اطراف یا زیر ونیر هم ممکن است پوسیده شود؟",
+      "question_en": "Can decay develop around or beneath a veneer?",
+      "answer_fa": "اگر لبه ونیر زبر، جدا یا حساس شد، برای بررسی مراجعه کنید و از چسباندن آن در خانه خودداری کنید.",
+      "answer_en": "Have a rough, loose, or sensitive veneer margin checked; do not try to glue it back at home.",
       "sources": [
-        "NHS_DENTAL_TREATMENTS"
+        "ADA_VENEERS",
+        "NHS_ORAL_CARE"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -596,10 +604,11 @@
       "category": "composite",
       "question_fa": "کامپوزیت ونیر چیست؟",
       "question_en": "What is composite bonding?",
-      "answer_fa": "کامپوزیت ماده‌ای همرنگ دندان است که برای برخی اصلاح‌های ظاهری یا ترمیم‌های محدود استفاده می‌شود. ممکن است در آینده به پولیش یا ترمیم نیاز پیدا کند.",
-      "answer_en": "Composite is a tooth-coloured material used for selected cosmetic changes or limited repairs. It may need polishing or repair over time.",
+      "answer_fa": "کامپوزیت می‌تواند برای ترمیم لب‌پریدگی، تغییر شکل محدود یا اصلاح برخی فاصله‌ها به کار رود.",
+      "answer_en": "Composite may repair chips, make limited shape changes, or close selected gaps.",
       "sources": [
-        "ADA_MOUTHHEALTHY"
+        "ADA_COMPOSITE",
+        "ADA_VENEERS"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -609,12 +618,13 @@
     {
       "id": "KDF-032",
       "category": "composite",
-      "question_fa": "چه نکته‌ای درباره کامپوزیت ونیر باید بدانم؟",
-      "question_en": "What should I know about composite bonding?",
-      "answer_fa": "کامپوزیت ماده‌ای همرنگ دندان است که برای برخی اصلاح‌های ظاهری یا ترمیم‌های محدود استفاده می‌شود. ممکن است در آینده به پولیش یا ترمیم نیاز پیدا کند.",
-      "answer_en": "Composite is a tooth-coloured material used for selected cosmetic changes or limited repairs. It may need polishing or repair over time.",
+      "question_fa": "کامپوزیت باندینگ برای چه تغییراتی استفاده می‌شود؟",
+      "question_en": "What changes can composite bonding address?",
+      "answer_fa": "این روش برای همه مشکلات ساختاری یا ناهنجاری‌های دندانی مناسب نیست؛ ارزیابی دندان‌پزشک لازم است.",
+      "answer_en": "It is not suitable for every structural problem or alignment issue; a dentist's assessment is needed.",
       "sources": [
-        "ADA_MOUTHHEALTHY"
+        "ADA_COMPOSITE",
+        "ADA_VENEERS"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -626,10 +636,11 @@
       "category": "composite",
       "question_fa": "ترمیم لب‌پریدگی با کامپوزیت چیست؟",
       "question_en": "What is composite chip repair?",
-      "answer_fa": "کامپوزیت ماده‌ای همرنگ دندان است که برای برخی اصلاح‌های ظاهری یا ترمیم‌های محدود استفاده می‌شود. ممکن است در آینده به پولیش یا ترمیم نیاز پیدا کند.",
-      "answer_en": "Composite is a tooth-coloured material used for selected cosmetic changes or limited repairs. It may need polishing or repair over time.",
+      "answer_fa": "اگر شکستگی گسترده باشد یا بخش زیادی از ساختار دندان از دست رفته باشد، ممکن است روکش یا درمان دیگری مطرح شود.",
+      "answer_en": "If the fracture is extensive or much of the tooth structure is missing, a crown or another treatment may be considered.",
       "sources": [
-        "ADA_MOUTHHEALTHY"
+        "NHS_DENTAL_TREATMENTS",
+        "ADA_COMPOSITE"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -639,12 +650,13 @@
     {
       "id": "KDF-034",
       "category": "composite",
-      "question_fa": "چه نکته‌ای درباره ترمیم لب‌پریدگی با کامپوزیت باید بدانم؟",
-      "question_en": "What should I know about composite chip repair?",
-      "answer_fa": "کامپوزیت ماده‌ای همرنگ دندان است که برای برخی اصلاح‌های ظاهری یا ترمیم‌های محدود استفاده می‌شود. ممکن است در آینده به پولیش یا ترمیم نیاز پیدا کند.",
-      "answer_en": "Composite is a tooth-coloured material used for selected cosmetic changes or limited repairs. It may need polishing or repair over time.",
+      "question_fa": "چه زمانی لب‌پریدگی دندان ممکن است به روکش نیاز داشته باشد؟",
+      "question_en": "When might a chipped tooth need a crown instead?",
+      "answer_fa": "درد هنگام گاززدن یا ترک قابل‌مشاهده را زودتر بررسی کنید و تا آن زمان با آن سمت غذا نجوید.",
+      "answer_en": "Have pain on biting or a visible crack assessed promptly and avoid chewing on that side meanwhile.",
       "sources": [
-        "ADA_MOUTHHEALTHY"
+        "NHS_DENTAL_TREATMENTS",
+        "ADA_COMPOSITE"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -656,10 +668,10 @@
       "category": "composite",
       "question_fa": "نگهداری کامپوزیت چیست؟",
       "question_en": "What is composite maintenance?",
-      "answer_fa": "کامپوزیت ماده‌ای همرنگ دندان است که برای برخی اصلاح‌های ظاهری یا ترمیم‌های محدود استفاده می‌شود. ممکن است در آینده به پولیش یا ترمیم نیاز پیدا کند.",
-      "answer_en": "Composite is a tooth-coloured material used for selected cosmetic changes or limited repairs. It may need polishing or repair over time.",
+      "answer_fa": "در برخی موارد می‌توان بخش آسیب‌دیده را ترمیم یا پولیش کرد؛ گاهی تعویض لازم می‌شود.",
+      "answer_en": "In some cases, damaged composite can be repaired or polished; sometimes replacement is needed.",
       "sources": [
-        "ADA_MOUTHHEALTHY"
+        "ADA_COMPOSITE"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -669,12 +681,12 @@
     {
       "id": "KDF-036",
       "category": "composite",
-      "question_fa": "چه نکته‌ای درباره نگهداری کامپوزیت باید بدانم؟",
-      "question_en": "What should I know about composite maintenance?",
-      "answer_fa": "کامپوزیت ماده‌ای همرنگ دندان است که برای برخی اصلاح‌های ظاهری یا ترمیم‌های محدود استفاده می‌شود. ممکن است در آینده به پولیش یا ترمیم نیاز پیدا کند.",
-      "answer_en": "Composite is a tooth-coloured material used for selected cosmetic changes or limited repairs. It may need polishing or repair over time.",
+      "question_fa": "آیا کامپوزیت شکسته قابل ترمیم است؟",
+      "question_en": "Can damaged composite bonding be repaired?",
+      "answer_fa": "اگر ترمیم تیز شده یا جدا شده است، برای ترمیم حرفه‌ای مراجعه کنید و آن را در خانه سوهان نزنید.",
+      "answer_en": "If a restoration becomes sharp or detaches, seek professional repair and do not file it at home.",
       "sources": [
-        "ADA_MOUTHHEALTHY"
+        "ADA_COMPOSITE"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -686,10 +698,11 @@
       "category": "crown",
       "question_fa": "روکش دندان چیست؟",
       "question_en": "What is dental crown?",
-      "answer_fa": "روکش پوششی برای محافظت یا بازسازی دندان آسیب‌دیده است. انتخاب جنس و نیاز به روکش پس از معاینه و بررسی میزان بافت باقی‌مانده مشخص می‌شود.",
-      "answer_en": "A crown covers a tooth to protect or restore it. Material choice and need are determined after examination and assessment of remaining tooth structure.",
+      "answer_fa": "محل دندان، نیروهای جویدن، فضای موجود، زیبایی و شرایط فردی در انتخاب ماده مؤثرند.",
+      "answer_en": "Tooth location, chewing forces, available space, aesthetics, and individual factors influence material choice.",
       "sources": [
-        "NHS_DENTAL_TREATMENTS"
+        "NHS_DENTAL_TREATMENTS",
+        "ADA_ORAL_HEALTH_TOPICS"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -699,12 +712,13 @@
     {
       "id": "KDF-038",
       "category": "crown",
-      "question_fa": "چه نکته‌ای درباره روکش دندان باید بدانم؟",
-      "question_en": "What should I know about dental crown?",
-      "answer_fa": "روکش پوششی برای محافظت یا بازسازی دندان آسیب‌دیده است. انتخاب جنس و نیاز به روکش پس از معاینه و بررسی میزان بافت باقی‌مانده مشخص می‌شود.",
-      "answer_en": "A crown covers a tooth to protect or restore it. Material choice and need are determined after examination and assessment of remaining tooth structure.",
+      "question_fa": "چه عواملی بر انتخاب جنس روکش دندان اثر می‌گذارند؟",
+      "question_en": "What affects the choice of crown material?",
+      "answer_fa": "از دندان‌پزشک درباره مزایا، محدودیت‌ها و تناسب هر ماده با وضعیت دندان خود سؤال کنید.",
+      "answer_en": "Ask your dentist about the benefits, limitations, and suitability of each material for your tooth.",
       "sources": [
-        "NHS_DENTAL_TREATMENTS"
+        "NHS_DENTAL_TREATMENTS",
+        "ADA_ORAL_HEALTH_TOPICS"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -716,8 +730,8 @@
       "category": "crown",
       "question_fa": "روکش موقت چیست؟",
       "question_en": "What is temporary crown?",
-      "answer_fa": "روکش پوششی برای محافظت یا بازسازی دندان آسیب‌دیده است. انتخاب جنس و نیاز به روکش پس از معاینه و بررسی میزان بافت باقی‌مانده مشخص می‌شود.",
-      "answer_en": "A crown covers a tooth to protect or restore it. Material choice and need are determined after examination and assessment of remaining tooth structure.",
+      "answer_fa": "تا نصب روکش نهایی، از جویدن خوراکی‌های بسیار سفت یا چسبنده با آن سمت پرهیز کنید.",
+      "answer_en": "Until the final crown is fitted, avoid chewing very hard or sticky foods on that side.",
       "sources": [
         "NHS_DENTAL_TREATMENTS"
       ],
@@ -729,10 +743,10 @@
     {
       "id": "KDF-040",
       "category": "crown",
-      "question_fa": "چه نکته‌ای درباره روکش موقت باید بدانم؟",
-      "question_en": "What should I know about temporary crown?",
-      "answer_fa": "روکش پوششی برای محافظت یا بازسازی دندان آسیب‌دیده است. انتخاب جنس و نیاز به روکش پس از معاینه و بررسی میزان بافت باقی‌مانده مشخص می‌شود.",
-      "answer_en": "A crown covers a tooth to protect or restore it. Material choice and need are determined after examination and assessment of remaining tooth structure.",
+      "question_fa": "چطور از روکش موقت محافظت کنم؟",
+      "question_en": "How can I protect a temporary crown?",
+      "answer_fa": "اگر روکش موقت افتاد یا جابه‌جا شد، با کلینیک تماس بگیرید و از چسب خانگی استفاده نکنید.",
+      "answer_en": "If the temporary crown comes off or shifts, contact the clinic and do not use household glue.",
       "sources": [
         "NHS_DENTAL_TREATMENTS"
       ],

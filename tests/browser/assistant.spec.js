@@ -99,3 +99,14 @@ test('assistant exposes rate limiting as a safe state', async ({ page }) => {
   await expect(limited).toContainText('تعداد درخواست‌ها');
   await expect(limited).not.toContainText('rate limit details');
 });
+
+test('assistant displays approved external sources for exact FAQ answers', async ({ page }) => {
+  await openAssistant(page);
+
+  await page.locator('#aiInput').fill('چند بار در روز باید مسواک بزنم؟');
+  await page.locator('#aiForm').press('Enter');
+
+  const answer = page.locator('.msg--bot').filter({ has: page.locator('.msg__source--external') }).last();
+  await expect(answer.locator('.msg__source--external').first()).toBeVisible();
+  await expect(answer.locator('.msg__source--external').first()).toHaveAttribute('href', /^https:\/\//);
+});

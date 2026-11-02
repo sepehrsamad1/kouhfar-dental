@@ -32,7 +32,7 @@ The versioned dataset is tests/Fixtures/AI/task27-evaluation-v1.json and contain
 - AAOMS wisdom-tooth management: https://aaoms.org/wp-content/uploads/2024/05/wisdom_teeth_management.pdf
 - Iranian Pediatric Dentistry Association patient FAQ: https://www.kapd.ir/faq/
 - Shahid Beheshti Dental Hospital patient education: https://app.shdh.ir/پیشگیری-و-بهداشت/
-- Tehran University of Medical Sciences Faculty of Dentistry: https://dentistry.tums.ac.ir/
+- Shahid Beheshti Dental Hospital orthodontic patient education: https://app.shdh.ir/آموزش-بیماران-ارتودنسی2/
 
 ## Task 27 implementation notes\n\n- The 100 Persian and 100 English FAQ questions and answers are distinct, source-linked drafts; the seeder rejects duplicate questions/answers or missing source references. They remain unpublished pending clinician review.\n- The initial monthly budget is 10,000,000 IRR and is editable by authorized administrators; changes are validated and audit-logged.\n- Evaluation reports record provider version, model version, prompt version, and dataset version and are uploaded as a CI artifact.
 - Exact published FAQ matches are served without a model request; budget exhaustion can therefore fall back to approved FAQ content, while feature/emergency disable still overrides it.

@@ -19,10 +19,9 @@
 - Added regression tests for malicious intended redirects and Secure/HttpOnly/SameSite cookie flags.
 - Added patient search SQL-looking input and hostile mass-assignment regression tests.
 - Restricted dormant Kavenegar egress to the approved HTTPS host/path, rejected userinfo/query/fragment/other origins, disabled redirects and prevented transport exceptions from exposing the API-key URL; added synthetic SSRF/redirect regression tests.
-- Restricted dormant Kavenegar egress to the approved HTTPS host/path, disabled redirects and prevented transport exceptions from exposing the API-key URL; added mocked SSRF/redirect regression tests.
 - Added Composer lockfile audit and npm lockfile audit to CI.
 - Added Gitleaks full-history secret scan to CI using a full checkout.
-- Added threat model, ASVS checklist, preliminary privacy impact assessment, data inventory/retention register, third-party flow inventory and findings register.
+- Added threat model, ASVS checklist, preliminary privacy impact assessment, data inventory/retention register, third-party flow inventory, findings register and clinic-owner decision register.
 - Marked the old Express/Prisma architecture note as historical/superseded so it cannot be mistaken for the active Laravel architecture.
 
 ## Evidence already present on base
@@ -38,7 +37,7 @@
 
 ## Automated verification status
 
-<https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41480042377|CI run #820> passed on code commit `653e6d45e960edf391d97d0d1b63030daf4a3399`.
+[CI run #820](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41480042377) passed on code commit `653e6d45e960edf391d97d0d1b63030daf4a3399`.
 
 - 279 Laravel/Pest tests passed (24,491 assertions), including the new patient authorization, staff deactivation and mocked Kavenegar egress regression tests.
 - 36 Playwright browser tests passed.

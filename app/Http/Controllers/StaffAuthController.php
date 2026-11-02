@@ -107,10 +107,24 @@ class StaffAuthController
             return redirect()->route('staff.login');
         }
 
-        if ($staff->mfa_enabled_at !== null || ! is_string($staff->mfa_totp_secret)
-            || ! $totp->verify($staff->mfa_totp_secret, (string) $request->input('code'))) {
+        $throttleKey = $this->mfaThrottleKey($staff);
+
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
             return back()->withErrors(['code' => 'کد واردشده معتبر نیست.']);
         }
+
+        $counter = is_string($staff->mfa_totp_secret)
+            ? $totp->matchingCounter($staff->mfa_totp_secret, (string) $request->input('code'))
+            : null;
+
+        if ($staff->mfa_enabled_at !== null || $counter === null
+            || ($staff->mfa_last_totp_counter !== null && $counter <= $staff->mfa_last_totp_counter)) {
+            RateLimiter::hit($throttleKey, 300);
+
+            return back()->withErrors(['code' => 'کد واردشده معتبر نیست.']);
+        }
+
+        RateLimiter::clear($throttleKey);
 
         $recoveryCodes = [];
         $recoveryHashes = [];
@@ -123,6 +137,7 @@ class StaffAuthController
 
         $staff->forceFill([
             'mfa_enabled_at' => now('UTC'),
+            'mfa_last_totp_counter' => $counter,
             'mfa_recovery_codes' => $recoveryHashes,
         ])->save();
 
@@ -157,9 +172,18 @@ class StaffAuthController
             return redirect()->route('staff.mfa.setup');
         }
 
+        $throttleKey = $this->mfaThrottleKey($staff);
+
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            return back()->withErrors(['code' => 'کد واردشده معتبر نیست.']);
+        }
+
         $code = trim((string) $request->input('code'));
-        $verified = preg_match('/^[0-9]{6}$/D', $code) === 1
-            && $totp->verify($staff->mfa_totp_secret, $code);
+        $counter = preg_match('/^[0-9]{6}$/D', $code) === 1
+            ? $totp->matchingCounter($staff->mfa_totp_secret, $code)
+            : null;
+        $verified = $counter !== null
+            && ($staff->mfa_last_totp_counter === null || $counter > $staff->mfa_last_totp_counter);
 
         if (! $verified && preg_match('/^[A-Za-z0-9]{12}$/D', $code) === 1) {
             $normalized = Str::upper($code);
@@ -180,7 +204,15 @@ class StaffAuthController
         }
 
         if (! $verified) {
+            RateLimiter::hit($throttleKey, 300);
+
             return back()->withErrors(['code' => 'کد واردشده معتبر نیست.']);
+        }
+
+        RateLimiter::clear($throttleKey);
+
+        if ($counter !== null) {
+            $staff->forceFill(['mfa_last_totp_counter' => $counter])->save();
         }
 
         return $this->completeLogin($request, $staff);
@@ -210,6 +242,11 @@ class StaffAuthController
         $request->session()->regenerateToken();
 
         return redirect()->route('staff.login');
+    }
+
+    private function mfaThrottleKey(StaffUser $staff): string
+    {
+        return 'staff-mfa:'.hash('sha256', (string) $staff->getKey());
     }
 
     private function pendingStaff(Request $request): ?StaffUser

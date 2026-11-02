@@ -13,15 +13,11 @@
         <p>درصد مصرف: {{ $summary['percentage'] }}٪</p>
         <p>وضعیت درخواست‌های جدید: {{ $summary['blocked'] ? 'مسدود' : 'مجاز طبق کنترل بودجه' }}</p>
         <p>ارائه‌دهنده و مدل پیکربندی‌شده: {{ $summary['provider'] }} / {{ $summary['model'] }}</p>
-        <p>وضعیت اتصال: {{ $summary['provider_connection_status'] === 'fake' ? 'ارائه‌دهنده آزمایشی پیکربندی شده است؛ سرویس خارجی متصل نیست.' : 'وضعیت اتصال ارائه‌دهنده هنوز تأیید نشده است.' }}</p>
+        <p>وضعیت اتصال: {{ $summary['provider_connection_status'] === 'fake' ? 'ارائه‌دهنده آزمایشی پیکربندی شده است؛ سرویس خارجی متصل نیست.' : ($summary['provider_connection_status'] === 'missing_credentials' ? 'کلید API در تنظیمات Backend موجود نیست.' : 'کلید API در Backend تنظیم شده، اما اتصال واقعی هنوز تأیید نشده است.') }}</p>
         <p>وضعیت سهمیه واقعی ارائه‌دهنده: نامشخص؛ ارائه‌دهنده آزمایشی اطلاعات اعتبار یا سهمیه واقعی ارائه نمی‌کند.</p>
         <p>کنترل سقف مالی بر اساس هزینه تخمینی و نرخ‌های تنظیم‌شده انجام می‌شود؛ هزینه واقعی فقط در صورت دریافت داده صورتحساب ارائه‌دهنده ثبت خواهد شد.</p>
         @if ($summary['alerts'] !== [])
-            <ul role="status">
-                @foreach ($summary['alerts'] as $level)
-                    <li>هشدار مصرف بودجه: {{ $level }}٪ سقف ماهانه مصرف شده است.</li>
-                @endforeach
-            </ul>
+            <p role="status">هشدار مصرف بودجه: {{ collect($summary['alerts'])->last() }}٪ سقف ماهانه مصرف شده است.</p>
         @endif
     </section>
 
@@ -71,7 +67,7 @@
                 <p>مجموع توکن: {{ number_format((int) $row->input_tokens + (int) $row->output_tokens) }}</p>
                 <p>درخواست‌های موفق ثبت‌شده: {{ number_format((int) $row->request_count) }}</p>
                 <p>هزینه تخمینی: {{ number_format((float) $row->estimated_cost_irr, 2) }} ریال</p>
-                <p>هزینه واقعی ارائه‌دهنده: {{ $row->actual_cost_irr === null ? 'در دسترس نیست' : number_format((float) $row->actual_cost_irr, 2).' ریال' }}</p>
+                <p>هزینه واقعی گزارش‌شده (در صورت دسترسی): {{ $row->actual_cost_irr === null ? 'در دسترس نیست' : number_format((float) $row->actual_cost_irr, 2).' ریال' }}</p>
             </article>
         @empty
             <p>در چرخه جاری هنوز مصرفی ثبت نشده است.</p>
@@ -86,7 +82,7 @@
                 <p>{{ $row->provider }} / {{ $row->model }} / {{ $row->capability }}</p>
                 <p>توکن ورودی: {{ number_format((int) $row->input_tokens) }} | خروجی: {{ number_format((int) $row->output_tokens) }} | مجموع: {{ number_format((int) $row->input_tokens + (int) $row->output_tokens) }}</p>
                 <p>هزینه تخمینی: {{ number_format((float) $row->estimated_cost_irr, 2) }} ریال | هزینه واقعی گزارش‌شده (در صورت دسترسی): {{ $row->actual_cost_irr === null ? 'در دسترس نیست' : number_format((float) $row->actual_cost_irr, 2).' ریال' }}</p>
-                <p>تعداد درخواست‌ها: {{ number_format((int) $row->request_count) }}</p>
+                <p>تعداد درخواست‌های موفق: {{ number_format((int) $row->request_count) }}</p>
             </article>
         @empty
             <p>مصرف روزانه‌ای ثبت نشده است.</p>

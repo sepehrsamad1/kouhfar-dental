@@ -71,19 +71,54 @@ final class AIAdminController
         $data = $request->validate([
             'monthly_budget_irr' => ['required', 'integer', 'min:1000', 'max:1000000000000'],
             'emergency_disabled' => ['nullable', 'boolean'],
+            'provider_token_limits' => ['sometimes', 'nullable', 'array'],
+            'provider_token_limits.*' => ['nullable', 'integer', 'min:1', 'max:1000000000000'],
+            'model_budget_limits_irr' => ['sometimes', 'nullable', 'array'],
+            'model_budget_limits_irr.*' => ['nullable', 'integer', 'min:1000', 'max:1000000000000'],
         ]);
 
         $setting = $controls->settings();
+        $allowedModels = collect(['text', 'image_analysis', 'image_transformation'])
+            ->map(fn (string $capability): string => (string) config("ai.capabilities.{$capability}.model", ''))
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+
+        foreach (['provider_token_limits', 'model_budget_limits_irr'] as $field) {
+            $unknownModels = array_diff(array_keys((array) ($data[$field] ?? [])), $allowedModels);
+
+            if ($unknownModels !== []) {
+                throw ValidationException::withMessages([$field => 'Only currently configured AI models may have limits.']);
+            }
+        }
+
+        $tokenLimits = array_key_exists('provider_token_limits', $data)
+            ? array_filter(array_map('intval', (array) $data['provider_token_limits']), static fn (int $value): bool => $value > 0)
+            : (array) $setting->provider_token_limits;
+        $modelBudgetLimits = array_key_exists('model_budget_limits_irr', $data)
+            ? array_filter(array_map('intval', (array) $data['model_budget_limits_irr']), static fn (int $value): bool => $value > 0)
+            : (array) $setting->model_budget_limits_irr;
+
         $before = [
             'monthly_budget_irr' => $setting->monthly_budget_irr,
             'emergency_disabled' => $setting->emergency_disabled,
+            'provider_token_limits' => (array) $setting->provider_token_limits,
+            'model_budget_limits_irr' => (array) $setting->model_budget_limits_irr,
         ];
         $after = [
             'monthly_budget_irr' => (int) $data['monthly_budget_irr'],
             'emergency_disabled' => (bool) ($data['emergency_disabled'] ?? false),
+            'provider_token_limits' => $tokenLimits,
+            'model_budget_limits_irr' => $modelBudgetLimits,
         ];
 
-        $controls->update($after['monthly_budget_irr'], $after['emergency_disabled']);
+        $controls->update(
+            $after['monthly_budget_irr'],
+            $after['emergency_disabled'],
+            $after['provider_token_limits'],
+            $after['model_budget_limits_irr'],
+        );
         $actor = $request->user('staff');
         abort_unless($actor instanceof StaffUser, 403);
 

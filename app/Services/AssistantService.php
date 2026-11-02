@@ -144,7 +144,7 @@ final class AssistantService
 
     private function containsSensitiveIdentifiers(string $message): bool
     {
-        return preg_match('/(?:[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}|(?<!\\d)(?:\\+?98|0098|0)?9\\d{2}[\\s-]?\\d{3}[\\s-]?\\d{4}(?!\\d)|(?<!\\d)(?:\\+?1[\\s.-]?)?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4}(?!\\d)|(?<!\\d)\\d{10}(?!\\d)|(?:my\\s+name\\s+is|patient\\s+name\\s+is|نام\\s+من|نام\\s+بیمار)\\s+[\\p{L}]+|patient\\s+records?|medical\\s+records?|پرونده\\s*بیمار|سوابق\\s*بیمار|(?:کد\\s*ملی|شماره\\s*(?:پرونده|تماس))\\s*[:：]?\\s*[A-Z0-9-]{5,})/iu', $message) === 1;
+        return preg_match('/(?:[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}|(?<!\\d)(?:\\+?98|0098|0)?9\\d{2}[\\s-]?\\d{3}[\\s-]?\\d{4}(?!\\d)|(?<!\\d)(?:\\+?1[\\s.-]?)?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4}(?!\\d)|(?<!\\d)\\d{10}(?!\\d)|(?:my\\s+name\\s+is|patient\\s+name\\s+is|نام\\s+من|نام\\s+بیمار)\\s+[\\p{L}]+|(?:date\\s+of\\s+birth|dob|تاریخ\\s+تولد)\\s*[:：]?\\s*[0-9۰-۹]{1,4}[\\/-][0-9۰-۹]{1,2}[\\/-][0-9۰-۹]{1,4}|patient\\s+records?|medical\\s+records?|پرونده\\s*بیمار|سوابق\\s*بیمار|(?:کد\\s*ملی|شماره\\s*(?:پرونده|تماس))\\s*[:：]?\\s*[A-Z0-9-]{5,})/iu', $message) === 1;
     }
 
     private function privacyNotice(string $locale): string

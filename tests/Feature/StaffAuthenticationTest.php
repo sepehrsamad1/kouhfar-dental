@@ -50,7 +50,7 @@ it('provides a staff login page and authenticates active staff', function (): vo
 it('rejects backslash-based and external intended redirects after staff login', function (): void {
     $staff = makeStaffUser(['email' => 'redirect@example.invalid']);
 
-    foreach (['/\\\\evil.example/path', '//evil.example/path', 'https://evil.example/path'] as $intended) {
+    foreach (['/'.chr(92).'evil.example/path', '//evil.example/path', 'https://evil.example/path'] as $intended) {
         $response = $this->withSession(['url.intended' => $intended])
             ->post(route('staff.login.store'), [
                 'email' => $staff->email,

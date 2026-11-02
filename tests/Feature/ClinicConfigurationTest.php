@@ -8,6 +8,7 @@ use App\ClinicWorkingHour;
 use App\Enums\AppointmentStatus;
 use App\Http\Middleware\EnsureStaffSessionIsFresh;
 use App\Patient;
+use App\Resource;
 use App\Practitioner;
 use App\ScheduleBreak;
 use App\ScheduleException;
@@ -534,3 +535,44 @@ it('blocks narrowing practitioner hours when a confirmed appointment falls outsi
     expect(substr((string) $hour->refresh()->start_local, 0, 5))->toBe('12:00')
         ->and(Appointment::query()->whereKey($appointment->id)->exists())->toBeTrue();
 });
+
+it('denies non-admin staff from changing a resource by direct object route while allowing admin', function (): void {
+    $resource = Resource::factory()->create([
+        'name_fa' => 'منبع محرمانه',
+        'kind' => 'dental_unit',
+        'is_active' => false,
+    ]);
+    $originalVersion = $resource->version;
+
+    foreach (['reception', 'practitioner'] as $role) {
+        $staff = configurationStaff($role);
+
+        $this->actingAs($staff, 'staff')
+            ->patch(route('staff.configuration.resources.update', $resource), [
+                'version' => $originalVersion,
+                'name_fa' => 'تغییر غیرمجاز',
+                'kind' => 'dental_unit',
+                'is_active' => true,
+            ])
+            ->assertForbidden();
+
+        expect($resource->refresh()->name_fa)->toBe('منبع محرمانه')
+            ->and($resource->version)->toBe($originalVersion);
+    }
+
+    $admin = configurationStaff('admin');
+
+    $this->actingAs($admin, 'staff')
+        ->patch(route('staff.configuration.resources.update', $resource), [
+            'version' => $originalVersion,
+            'name_fa' => 'منبع به‌روزشده',
+            'kind' => 'dental_unit',
+            'is_active' => true,
+        ])
+        ->assertRedirect();
+
+    expect($resource->refresh()->name_fa)->toBe('منبع به‌روزشده')
+        ->and($resource->is_active)->toBeTrue()
+        ->and($resource->version)->toBe($originalVersion + 1);
+});
+

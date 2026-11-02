@@ -16,11 +16,18 @@ use Throwable;
 
 final class AIProviderManager
 {
-    public function __construct(
-        private readonly AIUsageRecorder $usage,
-        private readonly AIRequestRecorder $requests,
-        private readonly AIControlService $controls,
-    ) {}
+    private readonly AIUsageRecorder $usage;
+
+    private readonly AIRequestRecorder $requests;
+
+    private readonly AIControlService $controls;
+
+    public function __construct(AIUsageRecorder $usage, AIRequestRecorder $requests, AIControlService $controls)
+    {
+        $this->usage = $usage;
+        $this->requests = $requests;
+        $this->controls = $controls;
+    }
 
     /** @return array{status: string, output: ?string, input_tokens: int, output_tokens: int} */
     public function generateText(string $feature, string $prompt, array $context = []): array
@@ -138,7 +145,7 @@ final class AIProviderManager
 
     private function allowed(string $feature): bool
     {
-        if (! $this->controls->allowsRequests()) {
+        if ($this->controls->allowsRequests() === false) {
             return false;
         }
 

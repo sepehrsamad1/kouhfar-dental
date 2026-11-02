@@ -541,6 +541,7 @@ it('denies non-admin staff from changing a resource by direct object route while
         'name_fa' => 'منبع محرمانه',
         'kind' => 'dental_unit',
         'is_active' => false,
+        'version' => 1,
     ]);
     $originalVersion = $resource->version;
 

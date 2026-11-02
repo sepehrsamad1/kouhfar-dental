@@ -29,6 +29,7 @@ final class PublishedContentProvider
                 'version' => $item->version,
                 'title' => (string) ($item->bodyData()['title'] ?? ''),
                 'text' => (string) ($item->bodyData()['text'] ?? ''),
+                'source_references' => (array) ($item->bodyData()['source_references'] ?? []),
             ]);
     }
 }

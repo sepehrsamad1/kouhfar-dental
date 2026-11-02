@@ -131,6 +131,38 @@ it('paginates and scopes patient lookup while masking mobile numbers', function 
     expect($response->json('data.0.mobile'))->not->toBe('09121234567');
 });
 
+it('treats SQL-looking patient search input as a bound value', function (): void {
+    $admin = makePatientManagerStaff('admin');
+    Patient::factory()->create(['full_name' => 'Visible Patient']);
+
+    $response = $this->actingAs($admin, 'staff')
+        ->getJson(route('staff.patients.index', ['q' => "' OR 1=1 --"]));
+
+    $response->assertOk()->assertJsonCount(0, 'data');
+});
+
+it('ignores unvalidated patient attributes instead of mass assigning them', function (): void {
+    $reception = makePatientManagerStaff('reception');
+
+    $response = $this->actingAs($reception, 'staff')
+        ->postJson(route('staff.patients.store'), [
+            'full_name' => 'Synthetic Patient',
+            'mobile' => '09121234567',
+            'archived_at' => now()->toIso8601String(),
+            'version' => 999,
+            'role' => 'admin',
+            'is_admin' => true,
+        ]);
+
+    $response->assertCreated();
+
+    $patient = Patient::query()->firstOrFail();
+    expect($patient->archived_at)->toBeNull()
+        ->and($patient->version)->toBe(1)
+        ->and($patient->getAttributes())->not->toHaveKey('role')
+        ->and($patient->getAttributes())->not->toHaveKey('is_admin');
+});
+
 it('restricts practitioner lookup and updates to their own patients', function (): void {
     $practitionerUser = makePatientManagerStaff('practitioner');
     $otherPractitioner = makePatientManagerStaff('practitioner');

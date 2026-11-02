@@ -126,7 +126,7 @@
       "id": "KDF-001",
       "category": "general",
       "question_fa": "بهداشت روزانه دهان چیست؟",
-      "question_en": "What is daily oral hygiene?",
+      "question_en": "How often should I brush my teeth?",
       "answer_fa": "مراقبت روزانه شامل مسواک‌زدن دو بار در روز با خمیردندان فلورایددار و تمیزکردن روزانه فضاهای بین دندانی است.",
       "answer_en": "Daily care includes brushing twice a day with fluoride toothpaste and cleaning between teeth every day.",
       "sources": [
@@ -358,7 +358,7 @@
       "id": "KDF-015",
       "category": "general",
       "question_fa": "معاینه دوره‌ای چیست؟",
-      "question_en": "What is routine dental check-up?",
+      "question_en": "What is a routine dental check-up?",
       "answer_fa": "دندان‌پزشک فاصله مراجعات را بر اساس خطر پوسیدگی، سلامت لثه، سابقه درمان و نیاز فردی تعیین می‌کند.",
       "answer_en": "A dentist sets check-up intervals based on decay risk, gum health, treatment history, and individual needs.",
       "sources": [
@@ -423,7 +423,7 @@
       "id": "KDF-019",
       "category": "implant",
       "question_fa": "ارزیابی استخوان برای ایمپلنت چیست؟",
-      "question_en": "What is bone assessment for implants?",
+      "question_en": "What does bone assessment for dental implants involve?",
       "answer_fa": "مدت‌زمان از دست‌رفتن دندان، تحلیل استخوان، عفونت قبلی و ساختار فک می‌توانند بر حجم استخوان اثر بگذارند.",
       "answer_en": "Time since tooth loss, bone resorption, previous infection, and jaw anatomy can affect bone volume.",
       "sources": [
@@ -455,7 +455,7 @@
       "id": "KDF-021",
       "category": "implant",
       "question_fa": "مراقبت از ایمپلنت چیست؟",
-      "question_en": "What is implant care?",
+      "question_en": "How should I care for a dental implant?",
       "answer_fa": "اطراف روکش و خط لثه ایمپلنت را هر روز با مسواک و ابزار بین‌دندانی مناسب تمیز کنید.",
       "answer_en": "Clean around the implant crown and gumline daily with a toothbrush and a suitable interdental aid.",
       "sources": [
@@ -551,7 +551,7 @@
       "id": "KDF-027",
       "category": "veneer",
       "question_fa": "آماده‌سازی دندان برای ونیر چیست؟",
-      "question_en": "What is tooth preparation for veneers?",
+      "question_en": "What does tooth preparation for veneers involve?",
       "answer_fa": "میزان آماده‌سازی به نوع ونیر و وضعیت دندان بستگی دارد؛ در برخی روش‌ها مینای سطح جلویی برداشته می‌شود و درمان برگشت‌ناپذیر است.",
       "answer_en": "Preparation depends on veneer type and tooth condition; some techniques remove front-surface enamel and are irreversible.",
       "sources": [
@@ -581,7 +581,7 @@
       "id": "KDF-029",
       "category": "veneer",
       "question_fa": "مراقبت از ونیر چیست؟",
-      "question_en": "What is veneer care?",
+      "question_en": "How should I care for dental veneers?",
       "answer_fa": "بله؛ ونیر از دندان در برابر پوسیدگی محافظت کامل نمی‌کند. تمیزکردن لبه‌ها و معاینه دوره‌ای همچنان لازم است.",
       "answer_en": "Yes. A veneer does not fully protect the tooth from decay. Cleaning its margins and routine check-ups remain important.",
       "sources": [
@@ -645,7 +645,7 @@
       "id": "KDF-033",
       "category": "composite",
       "question_fa": "ترمیم لب‌پریدگی با کامپوزیت چیست؟",
-      "question_en": "What is composite chip repair?",
+      "question_en": "How can a chipped composite restoration be repaired?",
       "answer_fa": "اگر شکستگی گسترده باشد یا بخش زیادی از ساختار دندان از دست رفته باشد، ممکن است روکش یا درمان دیگری مطرح شود.",
       "answer_en": "If the fracture is extensive or much of the tooth structure is missing, a crown or another treatment may be considered.",
       "sources": [
@@ -677,7 +677,7 @@
       "id": "KDF-035",
       "category": "composite",
       "question_fa": "نگهداری کامپوزیت چیست؟",
-      "question_en": "What is composite maintenance?",
+      "question_en": "How should I maintain composite bonding?",
       "answer_fa": "در برخی موارد می‌توان بخش آسیب‌دیده را ترمیم یا پولیش کرد؛ گاهی تعویض لازم می‌شود.",
       "answer_en": "In some cases, damaged composite can be repaired or polished; sometimes replacement is needed.",
       "sources": [
@@ -801,7 +801,7 @@
       "id": "KDF-043",
       "category": "whitening",
       "question_fa": "بلیچینگ دندان چیست؟",
-      "question_en": "What is teeth whitening?",
+      "question_en": "What is tooth whitening?",
       "answer_fa": "روش‌ها شامل بلیچینگ در مطب، محصولات تجویزشده برای خانه و برخی محصولات بدون نسخه است.",
       "answer_en": "Options include in-office bleaching, dentist-prescribed home products, and some over-the-counter products.",
       "sources": [
@@ -831,7 +831,7 @@
       "id": "KDF-045",
       "category": "whitening",
       "question_fa": "حساسیت پس از بلیچینگ چیست؟",
-      "question_en": "What is sensitivity after whitening?",
+      "question_en": "Why can teeth become sensitive after whitening?",
       "answer_fa": "در صورت درد شدید، تحریک قابل‌توجه لثه یا حساسیت رو به افزایش، استفاده را متوقف و با دندان‌پزشک مشورت کنید.",
       "answer_en": "Stop using the product and consult a dentist if you develop severe pain, significant gum irritation, or worsening sensitivity.",
       "sources": [
@@ -1047,7 +1047,7 @@
       "id": "KDF-059",
       "category": "filling",
       "question_fa": "حساسیت پس از پرکردن چیست؟",
-      "question_en": "What is sensitivity after a filling?",
+      "question_en": "Why can a tooth feel sensitive after a filling?",
       "answer_fa": "درد شدید، درد هنگام گاززدن، تورم یا حساسیتی که بدتر می‌شود نیازمند بررسی است.",
       "answer_en": "Severe pain, pain on biting, swelling, or worsening sensitivity needs assessment.",
       "sources": [
@@ -1079,7 +1079,7 @@
       "id": "KDF-061",
       "category": "filling",
       "question_fa": "تعویض پرکردگی چیست؟",
-      "question_en": "What is filling replacement?",
+      "question_en": "When should an old filling be replaced?",
       "answer_fa": "شکستگی، افتادن، گیرکردن مکرر غذا، لبه تیز یا درد هنگام جویدن می‌تواند نشانه نیاز به بررسی باشد.",
       "answer_en": "A fracture, loss, repeated food trapping, sharp edge, or pain on chewing may warrant review.",
       "sources": [
@@ -1175,7 +1175,7 @@
       "id": "KDF-067",
       "category": "cleaning",
       "question_fa": "مراقبت پس از جرم‌گیری چیست؟",
-      "question_en": "What is care after scaling?",
+      "question_en": "What care is needed after dental scaling?",
       "answer_fa": "حساسیت کوتاه‌مدت ممکن است رخ دهد، اما اگر شدید است یا برطرف نمی‌شود، با دندان‌پزشک تماس بگیرید.",
       "answer_en": "Short-term sensitivity can occur, but contact your dentist if it is severe or does not settle.",
       "sources": [
@@ -1271,7 +1271,7 @@
       "id": "KDF-073",
       "category": "wisdom",
       "question_fa": "خارج کردن دندان عقل چیست؟",
-      "question_en": "What is wisdom tooth removal?",
+      "question_en": "What does wisdom tooth removal involve?",
       "answer_fa": "عفونت، پوسیدگی، کیست یا آسیب به دندان مجاور از عوامل مهم‌اند؛ موقعیت دندان و خطرهای جراحی نیز بررسی می‌شوند.",
       "answer_en": "Infection, decay, cysts, or damage to neighbouring teeth are important factors; tooth position and surgical risks are also assessed.",
       "sources": [
@@ -1365,7 +1365,7 @@
       "id": "KDF-079",
       "category": "orthodontics",
       "question_fa": "ارتودنسی بزرگسالان چیست؟",
-      "question_en": "What is adult orthodontics?",
+      "question_en": "What is orthodontic treatment for adults?",
       "answer_fa": "بله؛ ارتودنسی محدود به کودکان نیست، اما سلامت لثه، استخوان، ترمیم‌ها و نوع مشکل باید ارزیابی شود.",
       "answer_en": "Yes. Orthodontics is not limited to children, but gum and bone health, restorations, and the problem must be assessed.",
       "sources": [
@@ -1477,7 +1477,7 @@
       "id": "KDF-086",
       "category": "gum",
       "question_fa": "پاک‌سازی عمیق برای بیماری لثه چیست؟",
-      "question_en": "What is deep cleaning for gum disease?",
+      "question_en": "What does deep cleaning for gum disease involve?",
       "answer_fa": "پس از درمان، مراقبت روزانه و مراجعات نگهدارنده برای کنترل تجمع پلاک اهمیت دارد.",
       "answer_en": "After treatment, daily care and maintenance visits help control plaque buildup.",
       "sources": [

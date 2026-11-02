@@ -101,6 +101,8 @@ it('falls back safely when an unapproved provider is selected', function (): voi
     Log::spy();
     config([
         'ai.capabilities.text.provider' => 'unapproved-provider',
+        'ai.capabilities.text.api_key' => 'synthetic-test-placeholder',
+        'ai.pricing_irr.text' => ['input_per_1k' => 1, 'output_per_1k' => 2],
         'ai.capabilities.text.fallback' => 'safe synthetic fallback',
     ]);
 

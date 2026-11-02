@@ -118,7 +118,5 @@ test('approved external FAQ sources remain visible and within the viewport at 37
     expect(bounds.x).toBeGreaterThanOrEqual(0);
     expect(bounds.x + bounds.width).toBeLessThanOrEqual(width);
 
-    await page.close();
-    page = await page.context().newPage();
   }
 });

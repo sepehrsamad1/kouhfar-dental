@@ -38,6 +38,22 @@ it('blocks provider calls at the approved monthly IRR budget ceiling', function 
         ->and(app(AIControlService::class)->summary()['blocked'])->toBeTrue();
 });
 
+it('raises the approved 50, 80 and 100 percent financial thresholds from fake usage data', function (): void {
+    $usage = AIUsage::factory()->create([
+        'day' => now('UTC')->toDateString(),
+        'estimated_cost_irr' => 5_000_000,
+    ]);
+
+    expect(app(AIControlService::class)->summary()['alerts'])->toBe([50]);
+
+    $usage->update(['estimated_cost_irr' => 8_000_000]);
+    expect(app(AIControlService::class)->summary()['alerts'])->toBe([50, 80]);
+
+    $usage->update(['estimated_cost_irr' => 10_000_000]);
+    expect(app(AIControlService::class)->summary()['alerts'])->toBe([50, 80, 100])
+        ->and(app(AIControlService::class)->summary()['blocked'])->toBeTrue();
+});
+
 it('supports an administrator emergency disable without invoking the provider', function (): void {
     $settings = app(AIControlService::class)->settings();
     $settings->update(['emergency_disabled' => true]);

@@ -197,10 +197,15 @@ final class AssistantService
             ? 'I am the intelligent assistant of Dr. Kouhfar, designed to guide you about dental services, oral health, and dental treatments. I am glad to help.'
             : 'من دستیار هوشمند دکتر کوهفر هستم و برای راهنمایی شما در زمینه خدمات دندان‌پزشکی، مراقبت از دهان و دندان و پاسخ به سؤالات مرتبط با درمان‌های دندان‌پزشکی طراحی شده‌ام. خوشحالم که می‌توانم راهنمای شما باشم.';
 
-        $asksTechnicalDetails = str_contains($message, 'model')
-            || str_contains($message, 'provider')
-            || str_contains($message, 'مدل هوش مصنوعی')
-            || str_contains($message, 'موتور هوش مصنوعی');
+        $technicalQuestion = mb_strtolower($message);
+        $asksTechnicalDetails = str_contains($technicalQuestion, 'model')
+            || str_contains($technicalQuestion, 'provider')
+            || str_contains($technicalQuestion, 'chatgpt')
+            || str_contains($technicalQuestion, 'openai')
+            || str_contains($technicalQuestion, 'gemini')
+            || str_contains($technicalQuestion, 'claude')
+            || str_contains($technicalQuestion, 'مدل هوش مصنوعی')
+            || str_contains($technicalQuestion, 'موتور هوش مصنوعی');
 
         if ($asksTechnicalDetails === false) {
             return $identity;

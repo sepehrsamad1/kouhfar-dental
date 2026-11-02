@@ -18,6 +18,8 @@ class StaffUser extends Model implements AuthenticatableContract
 
     protected $hidden = [
         'password_hash',
+        'mfa_totp_secret',
+        'mfa_recovery_codes',
     ];
 
     protected $fillable = [
@@ -32,6 +34,9 @@ class StaffUser extends Model implements AuthenticatableContract
         return [
             'password_hash' => 'hashed',
             'is_active' => 'boolean',
+            'mfa_totp_secret' => 'encrypted',
+            'mfa_recovery_codes' => 'encrypted:array',
+            'mfa_enabled_at' => 'immutable_datetime',
         ];
     }
 

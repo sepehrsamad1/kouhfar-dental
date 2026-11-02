@@ -9,11 +9,29 @@ use App\Services\AssistantService;
 use Database\Seeders\DentalFaqTestingSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\RateLimiter;
 
 uses(RefreshDatabase::class);
 
+function clearTask27AiRateLimits(): void
+{
+    $request = request();
+    $identities = array_filter([
+        $request->ip(),
+        $request->hasSession() ? $request->session()->getId() : null,
+    ]);
+
+    foreach (['budget-test', 'emergency-disable-test', 'model-accounting-test', 'per-model-token-cap', 'per-model-budget-cap', 'unpriced-provider', 'missing-key-provider'] as $feature) {
+        foreach ($identities as $identity) {
+            $key = 'ai:'.substr(hash('sha256', $feature.'|'.$identity), 0, 24).':'.now('UTC')->format('Y-m-d-H-i');
+            RateLimiter::clear($key);
+        }
+    }
+}
+
 beforeEach(function (): void {
     Cache::flush();
+    clearTask27AiRateLimits();
 
     config([
         'ai.enabled' => true,

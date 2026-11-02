@@ -254,3 +254,21 @@ it('blocks a non-fake provider when model-specific pricing is not configured', f
         ->and(AIRequest::query()->sole()->status)->toBe('blocked')
         ->and(AIUsage::query()->count())->toBe(0);
 });
+
+it('blocks a non-fake provider when its backend API key is missing even if pricing exists', function (): void {
+    config([
+        'ai.capabilities.text.provider' => 'external-placeholder',
+        'ai.capabilities.text.model' => 'external-model-v1',
+        'ai.capabilities.text.api_key' => null,
+        'ai.pricing_irr.models' => [
+            'external-model-v1' => ['input_per_1k' => 100, 'output_per_1k' => 200],
+        ],
+    ]);
+
+    $response = app(AIProviderManager::class)->generateText('missing-key-provider', 'must not reach provider');
+
+    expect($response['status'])->toBe('rate_limited')
+        ->and(AIRequest::query()->sole()->status)->toBe('blocked')
+        ->and(AIUsage::query()->count())->toBe(0)
+        ->and(app(AIControlService::class)->summary()['provider_connection_status'])->toBe('missing_credentials');
+});

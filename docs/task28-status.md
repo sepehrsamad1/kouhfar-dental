@@ -18,6 +18,7 @@
 - Changed session cookie Secure default to true outside local/testing; retained HttpOnly and SameSite=Lax.
 - Added regression tests for malicious intended redirects and Secure/HttpOnly/SameSite cookie flags.
 - Added patient search SQL-looking input and hostile mass-assignment regression tests.
+- Restricted dormant Kavenegar egress to the approved HTTPS host/path, disabled redirects and prevented transport exceptions from exposing the API-key URL; added mocked SSRF/redirect regression tests.
 - Added Composer lockfile audit and npm lockfile audit to CI.
 - Added Gitleaks full-history secret scan to CI using a full checkout.
 - Added threat model, ASVS checklist, preliminary privacy impact assessment, data inventory/retention register, third-party flow inventory and findings register.

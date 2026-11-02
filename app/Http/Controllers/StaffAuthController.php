@@ -94,11 +94,17 @@ class StaffAuthController
 
         $parts = parse_url($intended);
 
-        if ($parts === false || isset($parts['scheme'], $parts['host'], $parts['user'], $parts['pass'])) {
-            return route('staff.dashboard');
-        }
-
-        if (! str_starts_with($intended, '/') || str_starts_with($intended, '//')) {
+        if (
+            $parts === false
+            || isset($parts['scheme'])
+            || isset($parts['host'])
+            || isset($parts['user'])
+            || isset($parts['pass'])
+            || ! str_starts_with($intended, '/')
+            || str_starts_with($intended, '//')
+            || str_contains($intended, '\\')
+            || preg_match('/[\\x00-\\x1F\\x7F]/', $intended) === 1
+        ) {
             return route('staff.dashboard');
         }
 

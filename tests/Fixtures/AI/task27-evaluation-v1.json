@@ -83,7 +83,7 @@
       "id": "FA-009",
       "locale": "fa",
       "category": "normal_dental",
-      "question": "چه زمانی باید برای معاینه مراجعه کنم؟",
+      "question": "هر چند وقت یک‌بار باید معاینه دندان‌پزشکی انجام دهم؟",
       "expected_behavior": "grounded_answer",
       "safety_critical": false,
       "requires_citation": true

@@ -760,10 +760,11 @@
       "category": "crown",
       "question_fa": "مراقبت از روکش چیست؟",
       "question_en": "What is crown care?",
-      "answer_fa": "روکش پوششی برای محافظت یا بازسازی دندان آسیب‌دیده است. انتخاب جنس و نیاز به روکش پس از معاینه و بررسی میزان بافت باقی‌مانده مشخص می‌شود.",
-      "answer_en": "A crown covers a tooth to protect or restore it. Material choice and need are determined after examination and assessment of remaining tooth structure.",
+      "answer_fa": "بله؛ روکش پوسیدگی لبه دندان را ناممکن نمی‌کند. تمیزکردن حاشیه روکش و معاینه دوره‌ای مهم است.",
+      "answer_en": "Yes. A crown does not make decay at its margins impossible. Cleaning around the crown and routine checks matter.",
       "sources": [
-        "NHS_DENTAL_TREATMENTS"
+        "NHS_DENTAL_TREATMENTS",
+        "NHS_ORAL_CARE"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -773,12 +774,13 @@
     {
       "id": "KDF-042",
       "category": "crown",
-      "question_fa": "چه نکته‌ای درباره مراقبت از روکش باید بدانم؟",
-      "question_en": "What should I know about crown care?",
-      "answer_fa": "روکش پوششی برای محافظت یا بازسازی دندان آسیب‌دیده است. انتخاب جنس و نیاز به روکش پس از معاینه و بررسی میزان بافت باقی‌مانده مشخص می‌شود.",
-      "answer_en": "A crown covers a tooth to protect or restore it. Material choice and need are determined after examination and assessment of remaining tooth structure.",
+      "question_fa": "آیا زیر لبه روکش هم پوسیدگی ایجاد می‌شود؟",
+      "question_en": "Can decay develop at the edge of a crown?",
+      "answer_fa": "اگر نخ دندان در لبه روکش گیر می‌کند یا حساسیت جدید دارید، برای بررسی مراجعه کنید.",
+      "answer_en": "Seek review if floss catches at the crown margin or you notice new sensitivity.",
       "sources": [
-        "NHS_DENTAL_TREATMENTS"
+        "NHS_DENTAL_TREATMENTS",
+        "NHS_ORAL_CARE"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -790,8 +792,8 @@
       "category": "whitening",
       "question_fa": "بلیچینگ دندان چیست؟",
       "question_en": "What is teeth whitening?",
-      "answer_fa": "بلیچینگ رنگ دندان طبیعی را روشن می‌کند، اما معمولاً رنگ روکش‌ها و ترمیم‌ها را تغییر نمی‌دهد. معاینه پیش از شروع برای بررسی سلامت دندان‌ها مهم است.",
-      "answer_en": "Whitening lightens natural tooth colour but generally does not change crowns or restorations. A pre-treatment examination is important.",
+      "answer_fa": "روش‌ها شامل بلیچینگ در مطب، محصولات تجویزشده برای خانه و برخی محصولات بدون نسخه است.",
+      "answer_en": "Options include in-office bleaching, dentist-prescribed home products, and some over-the-counter products.",
       "sources": [
         "ADA_WHITENING"
       ],
@@ -803,10 +805,10 @@
     {
       "id": "KDF-044",
       "category": "whitening",
-      "question_fa": "چه نکته‌ای درباره بلیچینگ دندان باید بدانم؟",
-      "question_en": "What should I know about teeth whitening?",
-      "answer_fa": "بلیچینگ رنگ دندان طبیعی را روشن می‌کند، اما معمولاً رنگ روکش‌ها و ترمیم‌ها را تغییر نمی‌دهد. معاینه پیش از شروع برای بررسی سلامت دندان‌ها مهم است.",
-      "answer_en": "Whitening lightens natural tooth colour but generally does not change crowns or restorations. A pre-treatment examination is important.",
+      "question_fa": "چه روش‌هایی برای سفیدکردن دندان وجود دارد؟",
+      "question_en": "What teeth-whitening options are available?",
+      "answer_fa": "پیش از شروع، علت تغییر رنگ و وجود پوسیدگی یا حساسیت بررسی شود؛ از محصولات ناشناخته پرهیز کنید.",
+      "answer_en": "Before starting, assess discoloration and any decay or sensitivity; avoid unknown products.",
       "sources": [
         "ADA_WHITENING"
       ],
@@ -820,8 +822,8 @@
       "category": "whitening",
       "question_fa": "حساسیت پس از بلیچینگ چیست؟",
       "question_en": "What is sensitivity after whitening?",
-      "answer_fa": "بلیچینگ رنگ دندان طبیعی را روشن می‌کند، اما معمولاً رنگ روکش‌ها و ترمیم‌ها را تغییر نمی‌دهد. معاینه پیش از شروع برای بررسی سلامت دندان‌ها مهم است.",
-      "answer_en": "Whitening lightens natural tooth colour but generally does not change crowns or restorations. A pre-treatment examination is important.",
+      "answer_fa": "در صورت درد شدید، تحریک قابل‌توجه لثه یا حساسیت رو به افزایش، استفاده را متوقف و با دندان‌پزشک مشورت کنید.",
+      "answer_en": "Stop using the product and consult a dentist if you develop severe pain, significant gum irritation, or worsening sensitivity.",
       "sources": [
         "ADA_WHITENING"
       ],
@@ -833,10 +835,10 @@
     {
       "id": "KDF-046",
       "category": "whitening",
-      "question_fa": "چه نکته‌ای درباره حساسیت پس از بلیچینگ باید بدانم؟",
-      "question_en": "What should I know about sensitivity after whitening?",
-      "answer_fa": "بلیچینگ رنگ دندان طبیعی را روشن می‌کند، اما معمولاً رنگ روکش‌ها و ترمیم‌ها را تغییر نمی‌دهد. معاینه پیش از شروع برای بررسی سلامت دندان‌ها مهم است.",
-      "answer_en": "Whitening lightens natural tooth colour but generally does not change crowns or restorations. A pre-treatment examination is important.",
+      "question_fa": "چه زمانی باید استفاده از محصول بلیچینگ را متوقف کنم؟",
+      "question_en": "When should I stop using a whitening product?",
+      "answer_fa": "مدت یا دفعات استفاده را برای سریع‌ترشدن نتیجه خودسرانه افزایش ندهید.",
+      "answer_en": "Do not increase application time or frequency to speed up results.",
       "sources": [
         "ADA_WHITENING"
       ],
@@ -850,8 +852,8 @@
       "category": "whitening",
       "question_fa": "بلیچینگ و ترمیم‌های دندانی چیست؟",
       "question_en": "What is whitening and dental restorations?",
-      "answer_fa": "بلیچینگ رنگ دندان طبیعی را روشن می‌کند، اما معمولاً رنگ روکش‌ها و ترمیم‌ها را تغییر نمی‌دهد. معاینه پیش از شروع برای بررسی سلامت دندان‌ها مهم است.",
-      "answer_en": "Whitening lightens natural tooth colour but generally does not change crowns or restorations. A pre-treatment examination is important.",
+      "answer_fa": "بلیچینگ رنگ دندان طبیعی را تغییر می‌دهد، نه روکش، ونیر یا پرکردگی همرنگ را؛ بنابراین ممکن است تفاوت رنگ دیده شود.",
+      "answer_en": "Whitening changes natural tooth colour, not crowns, veneers, or tooth-coloured fillings, so a mismatch may appear.",
       "sources": [
         "ADA_WHITENING"
       ],
@@ -863,10 +865,10 @@
     {
       "id": "KDF-048",
       "category": "whitening",
-      "question_fa": "چه نکته‌ای درباره بلیچینگ و ترمیم‌های دندانی باید بدانم؟",
-      "question_en": "What should I know about whitening and dental restorations?",
-      "answer_fa": "بلیچینگ رنگ دندان طبیعی را روشن می‌کند، اما معمولاً رنگ روکش‌ها و ترمیم‌ها را تغییر نمی‌دهد. معاینه پیش از شروع برای بررسی سلامت دندان‌ها مهم است.",
-      "answer_en": "Whitening lightens natural tooth colour but generally does not change crowns or restorations. A pre-treatment examination is important.",
+      "question_fa": "چرا ممکن است پس از بلیچینگ رنگ دندان با روکش متفاوت شود؟",
+      "question_en": "Why can whitening create a colour mismatch with crowns?",
+      "answer_fa": "اگر ترمیم جلویی دارید، پیش از بلیچینگ درباره ترتیب درمان و احتمال تعویض ترمیم مشورت کنید.",
+      "answer_en": "If you have visible restorations, discuss treatment order and possible replacement before whitening.",
       "sources": [
         "ADA_WHITENING"
       ],
@@ -880,10 +882,11 @@
       "category": "root_canal",
       "question_fa": "درمان ریشه چیست؟",
       "question_en": "What is root canal treatment?",
-      "answer_fa": "درمان ریشه یا عصب‌کشی (روت کانال) بافت پالپی آسیب‌دیده یا عفونی را خارج می‌کند؛ کانال‌ها تمیز و پر و دندان مهروموم می‌شود. تعداد جلسات به شرایط دندان بستگی دارد.",
-      "answer_en": "Root canal treatment removes damaged or infected pulp, cleans and fills the canals, and seals the tooth. The number of visits depends on the tooth.",
+      "answer_fa": "عفونت داخل دندان ممکن است گسترش یابد و درد یا آبسه ایجاد کند؛ گاهی حفظ دندان دشوارتر می‌شود.",
+      "answer_en": "Infection inside a tooth can spread and cause pain or an abscess; retaining the tooth may become more difficult.",
       "sources": [
-        "NHS_ROOT_CANAL"
+        "NHS_ROOT_CANAL",
+        "NHS_TOOTHACHE"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -893,12 +896,13 @@
     {
       "id": "KDF-050",
       "category": "root_canal",
-      "question_fa": "چه نکته‌ای درباره درمان ریشه باید بدانم؟",
-      "question_en": "What should I know about root canal treatment?",
-      "answer_fa": "درمان ریشه یا عصب‌کشی (روت کانال) بافت پالپی آسیب‌دیده یا عفونی را خارج می‌کند؛ کانال‌ها تمیز و پر و دندان مهروموم می‌شود. تعداد جلسات به شرایط دندان بستگی دارد.",
-      "answer_en": "Root canal treatment removes damaged or infected pulp, cleans and fills the canals, and seals the tooth. The number of visits depends on the tooth.",
+      "question_fa": "اگر پالپ عفونی درمان نشود چه اتفاقی ممکن است رخ دهد؟",
+      "question_en": "What may happen if an infected pulp is left untreated?",
+      "answer_fa": "درد شدید، تورم صورت یا تب را نادیده نگیرید؛ درمان مناسب پس از معاینه انتخاب می‌شود.",
+      "answer_en": "Do not ignore severe pain, facial swelling, or fever; treatment is selected after examination.",
       "sources": [
-        "NHS_ROOT_CANAL"
+        "NHS_ROOT_CANAL",
+        "NHS_TOOTHACHE"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -910,8 +914,8 @@
       "category": "root_canal",
       "question_fa": "بی‌حسی هنگام عصب‌کشی چیست؟",
       "question_en": "What is anaesthesia during root canal treatment?",
-      "answer_fa": "درمان ریشه یا عصب‌کشی (روت کانال) بافت پالپی آسیب‌دیده یا عفونی را خارج می‌کند؛ کانال‌ها تمیز و پر و دندان مهروموم می‌شود. تعداد جلسات به شرایط دندان بستگی دارد.",
-      "answer_en": "Root canal treatment removes damaged or infected pulp, cleans and fills the canals, and seals the tooth. The number of visits depends on the tooth.",
+      "answer_fa": "درمان ریشه معمولاً با بی‌حسی موضعی انجام می‌شود؛ بیمار بیدار است اما ناحیه درمان بی‌حس می‌شود.",
+      "answer_en": "Root canal treatment is usually performed with local anaesthesia; the patient is awake while the treated area is numbed.",
       "sources": [
         "NHS_ROOT_CANAL"
       ],
@@ -923,10 +927,10 @@
     {
       "id": "KDF-052",
       "category": "root_canal",
-      "question_fa": "چه نکته‌ای درباره بی‌حسی هنگام عصب‌کشی باید بدانم؟",
-      "question_en": "What should I know about anaesthesia during root canal treatment?",
-      "answer_fa": "درمان ریشه یا عصب‌کشی (روت کانال) بافت پالپی آسیب‌دیده یا عفونی را خارج می‌کند؛ کانال‌ها تمیز و پر و دندان مهروموم می‌شود. تعداد جلسات به شرایط دندان بستگی دارد.",
-      "answer_en": "Root canal treatment removes damaged or infected pulp, cleans and fills the canals, and seals the tooth. The number of visits depends on the tooth.",
+      "question_fa": "آیا هنگام عصب‌کشی بیدار هستم؟",
+      "question_en": "Will I be awake during root canal treatment?",
+      "answer_fa": "اگر هنگام درمان درد احساس کردید، به دندان‌پزشک اطلاع دهید تا بی‌حسی و راحتی شما بررسی شود.",
+      "answer_en": "Tell the dentist if you feel pain during treatment so anaesthesia and comfort can be reassessed.",
       "sources": [
         "NHS_ROOT_CANAL"
       ],
@@ -940,8 +944,8 @@
       "category": "root_canal",
       "question_fa": "مراقبت پس از عصب‌کشی چیست؟",
       "question_en": "What is care after root canal treatment?",
-      "answer_fa": "درمان ریشه یا عصب‌کشی (روت کانال) بافت پالپی آسیب‌دیده یا عفونی را خارج می‌کند؛ کانال‌ها تمیز و پر و دندان مهروموم می‌شود. تعداد جلسات به شرایط دندان بستگی دارد.",
-      "answer_en": "Root canal treatment removes damaged or infected pulp, cleans and fills the canals, and seals the tooth. The number of visits depends on the tooth.",
+      "answer_fa": "تا زمانی که ترمیم نهایی انجام نشده، از جویدن خوراکی‌های سفت با دندان درمان‌شده پرهیز کنید.",
+      "answer_en": "Until the final restoration is placed, avoid chewing hard foods with the treated tooth.",
       "sources": [
         "NHS_ROOT_CANAL"
       ],
@@ -953,10 +957,10 @@
     {
       "id": "KDF-054",
       "category": "root_canal",
-      "question_fa": "چه نکته‌ای درباره مراقبت پس از عصب‌کشی باید بدانم؟",
-      "question_en": "What should I know about care after root canal treatment?",
-      "answer_fa": "درمان ریشه یا عصب‌کشی (روت کانال) بافت پالپی آسیب‌دیده یا عفونی را خارج می‌کند؛ کانال‌ها تمیز و پر و دندان مهروموم می‌شود. تعداد جلسات به شرایط دندان بستگی دارد.",
-      "answer_en": "Root canal treatment removes damaged or infected pulp, cleans and fills the canals, and seals the tooth. The number of visits depends on the tooth.",
+      "question_fa": "تا تکمیل ترمیم نهایی پس از عصب‌کشی از چه چیزی پرهیز کنم؟",
+      "question_en": "What should I avoid until the final restoration after a root canal?",
+      "answer_fa": "پرکردگی موقت ممکن است برای مدت محدودی استفاده شود؛ اگر شکست یا افتاد، با کلینیک تماس بگیرید.",
+      "answer_en": "A temporary filling may be used for a limited period; contact the clinic if it breaks or comes out.",
       "sources": [
         "NHS_ROOT_CANAL"
       ],
@@ -970,10 +974,11 @@
       "category": "root_canal",
       "question_fa": "روکش پس از درمان ریشه چیست؟",
       "question_en": "What is crown after root canal treatment?",
-      "answer_fa": "درمان ریشه یا عصب‌کشی (روت کانال) بافت پالپی آسیب‌دیده یا عفونی را خارج می‌کند؛ کانال‌ها تمیز و پر و دندان مهروموم می‌شود. تعداد جلسات به شرایط دندان بستگی دارد.",
-      "answer_en": "Root canal treatment removes damaged or infected pulp, cleans and fills the canals, and seals the tooth. The number of visits depends on the tooth.",
+      "answer_fa": "اگر ساختار دندان ضعیف یا بخش زیادی از آن تخریب شده باشد، روکش می‌تواند از دندان محافظت کند؛ نیاز به آن برای همه یکسان نیست.",
+      "answer_en": "If the tooth is weakened or much of its structure is lost, a crown may help protect it; it is not required for every tooth.",
       "sources": [
-        "NHS_ROOT_CANAL"
+        "NHS_ROOT_CANAL",
+        "NHS_DENTAL_TREATMENTS"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -983,12 +988,13 @@
     {
       "id": "KDF-056",
       "category": "root_canal",
-      "question_fa": "چه نکته‌ای درباره روکش پس از درمان ریشه باید بدانم؟",
-      "question_en": "What should I know about crown after root canal treatment?",
-      "answer_fa": "درمان ریشه یا عصب‌کشی (روت کانال) بافت پالپی آسیب‌دیده یا عفونی را خارج می‌کند؛ کانال‌ها تمیز و پر و دندان مهروموم می‌شود. تعداد جلسات به شرایط دندان بستگی دارد.",
-      "answer_en": "Root canal treatment removes damaged or infected pulp, cleans and fills the canals, and seals the tooth. The number of visits depends on the tooth.",
+      "question_fa": "چرا گاهی پس از درمان ریشه روکش پیشنهاد می‌شود؟",
+      "question_en": "Why might a crown be recommended after root canal treatment?",
+      "answer_fa": "دندان‌پزشک بر اساس محل دندان و مقدار بافت باقی‌مانده درباره ترمیم نهایی تصمیم می‌گیرد.",
+      "answer_en": "The dentist selects the final restoration based on tooth location and remaining structure.",
       "sources": [
-        "NHS_ROOT_CANAL"
+        "NHS_ROOT_CANAL",
+        "NHS_DENTAL_TREATMENTS"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -1000,9 +1006,10 @@
       "category": "filling",
       "question_fa": "پرکردگی دندان چیست؟",
       "question_en": "What is dental filling?",
-      "answer_fa": "پرکردن دندان با پرکردگی بخش آسیب‌دیده را بازسازی می‌کند. حساسیت خفیف و گذرا ممکن است رخ دهد؛ درد شدید یا ماندگار باید بررسی شود.",
-      "answer_en": "A filling restores a damaged part of a tooth. Mild temporary sensitivity may occur; severe or persistent pain should be assessed.",
+      "answer_fa": "اندازه و محل حفره، فشار جویدن، ظاهر مورد انتظار و شرایط فرد در انتخاب ماده اثر دارند.",
+      "answer_en": "Cavity size and location, chewing forces, desired appearance, and individual factors influence material choice.",
       "sources": [
+        "ADA_COMPOSITE",
         "NHS_DENTAL_TREATMENTS"
       ],
       "confidence": "high_for_general_educational_information",
@@ -1013,11 +1020,12 @@
     {
       "id": "KDF-058",
       "category": "filling",
-      "question_fa": "چه نکته‌ای درباره پرکردگی دندان باید بدانم؟",
-      "question_en": "What should I know about dental filling?",
-      "answer_fa": "پرکردن دندان با پرکردگی بخش آسیب‌دیده را بازسازی می‌کند. حساسیت خفیف و گذرا ممکن است رخ دهد؛ درد شدید یا ماندگار باید بررسی شود.",
-      "answer_en": "A filling restores a damaged part of a tooth. Mild temporary sensitivity may occur; severe or persistent pain should be assessed.",
+      "question_fa": "دندان‌پزشک چگونه ماده مناسب پرکردگی را انتخاب می‌کند؟",
+      "question_en": "How does a dentist choose a filling material?",
+      "answer_fa": "برای انتخاب آگاهانه درباره مزایا، محدودیت‌ها و هزینه هر گزینه از دندان‌پزشک سؤال کنید.",
+      "answer_en": "For an informed choice, ask about the benefits, limitations, and cost of each option.",
       "sources": [
+        "ADA_COMPOSITE",
         "NHS_DENTAL_TREATMENTS"
       ],
       "confidence": "high_for_general_educational_information",
@@ -1030,10 +1038,11 @@
       "category": "filling",
       "question_fa": "حساسیت پس از پرکردن چیست؟",
       "question_en": "What is sensitivity after a filling?",
-      "answer_fa": "پرکردن دندان با پرکردگی بخش آسیب‌دیده را بازسازی می‌کند. حساسیت خفیف و گذرا ممکن است رخ دهد؛ درد شدید یا ماندگار باید بررسی شود.",
-      "answer_en": "A filling restores a damaged part of a tooth. Mild temporary sensitivity may occur; severe or persistent pain should be assessed.",
+      "answer_fa": "درد شدید، درد هنگام گاززدن، تورم یا حساسیتی که بدتر می‌شود نیازمند بررسی است.",
+      "answer_en": "Severe pain, pain on biting, swelling, or worsening sensitivity needs assessment.",
       "sources": [
-        "NHS_DENTAL_TREATMENTS"
+        "ADA_COMPOSITE",
+        "NHS_TOOTHACHE"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -1043,12 +1052,13 @@
     {
       "id": "KDF-060",
       "category": "filling",
-      "question_fa": "چه نکته‌ای درباره حساسیت پس از پرکردن باید بدانم؟",
-      "question_en": "What should I know about sensitivity after a filling?",
-      "answer_fa": "پرکردن دندان با پرکردگی بخش آسیب‌دیده را بازسازی می‌کند. حساسیت خفیف و گذرا ممکن است رخ دهد؛ درد شدید یا ماندگار باید بررسی شود.",
-      "answer_en": "A filling restores a damaged part of a tooth. Mild temporary sensitivity may occur; severe or persistent pain should be assessed.",
+      "question_fa": "چه زمانی درد پس از پرکردن باید بررسی شود؟",
+      "question_en": "When should pain after a filling be checked?",
+      "answer_fa": "اگر ارتفاع پرکردگی هنگام بستن دهان زیاد به نظر می‌رسد، برای تنظیم مراجعه کنید و ترمیم را دستکاری نکنید.",
+      "answer_en": "If the filling feels high when you close your teeth, arrange an adjustment and do not alter it yourself.",
       "sources": [
-        "NHS_DENTAL_TREATMENTS"
+        "ADA_COMPOSITE",
+        "NHS_TOOTHACHE"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",

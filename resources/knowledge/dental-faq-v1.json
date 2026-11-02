@@ -49,6 +49,71 @@
       "title": "NHS Dental abscess",
       "url": "https://www.nhs.uk/conditions/dental-abscess/",
       "organization": "NHS"
+    },
+    "ADA_HOME_CARE": {
+      "title": "ADA — Home Oral Care",
+      "url": "https://www.ada.org/resources/ada-library/oral-health-topics/home-care",
+      "organization": "American Dental Association"
+    },
+    "NHS_ORAL_CARE": {
+      "title": "NHS — Take care of your teeth and gums",
+      "url": "https://www.nhs.uk/live-well/healthy-teeth-and-gums/take-care-of-your-teeth-and-gums/",
+      "organization": "National Health Service"
+    },
+    "NHS_CHECKUPS": {
+      "title": "NHS — Dental check-ups",
+      "url": "https://www.nhs.uk/live-well/healthy-teeth-and-gums/dental-check-ups/",
+      "organization": "National Health Service"
+    },
+    "NIDCR_TOOTH_DECAY": {
+      "title": "NIDCR — Tooth Decay",
+      "url": "https://www.nidcr.nih.gov/health-info/tooth-decay",
+      "organization": "National Institute of Dental and Craniofacial Research"
+    },
+    "NIDCR_DRY_MOUTH": {
+      "title": "NIDCR — Dry Mouth",
+      "url": "https://www.nidcr.nih.gov/health-info/dry-mouth",
+      "organization": "National Institute of Dental and Craniofacial Research"
+    },
+    "NIDCR_GUM_DISEASE": {
+      "title": "NIDCR — Periodontal (Gum) Disease",
+      "url": "https://www.nidcr.nih.gov/health-info/gum-disease",
+      "organization": "National Institute of Dental and Craniofacial Research"
+    },
+    "ADA_IMPLANTS": {
+      "title": "ADA MouthHealthy — Implants",
+      "url": "https://www.mouthhealthy.org/all-topics-a-z/implants",
+      "organization": "American Dental Association"
+    },
+    "ADA_VENEERS": {
+      "title": "ADA MouthHealthy — Veneers",
+      "url": "https://www.mouthhealthy.org/all-topics-a-z/veneers",
+      "organization": "American Dental Association"
+    },
+    "ADA_COMPOSITE": {
+      "title": "ADA MouthHealthy — Composite Fillings",
+      "url": "https://www.mouthhealthy.org/all-topics-a-z/composite-fillings",
+      "organization": "American Dental Association"
+    },
+    "AAOMS_WISDOM": {
+      "title": "AAOMS — Wisdom Teeth Management",
+      "url": "https://aaoms.org/wp-content/uploads/2024/05/wisdom_teeth_management.pdf",
+      "organization": "American Association of Oral and Maxillofacial Surgeons"
+    },
+    "NHS_KNOCKED_OUT": {
+      "title": "NHS — Knocked-out tooth",
+      "url": "https://www.nhs.uk/conditions/knocked-out-tooth/",
+      "organization": "National Health Service"
+    },
+    "IRAN_PEDIATRIC_DENTISTRY": {
+      "title": "Iranian Pediatric Dentistry Association — Patient FAQ",
+      "url": "https://www.kapd.ir/faq/",
+      "organization": "Iranian Pediatric Dentistry Association, Khorasan branch"
+    },
+    "TUMS_DENTAL": {
+      "title": "Tehran University of Medical Sciences — Faculty of Dentistry",
+      "url": "https://dentistry.tums.ac.ir/",
+      "organization": "Tehran University of Medical Sciences"
     }
   },
   "faqs": [
@@ -57,10 +122,12 @@
       "category": "general",
       "question_fa": "بهداشت روزانه دهان چیست؟",
       "question_en": "What is daily oral hygiene?",
-      "answer_fa": "بهداشت منظم شامل مسواک‌زدن دو بار در روز با خمیردندان فلورایددار و تمیزکردن روزانه بین دندان‌هاست. برنامه دقیق باید با توجه به سن و وضعیت فرد تنظیم شود.",
-      "answer_en": "Good daily care includes brushing twice a day with fluoride toothpaste and cleaning between teeth daily. Advice should be adapted to age and individual needs.",
+      "answer_fa": "مراقبت روزانه شامل مسواک‌زدن دو بار در روز با خمیردندان فلورایددار و تمیزکردن روزانه فضاهای بین دندانی است.",
+      "answer_en": "Daily care includes brushing twice a day with fluoride toothpaste and cleaning between teeth every day.",
       "sources": [
-        "CDC_ORAL_HEALTH"
+        "CDC_ORAL_HEALTH",
+        "NHS_ORAL_CARE",
+        "ADA_HOME_CARE"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -70,12 +137,14 @@
     {
       "id": "KDF-002",
       "category": "general",
-      "question_fa": "چه نکته‌ای درباره بهداشت روزانه دهان باید بدانم؟",
-      "question_en": "What should I know about daily oral hygiene?",
-      "answer_fa": "بهداشت منظم شامل مسواک‌زدن دو بار در روز با خمیردندان فلورایددار و تمیزکردن روزانه بین دندان‌هاست. برنامه دقیق باید با توجه به سن و وضعیت فرد تنظیم شود.",
-      "answer_en": "Good daily care includes brushing twice a day with fluoride toothpaste and cleaning between teeth daily. Advice should be adapted to age and individual needs.",
+      "question_fa": "روتین روزانه مراقبت از دهان شامل چه کارهایی است؟",
+      "question_en": "What should a daily oral-care routine include?",
+      "answer_fa": "برای تمیزکردن همه سطوح، مسواک را با فشار ملایم روی سطوح بیرونی، داخلی و جونده حرکت دهید.",
+      "answer_en": "Use gentle pressure and clean outer, inner, and chewing surfaces.",
       "sources": [
-        "CDC_ORAL_HEALTH"
+        "CDC_ORAL_HEALTH",
+        "NHS_ORAL_CARE",
+        "ADA_HOME_CARE"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -87,9 +156,10 @@
       "category": "general",
       "question_fa": "پوسیدگی دندان چیست؟",
       "question_en": "What is tooth decay?",
-      "answer_fa": "بهداشت منظم شامل مسواک‌زدن دو بار در روز با خمیردندان فلورایددار و تمیزکردن روزانه بین دندان‌هاست. برنامه دقیق باید با توجه به سن و وضعیت فرد تنظیم شود.",
-      "answer_en": "Good daily care includes brushing twice a day with fluoride toothpaste and cleaning between teeth daily. This helps reduce the risk of cavities and tooth decay. Advice should be adapted to age and individual needs.",
+      "answer_fa": "کاهش دفعات مصرف خوراکی‌های شیرین، مسواک با خمیردندان فلورایددار و تمیزکردن بین دندان‌ها به کاهش خطر پوسیدگی کمک می‌کند.",
+      "answer_en": "Limiting frequent sugary snacks, brushing with fluoride toothpaste, and cleaning between teeth can lower decay risk.",
       "sources": [
+        "NIDCR_TOOTH_DECAY",
         "CDC_ORAL_HEALTH"
       ],
       "confidence": "high_for_general_educational_information",
@@ -100,11 +170,12 @@
     {
       "id": "KDF-004",
       "category": "general",
-      "question_fa": "چه نکته‌ای درباره پوسیدگی دندان باید بدانم؟",
-      "question_en": "What should I know about tooth decay?",
-      "answer_fa": "بهداشت منظم شامل مسواک‌زدن دو بار در روز با خمیردندان فلورایددار و تمیزکردن روزانه بین دندان‌هاست. برنامه دقیق باید با توجه به سن و وضعیت فرد تنظیم شود.",
-      "answer_en": "Good daily care includes brushing twice a day with fluoride toothpaste and cleaning between teeth daily. This helps reduce the risk of cavities and tooth decay. Advice should be adapted to age and individual needs.",
+      "question_fa": "چطور می‌توان خطر پوسیدگی دندان را کاهش داد؟",
+      "question_en": "How can I reduce my risk of tooth decay?",
+      "answer_fa": "پوسیدگی اولیه ممکن است علامت نداشته باشد؛ معاینه می‌تواند تغییرات زودرس را شناسایی کند.",
+      "answer_en": "Early decay may have no symptoms; check-ups can identify early changes.",
       "sources": [
+        "NIDCR_TOOTH_DECAY",
         "CDC_ORAL_HEALTH"
       ],
       "confidence": "high_for_general_educational_information",
@@ -117,9 +188,10 @@
       "category": "general",
       "question_fa": "خمیردندان فلورایددار چیست؟",
       "question_en": "What is fluoride toothpaste?",
-      "answer_fa": "بهداشت منظم شامل مسواک‌زدن دو بار در روز با خمیردندان فلورایددار و تمیزکردن روزانه بین دندان‌هاست. برنامه دقیق باید با توجه به سن و وضعیت فرد تنظیم شود.",
-      "answer_en": "Good daily care includes brushing twice a day with fluoride toothpaste and cleaning between teeth daily. Advice should be adapted to age and individual needs.",
+      "answer_fa": "فلوراید به محافظت از مینای دندان کمک می‌کند؛ مقدار و نوع مناسب خمیردندان کودک به سن و توانایی تف‌کردن بستگی دارد.",
+      "answer_en": "Fluoride helps protect enamel; the right toothpaste type and amount for a child depend on age and ability to spit.",
       "sources": [
+        "IRAN_PEDIATRIC_DENTISTRY",
         "CDC_ORAL_HEALTH"
       ],
       "confidence": "high_for_general_educational_information",
@@ -130,11 +202,12 @@
     {
       "id": "KDF-006",
       "category": "general",
-      "question_fa": "چه نکته‌ای درباره خمیردندان فلورایددار باید بدانم؟",
-      "question_en": "What should I know about fluoride toothpaste?",
-      "answer_fa": "بهداشت منظم شامل مسواک‌زدن دو بار در روز با خمیردندان فلورایددار و تمیزکردن روزانه بین دندان‌هاست. برنامه دقیق باید با توجه به سن و وضعیت فرد تنظیم شود.",
-      "answer_en": "Good daily care includes brushing twice a day with fluoride toothpaste and cleaning between teeth daily. Advice should be adapted to age and individual needs.",
+      "question_fa": "برای کودکان چه خمیردندان فلورایدداری مناسب است؟",
+      "question_en": "Which fluoride toothpaste is suitable for children?",
+      "answer_fa": "محصول و مقدار خمیردندان را طبق راهنمای دندان‌پزشک کودک انتخاب کنید و از بلعیدن آن جلوگیری شود.",
+      "answer_en": "Choose toothpaste and amount according to pediatric dental guidance and encourage spitting rather than swallowing.",
       "sources": [
+        "IRAN_PEDIATRIC_DENTISTRY",
         "CDC_ORAL_HEALTH"
       ],
       "confidence": "high_for_general_educational_information",
@@ -147,10 +220,11 @@
       "category": "general",
       "question_fa": "نخ دندان چیست؟",
       "question_en": "What is dental floss?",
-      "answer_fa": "بهداشت منظم شامل مسواک‌زدن دو بار در روز با خمیردندان فلورایددار و تمیزکردن روزانه بین دندان‌هاست. برنامه دقیق باید با توجه به سن و وضعیت فرد تنظیم شود.",
-      "answer_en": "Good daily care includes brushing twice a day with fluoride toothpaste and cleaning between teeth daily. Advice should be adapted to age and individual needs.",
+      "answer_fa": "نخ دندان یا برس بین‌دندانی را روزانه و با ملایمت به کار ببرید تا پلاک و باقی‌مانده غذا از فضاهای دور از دسترس مسواک پاک شود.",
+      "answer_en": "Use floss or an interdental brush gently each day to remove plaque and debris from spaces a toothbrush cannot reach.",
       "sources": [
-        "CDC_ORAL_HEALTH"
+        "NHS_ORAL_CARE",
+        "ADA_HOME_CARE"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -160,12 +234,13 @@
     {
       "id": "KDF-008",
       "category": "general",
-      "question_fa": "چه نکته‌ای درباره نخ دندان باید بدانم؟",
-      "question_en": "What should I know about dental floss?",
-      "answer_fa": "بهداشت منظم شامل مسواک‌زدن دو بار در روز با خمیردندان فلورایددار و تمیزکردن روزانه بین دندان‌هاست. برنامه دقیق باید با توجه به سن و وضعیت فرد تنظیم شود.",
-      "answer_en": "Good daily care includes brushing twice a day with fluoride toothpaste and cleaning between teeth daily. Advice should be adapted to age and individual needs.",
+      "question_fa": "چطور فضای بین دندان‌ها را درست تمیز کنم؟",
+      "question_en": "How should I clean between my teeth?",
+      "answer_fa": "ابزار مناسب به فاصله بین دندان‌ها و وضعیت لثه بستگی دارد؛ اگر ابزار به‌سختی وارد می‌شود از دندان‌پزشک راهنمایی بگیرید.",
+      "answer_en": "The right tool depends on tooth spacing and gum condition; ask your dentist if it does not fit easily.",
       "sources": [
-        "CDC_ORAL_HEALTH"
+        "NHS_ORAL_CARE",
+        "ADA_HOME_CARE"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -177,10 +252,11 @@
       "category": "general",
       "question_fa": "خشکی دهان چیست؟",
       "question_en": "What is dry mouth?",
-      "answer_fa": "بهداشت منظم شامل مسواک‌زدن دو بار در روز با خمیردندان فلورایددار و تمیزکردن روزانه بین دندان‌هاست. برنامه دقیق باید با توجه به سن و وضعیت فرد تنظیم شود.",
-      "answer_en": "Good daily care includes brushing twice a day with fluoride toothpaste and cleaning between teeth daily. Advice should be adapted to age and individual needs.",
+      "answer_fa": "اگر خشکی دهان مداوم است، برای بررسی علت به دندان‌پزشک یا پزشک مراجعه کنید؛ برخی داروها و شرایط پزشکی می‌توانند نقش داشته باشند.",
+      "answer_en": "If dry mouth persists, see a dentist or doctor to identify the cause; some medicines and health conditions can contribute.",
       "sources": [
-        "CDC_ORAL_HEALTH"
+        "NIDCR_DRY_MOUTH",
+        "ADA_ORAL_HEALTH_TOPICS"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -190,12 +266,13 @@
     {
       "id": "KDF-010",
       "category": "general",
-      "question_fa": "چه نکته‌ای درباره خشکی دهان باید بدانم؟",
-      "question_en": "What should I know about dry mouth?",
-      "answer_fa": "بهداشت منظم شامل مسواک‌زدن دو بار در روز با خمیردندان فلورایددار و تمیزکردن روزانه بین دندان‌هاست. برنامه دقیق باید با توجه به سن و وضعیت فرد تنظیم شود.",
-      "answer_en": "Good daily care includes brushing twice a day with fluoride toothpaste and cleaning between teeth daily. Advice should be adapted to age and individual needs.",
+      "question_fa": "چه زمانی خشکی مداوم دهان باید بررسی شود؟",
+      "question_en": "When should persistent dry mouth be assessed?",
+      "answer_fa": "خشکی دهان می‌تواند خطر پوسیدگی و عفونت دهانی را افزایش دهد؛ داروها را خودسرانه قطع نکنید.",
+      "answer_en": "Dry mouth can increase decay and oral-infection risk; do not stop medicines on your own.",
       "sources": [
-        "CDC_ORAL_HEALTH"
+        "NIDCR_DRY_MOUTH",
+        "ADA_ORAL_HEALTH_TOPICS"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -207,10 +284,11 @@
       "category": "general",
       "question_fa": "حساسیت دندان چیست؟",
       "question_en": "What is tooth sensitivity?",
-      "answer_fa": "بهداشت منظم شامل مسواک‌زدن دو بار در روز با خمیردندان فلورایددار و تمیزکردن روزانه بین دندان‌هاست. برنامه دقیق باید با توجه به سن و وضعیت فرد تنظیم شود.",
-      "answer_en": "Good daily care includes brushing twice a day with fluoride toothpaste and cleaning between teeth daily. Advice should be adapted to age and individual needs.",
+      "answer_fa": "اگر حساسیت تازه شروع شده، تکرار می‌شود یا با درد هنگام جویدن همراه است، برای بررسی علت مراجعه کنید.",
+      "answer_en": "If sensitivity is new, recurring, or accompanied by pain when chewing, arrange an assessment.",
       "sources": [
-        "CDC_ORAL_HEALTH"
+        "ADA_ORAL_HEALTH_TOPICS",
+        "NHS_TOOTHACHE"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -220,12 +298,13 @@
     {
       "id": "KDF-012",
       "category": "general",
-      "question_fa": "چه نکته‌ای درباره حساسیت دندان باید بدانم؟",
-      "question_en": "What should I know about tooth sensitivity?",
-      "answer_fa": "بهداشت منظم شامل مسواک‌زدن دو بار در روز با خمیردندان فلورایددار و تمیزکردن روزانه بین دندان‌هاست. برنامه دقیق باید با توجه به سن و وضعیت فرد تنظیم شود.",
-      "answer_en": "Good daily care includes brushing twice a day with fluoride toothpaste and cleaning between teeth daily. Advice should be adapted to age and individual needs.",
+      "question_fa": "چه زمانی حساسیت دندان باید معاینه شود؟",
+      "question_en": "When should tooth sensitivity be checked?",
+      "answer_fa": "حساسیت شدید، موضعی یا رو به افزایش را با خمیردندان ضدحساسیت به‌تنهایی مدیریت نکنید.",
+      "answer_en": "Do not rely on desensitizing toothpaste alone for severe, localized, or worsening sensitivity.",
       "sources": [
-        "CDC_ORAL_HEALTH"
+        "ADA_ORAL_HEALTH_TOPICS",
+        "NHS_TOOTHACHE"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -237,10 +316,12 @@
       "category": "general",
       "question_fa": "بوی بد دهان چیست؟",
       "question_en": "What is bad breath?",
-      "answer_fa": "بهداشت منظم شامل مسواک‌زدن دو بار در روز با خمیردندان فلورایددار و تمیزکردن روزانه بین دندان‌هاست. برنامه دقیق باید با توجه به سن و وضعیت فرد تنظیم شود.",
-      "answer_en": "Good daily care includes brushing twice a day with fluoride toothpaste and cleaning between teeth daily. Advice should be adapted to age and individual needs.",
+      "answer_fa": "مسواک‌زدن، تمیزکردن زبان و نخ‌دندان می‌تواند تجمع مواد و پلاک را کاهش دهد؛ خشکی دهان و بیماری لثه نیز ممکن است نقش داشته باشند.",
+      "answer_en": "Brushing, tongue cleaning, and interdental care can reduce debris and plaque; dry mouth and gum disease may also contribute.",
       "sources": [
-        "CDC_ORAL_HEALTH"
+        "ADA_HOME_CARE",
+        "NIDCR_DRY_MOUTH",
+        "NIDCR_GUM_DISEASE"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -250,12 +331,14 @@
     {
       "id": "KDF-014",
       "category": "general",
-      "question_fa": "چه نکته‌ای درباره بوی بد دهان باید بدانم؟",
-      "question_en": "What should I know about bad breath?",
-      "answer_fa": "بهداشت منظم شامل مسواک‌زدن دو بار در روز با خمیردندان فلورایددار و تمیزکردن روزانه بین دندان‌هاست. برنامه دقیق باید با توجه به سن و وضعیت فرد تنظیم شود.",
-      "answer_en": "Good daily care includes brushing twice a day with fluoride toothpaste and cleaning between teeth daily. Advice should be adapted to age and individual needs.",
+      "question_fa": "چه کارهایی می‌تواند به کاهش بوی بد دهان کمک کند؟",
+      "question_en": "What can help reduce bad breath?",
+      "answer_fa": "اگر بوی بد با وجود رعایت بهداشت ادامه دارد، برای بررسی پوسیدگی، بیماری لثه یا خشکی دهان مراجعه کنید.",
+      "answer_en": "If bad breath persists despite good hygiene, seek assessment for decay, gum disease, or dry mouth.",
       "sources": [
-        "CDC_ORAL_HEALTH"
+        "ADA_HOME_CARE",
+        "NIDCR_DRY_MOUTH",
+        "NIDCR_GUM_DISEASE"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -267,9 +350,10 @@
       "category": "general",
       "question_fa": "معاینه دوره‌ای چیست؟",
       "question_en": "What is routine dental check-up?",
-      "answer_fa": "بهداشت منظم شامل مسواک‌زدن دو بار در روز با خمیردندان فلورایددار و تمیزکردن روزانه بین دندان‌هاست. برنامه دقیق باید با توجه به سن و وضعیت فرد تنظیم شود.",
-      "answer_en": "Good daily care includes brushing twice a day with fluoride toothpaste and cleaning between teeth daily. Advice should be adapted to age and individual needs.",
+      "answer_fa": "دندان‌پزشک فاصله مراجعات را بر اساس خطر پوسیدگی، سلامت لثه، سابقه درمان و نیاز فردی تعیین می‌کند.",
+      "answer_en": "A dentist sets check-up intervals based on decay risk, gum health, treatment history, and individual needs.",
       "sources": [
+        "NHS_CHECKUPS",
         "CDC_ORAL_HEALTH"
       ],
       "confidence": "high_for_general_educational_information",
@@ -280,11 +364,12 @@
     {
       "id": "KDF-016",
       "category": "general",
-      "question_fa": "چه نکته‌ای درباره معاینه دوره‌ای باید بدانم؟",
-      "question_en": "What should I know about routine dental check-up?",
-      "answer_fa": "بهداشت منظم شامل مسواک‌زدن دو بار در روز با خمیردندان فلورایددار و تمیزکردن روزانه بین دندان‌هاست. برنامه دقیق باید با توجه به سن و وضعیت فرد تنظیم شود.",
-      "answer_en": "Good daily care includes brushing twice a day with fluoride toothpaste and cleaning between teeth daily. Advice should be adapted to age and individual needs.",
+      "question_fa": "چه کسی فاصله مناسب معاینه‌های دندان‌پزشکی را تعیین می‌کند؟",
+      "question_en": "Who decides the right interval between dental check-ups?",
+      "answer_fa": "اگر بین دو معاینه درد، تورم یا خونریزی مداوم ایجاد شد، تا نوبت بعدی صبر نکنید و زودتر تماس بگیرید.",
+      "answer_en": "If pain, swelling, or persistent bleeding develops between visits, contact the clinic rather than waiting.",
       "sources": [
+        "NHS_CHECKUPS",
         "CDC_ORAL_HEALTH"
       ],
       "confidence": "high_for_general_educational_information",
@@ -297,9 +382,10 @@
       "category": "implant",
       "question_fa": "ایمپلنت دندان چیست؟",
       "question_en": "What is dental implant?",
-      "answer_fa": "ایمپلنت می‌تواند پایه‌ای برای روکش یا پروتز باشد، اما مناسب‌بودن آن به وضعیت استخوان و لثه، سلامت عمومی و ارزیابی دندان‌پزشک بستگی دارد.",
-      "answer_en": "An implant can support a crown or prosthesis, but suitability depends on bone and gum health, general health and a dentist's assessment.",
+      "answer_fa": "پس از قرارگیری پایه و ترمیم مناسب، قطعه اتصال و روکش سفارشی روی ایمپلنت نصب می‌شود؛ زمان‌بندی به وضعیت استخوان و طرح درمان بستگی دارد.",
+      "answer_en": "After implant placement and suitable healing, an abutment and custom crown are attached; timing depends on bone condition and the treatment plan.",
       "sources": [
+        "ADA_IMPLANTS",
         "NHS_DENTAL_TREATMENTS"
       ],
       "confidence": "high_for_general_educational_information",
@@ -310,11 +396,12 @@
     {
       "id": "KDF-018",
       "category": "implant",
-      "question_fa": "چه نکته‌ای درباره ایمپلنت دندان باید بدانم؟",
-      "question_en": "What should I know about dental implant?",
-      "answer_fa": "ایمپلنت می‌تواند پایه‌ای برای روکش یا پروتز باشد، اما مناسب‌بودن آن به وضعیت استخوان و لثه، سلامت عمومی و ارزیابی دندان‌پزشک بستگی دارد.",
-      "answer_en": "An implant can support a crown or prosthesis, but suitability depends on bone and gum health, general health and a dentist's assessment.",
+      "question_fa": "روکش روی ایمپلنت چگونه نصب می‌شود؟",
+      "question_en": "How is a crown attached to a dental implant?",
+      "answer_fa": "روکش ایمپلنت باید از نظر تماس با دندان‌های مقابل و تمیزشدن اطراف آن تنظیم شود؛ برای بررسی‌های دوره‌ای مراجعه کنید.",
+      "answer_en": "The implant crown should be checked for bite contact and cleanability; attend routine reviews.",
       "sources": [
+        "ADA_IMPLANTS",
         "NHS_DENTAL_TREATMENTS"
       ],
       "confidence": "high_for_general_educational_information",
@@ -327,10 +414,11 @@
       "category": "implant",
       "question_fa": "ارزیابی استخوان برای ایمپلنت چیست؟",
       "question_en": "What is bone assessment for implants?",
-      "answer_fa": "ایمپلنت می‌تواند پایه‌ای برای روکش یا پروتز باشد، اما مناسب‌بودن آن به وضعیت استخوان و لثه، سلامت عمومی و ارزیابی دندان‌پزشک بستگی دارد.",
-      "answer_en": "An implant can support a crown or prosthesis, but suitability depends on bone and gum health, general health and a dentist's assessment.",
+      "answer_fa": "مدت‌زمان از دست‌رفتن دندان، تحلیل استخوان، عفونت قبلی و ساختار فک می‌توانند بر حجم استخوان اثر بگذارند.",
+      "answer_en": "Time since tooth loss, bone resorption, previous infection, and jaw anatomy can affect bone volume.",
       "sources": [
-        "NHS_DENTAL_TREATMENTS"
+        "ADA_IMPLANTS",
+        "ADA_ORAL_HEALTH_TOPICS"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -340,12 +428,13 @@
     {
       "id": "KDF-020",
       "category": "implant",
-      "question_fa": "چه نکته‌ای درباره ارزیابی استخوان برای ایمپلنت باید بدانم؟",
-      "question_en": "What should I know about bone assessment for implants?",
-      "answer_fa": "ایمپلنت می‌تواند پایه‌ای برای روکش یا پروتز باشد، اما مناسب‌بودن آن به وضعیت استخوان و لثه، سلامت عمومی و ارزیابی دندان‌پزشک بستگی دارد.",
-      "answer_en": "An implant can support a crown or prosthesis, but suitability depends on bone and gum health, general health and a dentist's assessment.",
+      "question_fa": "چه عواملی بر کافی‌بودن استخوان برای ایمپلنت اثر می‌گذارند؟",
+      "question_en": "What affects whether there is enough bone for an implant?",
+      "answer_fa": "در صورت کمبود استخوان، دندان‌پزشک ممکن است پیوند استخوان یا گزینه جایگزین را بررسی کند؛ این تصمیم فردی است.",
+      "answer_en": "If bone is insufficient, the dentist may discuss grafting or an alternative; the decision is individualized.",
       "sources": [
-        "NHS_DENTAL_TREATMENTS"
+        "ADA_IMPLANTS",
+        "ADA_ORAL_HEALTH_TOPICS"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",

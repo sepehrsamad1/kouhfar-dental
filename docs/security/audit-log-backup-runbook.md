@@ -6,7 +6,7 @@
 - Keep encrypted backup copies for at least 90 days.
 - Store backups on storage physically separate from the application/database storage.
 - Restrict the destination to authorized administrators and encrypt the storage volume/service where available.
-- Run a monthly recovery verification.
+- Run a monthly authenticated restore into a temporary database table.
 - Never automatically delete original rows from `audit_logs`. The 90-day retention applies only to backup copies.
 
 ## Deployment configuration
@@ -36,7 +36,7 @@ php artisan audit-logs:verify-latest
 
 The backup command reads the existing `audit_logs` table through Laravel's database connection, so it does not depend on `pg_dump` or the SQLite CLI. It exports a consistent database snapshot directly into an encrypted file, using independently authenticated AES-256-GCM chunks using a per-backup derived key and random salt, and publishes the completed backup atomically. It only prunes encrypted backup copies older than the configured retention period after a successful backup. No plaintext backup file is written to disk. Original database rows are never deleted.
 
-The verification command decrypts and authenticates each chunk in memory, checks the authenticated end marker, and validates each JSON record without writing plaintext to disk or modifying the live database. This is an automated file-level recovery verification; it is not a substitute for a separately controlled full disaster-recovery exercise against an isolated database environment.
+The verification command authenticates and decrypts each chunk in memory, then inserts every recovered row into a randomly named temporary table that mirrors the audit-log column types on the active PostgreSQL or SQLite connection. It compares the restored row count with the authenticated record count and drops the temporary table in a finally block. It never writes to the live audit_logs table or stores plaintext backup files. This is a database-level temporary-table restore drill; it is not a substitute for a separately controlled full disaster-recovery exercise against an isolated database environment.
 
 ## Scheduler
 

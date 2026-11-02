@@ -12,7 +12,7 @@ final class VerifyLatestAuditLogBackup extends Command
 {
     protected $signature = 'audit-logs:verify-latest';
 
-    protected $description = 'Decrypt and validate the latest audit-log backup in an isolated streaming verification.';
+    protected $description = 'Restore the latest audit-log backup into an isolated temporary table and validate it.';
 
     public function handle(AuditLogBackupService $service): int
     {
@@ -25,7 +25,7 @@ final class VerifyLatestAuditLogBackup extends Command
             return self::FAILURE;
         }
 
-        $this->components->info("Verified {$result['file']}: {$result['records']} audit-log record(s) authenticated and validated.");
+        $this->components->info("Verified {$result['file']}: {$result['records']} audit-log record(s) restored into a temporary table and validated.");
 
         return self::SUCCESS;
     }

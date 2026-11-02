@@ -159,7 +159,8 @@ final class AIProviderManager
             return false;
         }
 
-        if ($this->configuredProvider($capability) !== 'fake' && $this->hasPricingConfigured($capability) === false) {
+        if ($this->configuredProvider($capability) !== 'fake'
+            && ($this->hasApiKeyConfigured($capability) === false || $this->hasPricingConfigured($capability) === false)) {
             return false;
         }
 
@@ -240,6 +241,13 @@ final class AIProviderManager
         $this->usage->record($feature, $input, $output, $cost, null, $provider, $model, $capability, $estimatedCostIrr);
 
         return ['provider' => $provider, 'model' => $model, 'estimated_cost_irr' => $estimatedCostIrr];
+    }
+
+    private function hasApiKeyConfigured(string $capability): bool
+    {
+        $apiKey = config("ai.capabilities.{$capability}.api_key");
+
+        return is_string($apiKey) && trim($apiKey) !== '';
     }
 
     private function hasPricingConfigured(string $capability): bool

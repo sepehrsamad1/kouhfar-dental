@@ -38,7 +38,7 @@ final class AssistantService
         $guardDecision = app(AssistantGuard::class)->classify($message);
 
         if ($guardDecision === 'identity') {
-            return ['status' => 'succeeded', 'answer' => $this->identityResponse($locale), 'sources' => []];
+            return ['status' => 'succeeded', 'answer' => $this->identityResponse($locale, $message), 'sources' => []];
         }
 
         if ($guardDecision === 'out_of_domain') {
@@ -191,11 +191,24 @@ final class AssistantService
             : 'این علائم می‌توانند نشانه یک وضعیت اورژانسی دندانپزشکی یا پزشکی باشند. اگر دچار مشکل شدید در تنفس یا بلع، تورم سریع یا شدید دهان، صورت، گلو یا گردن، خونریزی شدید و کنترل‌نشده، بیهوشی یا آسیب شدید صورت شده‌اید، فوراً به خدمات اورژانسی پزشکی مراجعه کنید. در ایران برای خدمات اورژانس پزشکی با ۱۱۵ تماس بگیرید. برای پاسخ هوش مصنوعی یا نوبت معمول دندانپزشکی منتظر نمانید.';
     }
 
-    private function identityResponse(string $locale): string
+    private function identityResponse(string $locale, string $message): string
     {
+        $identity = $locale === 'en'
+            ? 'I am the intelligent assistant of Dr. Kouhfar, designed to guide you about dental services, oral health, and dental treatments. I am glad to help.'
+            : 'من دستیار هوشمند دکتر کوهفر هستم و برای راهنمایی شما در زمینه خدمات دندان‌پزشکی، مراقبت از دهان و دندان و پاسخ به سؤالات مرتبط با درمان‌های دندان‌پزشکی طراحی شده‌ام. خوشحالم که می‌توانم راهنمای شما باشم.';
+
+        $asksTechnicalDetails = str_contains($message, 'model')
+            || str_contains($message, 'provider')
+            || str_contains($message, 'مدل هوش مصنوعی')
+            || str_contains($message, 'موتور هوش مصنوعی');
+
+        if ($asksTechnicalDetails === false) {
+            return $identity;
+        }
+
         return $locale === 'en'
-            ? 'I am the intelligent assistant of Dr. Kouhfar, designed to guide you about dental services, oral health, and dental treatments. I am glad to help. The current project configuration uses a deterministic test provider; no external AI provider is active.'
-            : 'من دستیار هوشمند دکتر کوهفر هستم و برای راهنمایی شما در زمینه خدمات دندان‌پزشکی، مراقبت از دهان و دندان و پاسخ به سؤالات مرتبط با درمان‌های دندان‌پزشکی طراحی شده‌ام. خوشحالم که می‌توانم راهنمای شما باشم. در پیکربندی فعلی پروژه از ارائه‌دهنده آزمایشی استفاده می‌شود و هیچ سرویس‌دهنده هوش مصنوعی بیرونی فعال نیست.';
+            ? $identity.' The current project configuration uses a deterministic test provider; no external AI provider is connected.'
+            : $identity.' در پیکربندی فعلی پروژه از ارائه‌دهنده آزمایشی استفاده می‌شود و هیچ سرویس هوش مصنوعی خارجی متصل نیست.';
     }
 
     private function domainRefusal(string $locale): string

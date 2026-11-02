@@ -135,6 +135,8 @@ class StaffAuthController
             $recoveryHashes[] = Hash::make($code);
         }
 
+        AuditLogger::record($staff, 'staff.mfa.enabled', $staff, null, ['reason_code' => 'totp_enrolled']);
+
         $staff->forceFill([
             'mfa_enabled_at' => now('UTC'),
             'mfa_last_totp_counter' => $counter,
@@ -199,6 +201,7 @@ class StaffAuthController
             if ($matchedIndex !== null) {
                 unset($recoveryHashes[$matchedIndex]);
                 $staff->forceFill(['mfa_recovery_codes' => array_values($recoveryHashes)])->save();
+                AuditLogger::record($staff, 'staff.mfa.recovery_code_used', $staff, null, ['reason_code' => 'one_time_recovery_code']);
                 $verified = true;
             }
         }

@@ -30,9 +30,10 @@ final class AIControlService
     public function allowsRequests(): bool
     {
         $settings = $this->settings();
+        $budget = min((int) $settings->monthly_budget_irr, 10_000_000);
 
         return ! $settings->emergency_disabled
-            && $this->monthlySpendIrr() < $settings->monthly_budget_irr;
+            && $this->monthlySpendIrr() < $budget;
     }
 
     /** @return array<string, mixed> */
@@ -40,12 +41,12 @@ final class AIControlService
     {
         $settings = $this->settings();
         $spend = $this->monthlySpendIrr();
-        $budget = max(1, $settings->monthly_budget_irr);
+        $budget = max(1, min((int) $settings->monthly_budget_irr, 10_000_000));
         $percentage = (int) floor(($spend / $budget) * 100);
 
         return [
             'monthly_spend_irr' => $spend,
-            'monthly_budget_irr' => $settings->monthly_budget_irr,
+            'monthly_budget_irr' => $budget,
             'percentage' => $percentage,
             'alerts' => array_values(array_filter([50, 80, 100], static fn (int $level): bool => $percentage >= $level)),
             'blocked' => $settings->emergency_disabled || $spend >= $settings->monthly_budget_irr,
@@ -58,7 +59,7 @@ final class AIControlService
     public function update(int $monthlyBudgetIrr, bool $emergencyDisabled): void
     {
         if ($monthlyBudgetIrr < 1_000 || $monthlyBudgetIrr > 10_000_000) {
-            throw new InvalidArgumentException('Monthly AI budget must remain within the owner-approved IRR ceiling.');
+            throw new \\InvalidArgumentException('Monthly AI budget must remain within the owner-approved IRR ceiling.');
         }
 
         DB::transaction(function () use ($monthlyBudgetIrr, $emergencyDisabled): void {

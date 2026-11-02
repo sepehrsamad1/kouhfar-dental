@@ -72,7 +72,10 @@ it('requires TOTP enrollment before the first staff login and shows recovery cod
         ->and($staff->getRawOriginal('mfa_totp_secret'))->not->toBe($staff->mfa_totp_secret)
         ->and($staff->toArray())->not->toHaveKey('mfa_totp_secret');
 
-    $this->get(route('staff.mfa.setup'))->assertOk()->assertSee($staff->mfa_totp_secret);
+    $this->get(route('staff.mfa.setup'))
+        ->assertOk()
+        ->assertSee($staff->mfa_totp_secret)
+        ->assertHeader('Cache-Control', 'no-store, private');
 
     $code = task28TotpCode($staff->mfa_totp_secret, now('UTC')->timestamp);
     $response = $this->post(route('staff.mfa.setup.complete'), ['code' => $code]);
@@ -104,7 +107,9 @@ it('requires a valid TOTP challenge for enrolled staff', function (): void {
     ])->assertRedirect(route('staff.mfa.challenge'));
 
     $this->assertGuest('staff');
-    $this->get(route('staff.mfa.challenge'))->assertOk();
+    $this->get(route('staff.mfa.challenge'))
+        ->assertOk()
+        ->assertHeader('Cache-Control', 'no-store, private');
 
     $code = task28TotpCode($secret, now('UTC')->timestamp);
     $this->post(route('staff.mfa.verify'), ['code' => $code])

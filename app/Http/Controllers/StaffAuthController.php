@@ -41,11 +41,9 @@ class StaffAuthController
         }
 
         $staff = StaffUser::query()->where('email', $email)->where('is_active', true)->first();
-        $passwordValid = $staff !== null
-            && is_string($staff->getAuthPassword())
-            && Hash::check($request->string('password')->toString(), $staff->getAuthPassword());
 
-        if (! $passwordValid) {
+        if ($staff === null || ! is_string($staff->getAuthPassword())
+            || ! Hash::check($request->string('password')->toString(), $staff->getAuthPassword())) {
             RateLimiter::hit($throttleKey, $decaySeconds);
             $this->recordAttempt($email, $request, false);
 
@@ -116,6 +114,7 @@ class StaffAuthController
             return back()->withErrors(['code' => 'کد واردشده معتبر نیست.']);
         }
 
+        /** @var array{staff: StaffUser, recovery_codes: list<string>}|null $enrollment */
         $enrollment = DB::transaction(function () use ($staff, $request, $totp): ?array {
             $lockedStaff = StaffUser::query()->whereKey($staff->getKey())->lockForUpdate()->first();
 
@@ -197,6 +196,7 @@ class StaffAuthController
         }
 
         $code = trim((string) $request->input('code'));
+        /** @var array{verified: bool, staff: StaffUser} $verification */
         $verification = DB::transaction(function () use ($staff, $code, $totp): array {
             $lockedStaff = StaffUser::query()->whereKey($staff->getKey())->lockForUpdate()->first();
 

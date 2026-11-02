@@ -1,6 +1,6 @@
 # Task 28 — Security and Privacy Audit
 
-**Status: BLOCKED — security/privacy audit work is in progress; production release remains blocked.**
+**Status: CI-VERIFIED FOR THE CURRENT CODE SCOPE; TASK ACCEPTANCE BLOCKED — CI run #820 passed on code commit `653e6d45e960edf391d97d0d1b63030daf4a3399`. Production release and Task 28 closure remain blocked by open high retention finding SEC-28-003 and required clinic-owner decisions.**
 
 ## Task identity
 
@@ -18,6 +18,7 @@
 - Changed session cookie Secure default to true outside local/testing; retained HttpOnly and SameSite=Lax.
 - Added regression tests for malicious intended redirects and Secure/HttpOnly/SameSite cookie flags.
 - Added patient search SQL-looking input and hostile mass-assignment regression tests.
+- Restricted dormant Kavenegar egress to the approved HTTPS host/path, rejected userinfo/query/fragment/other origins, disabled redirects and prevented transport exceptions from exposing the API-key URL; added synthetic SSRF/redirect regression tests.
 - Restricted dormant Kavenegar egress to the approved HTTPS host/path, disabled redirects and prevented transport exceptions from exposing the API-key URL; added mocked SSRF/redirect regression tests.
 - Added Composer lockfile audit and npm lockfile audit to CI.
 - Added Gitleaks full-history secret scan to CI using a full checkout.
@@ -37,35 +38,31 @@
 
 ## Automated verification status
 
-The new tests and CI scan jobs have been committed to the branch, but **no Task 28 branch CI result is recorded yet**. Do not treat the new tests or scans as passed until GitHub Actions reports success.
+<https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41480042377|CI run #820> passed on code commit `653e6d45e960edf391d97d0d1b63030daf4a3399`.
 
-Required CI commands include:
+- 279 Laravel/Pest tests passed (24,491 assertions), including the new patient authorization, staff deactivation and mocked Kavenegar egress regression tests.
+- 36 Playwright browser tests passed.
+- PostgreSQL migrations passed.
+- `composer audit --locked` passed with no reported advisories.
+- `npm audit --audit-level=high` passed; npm reported zero vulnerabilities.
+- Pint, PHPStan, JavaScript lint, typecheck and production build passed.
+- Full-history Gitleaks scan passed.
 
-```bash
-composer audit --locked
-npm audit --audit-level=high
-php artisan test
-vendor/bin/pint --test
-vendor/bin/phpstan analyse
-npm run lint
-npm run typecheck
-npm run build
-npm run test:browser
-```
+This proves the current repository/CI code paths and synthetic tests only. It is not a production penetration test, live Kavenegar/AI provider test, GitHub secret-alert review, or infrastructure verification.
 
-Gitleaks must complete a full-history scan. Any finding requires investigation and rotation/revocation of the affected credential; deleting it from the current tree is not enough.
+Required CI commands are recorded above. Gitleaks scans the full repository history; any future finding requires investigation and credential rotation/revocation, not merely deleting the current file.
 
 ## Open release blockers
 
-- **High — retention/privacy policy incomplete:** approved periods and purge behavior are missing for login-attempt hashes, session registry, audit logs, consent records, Smart Smile session/result metadata, AI usage/request rows, queue/failed-job payloads, notification outbox, idempotency snapshots, deletion requests, application logs and backups.
+- **High — retention/privacy policy incomplete:** the 2-year clinical-record and Task 21 media periods remain recorded; however, retention/purge behavior for login-attempt hashes, session registry, audit logs, consent records, Smart Smile session/result metadata, AI usage/request rows, queue/failed-job payloads, notification outbox, idempotency snapshots, deletion requests, application logs and backups is still unapproved or unimplemented. See [clinic-owner decisions](security/task28-owner-decisions.md).
 - **Medium — Smart Smile consent token has no expiry:** owner must approve TTL and post-expiry behavior before implementation.
 - **Medium — staff idle/absolute session timeout values are unset:** owner policy required; registry expiry currently defaults to ten years if unset.
 - **Medium — production controls unverified:** TLS/proxy, database runtime privileges, private storage ACLs, secret injection, backup/log access and retention are deployment evidence not present in the repository.
 - **Medium — verification scope incomplete:** full route-by-route IDOR matrix, production-like CSRF negative test, browser DOM-XSS corpus and distributed rate-limit behavior remain open.
-- Dependency/secret scan results are pending branch CI.
+- **CI scans passed:** Composer/npm audits and full-history Gitleaks passed in run #820. Supplementary review of GitHub secret alerts, binary images/artifacts and external log sinks remains open.
 
 ## Stop condition
 
-Task 28 must not be merged as complete or marked verified while any high finding remains open or required privacy/retention decisions are unapproved. The next action is to obtain the clinic owner's retention/TTL decisions, implement the approved schedules with idempotent purge jobs and tests, then rerun the complete CI/security suite.
+Task 28 must not be merged as complete or marked verified while any high finding remains open or required privacy/retention decisions are unapproved. The next action is to obtain the clinic owner's decisions in [task28-owner-decisions.md](security/task28-owner-decisions.md), implement the approved schedules with idempotent purge/anonymization jobs and tests, then rerun the complete CI/security suite.
 
 No real patient data, patient images, real credentials, production commands, destructive database operations, live AI provider or live SMS provider were used.

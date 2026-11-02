@@ -19,6 +19,7 @@ final class AIProviderManager
     public function __construct(
         private readonly AIUsageRecorder $usage,
         private readonly AIRequestRecorder $requests,
+        private readonly AIControlService $controls,
     ) {}
 
     /** @return array{status: string, output: ?string, input_tokens: int, output_tokens: int} */
@@ -34,8 +35,8 @@ final class AIProviderManager
 
         try {
             $result = $this->textProvider()->generate($prompt, $this->boundedContext($context));
-            $this->record($feature, $result);
-            $this->requests->record($feature, 'succeeded', $this->contentIds($context));
+            $meta = $this->record($feature, $result, 'text');
+            $this->requests->record($feature, 'succeeded', $this->contentIds($context), $meta['provider'], $meta['model'], 'text', $result['input_tokens'], $result['output_tokens'], $meta['estimated_cost_irr']);
 
             return [
                 'status' => 'succeeded',
@@ -45,7 +46,7 @@ final class AIProviderManager
             ];
         } catch (Throwable) {
             $this->safeFailureLog($feature, 'text');
-            $this->requests->record($feature, 'failed', $this->contentIds($context));
+            $this->requests->record($feature, 'failed', $this->contentIds($context), $this->configuredProvider('text'), $this->configuredModel('text'), 'text');
 
             return $this->fallback('text');
         }
@@ -64,8 +65,8 @@ final class AIProviderManager
 
         try {
             $result = $this->imageAnalysisProvider()->analyze($imageReference, $this->boundedContext($context));
-            $this->record($feature, $result);
-            $this->requests->record($feature, 'succeeded', $this->contentIds($context));
+            $meta = $this->record($feature, $result, 'image_analysis');
+            $this->requests->record($feature, 'succeeded', $this->contentIds($context), $meta['provider'], $meta['model'], 'image_analysis', $result['input_tokens'], $result['output_tokens'], $meta['estimated_cost_irr']);
 
             return [
                 'status' => 'succeeded',
@@ -75,7 +76,7 @@ final class AIProviderManager
             ];
         } catch (Throwable) {
             $this->safeFailureLog($feature, 'image_analysis');
-            $this->requests->record($feature, 'failed', $this->contentIds($context));
+            $this->requests->record($feature, 'failed', $this->contentIds($context), $this->configuredProvider('image_analysis'), $this->configuredModel('image_analysis'), 'image_analysis');
 
             return ['status' => 'fallback', 'result' => null, 'input_tokens' => 0, 'output_tokens' => 0];
         }
@@ -94,8 +95,8 @@ final class AIProviderManager
 
         try {
             $result = $this->imageTransformationProvider()->transform($imageReference, $this->boundedContext($context));
-            $this->record($feature, $result);
-            $this->requests->record($feature, 'succeeded', $this->contentIds($context));
+            $meta = $this->record($feature, $result, 'image_transformation');
+            $this->requests->record($feature, 'succeeded', $this->contentIds($context), $meta['provider'], $meta['model'], 'image_transformation', $result['input_tokens'], $result['output_tokens'], $meta['estimated_cost_irr']);
 
             return [
                 'status' => 'succeeded',
@@ -105,7 +106,7 @@ final class AIProviderManager
             ];
         } catch (Throwable) {
             $this->safeFailureLog($feature, 'image_transformation');
-            $this->requests->record($feature, 'failed', $this->contentIds($context));
+            $this->requests->record($feature, 'failed', $this->contentIds($context), $this->configuredProvider('image_transformation'), $this->configuredModel('image_transformation'), 'image_transformation');
 
             return ['status' => 'fallback', 'image_reference' => null, 'input_tokens' => 0, 'output_tokens' => 0];
         }
@@ -118,6 +119,10 @@ final class AIProviderManager
 
     private function allowed(string $feature): bool
     {
+        if (! $this->controls->allowsRequests()) {
+            return false;
+        }
+
         $dailyLimit = (float) config('ai.rate_limits.daily_cost', 0);
         if ($dailyLimit > 0) {
             $spent = (float) (AIUsage::query()
@@ -171,14 +176,31 @@ final class AIProviderManager
         return array_intersect_key($context, array_flip((array) config('ai.allowed_context_keys', [])));
     }
 
-    /** @param array{input_tokens:int,output_tokens:int} $result */
-    private function record(string $feature, array $result): void
+    /** @param array{input_tokens:int,output_tokens:int} $result @return array{provider:string,model:string,estimated_cost_irr:float} */
+    private function record(string $feature, array $result, string $capability): array
     {
         $input = max(0, (int) $result['input_tokens']);
         $output = max(0, (int) $result['output_tokens']);
         $cost = (($input * (float) config('ai.pricing.input_per_1k', 0.0)) + ($output * (float) config('ai.pricing.output_per_1k', 0.0))) / 1000;
+        $provider = $this->configuredProvider($capability);
+        $model = $this->configuredModel($capability);
+        $inputRate = (float) config("ai.pricing_irr.{$capability}.input_per_1k", 0);
+        $outputRate = (float) config("ai.pricing_irr.{$capability}.output_per_1k", 0);
+        $estimatedCostIrr = (($input * $inputRate) + ($output * $outputRate)) / 1000;
 
-        $this->usage->record($feature, $input, $output, $cost);
+        $this->usage->record($feature, $input, $output, $cost, null, $provider, $model, $capability, $estimatedCostIrr);
+
+        return ['provider' => $provider, 'model' => $model, 'estimated_cost_irr' => $estimatedCostIrr];
+    }
+
+    private function configuredProvider(string $capability): string
+    {
+        return (string) config("ai.capabilities.{$capability}.provider", 'fake');
+    }
+
+    private function configuredModel(string $capability): string
+    {
+        return (string) config("ai.capabilities.{$capability}.model", 'fake-v1');
     }
 
     /** @param array<string, mixed> $context @return array<int, string> */

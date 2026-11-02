@@ -36,7 +36,7 @@ test('assistant renders the approved emergency response', async ({ page }) => {
   await page.locator('#aiForm').press('Enter');
 
   const emergency = page.locator('.msg--emergency').last();
-  await expect(emergency).toContainText('۱۱۵');
+  await expect(emergency).toContainText('خدمات اورژانس پزشکی');
   await expect(emergency).toContainText('اورژانسی');
 });
 

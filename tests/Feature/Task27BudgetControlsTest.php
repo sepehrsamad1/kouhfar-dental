@@ -95,7 +95,6 @@ it('reports provider quota as unknown when the fake provider exposes no billing 
         ->and($summary['provider_quota_alert_percentages'])->toBe([80, 95]);
 });
 
-
 it('serves an exact approved FAQ without provider usage when the monthly budget is exhausted', function (): void {
     $this->seed(DentalFaqTestingSeeder::class);
     $faq = ContentItem::query()

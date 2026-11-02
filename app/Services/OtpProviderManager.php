@@ -14,6 +14,7 @@ final class OtpProviderManager
     {
         return match ((string) config('notifications.otp.driver', 'null')) {
             'melipayamak' => app(MeliPayamakOtpProvider::class),
+            'null' => app(NullOtpProvider::class),
             default => throw new InvalidArgumentException('Unsupported OTP driver.'),
         };
     }

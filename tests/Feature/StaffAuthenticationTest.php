@@ -102,10 +102,29 @@ it('prefixes non-local session cookie names with __Secure-', function (): void {
         $originalAppEnv === false ? putenv('APP_ENV') : putenv('APP_ENV='.$originalAppEnv);
         $originalSessionCookie === false ? putenv('SESSION_COOKIE') : putenv('SESSION_COOKIE='.$originalSessionCookie);
 
-        $originalEnvApp === null ? unset($_ENV['APP_ENV']) : $_ENV['APP_ENV'] = $originalEnvApp;
-        $originalServerApp === null ? unset($_SERVER['APP_ENV']) : $_SERVER['APP_ENV'] = $originalServerApp;
-        $originalEnvCookie === null ? unset($_ENV['SESSION_COOKIE']) : $_ENV['SESSION_COOKIE'] = $originalEnvCookie;
-        $originalServerCookie === null ? unset($_SERVER['SESSION_COOKIE']) : $_SERVER['SESSION_COOKIE'] = $originalServerCookie;
+        if ($originalEnvApp === null) {
+            unset($_ENV['APP_ENV']);
+        } else {
+            $_ENV['APP_ENV'] = $originalEnvApp;
+        }
+
+        if ($originalServerApp === null) {
+            unset($_SERVER['APP_ENV']);
+        } else {
+            $_SERVER['APP_ENV'] = $originalServerApp;
+        }
+
+        if ($originalEnvCookie === null) {
+            unset($_ENV['SESSION_COOKIE']);
+        } else {
+            $_ENV['SESSION_COOKIE'] = $originalEnvCookie;
+        }
+
+        if ($originalServerCookie === null) {
+            unset($_SERVER['SESSION_COOKIE']);
+        } else {
+            $_SERVER['SESSION_COOKIE'] = $originalServerCookie;
+        }
     }
 
     expect($settings['cookie'])->toBe('__Secure-custom-session')

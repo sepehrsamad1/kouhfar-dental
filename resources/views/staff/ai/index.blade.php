@@ -12,6 +12,8 @@
         <p>سقف ماهانه: {{ number_format($summary['monthly_budget_irr']) }} ریال</p>
         <p>درصد مصرف: {{ $summary['percentage'] }}٪</p>
         <p>وضعیت درخواست‌های جدید: {{ $summary['blocked'] ? 'مسدود' : 'مجاز طبق کنترل بودجه' }}</p>
+        <p>ارائه‌دهنده و مدل پیکربندی‌شده: {{ $summary['provider'] }} / {{ $summary['model'] }}</p>
+        <p>وضعیت اتصال: {{ $summary['provider_connection_status'] === 'fake' ? 'ارائه‌دهنده آزمایشی فعال است؛ سرویس خارجی متصل نیست.' : 'وضعیت اتصال ارائه‌دهنده هنوز تأیید نشده است.' }}</p>
         <p>وضعیت سهمیه واقعی ارائه‌دهنده: نامشخص؛ ارائه‌دهنده آزمایشی اطلاعات اعتبار یا سهمیه واقعی ارائه نمی‌کند.</p>
         @if ($summary['alerts'] !== [])
             <ul role="status">
@@ -51,6 +53,21 @@
             </article>
         @empty
             <p>در چرخه جاری هنوز مصرفی ثبت نشده است.</p>
+        @endforelse
+    </section>
+
+    <section>
+        <h2>مصرف روزانه به تفکیک قابلیت</h2>
+        @forelse ($dailyUsage as $row)
+            <article>
+                <h3>{{ $row->day }} — {{ $row->feature }}</h3>
+                <p>{{ $row->provider }} / {{ $row->model }} / {{ $row->capability }}</p>
+                <p>توکن ورودی: {{ number_format((int) $row->input_tokens) }} | خروجی: {{ number_format((int) $row->output_tokens) }} | مجموع: {{ number_format((int) $row->input_tokens + (int) $row->output_tokens) }}</p>
+                <p>هزینه تخمینی: {{ number_format((float) $row->estimated_cost_irr, 2) }} ریال | هزینه واقعی: {{ $row->actual_cost_irr === null ? 'در دسترس نیست' : number_format((float) $row->actual_cost_irr, 2).' ریال' }}</p>
+                <p>تعداد درخواست‌ها: {{ number_format((int) $row->request_count) }}</p>
+            </article>
+        @empty
+            <p>مصرف روزانه‌ای ثبت نشده است.</p>
         @endforelse
     </section>
 

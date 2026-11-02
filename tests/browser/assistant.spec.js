@@ -100,13 +100,25 @@ test('assistant exposes rate limiting as a safe state', async ({ page }) => {
   await expect(limited).not.toContainText('rate limit details');
 });
 
-test('assistant displays approved external sources for exact FAQ answers', async ({ page }) => {
-  await openAssistant(page);
+test('approved external FAQ sources remain visible and within the viewport at 375, 768 and 1440px', async ({ page }) => {
+  for (const width of [375, 768, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    await openAssistant(page);
 
-  await page.locator('#aiInput').fill('چند بار در روز باید مسواک بزنم؟');
-  await page.locator('#aiForm').press('Enter');
+    await page.locator('#aiInput').fill('چند بار در روز باید مسواک بزنم؟');
+    await page.locator('#aiForm').press('Enter');
 
-  const answer = page.locator('.msg--bot').filter({ has: page.locator('.msg__source--external') }).last();
-  await expect(answer.locator('.msg__source--external').first()).toBeVisible();
-  await expect(answer.locator('.msg__source--external').first()).toHaveAttribute('href', /^https:\/\//);
+    const answer = page.locator('.msg--bot').filter({ has: page.locator('.msg__source--external') }).last();
+    const source = answer.locator('.msg__source--external').first();
+    await expect(source).toBeVisible();
+    await expect(source).toHaveAttribute('href', /^https:\/\//);
+
+    const bounds = await source.boundingBox();
+    expect(bounds).not.toBeNull();
+    expect(bounds.x).toBeGreaterThanOrEqual(0);
+    expect(bounds.x + bounds.width).toBeLessThanOrEqual(width);
+
+    await page.close();
+    page = await page.context().newPage();
+  }
 });

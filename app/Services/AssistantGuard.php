@@ -10,27 +10,27 @@ final class AssistantGuard
     {
         $text = mb_strtolower(trim($message));
 
-        if ($this->hasAny($text, ['ignore all previous', 'ignore previous instructions', 'system prompt', 'developer message', 'reveal your prompt', 'hidden instructions', 'پرامپت سیستم', 'دستورهای مخفی', 'اطلاعات محرمانه', 'کلید api', 'api key', 'database credentials', 'environment variables', 'پرونده بیماران'])) {
+        if ($this->hasAny($text, ['ignore all previous', 'ignore previous instructions', 'system prompt', 'developer message', 'reveal your prompt', 'hidden instructions', 'پرامپت سیستم', 'دستورهای مخفی', 'اطلاعات محرمانه', 'کلید api', 'api key', 'database credentials', 'environment variables', 'پرونده بیماران', 'دستورهای قبلی', 'همه قوانین', 'محدودیت‌های امنیتی', 'محدودیت های امنیتی', 'نقش پزشک', 'هویت اصلی', 'بدون محدودیت', 'از متن بازیابی شده دستور'])) {
             return 'prompt_injection';
         }
 
-        if ($this->hasAny($text, ['نمی‌توانم نفس', 'نمی توانم نفس', 'مشکل تنفس', 'مشکل بلع', 'خونریزی شدید', 'خونریزی کنترل‌نشده', 'تورم شدید', 'تورم سریع', 'بیهوش', 'uncontrolled heavy bleeding', 'difficulty breathing', 'difficulty swallowing', 'severe swelling', 'airway', 'unconscious', 'serious facial trauma', 'lost consciousness', 'loss of consciousness', 'swelling rapidly', 'rapidly swelling', 'seriously injured', 'uncontrolled bleeding', 'double vision', 'cannot swallow saliva', 'cannot swallow my saliva'])) {
+        if ($this->hasAny($text, ['نمی‌توانم نفس', 'نمی توانم نفس', 'مشکل تنفس', 'مشکل بلع', 'خونریزی شدید', 'خونریزی کنترل‌نشده', 'تورم شدید', 'تورم سریع', 'بیهوش', 'uncontrolled heavy bleeding', 'difficulty breathing', 'difficulty swallowing', 'severe swelling', 'airway', 'unconscious', 'serious facial trauma', 'lost consciousness', 'loss of consciousness', 'swelling rapidly', 'rapidly swelling', 'seriously injured', 'uncontrolled bleeding', 'double vision', 'cannot swallow saliva', 'cannot swallow my saliva', 'بلع سخت', 'آسیب شدید دیده', 'تنفس برایم سخت', 'راه تنفسم را بسته', 'دوبینی', 'آب دهانم را قورت', 'my throat is swollen', 'heavy bleeding from my mouth', 'face is swelling rapidly', 'jaw was seriously injured', 'neck is swollen'])) {
             return 'emergency';
         }
 
-        if ($this->hasAny($text, ['hurt myself', 'self-harm', 'harm someone', 'آسیب زدن به خود', 'مواد خطرناک', 'break into the booking', 'جعل گواهی', 'دستکاری پرونده', 'alter a medical record', 'medical record', 'controlled medicine without a prescription', 'fake treatment certificate', 'dangerous substances', 'invasive dental treatment at home', 'anesthetize someone without training', 'hide an infection', 'medical equipment to injure'])) {
+        if ($this->hasAny($text, ['hurt myself', 'self-harm', 'harm someone', 'آسیب زدن به خود', 'مواد خطرناک', 'break into the booking', 'جعل گواهی', 'دستکاری پرونده', 'alter a medical record', 'medical record', 'controlled medicine without a prescription', 'fake treatment certificate', 'dangerous substances', 'invasive dental treatment at home', 'anesthetize someone without training', 'hide an infection', 'medical equipment to injure', 'اطلاعات اتصال دیتابیس', 'رمز پنل', 'متغیرهای محیطی سرور', 'توکن دسترسی', 'یادداشت‌های محرمانه کارکنان', 'پرامپت محرمانه', 'شناسه بیمار دیگری', 'جزئیات امنیتی سرور', 'پنهان کردن عفونت', 'تجهیزات پزشکی برای آسیب', 'درمان تهاجمی در خانه', 'بدون تخصص کسی را بی‌حس', 'گواهی درمان جعلی', 'داروی کنترل‌شده را بدون نسخه', 'روش آسیب زدن'])) {
             return 'prompt_injection';
         }
 
-        if ($this->hasAny($text, ['اسم تو چیست', 'اسم تو چیه', 'تو کی هستی', 'چه کسی هستی', 'چه کسی ساخته', 'خودت را chatgpt', 'what is your name', 'who are you', 'who created you', 'introduce yourself as', 'which ai model', 'claim to be dr.', 'claim to be doctor'])) {
+        if ($this->hasAny($text, ['اسم تو چیست', 'اسم تو چیه', 'تو کی هستی', 'چه کسی هستی', 'چه کسی ساخته', 'خودت را chatgpt', 'what is your name', 'who are you', 'who created you', 'introduce yourself as', 'which ai model', 'claim to be dr.', 'claim to be doctor', 'act as my doctor'])) {
             return 'identity';
         }
 
-        if ($this->hasAny($text, ['تشخیص بیماری', 'بیماری من', 'diagnose', 'diagnosis', 'prescribe', 'prescription', 'نسخه', 'دوز دارو', 'مقدار دارو', 'آنتی‌بیوتیک تجویز', 'antibiotic dose', 'medication dose'])) {
+        if ($this->hasAny($text, ['تشخیص بیماری', 'بیماری من', 'diagnose', 'diagnosis', 'prescribe', 'prescription', 'نسخه', 'دوز دارو', 'مقدار دارو', 'آنتی‌بیوتیک تجویز', 'antibiotic dose', 'medication dose', 'کدام دندانم عفونت', 'تشخیص قطعی', 'بدون معاینه درمان', 'توده دهانم سرطان', 'علت قطعی درد', 'باید دندانم را بکشم', 'which tooth is infected', 'definitive diagnosis', 'without an examination', 'mouth lump', 'definite cause of my jaw pain', 'must my tooth be extracted'])) {
             return 'medical_refusal';
         }
 
-        if ($this->hasAny($text, ['دندان', 'دندانپزشک', 'دندان‌پزشک', 'دندان‌پزشکی', 'دهان', 'لثه', 'ایمپلنت', 'لمینیت', 'کامپوزیت', 'روکش', 'بلیچینگ', 'عصب‌کشی', 'درمان ریشه', 'جرم‌گیری', 'ارتودنسی', 'دندان عقل', 'پوسیدگی', 'پرکردگی', 'نوبت', 'کلینیک', 'سلامت دهان', 'tooth', 'teeth', 'dental', 'dentist', 'dentistry', 'oral health', 'gum', 'implant', 'veneer', 'composite', 'crown', 'whitening', 'root canal', 'filling', 'braces', 'wisdom tooth', 'clinic', 'patient rights', 'toothache', 'tooth pain', 'dental treatment', 'mouth pain', 'breath', 'how much does dental treatment cost', 'is this dental problem dangerous', 'dry mouth', 'tooth pain', 'toothache', 'dental treatment'])) {
+        if ($this->hasAny($text, ['دندان', 'دندانپزشک', 'دندان‌پزشک', 'دندان‌پزشکی', 'دهان', 'لثه', 'ایمپلنت', 'لمینیت', 'کامپوزیت', 'روکش', 'بلیچینگ', 'عصب‌کشی', 'درمان ریشه', 'جرم‌گیری', 'ارتودنسی', 'دندان عقل', 'پوسیدگی', 'پرکردگی', 'نوبت', 'کلینیک', 'سلامت دهان', 'tooth', 'teeth', 'dental', 'dentist', 'dentistry', 'oral health', 'gum', 'implant', 'veneer', 'composite', 'crown', 'whitening', 'root canal', 'filling', 'braces', 'wisdom tooth', 'clinic', 'patient rights', 'toothache', 'tooth pain', 'dental treatment', 'mouth pain', 'breath', 'how much does dental treatment cost', 'is this dental problem dangerous', 'dry mouth', 'tooth pain', 'toothache', 'dental treatment', 'مسواک', 'نخ دندان', 'معاینه', 'brush', 'floss', 'mouthwash', 'orthodontic treatment'])) {
             return 'in_scope';
         }
 

@@ -102,7 +102,8 @@ it('blocks calls after the configured per-minute limit', function (): void {
 
     expect($first['status'])->toBe('succeeded')
         ->and($second['status'])->toBe('rate_limited')
-        ->and(AIRequest::query()->count())->toBe(1);
+        ->and(AIRequest::query()->count())->toBe(2)
+        ->and(AIRequest::query()->latest('created_at')->first()->status)->toBe('blocked');
 });
 
 it('enforces the configured daily cost ceiling before invoking a provider', function (): void {
@@ -118,5 +119,6 @@ it('enforces the configured daily cost ceiling before invoking a provider', func
     $result = app(AIProviderManager::class)->generateText('cost-limited', 'should not run');
 
     expect($result['status'])->toBe('rate_limited')
-        ->and(AIRequest::query()->count())->toBe(0);
+        ->and(AIRequest::query()->count())->toBe(1)
+        ->and(AIRequest::query()->sole()->status)->toBe('blocked');
 });

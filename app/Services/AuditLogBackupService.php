@@ -11,7 +11,9 @@ use Throwable;
 final class AuditLogBackupService
 {
     private const MAGIC = 'KFAUDIT1';
+
     private const NONCE_BYTES = 12;
+
     private const TAG_BYTES = 16;
 
     /** @return array{file: string, records: int, pruned: int} */

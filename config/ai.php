@@ -39,6 +39,7 @@ return [
         'output_per_1k' => (float) env('AI_OUTPUT_COST_PER_1K', 0),
     ],
     'pricing_irr' => [
+        'models' => json_decode((string) env('AI_MODEL_PRICING_IRR', '{}'), true) ?: [],
         'text' => [
             'input_per_1k' => (float) env('AI_TEXT_INPUT_COST_IRR_PER_1K', 0),
             'output_per_1k' => (float) env('AI_TEXT_OUTPUT_COST_IRR_PER_1K', 0),

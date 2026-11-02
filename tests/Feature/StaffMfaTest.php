@@ -141,6 +141,38 @@ it('consumes a recovery code once and rejects reuse', function (): void {
     $this->assertGuest('staff');
 });
 
+it('rejects reuse of the same TOTP time-step after a successful login', function (): void {
+    $staff = task28MfaStaff(['email' => 'totp-replay@example.invalid']);
+    $secret = app(TotpService::class)->generateSecret();
+    $counter = intdiv(now('UTC')->timestamp, 30);
+    $staff->forceFill([
+        'mfa_totp_secret' => $secret,
+        'mfa_enabled_at' => now('UTC'),
+        'mfa_last_totp_counter' => $counter - 1,
+        'mfa_recovery_codes' => [],
+    ])->save();
+
+    $code = task28TotpCode($secret, now('UTC')->timestamp);
+    $this->post(route('staff.login.store'), [
+        'email' => $staff->email,
+        'password' => 'correct-password',
+    ])->assertRedirect(route('staff.mfa.challenge'));
+    $this->post(route('staff.mfa.verify'), ['code' => $code])
+        ->assertRedirect(route('staff.dashboard'));
+    $this->post(route('staff.logout'))->assertRedirect(route('staff.login'));
+
+    $this->post(route('staff.login.store'), [
+        'email' => $staff->email,
+        'password' => 'correct-password',
+    ])->assertRedirect(route('staff.mfa.challenge'));
+    $this->from(route('staff.mfa.challenge'))
+        ->post(route('staff.mfa.verify'), ['code' => $code])
+        ->assertRedirect(route('staff.mfa.challenge'))
+        ->assertSessionHasErrors('code');
+
+    $this->assertGuest('staff');
+});
+
 it('expires a pending MFA challenge after ten minutes', function (): void {
     $staff = task28MfaStaff(['email' => 'expired-mfa@example.invalid']);
     $staff->forceFill([

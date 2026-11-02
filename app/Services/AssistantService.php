@@ -8,15 +8,12 @@ use Illuminate\Support\Collection;
 
 final class AssistantService
 {
-    private const MAX_MESSAGE_LENGTH = 2000;
-
-    private const MAX_SOURCES = 5;
-
     public function __construct(
         private readonly PublishedContentProvider $knowledge,
         private readonly AIProviderManager $ai,
         private readonly AssistantGuard $guard,
-    ) {}
+    ) {
+    }
 
     /** @return array{status:string,answer:string,sources:array<int,array<string,mixed>>} */
     public function respond(string $message, string $locale = 'fa'): array
@@ -29,7 +26,7 @@ final class AssistantService
             return $this->unavailable($locale);
         }
 
-        $message = mb_substr($message, 0, self::MAX_MESSAGE_LENGTH);
+        $message = mb_substr($message, 0, 2000);
 
         $guardDecision = $this->guard->classify($message);
 
@@ -148,7 +145,7 @@ final class AssistantService
             })
             ->filter(static fn (array $item): bool => $item['_score'] > 0)
             ->sortByDesc('_score')
-            ->take(self::MAX_SOURCES)
+            ->take(5)
             ->values();
     }
 

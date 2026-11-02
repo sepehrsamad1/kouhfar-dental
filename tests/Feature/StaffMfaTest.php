@@ -80,6 +80,7 @@ it('requires TOTP enrollment before the first staff login and shows recovery cod
     $this->assertAuthenticatedAs($staff->fresh(), 'staff');
     expect($staff->fresh()->mfa_enabled_at)->not->toBeNull()
         ->and(count($staff->fresh()->mfa_recovery_codes))->toBe(10);
+    expect(AuditLog::query()->where('action', 'staff.mfa.enabled')->exists())->toBeTrue();
 
     expect(session('staff_mfa_recovery_codes'))->toBeNull();
     $this->get(route('staff.mfa.recovery-codes'))->assertRedirect(route('staff.dashboard'));
@@ -127,7 +128,8 @@ it('consumes a recovery code once and rejects reuse', function (): void {
     $this->post(route('staff.mfa.verify'), ['code' => $recovery])
         ->assertRedirect(route('staff.dashboard'));
 
-    expect($staff->fresh()->mfa_recovery_codes)->toBe([]);
+    expect($staff->fresh()->mfa_recovery_codes)->toBe([])
+        ->and(AuditLog::query()->where('action', 'staff.mfa.recovery_code_used')->exists())->toBeTrue();
     $this->post(route('staff.logout'))->assertRedirect(route('staff.login'));
 
     $this->post(route('staff.login.store'), [

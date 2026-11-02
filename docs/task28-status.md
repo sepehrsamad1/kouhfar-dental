@@ -19,7 +19,7 @@
 - Added regression tests for malicious intended redirects and Secure/HttpOnly/SameSite cookie flags.
 - Added patient search SQL-looking input and hostile mass-assignment regression tests.
 - Restricted dormant Kavenegar egress to the approved HTTPS host/path, rejected userinfo/query/fragment/other origins, disabled redirects and prevented transport exceptions from exposing the API-key URL; added synthetic SSRF/redirect regression tests.
-- Added production/staging `__Secure-` session-cookie naming to satisfy ASVS V3.3.1; the new configuration regression test awaits CI retest.
+- Added production/staging `__Secure-` session-cookie naming to satisfy ASVS V3.3.1; the configuration regression test passed in CI run #843.
 - Added ASVS Level 2 MFA finding: staff authentication is currently password-only; owner must approve the second factor and recovery flow before this can be implemented.
 - Added Composer lockfile audit and npm lockfile audit to CI.
 - Added Gitleaks full-history secret scan to CI using a full checkout.
@@ -39,7 +39,7 @@
 
 ## Automated verification status
 
-[CI run #843](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41480042377) passed on code commit `38e412e4e7bd8cea2bc3a5635aa22879d541c9f1`.
+[CI run #843](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41482954664) passed on code commit `38e412e4e7bd8cea2bc3a5635aa22879d541c9f1`.
 
 - 280 Laravel/Pest tests passed (24,493 assertions), including the new patient authorization, staff deactivation and mocked Kavenegar egress regression tests.
 - 36 Playwright browser tests passed.
@@ -49,7 +49,7 @@
 - Pint, PHPStan, JavaScript lint, typecheck and production build passed.
 - Full-history Gitleaks scan passed.
 
-This proves the code revision at commit `653e6d45e960edf391d97d0d1b63030daf4a3399` and its synthetic tests only. The latest branch commit includes the `__Secure-` cookie-prefix change and its passing regression test. It is not a production penetration test, live Kavenegar/AI provider test, GitHub secret-alert review, or infrastructure verification.
+This proves the code revision at commit `38e412e4e7bd8cea2bc3a5635aa22879d541c9f1` and its synthetic tests only. The latest branch commit includes the `__Secure-` cookie-prefix change and its passing regression test. It is not a production penetration test, live Kavenegar/AI provider test, GitHub secret-alert review, or infrastructure verification.
 
 Required CI commands are recorded above. Gitleaks scans the full repository history; any future finding requires investigation and credential rotation/revocation, not merely deleting the current file.
 

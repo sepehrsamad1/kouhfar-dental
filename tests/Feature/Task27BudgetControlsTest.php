@@ -33,7 +33,8 @@ it('blocks provider calls at the approved monthly IRR budget ceiling', function 
     $result = app(AIProviderManager::class)->generateText('budget-test', 'must not reach provider');
 
     expect($result['status'])->toBe('rate_limited')
-        ->and(AIRequest::query()->count())->toBe(0)
+        ->and(AIRequest::query()->count())->toBe(1)
+        ->and(AIRequest::query()->sole()->status)->toBe('blocked')
         ->and(app(AIControlService::class)->summary()['blocked'])->toBeTrue();
 });
 
@@ -44,7 +45,8 @@ it('supports an administrator emergency disable without invoking the provider', 
     $result = app(AIProviderManager::class)->generateText('emergency-disable-test', 'must not reach provider');
 
     expect($result['status'])->toBe('rate_limited')
-        ->and(AIRequest::query()->count())->toBe(0)
+        ->and(AIRequest::query()->count())->toBe(1)
+        ->and(AIRequest::query()->sole()->status)->toBe('blocked')
         ->and(app(AIControlService::class)->summary()['emergency_disabled'])->toBeTrue();
 });
 

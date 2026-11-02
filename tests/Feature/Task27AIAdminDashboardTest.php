@@ -56,7 +56,8 @@ it('allows an administrator to view and update the AI budget and emergency switc
         ->assertSee('سقف داخلی توکن ماهانه')
         ->assertSee('سقف مالی ماهانه مدل')
         ->assertSee('هشدار مصرف توکن مدل fake-v1')
-        ->assertSee('هشدار بودجه مدل fake-v1');
+        ->assertSee('هشدار بودجه مدل fake-v1')
+        ->assertSee('تعرفه مدل تنظیم نشده است');
 
     $this->patch(route('staff.ai.update'), [
         'monthly_budget_irr' => 15_000_000,

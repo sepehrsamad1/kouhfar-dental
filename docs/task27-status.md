@@ -11,12 +11,12 @@ See task27-owner-decisions.md. Approved: 100 Persian + 100 English evaluation ca
 - Versioned v1.0.0 bilingual evaluation dataset with normal and specialist dental questions, off-domain cases, diagnosis/prescription refusals, emergencies, prompt injection, secret exfiltration, harmful requests, ambiguity, identity override, adversarial retrieved-content instructions, and citation-required cases.
 - Deterministic Persian/English guard with text normalization, domain restriction, emergency routing, medical refusal, fixed identity, and prompt-injection/secret-exfiltration checks.
 - Fixed assistant persona prompt, standard domain refusal and owner-approved outage/budget fallback text.
-- 100 bilingual FAQ entries in resources/knowledge/dental-faq-v1.json, with seven source references, confidence labels, warnings and explicit draft-for-clinician-review status.
+- 100 distinct bilingual FAQ questions and answers in resources/knowledge/dental-faq-v1.json, with 22 source references from ADA, NHS, CDC, NIDCR, AAOMS and Iranian dental/academic sources; confidence labels, emergency warnings and explicit draft-for-clinician-review status.
 - DentalFaqDraftSeeder imports 200 locale records into the existing content workflow as unpublished clinical drafts. DentalFaqTestingSeeder can publish these only in the testing environment for deterministic evaluation.
 - AIReleaseGate calculates citation, lexical source-grounding, refusal, emergency and forbidden-output metrics; known-bad-answer regression test verifies the gate fails.
-- AssistantEvaluationRunner and php artisan ai:evaluate generate a versioned JSON release report with dataset/prompt/provider/model metadata.
+- AssistantEvaluationRunner and php artisan ai:evaluate generate a versioned JSON release report with dataset/prompt/provider/model and explicit provider/model version metadata; CI uploads the report artifact.
 - IRR budget settings table, per-provider/model/capability token and cost aggregates, per-request success/failure metadata, model-specific IRR pricing configuration, monthly 10,000,000 IRR ceiling, 50/80/100 financial alerts, and request blocking at the ceiling.
-- Admin-only AI usage and budget page, editable budget, emergency disable, model usage summary, timestamped requests, audit logging, and staff-layout budget alerts.
+- Admin-only AI usage and budget page, budget that administrators may reduce but cannot raise above the owner-approved 10,000,000 IRR ceiling, emergency disable, model usage summary, timestamped requests, audit logging, and staff-layout budget alerts.
 - Standard fallback is returned without an additional model request when AI is disabled, rate-limited, over budget, or provider processing fails.
 
 ## Important accounting and safety limits

@@ -30,6 +30,8 @@ final class AIProviderManager
         }
 
         if ($this->allowed($feature) === false) {
+            $this->recordBlocked($feature, 'text');
+
             return $this->limited();
         }
 
@@ -60,6 +62,8 @@ final class AIProviderManager
         }
 
         if ($this->allowed($feature) === false) {
+            $this->recordBlocked($feature, 'image_analysis');
+
             return ['status' => 'rate_limited', 'result' => null, 'input_tokens' => 0, 'output_tokens' => 0];
         }
 
@@ -90,6 +94,8 @@ final class AIProviderManager
         }
 
         if ($this->allowed($feature) === false) {
+            $this->recordBlocked($feature, 'image_transformation');
+
             return ['status' => 'rate_limited', 'image_reference' => null, 'input_tokens' => 0, 'output_tokens' => 0];
         }
 
@@ -110,6 +116,19 @@ final class AIProviderManager
 
             return ['status' => 'fallback', 'image_reference' => null, 'input_tokens' => 0, 'output_tokens' => 0];
         }
+    }
+
+
+    private function recordBlocked(string $feature, string $capability): void
+    {
+        $this->requests->record(
+            $feature,
+            'blocked',
+            [],
+            $this->configuredProvider($capability),
+            $this->configuredModel($capability),
+            $capability,
+        );
     }
 
     private function enabled(string $capability): bool

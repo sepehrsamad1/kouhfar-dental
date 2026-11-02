@@ -33,7 +33,7 @@ final class AssistantService
             return $this->unavailable($locale);
         }
 
-        $message = mb_substr($message, 0, 2000);
+        $message = mb_substr($message, 0, self::MAX_MESSAGE_LENGTH);
 
         $guardDecision = app(AssistantGuard::class)->classify($message);
 
@@ -152,7 +152,7 @@ final class AssistantService
             })
             ->filter(static fn (array $item): bool => $item['_score'] > 0)
             ->sortByDesc('_score')
-            ->take(5)
+            ->take(self::MAX_SOURCES)
             ->values();
     }
 

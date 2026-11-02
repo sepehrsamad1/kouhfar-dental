@@ -32,10 +32,28 @@
             <label>سقف بودجه ماهانه (ریال)
                 <input type="number" name="monthly_budget_irr" min="1000" max="1000000000000" value="{{ old('monthly_budget_irr', $settings->monthly_budget_irr) }}" required>
             </label>
+            @foreach ($summary['model_limits'] as $model => $limits)
+                <article>
+                    <h3>محدودیت مستقل مدل: {{ $model }}</h3>
+                    <label>سقف داخلی توکن ماهانه
+                        <input type="number" name="provider_token_limits[{{ $model }}]" min="1" max="1000000000000" value="{{ old('provider_token_limits.'.$model, data_get($settings->provider_token_limits, $model, '')) }}" placeholder="بدون سقف مستقل">
+                    </label>
+                    <label>سقف مالی ماهانه مدل (ریال)
+                        <input type="number" name="model_budget_limits_irr[{{ $model }}]" min="1000" max="1000000000000" value="{{ old('model_budget_limits_irr.'.$model, data_get($settings->model_budget_limits_irr, $model, '')) }}" placeholder="بدون سقف مستقل">
+                    </label>
+                    <p>مصرف توکن: {{ number_format($limits['tokens_used']) }} / {{ $limits['token_limit'] === null ? 'سقف مستقل تنظیم نشده' : number_format($limits['token_limit']) }} | مصرف مالی: {{ number_format($limits['spend_irr']) }} / {{ $limits['budget_limit_irr'] === null ? 'سقف مستقل تنظیم نشده' : number_format($limits['budget_limit_irr']) }} ریال</p>
+                    @foreach ($limits['token_alerts'] as $level)
+                        <p role="alert">هشدار سقف داخلی توکن مدل {{ $model }}: {{ $level }}٪ مصرف شده است.</p>
+                    @endforeach
+                    @foreach ($limits['budget_alerts'] as $level)
+                        <p role="alert">هشدار سقف مالی مدل {{ $model }}: {{ $level }}٪ مصرف شده است.</p>
+                    @endforeach
+                </article>
+            @endforeach
             <label><input type="checkbox" name="emergency_disabled" value="1" @checked(old('emergency_disabled', $settings->emergency_disabled))> غیرفعال‌سازی اضطراری دستیار هوشمند</label>
             <button type="submit">ذخیره کنترل‌ها</button>
         </form>
-        <p>آستانه‌های مالی: ۵۰٪، ۸۰٪ و ۱۰۰٪. در ۱۰۰٪ یا با فعال‌بودن غیرفعال‌سازی اضطراری، فراخوانی جدید مدل متوقف می‌شود.</p>
+        <p>آستانه‌های مالی کلی و هر سقف مالی مدل: ۵۰٪، ۸۰٪ و ۱۰۰٪. آستانه سقف داخلی توکن هر مدل: ۸۰٪ و ۹۵٪. رسیدن هر مدل به سقف مستقل خودش، فقط همان مدل را متوقف می‌کند؛ سقف کلی ماهانه همه مدل‌ها را متوقف می‌کند.</p>
         <p>آستانه سهمیه مدل: ۸۰٪ و ۹۵٪؛ در پیکربندی فعلی قابل دریافت از ارائه‌دهنده نیست و به‌صورت «نامشخص» باقی می‌ماند.</p>
     </section>
 

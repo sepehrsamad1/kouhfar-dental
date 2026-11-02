@@ -16,10 +16,13 @@ final class AssistantService
 
     private readonly AIProviderManager $ai;
 
-    public function __construct(PublishedContentProvider $knowledge, AIProviderManager $ai)
+    private readonly AIControlService $controls;
+
+    public function __construct(PublishedContentProvider $knowledge, AIProviderManager $ai, AIControlService $controls)
     {
         $this->knowledge = $knowledge;
         $this->ai = $ai;
+        $this->controls = $controls;
     }
 
     /** @return array{status:string,answer:string,sources:array<int,array<string,mixed>>} */
@@ -62,7 +65,25 @@ final class AssistantService
             return ['status' => 'refused', 'answer' => $this->medicalRefusal($locale), 'sources' => []];
         }
 
-        $items = $this->rankKnowledge($this->knowledge->forKnowledge($locale), $message);
+        if (config('ai.enabled') !== true
+            || config('ai.capabilities.text.enabled') !== true
+            || $this->controls->settings()->emergency_disabled) {
+            return ['status' => 'disabled', 'answer' => $this->serviceUnavailableText($locale), 'sources' => []];
+        }
+
+        $knowledgeItems = $this->knowledge->forKnowledge($locale);
+        $exactFaq = $knowledgeItems->first(fn (array $item): bool => str_starts_with($item['content_key'], 'dental-faq-')
+            && $this->normalizeQuestion($item['title']) === $this->normalizeQuestion($message));
+
+        if ($exactFaq !== null) {
+            return [
+                'status' => 'succeeded',
+                'answer' => $exactFaq['text'],
+                'sources' => $this->sources(collect([$exactFaq])),
+            ];
+        }
+
+        $items = $this->rankKnowledge($knowledgeItems, $message);
         if ($items->isEmpty()) {
 
             return ['status' => 'unavailable', 'answer' => $this->unavailableText($locale), 'sources' => []];
@@ -131,6 +152,15 @@ final class AssistantService
     {
 
         return preg_match('/(تشخیص\s*(بیماری|من)|من\s*چه\s*بیماری|what\s+(disease|condition)\s+do\s+i\s+have|diagnos(e|is|ing)|prescri(be|ption)|نسخه|دوز|مقدار\s*(دارو|آنتی.?بیوتیک)|آنتی.?بیوتیک\s*(بخور|مصرف)|antibiotic\s+dose|medication\s+dose|قیمت|هزینه|price|competitor|مقایسه\s*(با|با کلینیک)|ضمانت\s*(درمان|نتیجه))/iu', $message) === 1;
+    }
+
+    private function normalizeQuestion(string $text): string
+    {
+        $text = mb_strtolower(str_replace(["\u{200C}", 'ي', 'ك'], ['', 'ی', 'ک'], $text));
+        $text = preg_replace('/[^\p{L}\p{N}]+/u', ' ', $text) ?? $text;
+        $text = preg_replace('/\s+/u', ' ', $text) ?? $text;
+
+        return trim($text);
     }
 
     private function rankKnowledge(Collection $items, string $message): Collection

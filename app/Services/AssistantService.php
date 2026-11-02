@@ -197,19 +197,19 @@ final class AssistantService
         ];
 
         return array_values(array_filter($references, static function ($reference) use ($allowedHosts): bool {
-            if (!is_array($reference)) {
+            if (! is_array($reference)) {
                 return false;
             }
 
             $url = $reference['url'] ?? null;
 
-            if (!is_string($url)) {
+            if (! is_string($url)) {
                 return false;
             }
 
             $parts = parse_url($url);
 
-            if (!is_array($parts)) {
+            if (! is_array($parts)) {
                 return false;
             }
 

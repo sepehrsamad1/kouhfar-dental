@@ -1388,234 +1388,228 @@
       "category": "gum",
       "question_fa": "بیماری لثه چیست؟",
       "question_en": "What is gum disease?",
-      "answer_fa": "خونریزی، قرمزی، تورم یا تحلیل لثه می‌تواند نشانه بیماری لثه باشد. تشخیص و انتخاب درمان به معاینه دندان‌پزشک نیاز دارد.",
-      "answer_en": "Bleeding, redness, swelling or gum recession may indicate gum disease. Diagnosis and treatment selection require a dental examination.",
+      "answer_fa": "قرمزی، تورم و خونریزی لثه هنگام مسواک‌زدن می‌تواند از نشانه‌های التهاب باشد؛ بیماری لثه گاهی در ابتدا درد ندارد.",
+      "answer_en": "Redness, swelling, and bleeding during brushing can be signs of inflammation; gum disease may cause no pain early on.",
       "sources": [
-        "ADA_ORAL_HEALTH_TOPICS"
+        "NIDCR_GUM_DISEASE"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
-      "warning_fa": null,
-      "warning_en": null
+      "warning_fa": "در صورت وجود علائم شدید یا رو به افزایش، ارزیابی حضوری فوری لازم است.",
+      "warning_en": "Severe or worsening symptoms require prompt in-person assessment."
     },
     {
       "id": "KDF-082",
       "category": "gum",
-      "question_fa": "چه نکته‌ای درباره بیماری لثه باید بدانم؟",
-      "question_en": "What should I know about gum disease?",
-      "answer_fa": "خونریزی، قرمزی، تورم یا تحلیل لثه می‌تواند نشانه بیماری لثه باشد. تشخیص و انتخاب درمان به معاینه دندان‌پزشک نیاز دارد.",
-      "answer_en": "Bleeding, redness, swelling or gum recession may indicate gum disease. Diagnosis and treatment selection require a dental examination.",
+      "question_fa": "نشانه‌های اولیه بیماری لثه چیست؟",
+      "question_en": "What are early signs of gum disease?",
+      "answer_fa": "اگر این نشانه‌ها تکرار می‌شوند، معاینه بگیرید؛ جرم سخت‌شده فقط با پاک‌سازی حرفه‌ای برداشته می‌شود.",
+      "answer_en": "If these signs recur, arrange an assessment; hardened tartar requires professional cleaning.",
       "sources": [
-        "ADA_ORAL_HEALTH_TOPICS"
+        "NIDCR_GUM_DISEASE"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
-      "warning_fa": null,
-      "warning_en": null
+      "warning_fa": "در صورت وجود علائم شدید یا رو به افزایش، ارزیابی حضوری فوری لازم است.",
+      "warning_en": "Severe or worsening symptoms require prompt in-person assessment."
     },
     {
       "id": "KDF-083",
       "category": "gum",
       "question_fa": "خونریزی لثه چیست؟",
       "question_en": "What is bleeding gums?",
-      "answer_fa": "خونریزی، قرمزی، تورم یا تحلیل لثه می‌تواند نشانه بیماری لثه باشد. تشخیص و انتخاب درمان به معاینه دندان‌پزشک نیاز دارد.",
-      "answer_en": "Bleeding, redness, swelling or gum recession may indicate gum disease. Diagnosis and treatment selection require a dental examination.",
+      "answer_fa": "بهداشت دهان را کاملاً متوقف نکنید؛ با مسواک نرم و روش ملایم ادامه دهید و برای بررسی خونریزی مکرر مراجعه کنید.",
+      "answer_en": "Do not stop oral hygiene altogether; continue gently with a soft brush and seek assessment for repeated bleeding.",
       "sources": [
-        "ADA_ORAL_HEALTH_TOPICS"
+        "NIDCR_GUM_DISEASE",
+        "NHS_ORAL_CARE"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
-      "warning_fa": null,
-      "warning_en": null
+      "warning_fa": "در صورت وجود علائم شدید یا رو به افزایش، ارزیابی حضوری فوری لازم است.",
+      "warning_en": "Severe or worsening symptoms require prompt in-person assessment."
     },
     {
       "id": "KDF-084",
       "category": "gum",
-      "question_fa": "چه نکته‌ای درباره خونریزی لثه باید بدانم؟",
-      "question_en": "What should I know about bleeding gums?",
-      "answer_fa": "خونریزی، قرمزی، تورم یا تحلیل لثه می‌تواند نشانه بیماری لثه باشد. تشخیص و انتخاب درمان به معاینه دندان‌پزشک نیاز دارد.",
-      "answer_en": "Bleeding, redness, swelling or gum recession may indicate gum disease. Diagnosis and treatment selection require a dental examination.",
+      "question_fa": "اگر لثه خونریزی دارد باید مسواک‌زدن را متوقف کنم؟",
+      "question_en": "Should I stop brushing if my gums bleed?",
+      "answer_fa": "مسواک‌زدن خشن می‌تواند لثه را تحریک کند، اما خونریزی مداوم نیز نباید نادیده گرفته شود.",
+      "answer_en": "Aggressive brushing can irritate gums, but persistent bleeding should not be ignored.",
       "sources": [
-        "ADA_ORAL_HEALTH_TOPICS"
+        "NIDCR_GUM_DISEASE",
+        "NHS_ORAL_CARE"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
-      "warning_fa": null,
-      "warning_en": null
+      "warning_fa": "در صورت وجود علائم شدید یا رو به افزایش، ارزیابی حضوری فوری لازم است.",
+      "warning_en": "Severe or worsening symptoms require prompt in-person assessment."
     },
     {
       "id": "KDF-085",
       "category": "gum",
       "question_fa": "درمان التهاب لثه چیست؟",
       "question_en": "What is gum inflammation treatment?",
-      "answer_fa": "خونریزی، قرمزی، تورم یا تحلیل لثه می‌تواند نشانه بیماری لثه باشد. تشخیص و انتخاب درمان به معاینه دندان‌پزشک نیاز دارد.",
-      "answer_en": "Bleeding, redness, swelling or gum recession may indicate gum disease. Diagnosis and treatment selection require a dental examination.",
+      "answer_fa": "پاک‌سازی عمیق برای برداشتن پلاک و جرم زیر لثه و تمیزکردن سطح ریشه انجام می‌شود؛ نیاز به آن به شدت بیماری بستگی دارد.",
+      "answer_en": "Deep cleaning removes plaque and tartar below the gumline and cleans root surfaces; need depends on disease severity.",
       "sources": [
+        "NIDCR_GUM_DISEASE",
         "ADA_ORAL_HEALTH_TOPICS"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
-      "warning_fa": null,
-      "warning_en": null
+      "warning_fa": "در صورت وجود علائم شدید یا رو به افزایش، ارزیابی حضوری فوری لازم است.",
+      "warning_en": "Severe or worsening symptoms require prompt in-person assessment."
     },
     {
       "id": "KDF-086",
       "category": "gum",
-      "question_fa": "چه نکته‌ای درباره درمان التهاب لثه باید بدانم؟",
-      "question_en": "What should I know about gum inflammation treatment?",
-      "answer_fa": "خونریزی، قرمزی، تورم یا تحلیل لثه می‌تواند نشانه بیماری لثه باشد. تشخیص و انتخاب درمان به معاینه دندان‌پزشک نیاز دارد.",
-      "answer_en": "Bleeding, redness, swelling or gum recession may indicate gum disease. Diagnosis and treatment selection require a dental examination.",
+      "question_fa": "پاک‌سازی عمیق برای بیماری لثه چیست؟",
+      "question_en": "What is deep cleaning for gum disease?",
+      "answer_fa": "پس از درمان، مراقبت روزانه و مراجعات نگهدارنده برای کنترل تجمع پلاک اهمیت دارد.",
+      "answer_en": "After treatment, daily care and maintenance visits help control plaque buildup.",
       "sources": [
+        "NIDCR_GUM_DISEASE",
         "ADA_ORAL_HEALTH_TOPICS"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
-      "warning_fa": null,
-      "warning_en": null
+      "warning_fa": "در صورت وجود علائم شدید یا رو به افزایش، ارزیابی حضوری فوری لازم است.",
+      "warning_en": "Severe or worsening symptoms require prompt in-person assessment."
     },
     {
       "id": "KDF-087",
       "category": "emergency",
       "question_fa": "تورم شدید دهان و گردن چیست؟",
       "question_en": "What is severe mouth or neck swelling?",
-      "answer_fa": "مشکل شدید تنفس یا بلع، تورم سریع دهان یا گردن، خونریزی شدید کنترل‌نشده یا بیهوشی نیازمند خدمات اورژانسی فوری است. در ایران با ۱۱۵ تماس بگیرید و منتظر پاسخ چت‌بات نمانید.",
-      "answer_en": "Severe breathing or swallowing difficulty, rapidly increasing mouth or neck swelling, uncontrolled heavy bleeding or loss of consciousness require immediate emergency care. In Iran call 115; do not wait for a chatbot.",
+      "answer_fa": "تورم شدید یا سریع، به‌ویژه همراه مشکل تنفس یا بلع، نیازمند کمک اورژانسی است؛ برای نوبت معمول منتظر نمانید.",
+      "answer_en": "Severe or rapidly increasing swelling, especially with breathing or swallowing difficulty, needs emergency help; do not wait for a routine appointment.",
       "sources": [
-        "NHS_EMERGENCY",
-        "NHS_TOOTHACHE",
-        "NHS_DENTAL_ABSCESS"
+        "NHS_EMERGENCY"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
-      "warning_fa": "در علائم هشداردهنده فوراً خدمات اورژانسی دریافت کنید.",
-      "warning_en": "Seek emergency care immediately for red-flag symptoms."
+      "warning_fa": "در صورت وجود علائم شدید یا رو به افزایش، ارزیابی حضوری فوری لازم است.",
+      "warning_en": "Severe or worsening symptoms require prompt in-person assessment."
     },
     {
       "id": "KDF-088",
       "category": "emergency",
-      "question_fa": "چه نکته‌ای درباره تورم شدید دهان و گردن باید بدانم؟",
-      "question_en": "What should I know about severe mouth or neck swelling?",
-      "answer_fa": "مشکل شدید تنفس یا بلع، تورم سریع دهان یا گردن، خونریزی شدید کنترل‌نشده یا بیهوشی نیازمند خدمات اورژانسی فوری است. در ایران با ۱۱۵ تماس بگیرید و منتظر پاسخ چت‌بات نمانید.",
-      "answer_en": "Severe breathing or swallowing difficulty, rapidly increasing mouth or neck swelling, uncontrolled heavy bleeding or loss of consciousness require immediate emergency care. In Iran call 115; do not wait for a chatbot.",
+      "question_fa": "چه زمانی تورم دهان یا گردن یک وضعیت اورژانسی است؟",
+      "question_en": "When is swelling of the mouth or neck an emergency?",
+      "answer_fa": "در ایران برای خدمات اورژانس پزشکی با ۱۱۵ تماس بگیرید.",
+      "answer_en": "In Iran, call 115 for emergency medical services.",
       "sources": [
-        "NHS_EMERGENCY",
-        "NHS_TOOTHACHE",
-        "NHS_DENTAL_ABSCESS"
+        "NHS_EMERGENCY"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
-      "warning_fa": "در علائم هشداردهنده فوراً خدمات اورژانسی دریافت کنید.",
-      "warning_en": "Seek emergency care immediately for red-flag symptoms."
+      "warning_fa": "در صورت وجود علائم شدید یا رو به افزایش، ارزیابی حضوری فوری لازم است.",
+      "warning_en": "Severe or worsening symptoms require prompt in-person assessment."
     },
     {
       "id": "KDF-089",
       "category": "emergency",
       "question_fa": "خونریزی کنترل‌نشده دهان چیست؟",
       "question_en": "What is uncontrolled oral bleeding?",
-      "answer_fa": "مشکل شدید تنفس یا بلع، تورم سریع دهان یا گردن، خونریزی شدید کنترل‌نشده یا بیهوشی نیازمند خدمات اورژانسی فوری است. در ایران با ۱۱۵ تماس بگیرید و منتظر پاسخ چت‌بات نمانید.",
-      "answer_en": "Severe breathing or swallowing difficulty, rapidly increasing mouth or neck swelling, uncontrolled heavy bleeding or loss of consciousness require immediate emergency care. In Iran call 115; do not wait for a chatbot.",
+      "answer_fa": "خونریزی شدید یا کنترل‌نشده، به‌ویژه اگر با فشار مستقیم متوقف نمی‌شود، نیازمند رسیدگی فوری است.",
+      "answer_en": "Severe or uncontrolled bleeding, especially when it does not stop with direct pressure, requires urgent care.",
       "sources": [
-        "NHS_EMERGENCY",
-        "NHS_TOOTHACHE",
-        "NHS_DENTAL_ABSCESS"
+        "NHS_EMERGENCY"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
-      "warning_fa": "در علائم هشداردهنده فوراً خدمات اورژانسی دریافت کنید.",
-      "warning_en": "Seek emergency care immediately for red-flag symptoms."
+      "warning_fa": "در صورت وجود علائم شدید یا رو به افزایش، ارزیابی حضوری فوری لازم است.",
+      "warning_en": "Severe or worsening symptoms require prompt in-person assessment."
     },
     {
       "id": "KDF-090",
       "category": "emergency",
-      "question_fa": "چه نکته‌ای درباره خونریزی کنترل‌نشده دهان باید بدانم؟",
-      "question_en": "What should I know about uncontrolled oral bleeding?",
-      "answer_fa": "مشکل شدید تنفس یا بلع، تورم سریع دهان یا گردن، خونریزی شدید کنترل‌نشده یا بیهوشی نیازمند خدمات اورژانسی فوری است. در ایران با ۱۱۵ تماس بگیرید و منتظر پاسخ چت‌بات نمانید.",
-      "answer_en": "Severe breathing or swallowing difficulty, rapidly increasing mouth or neck swelling, uncontrolled heavy bleeding or loss of consciousness require immediate emergency care. In Iran call 115; do not wait for a chatbot.",
+      "question_fa": "چه زمانی خونریزی دهان نیازمند مراجعه اورژانسی است؟",
+      "question_en": "When does oral bleeding require emergency care?",
+      "answer_fa": "اگر خونریزی زیاد است یا احساس ضعف و غش دارید، فوراً کمک اورژانسی بگیرید.",
+      "answer_en": "If bleeding is heavy or you feel faint, seek emergency help immediately.",
       "sources": [
-        "NHS_EMERGENCY",
-        "NHS_TOOTHACHE",
-        "NHS_DENTAL_ABSCESS"
+        "NHS_EMERGENCY"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
-      "warning_fa": "در علائم هشداردهنده فوراً خدمات اورژانسی دریافت کنید.",
-      "warning_en": "Seek emergency care immediately for red-flag symptoms."
+      "warning_fa": "در صورت وجود علائم شدید یا رو به افزایش، ارزیابی حضوری فوری لازم است.",
+      "warning_en": "Severe or worsening symptoms require prompt in-person assessment."
     },
     {
       "id": "KDF-091",
       "category": "emergency",
       "question_fa": "دندان دائمی کنده‌شده چیست؟",
       "question_en": "What is knocked-out permanent tooth?",
-      "answer_fa": "مشکل شدید تنفس یا بلع، تورم سریع دهان یا گردن، خونریزی شدید کنترل‌نشده یا بیهوشی نیازمند خدمات اورژانسی فوری است. در ایران با ۱۱۵ تماس بگیرید و منتظر پاسخ چت‌بات نمانید.",
-      "answer_en": "Severe breathing or swallowing difficulty, rapidly increasing mouth or neck swelling, uncontrolled heavy bleeding or loss of consciousness require immediate emergency care. In Iran call 115; do not wait for a chatbot.",
+      "answer_fa": "دندان را از تاج بگیرید و ریشه را لمس نکنید؛ اگر جاگذاری آسان نیست، آن را در شیر یا بزاق نگه دارید و فوراً مراجعه کنید.",
+      "answer_en": "Hold the tooth by its crown and avoid touching the root; if it cannot be gently repositioned, keep it in milk or saliva and seek care immediately.",
       "sources": [
+        "NHS_KNOCKED_OUT",
         "NHS_EMERGENCY",
-        "NHS_TOOTHACHE",
-        "NHS_DENTAL_ABSCESS"
+        "IRAN_PEDIATRIC_DENTISTRY"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
-      "warning_fa": "در علائم هشداردهنده فوراً خدمات اورژانسی دریافت کنید.",
-      "warning_en": "Seek emergency care immediately for red-flag symptoms."
+      "warning_fa": "دندان دائمی کنده‌شده فوریت دندان‌پزشکی است؛ مراجعه را به تأخیر نیندازید.",
+      "warning_en": "A knocked-out permanent tooth is a dental emergency; do not delay care."
     },
     {
       "id": "KDF-092",
       "category": "emergency",
-      "question_fa": "چه نکته‌ای درباره دندان دائمی کنده‌شده باید بدانم؟",
-      "question_en": "What should I know about knocked-out permanent tooth?",
-      "answer_fa": "مشکل شدید تنفس یا بلع، تورم سریع دهان یا گردن، خونریزی شدید کنترل‌نشده یا بیهوشی نیازمند خدمات اورژانسی فوری است. در ایران با ۱۱۵ تماس بگیرید و منتظر پاسخ چت‌بات نمانید.",
-      "answer_en": "Severe breathing or swallowing difficulty, rapidly increasing mouth or neck swelling, uncontrolled heavy bleeding or loss of consciousness require immediate emergency care. In Iran call 115; do not wait for a chatbot.",
+      "question_fa": "اگر دندان دائمی کنده شد چگونه آن را نگه‌داری کنم؟",
+      "question_en": "How should I handle a knocked-out permanent tooth?",
+      "answer_fa": "دندان شیری را دوباره در حفره قرار ندهید؛ دندان دائمی کنده‌شده به رسیدگی هرچه سریع‌تر نیاز دارد.",
+      "answer_en": "Do not reinsert a baby tooth; a knocked-out permanent tooth needs care as soon as possible.",
       "sources": [
+        "NHS_KNOCKED_OUT",
         "NHS_EMERGENCY",
-        "NHS_TOOTHACHE",
-        "NHS_DENTAL_ABSCESS"
+        "IRAN_PEDIATRIC_DENTISTRY"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
-      "warning_fa": "در علائم هشداردهنده فوراً خدمات اورژانسی دریافت کنید.",
-      "warning_en": "Seek emergency care immediately for red-flag symptoms."
+      "warning_fa": "دندان شیری را دوباره در جای خود قرار ندهید.",
+      "warning_en": "Do not reinsert a baby tooth."
     },
     {
       "id": "KDF-093",
       "category": "emergency",
       "question_fa": "درد شدید دندان چیست؟",
       "question_en": "What is severe toothache?",
-      "answer_fa": "مشکل شدید تنفس یا بلع، تورم سریع دهان یا گردن، خونریزی شدید کنترل‌نشده یا بیهوشی نیازمند خدمات اورژانسی فوری است. در ایران با ۱۱۵ تماس بگیرید و منتظر پاسخ چت‌بات نمانید.",
-      "answer_en": "Severe breathing or swallowing difficulty, rapidly increasing mouth or neck swelling, uncontrolled heavy bleeding or loss of consciousness require immediate emergency care. In Iran call 115; do not wait for a chatbot.",
+      "answer_fa": "درد شدید، درد بیش از دو روز یا درد همراه تب، تورم یا درد هنگام گاززدن باید توسط دندان‌پزشک بررسی شود.",
+      "answer_en": "Severe pain, pain lasting more than two days, or pain with fever, swelling, or pain on biting should be assessed by a dentist.",
       "sources": [
-        "NHS_EMERGENCY",
         "NHS_TOOTHACHE",
-        "NHS_DENTAL_ABSCESS"
+        "NHS_EMERGENCY"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
-      "warning_fa": "در علائم هشداردهنده فوراً خدمات اورژانسی دریافت کنید.",
-      "warning_en": "Seek emergency care immediately for red-flag symptoms."
+      "warning_fa": "در صورت وجود علائم شدید یا رو به افزایش، ارزیابی حضوری فوری لازم است.",
+      "warning_en": "Severe or worsening symptoms require prompt in-person assessment."
     },
     {
       "id": "KDF-094",
       "category": "emergency",
-      "question_fa": "چه نکته‌ای درباره درد شدید دندان باید بدانم؟",
-      "question_en": "What should I know about severe toothache?",
-      "answer_fa": "مشکل شدید تنفس یا بلع، تورم سریع دهان یا گردن، خونریزی شدید کنترل‌نشده یا بیهوشی نیازمند خدمات اورژانسی فوری است. در ایران با ۱۱۵ تماس بگیرید و منتظر پاسخ چت‌بات نمانید.",
-      "answer_en": "Severe breathing or swallowing difficulty, rapidly increasing mouth or neck swelling, uncontrolled heavy bleeding or loss of consciousness require immediate emergency care. In Iran call 115; do not wait for a chatbot.",
+      "question_fa": "درد شدید دندان چه زمانی باید ارزیابی شود؟",
+      "question_en": "When should severe toothache be assessed?",
+      "answer_fa": "اگر تورم به گردن یا اطراف چشم رسیده یا تنفس و بلع را دشوار کرده است، فوراً به اورژانس مراجعه کنید.",
+      "answer_en": "If swelling reaches the neck or around the eye, or makes breathing or swallowing difficult, seek emergency care immediately.",
       "sources": [
-        "NHS_EMERGENCY",
         "NHS_TOOTHACHE",
-        "NHS_DENTAL_ABSCESS"
+        "NHS_EMERGENCY"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
-      "warning_fa": "در علائم هشداردهنده فوراً خدمات اورژانسی دریافت کنید.",
-      "warning_en": "Seek emergency care immediately for red-flag symptoms."
+      "warning_fa": "در صورت وجود علائم شدید یا رو به افزایش، ارزیابی حضوری فوری لازم است.",
+      "warning_en": "Severe or worsening symptoms require prompt in-person assessment."
     },
     {
       "id": "KDF-095",
       "category": "pre_post",
       "question_fa": "اطلاعات پزشکی پیش از درمان چیست؟",
       "question_en": "What is medical information before treatment?",
-      "answer_fa": "داروها، حساسیت‌ها، بیماری‌های زمینه‌ای و بارداری احتمالی را پیش از درمان اعلام کنید. پس از درمان، دستورهای اختصاصی تیم درمان را دنبال کنید و علائم شدید یا رو به افزایش را سریع گزارش دهید.",
-      "answer_en": "Tell the dental team about medicines, allergies, medical conditions and possible pregnancy. Follow aftercare instructions and promptly report severe or worsening symptoms.",
+      "answer_fa": "بله؛ بارداری، حساسیت دارویی، بیماری‌ها و داروهای مصرفی را پیش از درمان به تیم دندان‌پزشکی اطلاع دهید.",
+      "answer_en": "Yes. Tell the dental team about pregnancy, medicine allergies, health conditions, and medicines before treatment.",
       "sources": [
         "ADA_ORAL_HEALTH_TOPICS"
       ],
@@ -1627,10 +1621,10 @@
     {
       "id": "KDF-096",
       "category": "pre_post",
-      "question_fa": "چه نکته‌ای درباره اطلاعات پزشکی پیش از درمان باید بدانم؟",
-      "question_en": "What should I know about medical information before treatment?",
-      "answer_fa": "داروها، حساسیت‌ها، بیماری‌های زمینه‌ای و بارداری احتمالی را پیش از درمان اعلام کنید. پس از درمان، دستورهای اختصاصی تیم درمان را دنبال کنید و علائم شدید یا رو به افزایش را سریع گزارش دهید.",
-      "answer_en": "Tell the dental team about medicines, allergies, medical conditions and possible pregnancy. Follow aftercare instructions and promptly report severe or worsening symptoms.",
+      "question_fa": "آیا باید حساسیت دارویی و بارداری را پیش از درمان اعلام کنم؟",
+      "question_en": "Should I disclose allergies and pregnancy before treatment?",
+      "answer_fa": "اگر پس از ثبت نوبت داروی جدیدی شروع کردید یا وضعیت پزشکی‌تان تغییر کرد، پیش از مراجعه اطلاع دهید.",
+      "answer_en": "If you start a new medicine or your health changes after booking, tell the clinic before your visit.",
       "sources": [
         "ADA_ORAL_HEALTH_TOPICS"
       ],
@@ -1644,10 +1638,11 @@
       "category": "pre_post",
       "question_fa": "مراقبت پس از کشیدن دندان چیست؟",
       "question_en": "What is care after tooth extraction?",
-      "answer_fa": "داروها، حساسیت‌ها، بیماری‌های زمینه‌ای و بارداری احتمالی را پیش از درمان اعلام کنید. پس از درمان، دستورهای اختصاصی تیم درمان را دنبال کنید و علائم شدید یا رو به افزایش را سریع گزارش دهید.",
-      "answer_en": "Tell the dental team about medicines, allergies, medical conditions and possible pregnancy. Follow aftercare instructions and promptly report severe or worsening symptoms.",
+      "answer_fa": "دستور اختصاصی جراح را رعایت کنید و از دستکاری محل زخم یا فعالیت‌هایی که درمانگر منع کرده است پرهیز کنید.",
+      "answer_en": "Follow the surgeon's specific instructions and avoid disturbing the socket or activities restricted by the clinician.",
       "sources": [
-        "ADA_ORAL_HEALTH_TOPICS"
+        "NHS_EMERGENCY",
+        "NHS_DENTAL_TREATMENTS"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -1657,12 +1652,13 @@
     {
       "id": "KDF-098",
       "category": "pre_post",
-      "question_fa": "چه نکته‌ای درباره مراقبت پس از کشیدن دندان باید بدانم؟",
-      "question_en": "What should I know about care after tooth extraction?",
-      "answer_fa": "داروها، حساسیت‌ها، بیماری‌های زمینه‌ای و بارداری احتمالی را پیش از درمان اعلام کنید. پس از درمان، دستورهای اختصاصی تیم درمان را دنبال کنید و علائم شدید یا رو به افزایش را سریع گزارش دهید.",
-      "answer_en": "Tell the dental team about medicines, allergies, medical conditions and possible pregnancy. Follow aftercare instructions and promptly report severe or worsening symptoms.",
+      "question_fa": "بعد از کشیدن دندان از چه کارهایی باید پرهیز کنم؟",
+      "question_en": "What should I avoid after a tooth extraction?",
+      "answer_fa": "اگر خونریزی ادامه دارد، درد شدید می‌شود یا تب و تورم رو به افزایش دارید، با کلینیک تماس بگیرید.",
+      "answer_en": "Contact the clinic if bleeding continues, pain becomes severe, or fever and swelling increase.",
       "sources": [
-        "ADA_ORAL_HEALTH_TOPICS"
+        "NHS_EMERGENCY",
+        "NHS_DENTAL_TREATMENTS"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -1674,10 +1670,12 @@
       "category": "pre_post",
       "question_fa": "مراجعه پس از درمان دندان‌پزشکی چیست؟",
       "question_en": "What is follow-up after dental treatment?",
-      "answer_fa": "داروها، حساسیت‌ها، بیماری‌های زمینه‌ای و بارداری احتمالی را پیش از درمان اعلام کنید. پس از درمان، دستورهای اختصاصی تیم درمان را دنبال کنید و علائم شدید یا رو به افزایش را سریع گزارش دهید.",
-      "answer_en": "Tell the dental team about medicines, allergies, medical conditions and possible pregnancy. Follow aftercare instructions and promptly report severe or worsening symptoms.",
+      "answer_fa": "اگر درد یا تورم رو به افزایش، تب، خونریزی کنترل‌نشده، ترشح یا مشکل در ترمیم ایجاد شد، تماس بگیرید.",
+      "answer_en": "Contact the clinic for increasing pain or swelling, fever, uncontrolled bleeding, discharge, or a problem with the restoration.",
       "sources": [
-        "ADA_ORAL_HEALTH_TOPICS"
+        "NHS_ROOT_CANAL",
+        "NHS_DENTAL_TREATMENTS",
+        "NHS_EMERGENCY"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -1687,17 +1685,21 @@
     {
       "id": "KDF-100",
       "category": "pre_post",
-      "question_fa": "چه نکته‌ای درباره مراجعه پس از درمان دندان‌پزشکی باید بدانم؟",
-      "question_en": "What should I know about follow-up after dental treatment?",
-      "answer_fa": "داروها، حساسیت‌ها، بیماری‌های زمینه‌ای و بارداری احتمالی را پیش از درمان اعلام کنید. پس از درمان، دستورهای اختصاصی تیم درمان را دنبال کنید و علائم شدید یا رو به افزایش را سریع گزارش دهید.",
-      "answer_en": "Tell the dental team about medicines, allergies, medical conditions and possible pregnancy. Follow aftercare instructions and promptly report severe or worsening symptoms.",
+      "question_fa": "چه زمانی پس از درمان باید دوباره با کلینیک تماس بگیرم؟",
+      "question_en": "When should I contact the clinic again after treatment?",
+      "answer_fa": "حتی اگر علامتی ندارید، ویزیت پیگیری تعیین‌شده را برای بررسی ترمیم و تکمیل مراحل درمان از دست ندهید.",
+      "answer_en": "Even if you have no symptoms, attend the planned follow-up to review healing and complete treatment.",
       "sources": [
-        "ADA_ORAL_HEALTH_TOPICS"
+        "NHS_ROOT_CANAL",
+        "NHS_DENTAL_TREATMENTS",
+        "NHS_EMERGENCY"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
       "warning_fa": null,
       "warning_en": null
     }
-  ]
+  ],
+  "status": "draft_for_clinician_review",
+  "faq_count": 100
 }

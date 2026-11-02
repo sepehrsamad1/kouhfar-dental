@@ -51,6 +51,8 @@ it('keeps the owner-approved assistant identity and is transparent only when ask
     expect($assistant->respond('Who are you?', 'en')['answer'])
         ->toBe('I am the intelligent assistant of Dr. Kouhfar, designed to guide you about dental services, oral health, and dental treatments. I am glad to help.')
         ->and($assistant->respond('Which AI model are you?', 'en')['answer'])
+        ->toContain('no external AI provider is connected')
+        ->and($assistant->respond('Are you ChatGPT?', 'en')['answer'])
         ->toContain('no external AI provider is connected');
 });
 

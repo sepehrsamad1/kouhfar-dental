@@ -47,6 +47,40 @@ it('provides a staff login page and authenticates active staff', function (): vo
     expect(StaffSession::query()->where('user_id', $staff->id)->exists())->toBeTrue();
 });
 
+it('rejects backslash-based and external intended redirects after staff login', function (): void {
+    $staff = makeStaffUser(['email' => 'redirect@example.invalid']);
+
+    foreach (['/\\\\evil.example/path', '//evil.example/path', 'https://evil.example/path'] as $intended) {
+        $response = $this->withSession(['url.intended' => $intended])
+            ->post(route('staff.login.store'), [
+                'email' => $staff->email,
+                'password' => 'correct-password',
+            ]);
+
+        $response->assertRedirect(route('staff.dashboard'));
+        auth('staff')->logout();
+        $this->flushSession();
+    }
+});
+
+it('emits secure HttpOnly SameSite cookies when secure session cookies are enabled', function (): void {
+    config()->set('session.secure', true);
+    $staff = makeStaffUser(['email' => 'cookie@example.invalid']);
+
+    $response = $this->post(route('staff.login.store'), [
+        'email' => $staff->email,
+        'password' => 'correct-password',
+    ]);
+
+    $cookie = collect($response->headers->getCookies())
+        ->first(fn ($cookie) => $cookie->getName() === config('session.cookie'));
+
+    expect($cookie)->not->toBeNull()
+        ->and($cookie->isSecure())->toBeTrue()
+        ->and($cookie->isHttpOnly())->toBeTrue()
+        ->and($cookie->getSameSite())->toBe('lax');
+});
+
 it('regenerates the session id after successful login', function (): void {
     $staff = makeStaffUser(['email' => 'fixation@example.invalid']);
     $this->get(route('staff.login'));

@@ -57,6 +57,10 @@ final class AIControlService
 
     public function update(int $monthlyBudgetIrr, bool $emergencyDisabled): void
     {
+        if ($monthlyBudgetIrr < 1_000 || $monthlyBudgetIrr > 10_000_000) {
+            throw new InvalidArgumentException('Monthly AI budget must remain within the owner-approved IRR ceiling.');
+        }
+
         DB::transaction(function () use ($monthlyBudgetIrr, $emergencyDisabled): void {
             $settings = AIControlSetting::query()->whereKey(self::SETTINGS_ID)->lockForUpdate()->firstOrFail();
             $settings->forceFill([

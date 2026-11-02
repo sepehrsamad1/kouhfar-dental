@@ -28,6 +28,7 @@ See task27-owner-decisions.md. Approved: 100 Persian + 100 English evaluation ca
 ## Important accounting and safety limits
 
 - Actual provider billing is nullable and is never fabricated. The fake provider exposes no authenticated provider billing or quota API, so provider credit/token quota is explicitly reported as unknown. 80%/95% provider-quota alerts cannot be activated until an approved provider supplies telemetry.
+- Budget enforcement uses per-request actual billing when the provider reports it; otherwise it uses the configured per-model/capability estimate. Daily aggregates remain available for operational reporting.
 - The fake provider returns a source excerpt for assistant evaluation. This makes the deterministic run reproducible but does not prove a future live model's clinical accuracy. Grounding is a lexical source-overlap proxy, not an independent clinical review.
 - The FAQ set is draft clinical content and is not published to public users by this task. It requires clinician review and the existing content approval workflow before production publication.
 - Emergency responses do not hard-code a phone number: local availability can change, and recent reporting described a temporary 115 interruption in Tehran. Users are directed to local emergency medical services or the nearest emergency department.

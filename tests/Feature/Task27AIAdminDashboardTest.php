@@ -1,6 +1,7 @@
 <?php
 
 use App\AIUsage;
+use App\AIControlSetting;
 use App\Services\AIControlService;
 use App\AuditLog;
 use App\StaffUser;
@@ -72,7 +73,7 @@ it('allows an administrator to view and update the AI budget and emergency switc
     ]);
 
     expect(\App\AIControlSetting::query()->firstOrFail()->provider_token_limits)->toBe(['fake-v1' => 1_000_000])
-        ->and(\\App\\AIControlSetting::query()->firstOrFail()->model_budget_limits_irr)->toBe(['fake-v1' => 5_000_000]);
+        ->and(AIControlSetting::query()->firstOrFail()->model_budget_limits_irr)->toBe(['fake-v1' => 5_000_000]);
 
     $this->patch(route('staff.ai.update'), [
         'monthly_budget_irr' => 20_000_000,

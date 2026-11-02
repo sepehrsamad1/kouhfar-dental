@@ -41,6 +41,8 @@ jobs:
       DB_PASSWORD: postgres
       CACHE_STORE: array
       SESSION_DRIVER: array
+      # Browser smoke fixtures cover legacy staff pages; MFA has dedicated feature tests.
+      STAFF_MFA_REQUIRED: false
       QUEUE_CONNECTION: sync
       MAIL_MAILER: array
       PULSE_ENABLED: false

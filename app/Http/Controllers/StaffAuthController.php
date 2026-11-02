@@ -14,6 +14,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
@@ -115,12 +116,42 @@ class StaffAuthController
             return back()->withErrors(['code' => 'کد واردشده معتبر نیست.']);
         }
 
-        $counter = is_string($staff->mfa_totp_secret)
-            ? $totp->matchingCounter($staff->mfa_totp_secret, (string) $request->input('code'))
-            : null;
+        $enrollment = DB::transaction(function () use ($staff, $request, $totp): ?array {
+            $lockedStaff = StaffUser::query()->whereKey($staff->getKey())->lockForUpdate()->first();
 
-        if ($staff->mfa_enabled_at !== null || $counter === null
-            || ($staff->mfa_last_totp_counter !== null && $counter <= $staff->mfa_last_totp_counter)) {
+            if ($lockedStaff === null || $lockedStaff->mfa_enabled_at !== null
+                || ! is_string($lockedStaff->mfa_totp_secret)) {
+                return null;
+            }
+
+            $counter = $totp->matchingCounter($lockedStaff->mfa_totp_secret, (string) $request->input('code'));
+
+            if ($counter === null || ($lockedStaff->mfa_last_totp_counter !== null
+                && $counter <= $lockedStaff->mfa_last_totp_counter)) {
+                return null;
+            }
+
+            $recoveryCodes = [];
+            $recoveryHashes = [];
+
+            for ($index = 0; $index < 10; $index++) {
+                $code = Str::upper(Str::random(12));
+                $recoveryCodes[] = $code;
+                $recoveryHashes[] = Hash::make($code);
+            }
+
+            AuditLogger::record($lockedStaff, 'staff.mfa.enabled', $lockedStaff, null, ['reason_code' => 'totp_enrolled']);
+
+            $lockedStaff->forceFill([
+                'mfa_enabled_at' => now('UTC'),
+                'mfa_last_totp_counter' => $counter,
+                'mfa_recovery_codes' => $recoveryHashes,
+            ])->save();
+
+            return ['staff' => $lockedStaff, 'recovery_codes' => $recoveryCodes];
+        });
+
+        if ($enrollment === null) {
             RateLimiter::hit($throttleKey, 300);
 
             return back()->withErrors(['code' => 'کد واردشده معتبر نیست.']);
@@ -128,24 +159,7 @@ class StaffAuthController
 
         RateLimiter::clear($throttleKey);
 
-        $recoveryCodes = [];
-        $recoveryHashes = [];
-
-        for ($index = 0; $index < 10; $index++) {
-            $code = Str::upper(Str::random(12));
-            $recoveryCodes[] = $code;
-            $recoveryHashes[] = Hash::make($code);
-        }
-
-        AuditLogger::record($staff, 'staff.mfa.enabled', $staff, null, ['reason_code' => 'totp_enrolled']);
-
-        $staff->forceFill([
-            'mfa_enabled_at' => now('UTC'),
-            'mfa_last_totp_counter' => $counter,
-            'mfa_recovery_codes' => $recoveryHashes,
-        ])->save();
-
-        return $this->completeLogin($request, $staff, $recoveryCodes);
+        return $this->completeLogin($request, $enrollment['staff'], $enrollment['recovery_codes']);
     }
 
     public function challenge(Request $request): View|RedirectResponse
@@ -183,32 +197,47 @@ class StaffAuthController
         }
 
         $code = trim((string) $request->input('code'));
-        $counter = preg_match('/^[0-9]{6}$/D', $code) === 1
-            ? $totp->matchingCounter($staff->mfa_totp_secret, $code)
-            : null;
-        $verified = $counter !== null
-            && ($staff->mfa_last_totp_counter === null || $counter > $staff->mfa_last_totp_counter);
+        $verification = DB::transaction(function () use ($staff, $code, $totp): array {
+            $lockedStaff = StaffUser::query()->whereKey($staff->getKey())->lockForUpdate()->first();
 
-        if (! $verified && preg_match('/^[A-Za-z0-9]{12}$/D', $code) === 1) {
-            $normalized = Str::upper($code);
-            $recoveryHashes = (array) $staff->mfa_recovery_codes;
-            $matchedIndex = null;
+            if ($lockedStaff === null || $lockedStaff->mfa_enabled_at === null
+                || ! is_string($lockedStaff->mfa_totp_secret)) {
+                return ['verified' => false, 'staff' => $staff];
+            }
 
-            foreach ($recoveryHashes as $index => $hash) {
-                if (is_string($hash) && Hash::check($normalized, $hash)) {
-                    $matchedIndex = $index;
+            $counter = preg_match('/^[0-9]{6}$/D', $code) === 1
+                ? $totp->matchingCounter($lockedStaff->mfa_totp_secret, $code)
+                : null;
+            $verified = $counter !== null
+                && ($lockedStaff->mfa_last_totp_counter === null || $counter > $lockedStaff->mfa_last_totp_counter);
+
+            if (! $verified && preg_match('/^[A-Za-z0-9]{12}$/D', $code) === 1) {
+                $normalized = Str::upper($code);
+                $recoveryHashes = (array) $lockedStaff->mfa_recovery_codes;
+                $matchedIndex = null;
+
+                foreach ($recoveryHashes as $index => $hash) {
+                    if (is_string($hash) && Hash::check($normalized, $hash)) {
+                        $matchedIndex = $index;
+                    }
+                }
+
+                if ($matchedIndex !== null) {
+                    unset($recoveryHashes[$matchedIndex]);
+                    $lockedStaff->forceFill(['mfa_recovery_codes' => array_values($recoveryHashes)])->save();
+                    AuditLogger::record($lockedStaff, 'staff.mfa.recovery_code_used', $lockedStaff, null, ['reason_code' => 'one_time_recovery_code']);
+                    $verified = true;
                 }
             }
 
-            if ($matchedIndex !== null) {
-                unset($recoveryHashes[$matchedIndex]);
-                $staff->forceFill(['mfa_recovery_codes' => array_values($recoveryHashes)])->save();
-                AuditLogger::record($staff, 'staff.mfa.recovery_code_used', $staff, null, ['reason_code' => 'one_time_recovery_code']);
-                $verified = true;
+            if ($verified && $counter !== null) {
+                $lockedStaff->forceFill(['mfa_last_totp_counter' => $counter])->save();
             }
-        }
 
-        if (! $verified) {
+            return ['verified' => $verified, 'staff' => $lockedStaff];
+        });
+
+        if (! $verification['verified']) {
             RateLimiter::hit($throttleKey, 300);
 
             return back()->withErrors(['code' => 'کد واردشده معتبر نیست.']);
@@ -216,11 +245,7 @@ class StaffAuthController
 
         RateLimiter::clear($throttleKey);
 
-        if ($counter !== null) {
-            $staff->forceFill(['mfa_last_totp_counter' => $counter])->save();
-        }
-
-        return $this->completeLogin($request, $staff);
+        return $this->completeLogin($request, $verification['staff']);
     }
 
     public function recoveryCodes(): RedirectResponse

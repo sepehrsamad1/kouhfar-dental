@@ -4,7 +4,7 @@
 
 ## Global middleware boundary
 
-All routes declared in `routes/web.php` are subject to Laravel's `web` middleware stack. The staff route group additionally applies `auth:staff`, `staff.session.fresh`, and `PreventStoreCache`. Staff authorization is enforced in controllers through Policies/Gates; hiding a UI action is not treated as authorization.
+All routes declared in `routes/web.php` are subject to Laravel's `web` middleware stack. The protected staff route group additionally applies `auth:staff`, `staff.session.fresh`, and `PreventStoreCache`. Staff login and MFA enrollment/challenge routes remain guest routes with a short-lived pending session; the authenticated staff session is created only after TOTP or a one-time recovery code succeeds. Staff authorization is enforced in controllers through Policies/Gates; hiding a UI action is not treated as authorization.
 
 The public booking POST in `routes/api.php` explicitly adds `web` middleware and `throttle:30,1`. Public services and availability are read-only and throttled. Smart Smile endpoints are declared in `routes/web.php`, so they inherit the web middleware stack and also have route-specific throttles.
 
@@ -38,7 +38,7 @@ The public booking POST in `routes/api.php` explicitly adds `web` middleware and
 
 | Route | Control reviewed | Existing regression evidence | Assessment |
 |---|---|---|---|
-| `POST /api/v1/appointments` | Form Request validation, web/CSRF middleware, throttle, idempotency and concurrency-safe creator; phone-verification gate fails closed | `AppointmentCreationTest`, `AppointmentConcurrencyTest`, `PublicBookingUiApiTest` | PARTIAL — production-browser CSRF and distributed throttle tests remain open |
+| `POST /api/v1/appointments` | Form Request validation, web/CSRF middleware, throttle, idempotency and concurrency-safe creator; phone-verification gate fails closed with `PHONE_VERIFICATION_NOT_READY` | `AppointmentCreationTest`, `AppointmentConcurrencyTest`, `PublicBookingUiApiTest` | PARTIAL — MeliPayamak OTP adapter exists but challenge lifecycle is not implemented; production-browser CSRF and distributed throttle tests remain open |
 | `GET /api/v1/availability/{service}` and `GET /booking/availability/{service}` | Public-bookable service filtering and throttling | `AvailabilityEndpointTest`, browser booking tests | PARTIAL |
 | `POST /api/v1/smart-smile/consent` | Feature/release gate, route throttle, random bearer token, hashed token at rest | `Task26SmartSmileTest`: disabled gate and consent flow | PARTIAL — consent evidence retention/TTL not approved |
 | `POST /api/v1/smart-smile/upload` | Form Request token shape, MIME/size checks, consent resolution, private image processing, one upload per consent | Smart Smile and media tests cover consent-required and invalid uploads | PARTIAL |
@@ -47,17 +47,19 @@ The public booking POST in `routes/api.php` explicitly adds `web` middleware and
 
 ## Cross-cutting controls
 
+Staff MFA: TOTP is required by default for every staff account. The dedicated feature suite tests RFC 6238 behavior, first-login enrollment, encrypted secret storage, one-time recovery-code consumption, replay rejection and no-store enrollment/challenge/recovery responses. CI disables MFA only for legacy screenshot fixtures; production configuration defaults to enabled. The approved factor is TOTP, not SMS.
+
 | Control | Evidence | Assessment |
 |---|---|---|
 | CSRF | Web middleware for staff mutations and explicit web middleware for public booking POST; no production-browser negative test recorded | PARTIAL |
 | SQL injection | Eloquent/query-builder bindings in inspected paths; SQL-looking patient-search regression test | PARTIAL — raw-query inventory and DAST/fuzz not complete |
 | Stored XSS | Blade escaped rendering; content workflow script-markup regression test | PARTIAL — no full DOM/reflected payload corpus |
-| Open redirect | Intended URL parser rejects external schemes/hosts, protocol-relative paths, backslashes and control chars; regression test passed in CI #862 | PASS for reviewed staff-login redirect path |
-| Session lifecycle | Rotation, logout revocation, deactivated-account revocation, optional idle/absolute timeout tests; production/staging timeout values not approved | PARTIAL |
-| Rate limiting | Route throttles and per-email+IP login throttling; shared distributed backend behavior not verified | PARTIAL |
+| Open redirect | Intended URL parser rejects external schemes/hosts, protocol-relative paths, backslashes and control chars; regression test passed in CI #937 | PASS for reviewed staff-login redirect path |
+| Session lifecycle / MFA | Rotation, logout revocation, deactivated-account revocation, 15-minute idle and 8-hour absolute timeouts; TOTP enrollment, replay prevention, one-time recovery codes and MFA attempt throttling are tested in CI #937 | PARTIAL — lost-authenticator/admin reset process and production configuration still need verification |
+| Rate limiting | Route throttles, per-email+IP password-login throttling, and per-account MFA throttle (5 failures / 5 minutes); OTP adapter has no challenge/resend flow yet; shared distributed backend behavior not verified | PARTIAL |
 | Upload abuse | MIME sniffing, decode/re-encode, size/pixel bounds, private storage and signed downloads; automated tests passed | PASS for tested application-level image controls |
-| SSRF | No user-controlled URL fetch found; dormant Kavenegar adapter has fixed HTTPS allowlist, redirect disabled, synthetic negative tests passed in CI #862 | PARTIAL — provider credential URL-path residual risk |
-| Secret scanning | Full-history Gitleaks passed in CI #862; GitHub secret alerts and non-text artifact/log review not accessible through repository CI evidence | PARTIAL |
+| SSRF | No user-controlled URL fetch found; dormant Kavenegar adapter has fixed HTTPS allowlist, redirect disabled, synthetic negative tests passed in CI #937; MeliPayamak adapter uses fixed HTTPS host and disables redirects | PARTIAL — Kavenegar credential URL-path residual risk and deployment log review remain open |
+| Secret scanning | Full-history Gitleaks passed in CI #937; Composer and npm audits passed; GitHub secret alerts and non-text artifact/log review not accessible through repository CI evidence | PARTIAL |
 
 ## Explicitly unverified
 

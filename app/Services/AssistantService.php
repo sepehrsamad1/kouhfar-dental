@@ -199,7 +199,7 @@ final class AssistantService
         return array_values(array_filter($references, static function (array $reference) use ($allowedHosts): bool {
             $url = $reference['url'] ?? null;
 
-            if (! is_string($url)) {
+            if (!is_string($url)) {
                 return false;
             }
 

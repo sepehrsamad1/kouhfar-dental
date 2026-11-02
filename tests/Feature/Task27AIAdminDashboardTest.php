@@ -51,12 +51,17 @@ it('allows an administrator to view and update the AI budget and emergency switc
     $this->patch(route('staff.ai.update'), [
         'monthly_budget_irr' => 15_000_000,
         'emergency_disabled' => '1',
+        'provider_token_limits' => ['fake-v1' => 1_000_000],
+        'model_budget_limits_irr' => ['fake-v1' => 5_000_000],
     ])->assertRedirect();
 
     $this->assertDatabaseHas('ai_control_settings', [
         'monthly_budget_irr' => 15_000_000,
         'emergency_disabled' => true,
     ]);
+
+    expect(app(\\App\\AIControlSetting::class)->provider_token_limits)->toBe(['fake-v1' => 1_000_000])
+        ->and(app(\\App\\AIControlSetting::class)->model_budget_limits_irr)->toBe(['fake-v1' => 5_000_000]);
 
     expect(AuditLog::query()->where('action', 'ai.controls_updated')->count())->toBe(1);
 });

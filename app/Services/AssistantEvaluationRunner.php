@@ -19,6 +19,12 @@ final class AssistantEvaluationRunner
     /** @return array<string, mixed> */
     public function run(): array
     {
+        if (app()->environment('production') || config('ai.capabilities.text.provider', 'fake') !== 'fake') {
+            throw new RuntimeException('The deterministic Task 27 evaluation runner is restricted to non-production fake-provider runs.');
+        }
+
+        config(['ai.rate_limits.per_minute' => max(1000, (int) config('ai.rate_limits.per_minute', 10))]);
+
         $path = (string) config('ai_evaluation.dataset_path');
         if (! is_file($path)) {
             throw new RuntimeException('The configured AI evaluation dataset is missing.');

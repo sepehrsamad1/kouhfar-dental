@@ -45,16 +45,16 @@ final class AssistantService
             return ['status' => 'refused', 'answer' => $this->domainRefusal($locale), 'sources' => []];
         }
 
-        if ($guardDecision === 'prompt_injection' || $this->isPromptInjection($message)) {
-
-            return ['status' => 'refused', 'answer' => $this->refusal($locale), 'sources' => []];
-        }
-
         if ($guardDecision === 'emergency' || $this->isEmergency($message)) {
             $items = $this->knowledge->forKnowledge($locale)
                 ->filter(fn (array $item): bool => $item['content_key'] === 'dental-emergency-response');
 
             return ['status' => 'emergency', 'answer' => $this->emergencyResponse($locale), 'sources' => $this->sources($items)];
+        }
+
+        if ($guardDecision === 'prompt_injection' || $this->isPromptInjection($message)) {
+
+            return ['status' => 'refused', 'answer' => $this->refusal($locale), 'sources' => []];
         }
 
         if ($guardDecision === 'medical_refusal' || $this->isDisallowedMedicalRequest($message)) {

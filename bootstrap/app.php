@@ -19,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $schedule->command('media:purge-expired')->dailyAt('03:15')->timezone('Asia/Tehran')->withoutOverlapping(30);
         $schedule->command('audit-logs:backup')->dailyAt('02:00')->timezone('Asia/Tehran')->withoutOverlapping(120);
         $schedule->command('audit-logs:verify-latest')->monthlyOn(1, '04:00')->timezone('Asia/Tehran')->withoutOverlapping(60);
+        $schedule->command('security:prune-expired-data')->dailyAt('03:45')->timezone('Asia/Tehran')->withoutOverlapping(30);
     })
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->redirectGuestsTo(fn (): string => route('staff.login'));

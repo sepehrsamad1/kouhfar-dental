@@ -13,7 +13,9 @@ return [
     'cookie' => env('SESSION_COOKIE', 'kouhfar-session'),
     'path' => '/',
     'domain' => env('SESSION_DOMAIN'),
-    'secure' => env('SESSION_SECURE_COOKIE'),
+    'secure' => in_array(env('APP_ENV', 'production'), ['local', 'testing'], true)
+        ? env('SESSION_SECURE_COOKIE', false)
+        : true,
     'http_only' => true,
     'same_site' => 'lax',
     'partitioned' => false,

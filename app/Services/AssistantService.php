@@ -9,10 +9,13 @@ use Illuminate\Support\Collection;
 final class AssistantService
 {
     private const MAX_MESSAGE_LENGTH = 2000;
+
     private const MAX_SOURCES = 5;
 
     private readonly PublishedContentProvider $knowledge;
+
     private readonly AIProviderManager $ai;
+
     private readonly AssistantGuard $guard;
 
     public function __construct(PublishedContentProvider $knowledge, AIProviderManager $ai, AssistantGuard $guard)

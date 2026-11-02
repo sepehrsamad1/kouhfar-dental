@@ -33,5 +33,19 @@ return [
         'input_per_1k' => (float) env('AI_INPUT_COST_PER_1K', 0),
         'output_per_1k' => (float) env('AI_OUTPUT_COST_PER_1K', 0),
     ],
+    'pricing_irr' => [
+        'text' => [
+            'input_per_1k' => (float) env('AI_TEXT_INPUT_COST_IRR_PER_1K', 0),
+            'output_per_1k' => (float) env('AI_TEXT_OUTPUT_COST_IRR_PER_1K', 0),
+        ],
+        'image_analysis' => [
+            'input_per_1k' => (float) env('AI_IMAGE_INPUT_COST_IRR_PER_1K', 0),
+            'output_per_1k' => (float) env('AI_IMAGE_OUTPUT_COST_IRR_PER_1K', 0),
+        ],
+        'image_transformation' => [
+            'input_per_1k' => (float) env('AI_IMAGE_TRANSFORM_INPUT_COST_IRR_PER_1K', 0),
+            'output_per_1k' => (float) env('AI_IMAGE_TRANSFORM_OUTPUT_COST_IRR_PER_1K', 0),
+        ],
+    ],
     'allowed_context_keys' => ['locale', 'content_ids', 'feature_variant'],
 ];

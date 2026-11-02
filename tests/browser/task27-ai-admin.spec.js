@@ -11,7 +11,7 @@ async function loginAsAdmin(page) {
     await page.getByLabel('ایمیل').fill('browser-admin@example.invalid');
     await page.getByLabel('رمز عبور').fill('BrowserOnlyPassword!2026');
     await page.getByRole('button', { name: 'ورود' }).click();
-    await expect(page).toHaveURL(/\\/staff$/);
+    await expect(page).toHaveURL(/\/staff$/);
 }
 
 for (const viewport of viewports) {

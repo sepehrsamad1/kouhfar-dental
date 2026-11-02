@@ -6,7 +6,6 @@ namespace App\Services;
 
 use App\AIControlSetting;
 use App\AIRequest;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 final class AIControlService
@@ -79,9 +78,6 @@ final class AIControlService
         return true;
     }
 
-    /**
-     * @return  array<string, mixed>
-     */
     public function summary(): array
     {
         $settings = $this->settings();
@@ -100,9 +96,9 @@ final class AIControlService
         foreach ($this->configuredModels() as $model => $capabilities) {
             $tokenLimit = (int) ($tokenLimits[$model] ?? 0);
             $budgetLimit = (int) ($budgetLimits[$model] ?? 0);
-            $usage = $modelUsage->get($model);
-            $tokensUsed = (int) ($usage?->tokens_used ?? 0);
-            $modelSpend = (int) round((float) ($usage?->spend_irr ?? 0));
+            $usage = $modelUsage[$model] ?? [];
+            $tokensUsed = (int) ($usage['tokens_used'] ?? 0);
+            $modelSpend = (int) round((float) ($usage['spend_irr'] ?? 0));
             $tokenPercentage = $tokenLimit > 0 ? (int) floor(($tokensUsed / $tokenLimit) * 100) : null;
             $budgetPercentage = $budgetLimit > 0 ? (int) floor(($modelSpend / $budgetLimit) * 100) : null;
 
@@ -168,10 +164,6 @@ final class AIControlService
         ];
     }
 
-    /**
-     * @param  array<string, int>  $providerTokenLimits
-     * @param  array<string, int>  $modelBudgetLimitsIrr
-     */
     public function update(
         int $monthlyBudgetIrr,
         bool $emergencyDisabled,
@@ -189,10 +181,7 @@ final class AIControlService
         });
     }
 
-    /**
-     * @return  Collection<string, object{tokens_used: int, spend_irr: float}>
-     */
-    private function monthlyModelUsage(): Collection
+    private function monthlyModelUsage(): array
     {
         return AIRequest::query()
             ->selectRaw('model, COALESCE(SUM(input_tokens + output_tokens), 0) AS tokens_used, COALESCE(SUM(COALESCE(actual_cost_irr, estimated_cost_irr)), 0) AS spend_irr')
@@ -200,12 +189,15 @@ final class AIControlService
             ->whereIn('status', ['succeeded', 'failed'])
             ->groupBy('model')
             ->get()
-            ->keyBy('model');
+            ->mapWithKeys(static fn (AIRequest $request): array => [
+                (string) $request->model => [
+                    'tokens_used' => (int) $request->getAttribute('tokens_used'),
+                    'spend_irr' => (float) $request->getAttribute('spend_irr'),
+                ],
+            ])
+            ->all();
     }
 
-    /**
-     * @return  array<string, list<string>>
-     */
     private function configuredModels(): array
     {
         $models = [];

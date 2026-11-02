@@ -12,18 +12,11 @@ final class AssistantService
 
     private const MAX_SOURCES = 5;
 
-    private readonly PublishedContentProvider $knowledge;
-
-    private readonly AIProviderManager $ai;
-
-    private readonly AssistantGuard $guard;
-
-    public function __construct(PublishedContentProvider $knowledge, AIProviderManager $ai, AssistantGuard $guard)
-    {
-        $this->knowledge = $knowledge;
-        $this->ai = $ai;
-        $this->guard = $guard;
-    }
+    public function __construct(
+        private readonly PublishedContentProvider $knowledge,
+        private readonly AIProviderManager $ai,
+        private readonly AssistantGuard $guard,
+    ) {}
 
     /** @return array{status:string,answer:string,sources:array<int,array<string,mixed>>} */
     public function respond(string $message, string $locale = 'fa'): array

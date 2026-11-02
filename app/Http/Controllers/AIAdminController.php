@@ -39,11 +39,18 @@ final class AIAdminController
             ->orderBy('model')
             ->get();
 
+        $recentRequests = AIRequest::query()
+            ->select(['provider', 'model', 'capability', 'status', 'input_tokens', 'output_tokens', 'estimated_cost_irr', 'created_at'])
+            ->latest('created_at')
+            ->limit(100)
+            ->get();
+
         return view('staff.ai.index', [
             'summary' => $controls->summary(),
             'settings' => $controls->settings(),
             'usage' => $usage,
             'requests' => $requests,
+            'recentRequests' => $recentRequests,
         ]);
     }
 

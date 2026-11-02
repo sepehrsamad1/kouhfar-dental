@@ -43,6 +43,7 @@
                     </label>
                     <p>مصرف توکن: {{ number_format($limits['tokens_used']) }} / {{ $limits['token_limit'] === null ? 'سقف مستقل تنظیم نشده' : number_format($limits['token_limit']) }} | مصرف مالی: {{ number_format($limits['spend_irr']) }} / {{ $limits['budget_limit_irr'] === null ? 'سقف مستقل تنظیم نشده' : number_format($limits['budget_limit_irr']) }} ریال</p>
                     <p>وضعیت این مدل: {{ $limits['blocked'] ? 'متوقف‌شده به‌دلیل رسیدن به سقف مستقل' : 'مجاز طبق سقف‌های فعلی' }}</p>
+                    <p>وضعیت قیمت‌گذاری: {{ $limits['pricing_configured'] ? 'تعرفه مدل تنظیم شده است.' : 'تعرفه مدل تنظیم نشده است؛ ارائه‌دهنده واقعی نباید فعال شود.' }}</p>
                     @foreach ($limits['token_alerts'] as $level)
                         <p role="alert">هشدار سقف داخلی توکن مدل {{ $model }}: {{ $level }}٪ مصرف شده است.</p>
                     @endforeach

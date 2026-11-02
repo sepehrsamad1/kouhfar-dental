@@ -44,12 +44,12 @@
                     <p>مصرف توکن: {{ number_format($limits['tokens_used']) }} / {{ $limits['token_limit'] === null ? 'سقف مستقل تنظیم نشده' : number_format($limits['token_limit']) }} | مصرف مالی: {{ number_format($limits['spend_irr']) }} / {{ $limits['budget_limit_irr'] === null ? 'سقف مستقل تنظیم نشده' : number_format($limits['budget_limit_irr']) }} ریال</p>
                     <p>وضعیت این مدل: {{ $limits['blocked'] ? 'متوقف‌شده به‌دلیل رسیدن به سقف مستقل' : 'مجاز طبق سقف‌های فعلی' }}</p>
                     <p>وضعیت قیمت‌گذاری: {{ $limits['pricing_configured'] ? 'تعرفه مدل تنظیم شده است.' : 'تعرفه مدل تنظیم نشده است؛ ارائه‌دهنده واقعی نباید فعال شود.' }}</p>
-                    @foreach ($limits['token_alerts'] as $level)
-                        <p role="alert">هشدار سقف داخلی توکن مدل {{ $model }}: {{ $level }}٪ مصرف شده است.</p>
-                    @endforeach
-                    @foreach ($limits['budget_alerts'] as $level)
-                        <p role="alert">هشدار سقف مالی مدل {{ $model }}: {{ $level }}٪ مصرف شده است.</p>
-                    @endforeach
+                    @if (!empty($limits['token_alerts']))
+                        <p role="alert">هشدار سقف داخلی توکن مدل {{ $model }}: {{ collect($limits['token_alerts'])->last() }}٪ مصرف شده است.</p>
+                    @endif
+                    @if (!empty($limits['budget_alerts']))
+                        <p role="alert">هشدار سقف مالی مدل {{ $model }}: {{ collect($limits['budget_alerts'])->last() }}٪ مصرف شده است.</p>
+                    @endif
                 </article>
             @endforeach
             <label><input type="checkbox" name="emergency_disabled" value="1" @checked(old('emergency_disabled', $settings->emergency_disabled))> غیرفعال‌سازی اضطراری دستیار هوشمند</label>

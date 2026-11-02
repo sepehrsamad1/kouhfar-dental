@@ -45,6 +45,24 @@
         @if (!empty($aiControlSummary['blocked']))
             <div class="staff-alert staff-alert--error" role="alert">درخواست‌های جدید دستیار هوشمند به دلیل رسیدن به سقف بودجه یا غیرفعال‌سازی اضطراری متوقف شده‌اند.</div>
         @endif
+
+        @foreach (($aiControlSummary['model_limits'] ?? []) as $model => $limits)
+            @if (!empty($limits['token_alerts']))
+                <div class="staff-alert staff-alert--error" role="alert">
+                    هشدار مصرف توکن مدل {{ $model }}: {{ end($limits['token_alerts']) }}٪ از سقف داخلی ماهانه مصرف شده است.
+                </div>
+            @endif
+            @if (!empty($limits['budget_alerts']))
+                <div class="staff-alert staff-alert--error" role="alert">
+                    هشدار بودجه مدل {{ $model }}: {{ end($limits['budget_alerts']) }}٪ از سقف مالی مستقل مصرف شده است.
+                </div>
+            @endif
+            @if (!empty($limits['blocked']))
+                <div class="staff-alert staff-alert--error" role="alert">
+                    درخواست‌های مدل {{ $model }} به دلیل رسیدن به سقف مستقل توکن یا بودجه متوقف شده‌اند.
+                </div>
+            @endif
+        @endforeach
         @if (session('success'))
             <div class="staff-alert staff-alert--status" role="status">{{ session('success') }}</div>
         @endif

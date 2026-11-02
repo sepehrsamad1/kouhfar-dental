@@ -10,6 +10,22 @@ use Illuminate\Support\Facades\RateLimiter;
 
 uses(RefreshDatabase::class);
 
+function clearTask23AiRateLimits(): void
+{
+    $request = request();
+    $identities = array_filter([
+        $request->ip(),
+        $request->hasSession() ? $request->session()->getId() : null,
+    ]);
+
+    foreach (['assistant', 'smart-smile-simulation', 'limited-feature', 'cost-limited'] as $feature) {
+        foreach ($identities as $identity) {
+            $key = 'ai:'.substr(hash('sha256', $feature.'|'.$identity), 0, 24).':'.now('UTC')->format('Y-m-d-H-i');
+            RateLimiter::clear($key);
+        }
+    }
+}
+
 beforeEach(function (): void {
     config([
         'ai.enabled' => true,
@@ -27,6 +43,7 @@ beforeEach(function (): void {
     ]);
 
     Cache::flush();
+    clearTask23AiRateLimits();
     RateLimiter::clear('ai:'.substr(hash('sha256', 'assistant|127.0.0.1'), 0, 24).':'.now('UTC')->format('Y-m-d-H-i'));
     RateLimiter::clear('ai:'.substr(hash('sha256', 'assistant|127.0.0.1'), 0, 24).':'.now('UTC')->format('Y-m-d-H-i'));
 });

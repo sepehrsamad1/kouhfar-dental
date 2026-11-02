@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\AIControlSetting;
+use App\AIRequest;
 use App\AIUsage;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -33,9 +34,9 @@ final class AIControlService
 
     public function monthlyTokensForModel(string $model): int
     {
-        return (int) AIUsage::query()
+        return (int) AIRequest::query()
             ->where('model', $model)
-            ->whereBetween('day', [now('UTC')->startOfMonth()->toDateString(), now('UTC')->endOfMonth()->toDateString()])
+            ->whereBetween('created_at', [now('UTC')->startOfMonth(), now('UTC')->endOfMonth()])
             ->selectRaw('COALESCE(SUM(input_tokens + output_tokens), 0) AS total')
             ->value('total');
     }
@@ -190,9 +191,9 @@ final class AIControlService
      */
     private function monthlyModelUsage(): Collection
     {
-        return AIUsage::query()
+        return AIRequest::query()
             ->selectRaw('model, COALESCE(SUM(input_tokens + output_tokens), 0) AS tokens_used, COALESCE(SUM(COALESCE(actual_cost_irr, estimated_cost_irr)), 0) AS spend_irr')
-            ->whereBetween('day', [now('UTC')->startOfMonth()->toDateString(), now('UTC')->endOfMonth()->toDateString()])
+            ->whereBetween('created_at', [now('UTC')->startOfMonth(), now('UTC')->endOfMonth()])
             ->groupBy('model')
             ->get()
             ->keyBy('model');

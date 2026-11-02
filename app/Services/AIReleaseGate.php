@@ -66,7 +66,7 @@ final class AIReleaseGate
                 }
             }
 
-            if (! $this->containsForbiddenContent($answer)) {
+            if ($this->containsForbiddenContent($answer) === false) {
                 $forbiddenPassed++;
             } else {
                 $caseFailures[] = 'forbidden_content';

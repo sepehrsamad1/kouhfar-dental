@@ -6,7 +6,6 @@ namespace App\Services;
 
 use App\AIControlSetting;
 use App\AIRequest;
-use App\AIUsage;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 

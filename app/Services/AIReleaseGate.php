@@ -9,9 +9,9 @@ use App\ContentItem;
 final class AIReleaseGate
 {
     /**
-     * @param  array<string, mixed>  $dataset
-     * @param  array<string, array<string, mixed>>  $responses
-     * @return  array<string, mixed>
+     * @param array $dataset
+     * @param array $responses
+     * @return array
      */
     public function evaluate(array $dataset, array $responses): array
     {

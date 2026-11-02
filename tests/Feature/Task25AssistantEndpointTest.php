@@ -4,11 +4,14 @@ use App\ContentItem;
 use App\Enums\ContentItemStatus;
 use App\Enums\ContentKind;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\RateLimiter;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function (): void {
+    Cache::flush();
+
     config([
         'ai.enabled' => true,
         'ai.capabilities.text.enabled' => true,

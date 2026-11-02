@@ -13,7 +13,7 @@ final class AIControlSetting extends Model
 
     protected $table = 'ai_control_settings';
 
-    protected $fillable = ['monthly_budget_irr', 'emergency_disabled', 'provider_token_limits'];
+    protected $fillable = ['monthly_budget_irr', 'emergency_disabled', 'provider_token_limits', 'model_budget_limits_irr'];
 
     protected function casts(): array
     {
@@ -21,6 +21,7 @@ final class AIControlSetting extends Model
             'monthly_budget_irr' => 'integer',
             'emergency_disabled' => 'boolean',
             'provider_token_limits' => 'array',
+            'model_budget_limits_irr' => 'array',
         ];
     }
 }

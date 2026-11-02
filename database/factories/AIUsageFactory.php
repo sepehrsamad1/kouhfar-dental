@@ -19,9 +19,14 @@ class AIUsageFactory extends Factory
         return [
             'day' => now('UTC')->toImmutable()->toDateString(),
             'feature' => 'synthetic-test-only',
+            'provider' => 'fake',
+            'model' => 'fake-v1',
+            'capability' => 'text',
             'input_tokens' => 0,
             'output_tokens' => 0,
             'cost_estimate' => 0,
+            'estimated_cost_irr' => 0,
+            'actual_cost_irr' => null,
             'request_count' => 0,
         ];
     }

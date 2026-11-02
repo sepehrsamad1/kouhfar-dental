@@ -34,7 +34,7 @@ final class AIAdminController
 
         $dailyUsage = AIUsage::query()
             ->selectRaw('day, feature, provider, model, capability, SUM(input_tokens) AS input_tokens, SUM(output_tokens) AS output_tokens, SUM(estimated_cost_irr) AS estimated_cost_irr, SUM(actual_cost_irr) AS actual_cost_irr, SUM(request_count) AS request_count')
-            ->whereBetween('day', [now('UTC')->subDays(29)->toDateString(), $to])
+            ->whereBetween('day', [now('UTC')->subDays(29)->toDateString(), now('UTC')->toDateString()])
             ->groupBy('day', 'feature', 'provider', 'model', 'capability')
             ->orderByDesc('day')
             ->orderBy('feature')

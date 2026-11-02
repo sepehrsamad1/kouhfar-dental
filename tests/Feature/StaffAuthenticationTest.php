@@ -162,6 +162,24 @@ it('invalidates the authenticated session on logout', function (): void {
     expect(StaffSession::query()->find($registryId)->revoked_at)->not->toBeNull();
 });
 
+it('revokes an active staff session immediately after account deactivation', function (): void {
+    $staff = makeStaffUser(['email' => 'deactivated@example.invalid']);
+
+    $this->post(route('staff.login.store'), [
+        'email' => $staff->email,
+        'password' => 'correct-password',
+    ])->assertRedirect(route('staff.dashboard'));
+
+    $registryId = session('staff_registry_session_id');
+    $staff->forceFill(['is_active' => false])->save();
+
+    $this->get(route('staff.dashboard'))
+        ->assertRedirect(route('staff.login'));
+
+    $this->assertGuest('staff');
+    expect(StaffSession::query()->find($registryId)->revoked_at)->not->toBeNull();
+});
+
 it('enforces an approved idle timeout when configured', function (): void {
     config()->set('staff_auth.idle_timeout_minutes', 1);
 

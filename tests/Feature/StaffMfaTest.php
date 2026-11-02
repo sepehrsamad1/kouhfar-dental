@@ -74,12 +74,14 @@ it('requires TOTP enrollment before the first staff login and shows recovery cod
     $code = task28TotpCode($staff->mfa_totp_secret, now('UTC')->timestamp);
     $response = $this->post(route('staff.mfa.setup.complete'), ['code' => $code]);
 
-    $response->assertRedirect(route('staff.mfa.recovery-codes'));
+    $response->assertOk()
+        ->assertSee('کدهای بازیابی')
+        ->assertHeader('Cache-Control', 'no-store, private');
     $this->assertAuthenticatedAs($staff->fresh(), 'staff');
     expect($staff->fresh()->mfa_enabled_at)->not->toBeNull()
         ->and(count($staff->fresh()->mfa_recovery_codes))->toBe(10);
 
-    $this->get(route('staff.mfa.recovery-codes'))->assertOk()->assertSee('کدهای بازیابی');
+    expect(session('staff_mfa_recovery_codes'))->toBeNull();
     $this->get(route('staff.mfa.recovery-codes'))->assertRedirect(route('staff.dashboard'));
 });
 

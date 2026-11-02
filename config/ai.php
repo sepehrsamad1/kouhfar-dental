@@ -10,7 +10,7 @@ return [
             'enabled' => (bool) env('AI_TEXT_ENABLED', false),
             'provider' => env('AI_TEXT_PROVIDER', 'fake'),
             'model' => env('AI_TEXT_MODEL', 'fake-v1'),
-            'model_version' => env('AI_TEXT_MODEL_VERSION', 'fake-v1'),
+            'model_version' => env('AI_TEXT_MODEL_VERSION', env('AI_TEXT_MODEL', 'fake-v1')),
             'timeout_seconds' => (int) env('AI_TEXT_TIMEOUT_SECONDS', 10),
             'fallback' => env('AI_TEXT_FALLBACK'),
         ],

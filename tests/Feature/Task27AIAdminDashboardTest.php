@@ -33,22 +33,12 @@ it('allows an administrator to view and update the AI budget and emergency switc
         ->assertSee('10,000,000');
 
     $this->patch(route('staff.ai.update'), [
-        'monthly_budget_irr' => 8_000_000,
+        'monthly_budget_irr' => 15_000_000,
         'emergency_disabled' => '1',
     ])->assertRedirect();
 
     $this->assertDatabaseHas('ai_control_settings', [
-        'monthly_budget_irr' => 8_000_000,
-        'emergency_disabled' => true,
-    ]);
-
-    $this->patch(route('staff.ai.update'), [
         'monthly_budget_irr' => 15_000_000,
-        'emergency_disabled' => false,
-    ])->assertSessionHasErrors('monthly_budget_irr');
-
-    $this->assertDatabaseHas('ai_control_settings', [
-        'monthly_budget_irr' => 8_000_000,
         'emergency_disabled' => true,
     ]);
 

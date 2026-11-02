@@ -184,8 +184,10 @@ final class AIProviderManager
         $cost = (($input * (float) config('ai.pricing.input_per_1k', 0.0)) + ($output * (float) config('ai.pricing.output_per_1k', 0.0))) / 1000;
         $provider = $this->configuredProvider($capability);
         $model = $this->configuredModel($capability);
-        $inputRate = (float) config("ai.pricing_irr.{$capability}.input_per_1k", 0);
-        $outputRate = (float) config("ai.pricing_irr.{$capability}.output_per_1k", 0);
+        $modelPricing = (array) config('ai.pricing_irr.models', []);
+        $rates = (array) ($modelPricing[$model] ?? config("ai.pricing_irr.{$capability}", []));
+        $inputRate = (float) ($rates['input_per_1k'] ?? 0);
+        $outputRate = (float) ($rates['output_per_1k'] ?? 0);
         $estimatedCostIrr = (($input * $inputRate) + ($output * $outputRate)) / 1000;
 
         $this->usage->record($feature, $input, $output, $cost, null, $provider, $model, $capability, $estimatedCostIrr);

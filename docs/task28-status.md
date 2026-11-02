@@ -1,6 +1,6 @@
 # Task 28 — Security and Privacy Audit
 
-**Status: IMPLEMENTATION ADDED — CI PENDING for the latest commit. TASK ACCEPTANCE REMAINS BLOCKED by SEC-28-003 and SEC-28-012 plus deployment decisions and open verification scope.**
+**Status: BRANCH IMPLEMENTATION CI-VERIFIED — TASK ACCEPTANCE AND PRODUCTION RELEASE REMAIN BLOCKED by SEC-28-003 and SEC-28-012, other open findings, and deployment evidence.**
 
 ## Task identity
 
@@ -42,19 +42,21 @@
 
 ## Automated verification status
 
-The implementation in the latest commit is awaiting its own CI run. The preceding revision passed [CI run #862](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41489395349) passed on branch commit `c06720ddc041ad42786d47f7d74dbbc99b21bab0`.
+Latest branch commit `57d442a9f4267901a4be4f3cd73792bb7f2fbb03` passed [GitHub Actions CI run #886](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41527012433).
 
-- 280 Laravel/Pest tests passed (24,493 assertions), including the new patient authorization, staff deactivation and mocked Kavenegar egress regression tests.
+- 286 Laravel/Pest tests passed (24,520 assertions).
 - 36 Playwright browser tests passed.
 - PostgreSQL migrations passed.
 - `composer audit --locked` passed with no reported advisories.
 - `npm audit --audit-level=high` passed; npm reported zero vulnerabilities.
-- Pint, PHPStan, JavaScript lint, typecheck and production build passed.
-- Full-history Gitleaks scan passed.
+- Pint formatting check and PHPStan static analysis passed.
+- JavaScript lint, typecheck and production asset build passed.
+- Full-history Gitleaks secret scan passed.
+- Responsive screenshot artifacts for Tasks 12, 16, 19, 20, 26 and 27, plus the Task 27 AI evaluation report, were uploaded successfully.
 
-This proves the branch revision at commit `c06720ddc041ad42786d47f7d74dbbc99b21bab0` and its synthetic tests only. The tested branch includes the `__Secure-` cookie-prefix change, its passing regression test, the full ASVS CSV register, the route-level authorization matrix and the consolidated clinic-owner decision register. Run #862 validates the complete branch revision. It is not a production penetration test, live Kavenegar/AI provider test, GitHub secret-alert review, or infrastructure verification.
+This verifies the source revision at commit `57d442a9f4267901a4be4f3cd73792bb7f2fbb03` under the automated CI environment and synthetic test data. It is not a production penetration test, live Kavenegar/AI/SMS provider test, GitHub secret-alert review, independent infrastructure audit or full disaster-recovery exercise. The monthly temporary-table restore check is a controlled integrity/restore check, not a full isolated database recovery drill.
 
-Required CI commands are recorded above. Gitleaks scans the full repository history; any future finding requires investigation and credential rotation/revocation, not merely deleting the current file.
+Gitleaks scans the full repository history. Any future finding requires investigation and credential rotation/revocation, not merely deleting the current file.
 
 ## Open release blockers
 
@@ -65,10 +67,10 @@ Required CI commands are recorded above. Gitleaks scans the full repository hist
 - **Medium — staff idle/absolute session timeout values:** owner approved 15-minute idle and 8-hour absolute limits; configuration defaults are set in this branch. Verify production configuration and registry behavior at deployment.
 - **Medium — production controls unverified:** TLS/proxy, database runtime privileges, private storage ACLs, secret injection, backup/log access and retention are deployment evidence not present in the repository.
 - **Medium — verification scope incomplete:** full route-by-route IDOR matrix, production-like CSRF negative test, browser DOM-XSS corpus and distributed rate-limit behavior remain open.
-- **CI scans passed:** Composer/npm audits and full-history Gitleaks passed in run #820. Supplementary review of GitHub secret alerts, binary images/artifacts and external log sinks remains open.
+- **CI scans passed:** Composer/npm audits and full-history Gitleaks passed in run #886. Supplementary review of GitHub secret alerts, binary images/artifacts and external log sinks remains open.
 
 ## Stop condition
 
-Task 28 must not be merged as complete or marked verified while any high finding remains open or required privacy/retention decisions are unapproved. The next action is to resolve the remaining owner decisions, approve and implement staff MFA, provision the separate backup volume and encryption key, collect operational backup/recovery evidence, and close the remaining medium findings using deployment evidence and a route-by-route verification matrix.
+Task 28 must not be merged as complete or marked verified while any high finding remains open or required privacy/retention decisions are unapproved. The next actions are to resolve the remaining owner decisions, approve and implement staff MFA, provision the separate backup volume and encryption key, collect operational backup/recovery evidence, and close the remaining medium findings using deployment evidence and a route-by-route verification matrix.
 
 No real patient data, patient images, real credentials, production commands, destructive database operations, live AI provider or live SMS provider were used.

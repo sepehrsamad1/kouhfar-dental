@@ -91,6 +91,8 @@ jobs:
         run: npm run build
 
       - name: Check PHP formatting
+        env:
+          COLUMNS: 300
         run: vendor/bin/pint --test
 
       - name: Run PHP static analysis

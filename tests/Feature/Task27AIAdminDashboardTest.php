@@ -1,5 +1,6 @@
 <?php
 
+use App\AIUsage;
 use App\AuditLog;
 use App\StaffUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -22,6 +23,18 @@ it('shows AI usage controls only to administrators', function (): void {
 });
 
 it('allows an administrator to view and update the AI budget and emergency switch', function (): void {
+    AIUsage::factory()->create([
+        'day' => now('UTC')->toDateString(),
+        'feature' => 'assistant',
+        'provider' => 'fake',
+        'model' => 'fake-v1',
+        'capability' => 'text',
+        'input_tokens' => 10,
+        'output_tokens' => 5,
+        'estimated_cost_irr' => 2500,
+        'request_count' => 1,
+    ]);
+
     $admin = task27Staff('admin');
     $this->post(route('staff.login.store'), [
         'email' => $admin->email,
@@ -30,7 +43,10 @@ it('allows an administrator to view and update the AI budget and emergency switc
 
     $this->get(route('staff.ai.index'))->assertOk()
         ->assertSee('مدیریت دستیار هوشمند')
-        ->assertSee('10,000,000');
+        ->assertSee('10,000,000')
+        ->assertSee('مصرف روزانه به تفکیک قابلیت')
+        ->assertSee('assistant')
+        ->assertSee('سرویس خارجی متصل نیست');
 
     $this->patch(route('staff.ai.update'), [
         'monthly_budget_irr' => 15_000_000,

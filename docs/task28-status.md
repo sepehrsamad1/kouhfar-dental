@@ -1,6 +1,6 @@
 # Task 28 — Security and Privacy Audit
 
-**Status: CORE CODE SCOPE CI-VERIFIED; LATEST COOKIE-PREFIX CHANGE AWAITS RETEST; TASK ACCEPTANCE BLOCKED — CI run #820 passed on code commit `653e6d45e960edf391d97d0d1b63030daf4a3399`. The later `__Secure-` cookie-name change and its regression test are awaiting the latest branch CI run. Task 28 closure remains blocked by high findings SEC-28-003 and SEC-28-012 plus owner/deployment decisions.**
+**Status: CURRENT BRANCH CI-PASSED; TASK ACCEPTANCE BLOCKED — CI run #843 passed on commit `38e412e4e7bd8cea2bc3a5635aa22879d541c9f1`. Task 28 remains blocked by high findings SEC-28-003 (retention/purge) and SEC-28-012 (staff MFA), plus owner/deployment decisions and open verification scope.**
 
 ## Task identity
 
@@ -39,9 +39,9 @@
 
 ## Automated verification status
 
-[CI run #820](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41480042377) passed on code commit `653e6d45e960edf391d97d0d1b63030daf4a3399`.
+[CI run #843](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41480042377) passed on code commit `653e6d45e960edf391d97d0d1b63030daf4a3399`.
 
-- 279 Laravel/Pest tests passed (24,491 assertions), including the new patient authorization, staff deactivation and mocked Kavenegar egress regression tests.
+- 280 Laravel/Pest tests passed (24,493 assertions), including the new patient authorization, staff deactivation and mocked Kavenegar egress regression tests.
 - 36 Playwright browser tests passed.
 - PostgreSQL migrations passed.
 - `composer audit --locked` passed with no reported advisories.
@@ -49,7 +49,7 @@
 - Pint, PHPStan, JavaScript lint, typecheck and production build passed.
 - Full-history Gitleaks scan passed.
 
-This proves the code revision at commit `653e6d45e960edf391d97d0d1b63030daf4a3399` and its synthetic tests only. The later cookie-prefix change is pending CI retest. It is not a production penetration test, live Kavenegar/AI provider test, GitHub secret-alert review, or infrastructure verification.
+This proves the code revision at commit `653e6d45e960edf391d97d0d1b63030daf4a3399` and its synthetic tests only. The latest branch commit includes the `__Secure-` cookie-prefix change and its passing regression test. It is not a production penetration test, live Kavenegar/AI provider test, GitHub secret-alert review, or infrastructure verification.
 
 Required CI commands are recorded above. Gitleaks scans the full repository history; any future finding requires investigation and credential rotation/revocation, not merely deleting the current file.
 
@@ -68,6 +68,6 @@ Required CI commands are recorded above. Gitleaks scans the full repository hist
 
 ## Stop condition
 
-Task 28 must not be merged as complete or marked verified while any high finding remains open or required privacy/retention decisions are unapproved. The next action is to obtain the clinic owner's decisions in [task28-owner-decisions.md](security/task28-owner-decisions.md), implement the approved schedules with idempotent purge/anonymization jobs and tests, then rerun the complete CI/security suite.
+Task 28 must not be merged as complete or marked verified while any high finding remains open or required privacy/retention decisions are unapproved. The next action is to obtain the clinic owner's decisions in [task28-owner-decisions.md](security/task28-owner-decisions.md), implement the approved MFA and retention/purge controls with regression tests, and close the remaining medium findings using deployment evidence and a route-by-route verification matrix.
 
 No real patient data, patient images, real credentials, production commands, destructive database operations, live AI provider or live SMS provider were used.

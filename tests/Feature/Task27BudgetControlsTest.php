@@ -19,6 +19,8 @@ function clearTask27AiRateLimits(): void
     $identities = array_filter([
         $request->ip(),
         $request->hasSession() ? $request->session()->getId() : null,
+        '127.0.0.1',
+        'cli',
     ]);
 
     foreach (['budget-test', 'emergency-disable-test', 'model-accounting-test', 'per-model-token-cap', 'per-model-budget-cap', 'unpriced-provider', 'missing-key-provider'] as $feature) {

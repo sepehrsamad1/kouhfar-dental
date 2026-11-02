@@ -26,7 +26,7 @@ final class AssistantGuard
             return 'identity';
         }
 
-        if ($this->hasAny($text, ['تشخیص بیماری', 'بیماری من', 'diagnose', 'diagnosis', 'prescribe', 'prescription', 'نسخه', 'دوز دارو', 'مقدار دارو', 'آنتی‌بیوتیک تجویز', 'antibiotic dose', 'medication dose', 'کدام دندانم عفونت', 'تشخیص قطعی', 'بدون معاینه درمان', 'توده دهانم سرطان', 'علت قطعی درد', 'باید دندانم را بکشم', 'which tooth is infected', 'definitive diagnosis', 'without an examination', 'mouth lump', 'definite cause of my jaw pain', 'must my tooth be extracted'])) {
+        if ($this->hasAny($text, ['تشخیص بیماری', 'بیماری من', 'diagnose', 'diagnosis', 'prescribe', 'prescription', 'نسخه', 'دوز', 'دوز دارو', 'مقدار دارو', 'دارو و دوز', 'دارو و مقدار', 'تجویز دارو', 'دارو تجویز', 'دوز تجویز', 'آنتی‌بیوتیک تجویز', 'antibiotic dose', 'medication dose', 'medication dosage', 'drug dosage', 'dosage', 'کدام دندانم عفونت', 'تشخیص قطعی', 'بدون معاینه درمان', 'توده دهانم سرطان', 'علت قطعی درد', 'باید دندانم را بکشم', 'which tooth is infected', 'definitive diagnosis', 'without an examination', 'mouth lump', 'definite cause of my jaw pain', 'must my tooth be extracted'])) {
             return 'medical_refusal';
         }
 

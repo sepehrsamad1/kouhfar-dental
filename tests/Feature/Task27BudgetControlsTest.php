@@ -18,6 +18,7 @@ beforeEach(function (): void {
         'ai.rate_limits.daily_cost' => 0,
         'ai.pricing_irr.text.input_per_1k' => 1000,
         'ai.pricing_irr.text.output_per_1k' => 2000,
+        'ai.pricing_irr.models.fake-task27-model' => ['input_per_1k' => 1500, 'output_per_1k' => 2500],
     ]);
 });
 

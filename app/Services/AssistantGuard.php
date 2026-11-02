@@ -18,11 +18,11 @@ final class AssistantGuard
             return 'emergency';
         }
 
-        if ($this->hasAny($text, ['hurt myself', 'self-harm', 'harm someone', 'آسیب زدن به خود', 'مواد خطرناک', 'break into the booking', 'جعل گواهی', 'دستکاری پرونده', 'alter a medical record', 'medical record', 'controlled medicine without a prescription', 'fake treatment certificate'])) {
+        if ($this->hasAny($text, ['hurt myself', 'self-harm', 'harm someone', 'آسیب زدن به خود', 'مواد خطرناک', 'break into the booking', 'جعل گواهی', 'دستکاری پرونده', 'alter a medical record', 'medical record', 'controlled medicine without a prescription', 'fake treatment certificate', 'dangerous substances', 'invasive dental treatment at home', 'anesthetize someone without training', 'hide an infection', 'medical equipment to injure'])) {
             return 'prompt_injection';
         }
 
-        if ($this->hasAny($text, ['اسم تو چیست', 'اسم تو چیه', 'تو کی هستی', 'چه کسی هستی', 'چه کسی ساخته', 'خودت را chatgpt', 'what is your name', 'who are you', 'who created you', 'introduce yourself as', 'which ai model', 'act as my doctor', 'claim to be dr.', 'claim to be doctor'])) {
+        if ($this->hasAny($text, ['اسم تو چیست', 'اسم تو چیه', 'تو کی هستی', 'چه کسی هستی', 'چه کسی ساخته', 'خودت را chatgpt', 'what is your name', 'who are you', 'who created you', 'introduce yourself as', 'which ai model', 'claim to be dr.', 'claim to be doctor'])) {
             return 'identity';
         }
 
@@ -30,7 +30,7 @@ final class AssistantGuard
             return 'medical_refusal';
         }
 
-        if ($this->hasAny($text, ['دندان', 'دندانپزشک', 'دندان‌پزشک', 'دندان‌پزشکی', 'دهان', 'لثه', 'ایمپلنت', 'لمینیت', 'کامپوزیت', 'روکش', 'بلیچینگ', 'عصب‌کشی', 'درمان ریشه', 'جرم‌گیری', 'ارتودنسی', 'دندان عقل', 'پوسیدگی', 'پرکردگی', 'نوبت', 'کلینیک', 'سلامت دهان', 'tooth', 'teeth', 'dental', 'dentist', 'dentistry', 'oral health', 'gum', 'implant', 'veneer', 'composite', 'crown', 'whitening', 'root canal', 'filling', 'braces', 'wisdom tooth', 'clinic', 'patient rights', 'toothache', 'tooth pain', 'dental treatment', 'mouth pain', 'breath', 'how much does dental treatment cost', 'is this dental problem dangerous'])) {
+        if ($this->hasAny($text, ['دندان', 'دندانپزشک', 'دندان‌پزشک', 'دندان‌پزشکی', 'دهان', 'لثه', 'ایمپلنت', 'لمینیت', 'کامپوزیت', 'روکش', 'بلیچینگ', 'عصب‌کشی', 'درمان ریشه', 'جرم‌گیری', 'ارتودنسی', 'دندان عقل', 'پوسیدگی', 'پرکردگی', 'نوبت', 'کلینیک', 'سلامت دهان', 'tooth', 'teeth', 'dental', 'dentist', 'dentistry', 'oral health', 'gum', 'implant', 'veneer', 'composite', 'crown', 'whitening', 'root canal', 'filling', 'braces', 'wisdom tooth', 'clinic', 'patient rights', 'toothache', 'tooth pain', 'dental treatment', 'mouth pain', 'breath', 'how much does dental treatment cost', 'is this dental problem dangerous', 'dry mouth', 'tooth pain', 'toothache', 'dental treatment'])) {
             return 'in_scope';
         }
 

@@ -73,7 +73,7 @@ it('never uses draft content as knowledge', function (): void {
     $result = app(AssistantService::class)->respond('راز');
 
     expect($result['status'])
-        ->toBe('unavailable')
+        ->toBe('refused')
         ->and($result['sources'])
         ->toBe([]);
 });

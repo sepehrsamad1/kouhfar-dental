@@ -176,7 +176,7 @@ final class AssistantService
     {
         $content = (string) ($item['title'] ?? '')."\n".(string) ($item['text'] ?? '');
 
-        return preg_match('/(?:ignore\\s+(?:all|previous|prior)\\s+instructions|system\\s+prompt|developer\\s+message|reveal\\s+(?:the|your)\\s+(?:prompt|secret|api\\s*key)|api[_ -]?key\\s*[:=]|password\\s*[:=]|BEGIN [A-Z ]*PRIVATE KEY|دستور(?:ات)?\\s*(?:سیستم|پنهان)|پرامپت\\s*(?:اصلی|مخفی)|کلید\\s*API|رمز عبور\\s*[:=]|اطلاعات\\s*(?:داخلی|محرمانه))/iu', $content) !== 1;
+        return preg_match('/(?:ignore\\s+(?:all\\s+)?(?:previous|prior)\\s+instructions|ignore\\s+all\\s+instructions|(?:تمام|همه)\\s+(?:دستورالعمل(?:های)?|دستورات)\\s+(?:قبلی|پیشین)\\s+را\\s+نادیده|system\\s+prompt|developer\\s+message|reveal\\s+(?:the|your)\\s+(?:prompt|secret|api\\s*key)|api[_ -]?key\\s*[:=]|password\\s*[:=]|BEGIN [A-Z ]*PRIVATE KEY|دستور(?:ات)?\\s*(?:سیستم|پنهان)|پرامپت\\s*(?:اصلی|مخفی)|کلید\\s*API|رمز عبور\\s*[:=]|اطلاعات\\s*(?:داخلی|محرمانه))/iu', $content) !== 1;
     }
 
     private function normalizeQuestion(string $text): string

@@ -34,3 +34,6 @@ The decisions below are separate from that approved media policy. No real patien
 - Once decisions are approved, implement idempotent purge/anonymization jobs with audit-safe behavior and regression tests, then re-run the security suite.
 
 **Approval record:** placeholder — clinic owner to confirm each OD-28 decision, the approver identity/role and approval date. Do not put patient data or personal credentials in this document.
+
+
+| OD-28-11 | Staff multi-factor authentication | ASVS v5.0.0 Level 2 V6.3.3 is not met: staff authentication currently uses email/password only. | Approve the required second factor: SMS OTP through the clinic-approved provider, authenticator-app TOTP, or another explicitly approved mechanism. Also approve enrollment, lost-device recovery, account recovery, backup codes (if any), administrator reset authority, and behavior when the factor provider is unavailable. Task 15 provider integration is pending; no factor or recovery policy will be invented. |

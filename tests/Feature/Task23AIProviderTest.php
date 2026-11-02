@@ -34,7 +34,8 @@ it('keeps AI disabled by default', function (): void {
     $result = app(AIProviderManager::class)->generateText('assistant', 'sensitive patient prompt');
 
     expect($result['status'])->toBe('disabled')
-        ->and(AIRequest::query()->count())->toBe(0)
+        ->and(AIRequest::query()->count())->toBe(1)
+        ->and(AIRequest::query()->sole()->status)->toBe('disabled')
         ->and(AIUsage::query()->count())->toBe(0);
 });
 

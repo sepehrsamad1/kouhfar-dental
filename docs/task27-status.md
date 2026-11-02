@@ -41,7 +41,7 @@ See task27-owner-decisions.md. Approved: 100 Persian + 100 English evaluation ca
 
 ## CI verification — 2026-11-02
 
-<badge>CI PASS</badge> [GitHub Actions run #778](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41436715873) verified code commit `02737dd47274f990dd7e297979fb46c00c9f3973`.
+**CI PASS** [GitHub Actions run #778](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41436715873) verified code commit `02737dd47274f990dd7e297979fb46c00c9f3973`.
 
 ### Automated evidence
 

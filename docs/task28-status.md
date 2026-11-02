@@ -1,6 +1,6 @@
 # Task 28 — Security and Privacy Audit
 
-**Status: APPLICATION CODE AND CI CONFIGURATION PASSED — CI run #843 passed on code commit `38e412e4e7bd8cea2bc3a5635aa22879d541c9f1`; subsequent audit-document/register updates are being checked by CI run #858 on the documentation revision. TASK ACCEPTANCE REMAINS BLOCKED. Task 28 remains blocked by high findings SEC-28-003 (retention/purge) and SEC-28-012 (staff MFA), plus owner/deployment decisions and open verification scope.**
+**Status: LATEST BRANCH REVISION CI-PASSED — CI run #860 passed on commit `dcea4e623065571d8669b9e098e9680077dfbb83`. TASK ACCEPTANCE REMAINS BLOCKED by SEC-28-003 and SEC-28-012 plus owner/deployment decisions and open verification scope. Task 28 remains blocked by high findings SEC-28-003 (retention/purge) and SEC-28-012 (staff MFA), plus owner/deployment decisions and open verification scope.**
 
 ## Task identity
 
@@ -39,7 +39,7 @@
 
 ## Automated verification status
 
-[CI run #843](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41482954664) passed on code commit `38e412e4e7bd8cea2bc3a5635aa22879d541c9f1`.
+[CI run #860](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41488251971) passed on branch commit `dcea4e623065571d8669b9e098e9680077dfbb83`.
 
 - 280 Laravel/Pest tests passed (24,493 assertions), including the new patient authorization, staff deactivation and mocked Kavenegar egress regression tests.
 - 36 Playwright browser tests passed.
@@ -49,7 +49,7 @@
 - Pint, PHPStan, JavaScript lint, typecheck and production build passed.
 - Full-history Gitleaks scan passed.
 
-This proves the code revision at commit `38e412e4e7bd8cea2bc3a5635aa22879d541c9f1` and its synthetic tests only. The tested code commit includes the `__Secure-` cookie-prefix change and its passing regression test. Later changes to audit documentation and the ASVS evidence CSV do not change application code; their CI validation is tracked separately. It is not a production penetration test, live Kavenegar/AI provider test, GitHub secret-alert review, or infrastructure verification.
+This proves the code revision at commit `38e412e4e7bd8cea2bc3a5635aa22879d541c9f1` and its synthetic tests only. The tested branch includes the `__Secure-` cookie-prefix change, its passing regression test, the full ASVS CSV register and the route-level authorization matrix. Run #860 validates the complete branch revision. It is not a production penetration test, live Kavenegar/AI provider test, GitHub secret-alert review, or infrastructure verification.
 
 Required CI commands are recorded above. Gitleaks scans the full repository history; any future finding requires investigation and credential rotation/revocation, not merely deleting the current file.
 

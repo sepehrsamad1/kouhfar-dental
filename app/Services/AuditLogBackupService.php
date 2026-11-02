@@ -36,6 +36,7 @@ final class AuditLogBackupService
         try {
             $this->writeAll($output, self::MAGIC);
             $connection = DB::connection();
+            $outerTransactionLevel = $connection->transactionLevel();
             $connection->beginTransaction();
             $recordCount = 0;
             $sequence = 0;
@@ -44,7 +45,7 @@ final class AuditLogBackupService
             try {
                 // A repeatable-read snapshot prevents rows inserted during export from
                 // being skipped by UUID keyset pagination on PostgreSQL.
-                if ($connection->getDriverName() === 'pgsql') {
+                if ($outerTransactionLevel === 0 && $connection->getDriverName() === 'pgsql') {
                     $connection->statement('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ');
                 }
 

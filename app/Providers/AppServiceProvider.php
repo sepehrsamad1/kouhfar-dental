@@ -31,6 +31,7 @@ use App\Services\AIRequestRecorder;
 use App\Services\AIUsageRecorder;
 use App\Services\Clock;
 use App\Services\SmsProviderManager;
+use App\Services\OtpProviderManager;
 use App\Services\SystemClock;
 use App\StaffUser;
 use App\WorkingHour;
@@ -43,6 +44,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(SmsProviderManager::class);
+        $this->app->singleton(OtpProviderManager::class);
         $this->app->singleton(SmsChannel::class, fn ($app): SmsChannel => new SmsChannel(
             $app->make(SmsProviderManager::class)->resolve(),
         ));

@@ -92,3 +92,40 @@ it('reports provider quota as unknown when the fake provider exposes no billing 
         ->and($summary['provider_quota_alert_percentages'])->toBe([80, 95]);
 });
 
+
+it('serves an exact approved FAQ without provider usage when the monthly budget is exhausted', function (): void {
+    $this->seed(DentalFaqTestingSeeder::class);
+    $faq = ContentItem::query()
+        ->where('content_key', 'dental-faq-KDF-001')
+        ->where('locale', 'fa')
+        ->firstOrFail();
+
+    AIUsage::factory()->create([
+        'day' => now('UTC')->toDateString(),
+        'estimated_cost_irr' => 10_000_000,
+    ]);
+
+    $response = app(AssistantService::class)->respond($faq->bodyData()['title'], 'fa');
+
+    expect($response['status'])->toBe('succeeded')
+        ->and($response['answer'])->toBe($faq->bodyData()['text'])
+        ->and($response['sources'][0]['content_key'])->toBe('dental-faq-KDF-001')
+        ->and(AIRequest::query()->count())->toBe(0)
+        ->and(AIUsage::query()->count())->toBe(1);
+});
+
+it('honours emergency disable before serving a direct FAQ answer', function (): void {
+    $this->seed(DentalFaqTestingSeeder::class);
+    $faq = ContentItem::query()
+        ->where('content_key', 'dental-faq-KDF-001')
+        ->where('locale', 'fa')
+        ->firstOrFail();
+
+    app(AIControlService::class)->settings()->update(['emergency_disabled' => true]);
+
+    $response = app(AssistantService::class)->respond($faq->bodyData()['title'], 'fa');
+
+    expect($response['status'])->toBe('disabled')
+        ->and($response['answer'])->toContain('در حال به‌روزرسانی')
+        ->and(AIRequest::query()->count())->toBe(0);
+});

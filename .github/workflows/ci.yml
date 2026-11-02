@@ -86,7 +86,7 @@ jobs:
         run: npm run build
 
       - name: Check PHP formatting
-        run: vendor/bin/pint --test
+        run: vendor/bin/pint --test --diff
 
       - name: Run PHP static analysis
         run: vendor/bin/phpstan analyse

@@ -132,3 +132,15 @@ it('honours emergency disable before serving a direct FAQ answer', function (): 
         ->and($response['answer'])->toContain('در حال به‌روزرسانی')
         ->and(AIRequest::query()->count())->toBe(0);
 });
+
+it('does not send messages containing patient identifiers to the provider', function (): void {
+    $response = app(AssistantService::class)->respond(
+        'برای درد دندان راهنمایی می‌خواهم. شماره تماس من 09123456789 و ایمیلم patient@example.invalid است.',
+        'fa',
+    );
+
+    expect($response['status'])->toBe('refused')
+        ->and($response['answer'])->toContain('حریم خصوصی')
+        ->and(AIRequest::query()->count())->toBe(0)
+        ->and(AIUsage::query()->count())->toBe(0);
+});

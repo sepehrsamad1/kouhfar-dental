@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\AIRequest;
-use App\StaffUser;
 use App\AIUsage;
+use App\StaffUser;
 use App\Services\AIControlService;
 use App\Support\AuditLogger;
 use Illuminate\Contracts\View\View;

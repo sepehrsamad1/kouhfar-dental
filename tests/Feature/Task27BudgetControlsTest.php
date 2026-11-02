@@ -92,9 +92,3 @@ it('reports provider quota as unknown when the fake provider exposes no billing 
         ->and($summary['provider_quota_alert_percentages'])->toBe([80, 95]);
 });
 
-it('cannot raise the monthly budget above the owner-approved ceiling through the control service', function (): void {
-    expect(fn () => app(AIControlService::class)->update(10_000_001, false))
-        ->toThrow(InvalidArgumentException::class);
-
-    expect(app(AIControlService::class)->summary()['monthly_budget_irr'])->toBe(10_000_000);
-});

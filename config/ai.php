@@ -9,6 +9,7 @@ return [
         'text' => [
             'enabled' => (bool) env('AI_TEXT_ENABLED', false),
             'provider' => env('AI_TEXT_PROVIDER', 'fake'),
+            'api_key' => env('AI_TEXT_API_KEY'),
             'model' => env('AI_TEXT_MODEL', 'fake-v1'),
             'model_version' => env('AI_TEXT_MODEL_VERSION', env('AI_TEXT_MODEL', 'fake-v1')),
             'timeout_seconds' => (int) env('AI_TEXT_TIMEOUT_SECONDS', 10),
@@ -17,12 +18,14 @@ return [
         'image_analysis' => [
             'enabled' => (bool) env('AI_IMAGE_ANALYSIS_ENABLED', false),
             'provider' => env('AI_IMAGE_ANALYSIS_PROVIDER', 'fake'),
+            'api_key' => env('AI_IMAGE_ANALYSIS_API_KEY'),
             'model' => env('AI_IMAGE_ANALYSIS_MODEL', 'fake-v1'),
             'timeout_seconds' => (int) env('AI_IMAGE_ANALYSIS_TIMEOUT_SECONDS', 15),
         ],
         'image_transformation' => [
             'enabled' => (bool) env('AI_IMAGE_TRANSFORMATION_ENABLED', false),
             'provider' => env('AI_IMAGE_TRANSFORMATION_PROVIDER', 'fake'),
+            'api_key' => env('AI_IMAGE_TRANSFORMATION_API_KEY'),
             'model' => env('AI_IMAGE_TRANSFORMATION_MODEL', 'fake-v1'),
             'timeout_seconds' => (int) env('AI_IMAGE_TRANSFORMATION_TIMEOUT_SECONDS', 30),
         ],

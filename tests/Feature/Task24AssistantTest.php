@@ -108,6 +108,7 @@ it('refuses diagnosis, prescription, dosage and unsupported pricing', function (
     foreach ([
         'من چه بیماری دارم؟ تشخیص بده',
         'برای من آنتی بیوتیک و دوزش را تجویز کن',
+        'برای من دارو و دوز تجویز کن',
         'قیمت درمان چقدر است؟',
     ] as $question) {
         $result = app(AssistantService::class)->respond($question);

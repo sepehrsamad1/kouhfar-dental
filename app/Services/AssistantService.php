@@ -25,7 +25,9 @@ final class AssistantService
         $this->controls = $controls;
     }
 
-    /** @return array{status:string,answer:string,sources:array<int,array<string,mixed>>} */
+    /**
+     * @return  array{status: string, answer: string, sources: array<int, array<string, mixed>>}
+     */
     public function respond(string $message, string $locale = 'fa'): array
     {
         $message = trim($message);
@@ -180,8 +182,8 @@ final class AssistantService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $references
-     * @return array<int, array<string, mixed>>
+     * @param  array<int, array<string, mixed>>  $references
+     * @return  array<int, array<string, mixed>>
      */
     private function safeSourceReferences(array $references): array
     {

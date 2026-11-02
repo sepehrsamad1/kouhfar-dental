@@ -159,3 +159,11 @@ jobs:
           name: task26-smart-smile-responsive-screenshots
           path: test-results/task26-smart-smile-*.png
           if-no-files-found: ignore
+
+      - name: Upload Task 27 AI admin responsive screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: task27-ai-admin-responsive-screenshots
+          path: test-results/task27-ai-admin-*.png
+          if-no-files-found: ignore

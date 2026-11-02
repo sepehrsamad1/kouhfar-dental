@@ -6,6 +6,7 @@ namespace App\Services;
 
 use App\AIControlSetting;
 use App\AIUsage;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 final class AIControlService

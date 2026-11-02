@@ -7,7 +7,7 @@ Last updated: 2026-11-02
 Status: IN PROGRESS / BLOCKED — branch `task/28-security-privacy-audit`; no Task 28 CI evidence recorded yet. Production use with real patient data remains blocked.
 
 - Target: OWASP ASVS v5.0.0 Level 2.
-- Code remediations and regression tests: login redirect validation, production-default Secure session cookies, SQL-looking search input and mass-assignment tests.
+- Code remediations and regression tests: login redirect validation, production-default Secure session cookies, practitioner patient-edit/mobile-reveal privilege boundary, SQL-looking search input and mass-assignment tests.
 - CI additions: Composer audit, npm audit and full-history Gitleaks scan.
 - Audit artifacts: [Task 28 status](task28-status.md), [ASVS checklist](security/task28-asvs-checklist.md), [threat model](security/task28-threat-model.md), [privacy impact assessment](security/task28-privacy-impact-assessment.md), [data inventory](security/task28-data-inventory.md), [third-party flows](security/task28-third-party-flows.md), [findings register](security/task28-findings.md).
 - Release blockers: owner-approved retention for operational/audit/queue/consent/AI/log/backup records; Smart Smile consent-token TTL; session timeout policy; production infrastructure evidence; pending security/dependency scan results.

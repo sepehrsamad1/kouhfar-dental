@@ -1,0 +1,66 @@
+@extends('layouts.staff')
+
+@section('title', 'مدیریت دستیار هوشمند')
+
+@section('content')
+<main class="staff-config">
+    <h1>مدیریت دستیار هوشمند</h1>
+    <p>هزینه تخمینی بر اساس تعرفه‌های پیکربندی‌شده و توکن‌های ثبت‌شده محاسبه می‌شود. این عدد صورتحساب قطعی ارائه‌دهنده نیست.</p>
+    <section>
+        <h2>مصرف ماه جاری</h2>
+        <p>مصرف تخمینی: {{ number_format($summary['monthly_spend_irr']) }} ریال</p>
+        <p>سقف ماهانه: {{ number_format($summary['monthly_budget_irr']) }} ریال</p>
+        <p>درصد مصرف: {{ $summary['percentage'] }}٪</p>
+        <p>وضعیت درخواست‌های جدید: {{ $summary['blocked'] ? 'مسدود' : 'مجاز طبق کنترل بودجه' }}</p>
+        <p>وضعیت سهمیه واقعی ارائه‌دهنده: نامشخص؛ ارائه‌دهنده آزمایشی اطلاعات اعتبار یا سهمیه واقعی ارائه نمی‌کند.</p>
+        @if ($summary['alerts'] !== [])
+            <ul role="status">
+                @foreach ($summary['alerts'] as $level)
+                    <li>هشدار مصرف بودجه: {{ $level }}٪ سقف ماهانه مصرف شده است.</li>
+                @endforeach
+            </ul>
+        @endif
+    </section>
+
+    <section>
+        <h2>تنظیمات کنترل (فقط مدیر)</h2>
+        <form method="post" action="{{ route('staff.ai.update') }}">
+            @csrf
+            @method('PATCH')
+            <label>سقف بودجه ماهانه (ریال)
+                <input type="number" name="monthly_budget_irr" min="1000" max="1000000000000" value="{{ old('monthly_budget_irr', $settings->monthly_budget_irr) }}" required>
+            </label>
+            <label><input type="checkbox" name="emergency_disabled" value="1" @checked(old('emergency_disabled', $settings->emergency_disabled))> غیرفعال‌سازی اضطراری دستیار هوشمند</label>
+            <button type="submit">ذخیره کنترل‌ها</button>
+        </form>
+        <p>آستانه‌های مالی: ۵۰٪، ۸۰٪ و ۱۰۰٪. در ۱۰۰٪ یا با فعال‌بودن غیرفعال‌سازی اضطراری، فراخوانی جدید مدل متوقف می‌شود.</p>
+        <p>آستانه سهمیه مدل: ۸۰٪ و ۹۵٪؛ در پیکربندی فعلی قابل دریافت از ارائه‌دهنده نیست و به‌صورت «نامشخص» باقی می‌ماند.</p>
+    </section>
+
+    <section>
+        <h2>مصرف به تفکیک ارائه‌دهنده و مدل</h2>
+        @forelse ($usage as $row)
+            <article>
+                <h3>{{ $row->provider }} / {{ $row->model }} — {{ $row->capability }}</h3>
+                <p>توکن ورودی: {{ number_format((int) $row->input_tokens) }}</p>
+                <p>توکن خروجی: {{ number_format((int) $row->output_tokens) }}</p>
+                <p>مجموع توکن: {{ number_format((int) $row->input_tokens + (int) $row->output_tokens) }}</p>
+                <p>درخواست‌های موفق ثبت‌شده: {{ number_format((int) $row->request_count) }}</p>
+                <p>هزینه تخمینی: {{ number_format((float) $row->estimated_cost_irr, 2) }} ریال</p>
+                <p>هزینه واقعی ارائه‌دهنده: {{ $row->actual_cost_irr === null ? 'در دسترس نیست' : number_format((float) $row->actual_cost_irr, 2).' ریال' }}</p>
+            </article>
+        @empty
+            <p>در چرخه جاری هنوز مصرفی ثبت نشده است.</p>
+        @endforelse
+    </section>
+
+    <section>
+        <h2>درخواست‌های موفق و ناموفق</h2>
+        @forelse ($requests as $row)
+            <p>{{ $row->provider }} / {{ $row->model }} / {{ $row->capability }} — {{ $row->status }}: {{ $row->request_count }}</p>
+        @empty
+            <p>در چرخه جاری درخواستی ثبت نشده است.</p>
+        @endforelse
+    </section>
+</main>
+@endsection

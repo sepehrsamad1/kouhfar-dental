@@ -4,14 +4,14 @@ Last updated: 2026-11-02
 
 ## Task 28 — Security and Privacy Audit
 
-Status: IN PROGRESS / BLOCKED — branch `task/28-security-privacy-audit`; no Task 28 CI evidence recorded yet. Production use with real patient data remains blocked.
+Status: CI-VERIFIED FOR THE CURRENT CODE SCOPE / TASK ACCEPTANCE BLOCKED — branch `task/28-security-privacy-audit`; CI run #820 passed on code commit `653e6d45e960edf391d97d0d1b63030daf4a3399`. Production use with real patient data remains blocked.
 
-- Target: OWASP ASVS v5.0.0 Level 2.
-- Code remediations and regression tests: login redirect validation, production-default Secure session cookies, practitioner patient-edit/mobile-reveal privilege boundary, immediate session revocation on staff deactivation, SQL-looking search input and mass-assignment tests.
-- CI additions: Composer audit, npm audit and full-history Gitleaks scan.
-- Audit artifacts: [Task 28 status](task28-status.md), [ASVS checklist](security/task28-asvs-checklist.md), [threat model](security/task28-threat-model.md), [privacy impact assessment](security/task28-privacy-impact-assessment.md), [data inventory](security/task28-data-inventory.md), [third-party flows](security/task28-third-party-flows.md), [findings register](security/task28-findings.md).
-- Release blockers: owner-approved retention for operational/audit/queue/consent/AI/log/backup records; Smart Smile consent-token TTL; session timeout policy; production infrastructure evidence; pending security/dependency scan results.
-- Do not mark Task 28 verified or complete until all critical/high findings are closed and required privacy/retention decisions are approved.
+- Target: OWASP ASVS v5.0.0 Level 2 (scoped engineering assessment, not certification).
+- Code remediations and regression tests: login redirect validation, production-default Secure session cookies, practitioner patient-edit/mobile-reveal privilege boundary, immediate session revocation on staff deactivation, SQL-looking search input, mass-assignment defenses and Kavenegar SSRF/redirect/credential-leak controls.
+- CI evidence: 279 Laravel/Pest tests passed (24,491 assertions); 36 Playwright tests passed; PostgreSQL migrations, Pint, PHPStan, JavaScript lint/typecheck/build, Composer audit, npm audit and full-history Gitleaks passed.
+- Audit artifacts: [Task 28 status](task28-status.md), [ASVS checklist](security/task28-asvs-checklist.md), [threat model](security/task28-threat-model.md), [privacy impact assessment](security/task28-privacy-impact-assessment.md), [data inventory](security/task28-data-inventory.md), [third-party flows](security/task28-third-party-flows.md), [findings register](security/task28-findings.md), [clinic-owner decisions](security/task28-owner-decisions.md).
+- Release blockers: open high retention finding SEC-28-003; Smart Smile consent-token TTL; staff session timeout policy; production infrastructure evidence; full route-by-route IDOR/CSRF/DOM-XSS/distributed rate-limit verification; supplementary secret-surface review.
+- Do not merge Task 28 as complete or mark it verified for production until all critical/high findings are closed and required privacy/retention decisions are approved.
 
 ## Task 27 — AI evaluation, safety gates, dental knowledge and cost controls
 

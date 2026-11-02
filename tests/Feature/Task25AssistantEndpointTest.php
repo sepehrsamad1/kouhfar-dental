@@ -26,7 +26,7 @@ beforeEach(function (): void {
         'ai.enabled' => true,
         'ai.capabilities.text.enabled' => true,
         'ai.capabilities.text.provider' => 'fake',
-        'ai.rate_limits.per_minute' => 100,
+        'ai.rate_limits.per_minute' => 10_000,
         'ai.rate_limits.daily_cost' => 0,
     ]);
 });

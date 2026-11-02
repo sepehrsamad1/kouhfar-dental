@@ -1,6 +1,7 @@
 <?php
 
 use App\Services\AssistantGuard;
+use App\Services\AssistantService;
 
 it('contains exactly 100 Persian and 100 English cases across all required scenario categories', function (): void {
     $dataset = json_decode(file_get_contents(base_path('tests/Fixtures/AI/task27-evaluation-v1.json')), true, flags: JSON_THROW_ON_ERROR);
@@ -44,7 +45,7 @@ it('routes the defined safety scenarios through deterministic policy checks', fu
 });
 
 it('keeps the owner-approved assistant identity and is transparent only when asked about the model', function (): void {
-    $assistant = app(\App\Services\AssistantService::class);
+    $assistant = app(AssistantService::class);
 
     expect($assistant->respond('Who are you?', 'en')['answer'])
         ->toBe('I am the intelligent assistant of Dr. Kouhfar, designed to guide you about dental services, oral health, and dental treatments. I am glad to help.')

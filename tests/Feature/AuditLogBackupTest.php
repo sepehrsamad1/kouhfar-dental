@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 uses(RefreshDatabase::class);
 
 beforeEach(function (): void {
-    config()->set('audit_log_backup.path', storage_path('framework/testing/audit-backups-'.Str::uuid()));
+    config()->set('audit_log_backup.path', sys_get_temp_dir().DIRECTORY_SEPARATOR.'kouhfar-audit-backups-'.Str::uuid());
     config()->set('audit_log_backup.encryption_key', base64_encode(random_bytes(32)));
     config()->set('audit_log_backup.retention_days', 90);
     config()->set('audit_log_backup.chunk_bytes', 4096);
@@ -29,7 +29,7 @@ it('creates an authenticated encrypted backup and verifies it without changing l
 
     $this->artisan('audit-logs:backup')->assertExitCode(0);
     $this->artisan('audit-logs:verify-latest')
-        ->expectsOutputToContain('3 audit-log record(s) authenticated and validated')
+        ->expectsOutputToContain('3 audit-log record(s) restored into a temporary table and validated')
         ->assertExitCode(0);
 
     $files = glob(config('audit_log_backup.path').DIRECTORY_SEPARATOR.'audit-logs-*.kfa') ?: [];
@@ -46,7 +46,7 @@ it('rejects a backup whose authenticated ciphertext has been modified', function
 
     $files = glob(config('audit_log_backup.path').DIRECTORY_SEPARATOR.'audit-logs-*.kfa') ?: [];
     $contents = file_get_contents($files[0]);
-    $contents[24] = chr(ord($contents[24]) ^ 1);
+    $contents[40] = chr(ord($contents[40]) ^ 1);
     file_put_contents($files[0], $contents);
 
     $this->artisan('audit-logs:verify-latest')

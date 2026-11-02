@@ -23,7 +23,7 @@
 - Added ASVS Level 2 MFA finding: staff authentication is currently password-only; owner must approve the second factor and recovery flow before this can be implemented.
 - Recorded owner-approved patient/CRM and original audit-log indefinite retention; no automatic deletion of these records is authorized by the owner decision.
 - Added Laravel-native audit-log backup commands using a consistent database snapshot, AES-256-GCM authenticated chunk encryption, an explicitly configured absolute backup path, 90-day minimum backup-copy retention, and no database-specific dump utility.
-- Scheduled encrypted audit-log backups daily at 02:00 Asia/Tehran and file-level recovery verification monthly at 04:00 on day 1. Added an operational runbook and regression tests for encryption, tamper detection, missing configuration and backup-copy retention.
+- Scheduled encrypted audit-log backups daily at 02:00 Asia/Tehran and temporary-table restore verification monthly at 04:00 on day 1. Added an operational runbook and regression tests for encryption, tamper detection, missing configuration and backup-copy retention.
 - Added Composer lockfile audit and npm lockfile audit to CI.
 - Added Gitleaks full-history secret scan to CI using a full checkout.
 - Added threat model, ASVS checklist, preliminary privacy impact assessment, data inventory/retention register, third-party flow inventory, findings register and clinic-owner decision register.

@@ -34,7 +34,7 @@ php artisan audit-logs:backup
 php artisan audit-logs:verify-latest
 ```
 
-The backup command reads the existing `audit_logs` table through Laravel's database connection, so it does not depend on `pg_dump` or the SQLite CLI. It exports a consistent database snapshot directly into an encrypted file, using independently authenticated AES-256-GCM chunks, and publishes the completed backup atomically. It only prunes encrypted backup copies older than the configured retention period after a successful backup. No plaintext backup file is written to disk. Original database rows are never deleted.
+The backup command reads the existing `audit_logs` table through Laravel's database connection, so it does not depend on `pg_dump` or the SQLite CLI. It exports a consistent database snapshot directly into an encrypted file, using independently authenticated AES-256-GCM chunks using a per-backup derived key and random salt, and publishes the completed backup atomically. It only prunes encrypted backup copies older than the configured retention period after a successful backup. No plaintext backup file is written to disk. Original database rows are never deleted.
 
 The verification command decrypts and authenticates each chunk in memory, checks the authenticated end marker, and validates each JSON record without writing plaintext to disk or modifying the live database. This is an automated file-level recovery verification; it is not a substitute for a separately controlled full disaster-recovery exercise against an isolated database environment.
 

@@ -16,6 +16,8 @@ final class AuditLogBackupService
 
     private const TAG_BYTES = 16;
 
+    private const SALT_BYTES = 16;
+
     /** @return array{file: string, records: int, pruned: int} */
     public function createBackup(): array
     {
@@ -27,16 +29,22 @@ final class AuditLogBackupService
         $filename = 'audit-logs-'.now('UTC')->format('Ymd\THis\Z').'-'.bin2hex(random_bytes(8)).'.kfa';
         $finalPath = $root.DIRECTORY_SEPARATOR.$filename;
         $partPath = $finalPath.'.part';
-        $output = fopen($partPath, 'xb');
+        $previousUmask = umask(0077);
+
+        try {
+            $output = fopen($partPath, 'xb');
+        } finally {
+            umask($previousUmask);
+        }
 
         if ($output === false) {
             throw new RuntimeException('Could not create the encrypted audit-log backup file.');
         }
 
-        @chmod($partPath, 0600);
-
         try {
-            $this->writeAll($output, self::MAGIC);
+            $salt = random_bytes(self::SALT_BYTES);
+            $fileKey = hash_hmac('sha256', self::MAGIC.$salt, $key, true);
+            $this->writeAll($output, self::MAGIC.$salt);
             $connection = DB::connection();
             $outerTransactionLevel = $connection->transactionLevel();
             $connection->beginTransaction();
@@ -56,7 +64,7 @@ final class AuditLogBackupService
                     ->orderBy('id')
                     ->chunkById(500, function ($rows) use (
                         $output,
-                        $key,
+                        $fileKey,
                         $chunkBytes,
                         &$buffer,
                         &$sequence,
@@ -71,7 +79,7 @@ final class AuditLogBackupService
                             while (strlen($buffer) >= $chunkBytes) {
                                 $chunk = substr($buffer, 0, $chunkBytes);
                                 $buffer = substr($buffer, $chunkBytes);
-                                $this->writeEncryptedFrame($output, $chunk, $key, $sequence++);
+                                $this->writeEncryptedFrame($output, $chunk, $fileKey, $sequence++);
                             }
 
                             $recordCount++;
@@ -79,11 +87,11 @@ final class AuditLogBackupService
                     }, 'id');
 
                 if ($buffer !== '') {
-                    $this->writeEncryptedFrame($output, $buffer, $key, $sequence++);
+                    $this->writeEncryptedFrame($output, $buffer, $fileKey, $sequence++);
                 }
 
                 // Authenticated empty frame marks the exact end and detects truncation.
-                $this->writeEncryptedFrame($output, '', $key, $sequence);
+                $this->writeEncryptedFrame($output, '', $fileKey, $sequence);
                 $connection->commit();
             } catch (Throwable $exception) {
                 $connection->rollBack();
@@ -101,7 +109,6 @@ final class AuditLogBackupService
                 throw new RuntimeException('Could not atomically publish the encrypted audit-log backup.');
             }
 
-            @chmod($finalPath, 0600);
             $pruned = $this->pruneExpiredBackups($root, $retentionDays);
 
             return ['file' => $filename, 'records' => $recordCount, 'pruned' => $pruned];
@@ -110,8 +117,8 @@ final class AuditLogBackupService
                 fclose($output);
             }
 
-            if (is_file($partPath)) {
-                @unlink($partPath);
+            if (is_file($partPath) && is_writable($partPath)) {
+                unlink($partPath);
             }
 
             throw $exception;
@@ -130,10 +137,56 @@ final class AuditLogBackupService
 
         usort($files, static fn (string $left, string $right): int => (filemtime($right) ?: 0) <=> (filemtime($left) ?: 0));
 
-        return [
-            'file' => basename($files[0]),
-            'records' => $this->decryptAndValidate($files[0], $this->encryptionKey(), $this->chunkBytes()),
-        ];
+        $connection = DB::connection();
+        $table = 'audit_log_restore_'.bin2hex(random_bytes(8));
+        $createTableSql = match ($connection->getDriverName()) {
+            'pgsql' => "CREATE TEMPORARY TABLE {$table} (
+                id UUID PRIMARY KEY,
+                actor_id UUID NULL,
+                action VARCHAR(120) NOT NULL,
+                target_type VARCHAR(120) NULL,
+                target_id UUID NULL,
+                occurred_at TIMESTAMPTZ NOT NULL,
+                request_id UUID NULL,
+                meta JSONB NULL
+            )",
+            'sqlite' => "CREATE TEMPORARY TABLE {$table} (
+                id CHAR(36) PRIMARY KEY,
+                actor_id CHAR(36) NULL,
+                action VARCHAR(120) NOT NULL,
+                target_type VARCHAR(120) NULL,
+                target_id CHAR(36) NULL,
+                occurred_at TEXT NOT NULL,
+                request_id CHAR(36) NULL,
+                meta TEXT NULL
+            )",
+            default => throw new RuntimeException('Audit-log recovery verification supports PostgreSQL and SQLite only.'),
+        };
+
+        $connection->statement($createTableSql);
+
+        try {
+            $records = $this->decryptAndRestore(
+                $files[0],
+                $this->encryptionKey(),
+                $this->chunkBytes(),
+                $connection,
+                $table
+            );
+            $restoredRecords = (int) $connection->table($table)->count();
+
+            if ($records !== $restoredRecords) {
+                throw new RuntimeException('The temporary audit-log restore count does not match the authenticated backup.');
+            }
+
+            return ['file' => basename($files[0]), 'records' => $restoredRecords];
+        } finally {
+            try {
+                $connection->statement("DROP TABLE IF EXISTS {$table}");
+            } catch (Throwable $cleanupException) {
+                report($cleanupException);
+            }
+        }
     }
 
     private function backupRoot(): string
@@ -153,6 +206,12 @@ final class AuditLogBackupService
 
         if ($root === false || ! is_dir($root) || ! is_writable($root) || $root === DIRECTORY_SEPARATOR || $isWindowsDriveRoot) {
             throw new RuntimeException('The configured audit-log backup directory is not writable or is unsafe.');
+        }
+
+        $permissions = fileperms($root);
+
+        if (DIRECTORY_SEPARATOR === '/' && ($permissions === false || ($permissions & 0077) !== 0)) {
+            throw new RuntimeException('The audit-log backup directory must not grant group or other access.');
         }
 
         return rtrim($root, DIRECTORY_SEPARATOR);
@@ -233,7 +292,7 @@ final class AuditLogBackupService
         $this->writeAll($output, $nonce.pack('N', $length).$ciphertext.$tag);
     }
 
-    private function decryptAndValidate(string $path, string $key, int $chunkBytes): int
+    private function decryptAndRestore(string $path, string $key, int $chunkBytes, \Illuminate\Database\Connection $connection, string $table): int
     {
         $input = fopen($path, 'rb');
 
@@ -246,6 +305,13 @@ final class AuditLogBackupService
                 throw new RuntimeException('The audit-log backup format is invalid.');
             }
 
+            $salt = $this->readExactly($input, self::SALT_BYTES);
+
+            if (strlen($salt) !== self::SALT_BYTES) {
+                throw new RuntimeException('The audit-log backup encryption header is truncated.');
+            }
+
+            $fileKey = hash_hmac('sha256', self::MAGIC.$salt, $key, true);
             $sequence = 0;
             $pendingLine = '';
             $recordCount = 0;
@@ -279,7 +345,7 @@ final class AuditLogBackupService
                 $plain = openssl_decrypt(
                     $ciphertext,
                     'aes-256-gcm',
-                    $key,
+                    $fileKey,
                     OPENSSL_RAW_DATA,
                     $nonce,
                     $tag,
@@ -298,7 +364,7 @@ final class AuditLogBackupService
                     }
 
                     if ($pendingLine !== '') {
-                        $this->validateRecord($pendingLine);
+                        $this->restoreRecord($pendingLine, $connection, $table);
                         $recordCount++;
                     }
 
@@ -313,7 +379,7 @@ final class AuditLogBackupService
                     $pendingLine = substr($pendingLine, $newline + 1);
 
                     if ($line !== '') {
-                        $this->validateRecord($line);
+                        $this->restoreRecord($line, $connection, $table);
                         $recordCount++;
                     }
                 }
@@ -331,7 +397,7 @@ final class AuditLogBackupService
         }
     }
 
-    private function validateRecord(string $line): void
+    private function restoreRecord(string $line, \Illuminate\Database\Connection $connection, string $table): void
     {
         $record = json_decode($line, true, 512, JSON_THROW_ON_ERROR);
 
@@ -341,6 +407,25 @@ final class AuditLogBackupService
             || ! is_string($record['occurred_at'] ?? null)) {
             throw new RuntimeException('The decrypted audit-log backup contains an invalid record.');
         }
+
+        foreach (['actor_id', 'target_type', 'target_id', 'request_id', 'meta'] as $nullableField) {
+            if (array_key_exists($nullableField, $record)
+                && $record[$nullableField] !== null
+                && ! is_string($record[$nullableField])) {
+                throw new RuntimeException('The decrypted audit-log backup contains an invalid nullable field.');
+            }
+        }
+
+        $connection->table($table)->insert([
+            'id' => $record['id'],
+            'actor_id' => $record['actor_id'] ?? null,
+            'action' => $record['action'],
+            'target_type' => $record['target_type'] ?? null,
+            'target_id' => $record['target_id'] ?? null,
+            'occurred_at' => $record['occurred_at'],
+            'request_id' => $record['request_id'] ?? null,
+            'meta' => $record['meta'] ?? null,
+        ]);
     }
 
     private function pruneExpiredBackups(string $root, int $retentionDays): int
@@ -351,7 +436,7 @@ final class AuditLogBackupService
         foreach (glob($root.DIRECTORY_SEPARATOR.'audit-logs-*.kfa') ?: [] as $path) {
             $modifiedAt = filemtime($path);
 
-            if ($modifiedAt !== false && $modifiedAt < $cutoff && @unlink($path)) {
+            if ($modifiedAt !== false && $modifiedAt < $cutoff && is_writable($path) && unlink($path)) {
                 $deleted++;
             }
         }

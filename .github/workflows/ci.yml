@@ -44,6 +44,7 @@ jobs:
       SMART_SMILE_ENABLED: true
       SMART_SMILE_RELEASE_GATE: true
       AI_ENABLED: true
+      AI_TEXT_ENABLED: true
       AI_IMAGE_ANALYSIS_ENABLED: true
 
     steps:

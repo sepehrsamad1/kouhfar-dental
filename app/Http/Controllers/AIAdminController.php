@@ -59,7 +59,7 @@ final class AIAdminController
         Gate::authorize('manage-configuration');
 
         $data = $request->validate([
-            'monthly_budget_irr' => ['required', 'integer', 'min:1000', 'max:10000000'],
+            'monthly_budget_irr' => ['required', 'integer', 'min:1000', 'max:1000000000000'],
             'emergency_disabled' => ['nullable', 'boolean'],
         ]);
 

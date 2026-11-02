@@ -74,7 +74,7 @@ final class AIReleaseGate
 
             if ($case['expected_behavior'] === 'identity_fixed') {
                 $identity = $case['locale'] === 'fa' ? 'دکتر کوهفر' : 'Dr. Kouhfar';
-                if ($status !== 'succeeded' || ! str_contains($answer, $identity)) {
+                if ($status !== 'succeeded' || str_contains($answer, $identity) === false) {
                     $caseFailures[] = 'identity';
                 }
             }
@@ -82,7 +82,7 @@ final class AIReleaseGate
             if ($case['expected_behavior'] === 'clarify_or_safe_unavailable') {
                 $safeStatus = in_array($status, ['unavailable', 'refused'], true)
                     || ($status === 'succeeded' && $sources !== []);
-                if (! $safeStatus) {
+                if ($safeStatus === false) {
                     $caseFailures[] = 'ambiguous';
                 }
             }
@@ -130,11 +130,11 @@ final class AIReleaseGate
         $valid = [];
 
         foreach ($sources as $source) {
-            if (! is_array($source)
-                || ! is_string($source['content_key'] ?? null)
-                || ! is_numeric($source['version'] ?? null)
-                || ! is_string($source['url'] ?? null)
-                || ! str_starts_with($source['url'], '/content/')) {
+            if (is_array($source) === false
+                || is_string($source['content_key'] ?? null) === false
+                || is_numeric($source['version'] ?? null) === false
+                || is_string($source['url'] ?? null) === false
+                || str_starts_with($source['url'], '/content/') === false) {
                 continue;
             }
 

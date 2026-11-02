@@ -110,10 +110,15 @@
       "url": "https://www.kapd.ir/faq/",
       "organization": "Iranian Pediatric Dentistry Association, Khorasan branch"
     },
-    "TUMS_DENTAL": {
-      "title": "Tehran University of Medical Sciences — Faculty of Dentistry",
-      "url": "https://dentistry.tums.ac.ir/",
-      "organization": "Tehran University of Medical Sciences"
+    "SHAHID_BEHESHTI_PREVENTION": {
+      "title": "Shahid Beheshti Dental Hospital — Patient education: prevention and oral hygiene",
+      "url": "https://app.shdh.ir/پیشگیری-و-بهداشت/",
+      "organization": "Shahid Beheshti Dental Hospital"
+    },
+    "SHAHID_BEHESHTI_ORTHODONTICS": {
+      "title": "Shahid Beheshti Dental Hospital — Orthodontic patient education",
+      "url": "https://app.shdh.ir/آموزش-بیماران-ارتودنسی2/",
+      "organization": "Shahid Beheshti Dental Hospital"
     }
   },
   "faqs": [
@@ -127,7 +132,8 @@
       "sources": [
         "CDC_ORAL_HEALTH",
         "NHS_ORAL_CARE",
-        "ADA_HOME_CARE"
+        "ADA_HOME_CARE",
+        "SHAHID_BEHESHTI_PREVENTION"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -144,7 +150,8 @@
       "sources": [
         "CDC_ORAL_HEALTH",
         "NHS_ORAL_CARE",
-        "ADA_HOME_CARE"
+        "ADA_HOME_CARE",
+        "SHAHID_BEHESHTI_PREVENTION"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -192,7 +199,8 @@
       "answer_en": "Fluoride helps protect enamel; the right toothpaste type and amount for a child depend on age and ability to spit.",
       "sources": [
         "IRAN_PEDIATRIC_DENTISTRY",
-        "CDC_ORAL_HEALTH"
+        "CDC_ORAL_HEALTH",
+        "SHAHID_BEHESHTI_PREVENTION"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -224,7 +232,8 @@
       "answer_en": "Use floss or an interdental brush gently each day to remove plaque and debris from spaces a toothbrush cannot reach.",
       "sources": [
         "NHS_ORAL_CARE",
-        "ADA_HOME_CARE"
+        "ADA_HOME_CARE",
+        "SHAHID_BEHESHTI_PREVENTION"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -354,7 +363,8 @@
       "answer_en": "A dentist sets check-up intervals based on decay risk, gum health, treatment history, and individual needs.",
       "sources": [
         "NHS_CHECKUPS",
-        "CDC_ORAL_HEALTH"
+        "CDC_ORAL_HEALTH",
+        "SHAHID_BEHESHTI_PREVENTION"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -1296,7 +1306,7 @@
       "answer_en": "Orthodontic appliances apply controlled, gradual forces so teeth move into new positions over time.",
       "sources": [
         "NHS_DENTAL_TREATMENTS",
-        "TUMS_DENTAL"
+        "SHAHID_BEHESHTI_ORTHODONTICS"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -1312,7 +1322,7 @@
       "answer_en": "Periodic adjustments monitor tooth movement and gum health and allow the plan to be refined.",
       "sources": [
         "NHS_DENTAL_TREATMENTS",
-        "TUMS_DENTAL"
+        "SHAHID_BEHESHTI_ORTHODONTICS"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -1328,7 +1338,7 @@
       "answer_en": "Case complexity, appliance adherence, broken brackets, and biological tooth response can affect treatment duration.",
       "sources": [
         "NHS_DENTAL_TREATMENTS",
-        "TUMS_DENTAL"
+        "SHAHID_BEHESHTI_ORTHODONTICS"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -1344,7 +1354,7 @@
       "answer_en": "Attend adjustment visits as planned and do not change aligner or elastic wear time without guidance.",
       "sources": [
         "NHS_DENTAL_TREATMENTS",
-        "TUMS_DENTAL"
+        "SHAHID_BEHESHTI_ORTHODONTICS"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -1360,7 +1370,7 @@
       "answer_en": "Yes. Orthodontics is not limited to children, but gum and bone health, restorations, and the problem must be assessed.",
       "sources": [
         "NHS_DENTAL_TREATMENTS",
-        "TUMS_DENTAL"
+        "SHAHID_BEHESHTI_ORTHODONTICS"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -1376,7 +1386,7 @@
       "answer_en": "In adults, active gum disease or decay should be managed before or alongside orthodontic treatment.",
       "sources": [
         "NHS_DENTAL_TREATMENTS",
-        "TUMS_DENTAL"
+        "SHAHID_BEHESHTI_ORTHODONTICS"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -1391,7 +1401,8 @@
       "answer_fa": "قرمزی، تورم و خونریزی لثه هنگام مسواک‌زدن می‌تواند از نشانه‌های التهاب باشد؛ بیماری لثه گاهی در ابتدا درد ندارد.",
       "answer_en": "Redness, swelling, and bleeding during brushing can be signs of inflammation; gum disease may cause no pain early on.",
       "sources": [
-        "NIDCR_GUM_DISEASE"
+        "NIDCR_GUM_DISEASE",
+        "SHAHID_BEHESHTI_PREVENTION"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",
@@ -1406,7 +1417,8 @@
       "answer_fa": "اگر این نشانه‌ها تکرار می‌شوند، معاینه بگیرید؛ جرم سخت‌شده فقط با پاک‌سازی حرفه‌ای برداشته می‌شود.",
       "answer_en": "If these signs recur, arrange an assessment; hardened tartar requires professional cleaning.",
       "sources": [
-        "NIDCR_GUM_DISEASE"
+        "NIDCR_GUM_DISEASE",
+        "SHAHID_BEHESHTI_PREVENTION"
       ],
       "confidence": "high_for_general_educational_information",
       "review_status": "draft_for_clinician_review",

@@ -23,8 +23,27 @@ final class DentalFaqDraftSeeder extends Seeder
         $path = resource_path('knowledge/dental-faq-v1.json');
         $document = json_decode((string) file_get_contents($path), true, flags: JSON_THROW_ON_ERROR);
 
-        if (($document['version'] ?? null) !== '1.0.0' || count($document['faqs'] ?? []) !== 100) {
-            throw new RuntimeException('Dental FAQ dataset version or item count is invalid.');
+        $faqs = $document['faqs'] ?? [];
+        $sources = $document['sources'] ?? [];
+
+        if (($document['version'] ?? null) !== '1.0.0' || count($faqs) !== 100 || is_array($sources) === false) {
+            throw new RuntimeException('Dental FAQ dataset version, source registry, or item count is invalid.');
+        }
+
+        foreach (['question_fa', 'question_en', 'answer_fa', 'answer_en'] as $field) {
+            $values = array_column($faqs, $field);
+            if (count($values) !== 100 || count(array_unique($values)) !== 100) {
+                throw new RuntimeException("Dental FAQ {$field} values must be 100 distinct entries.");
+            }
+        }
+
+        foreach ($faqs as $faq) {
+            if (($faq['review_status'] ?? null) !== 'draft_for_clinician_review'
+                || ! is_array($faq['sources'] ?? null)
+                || $faq['sources'] === []
+                || array_diff($faq['sources'], array_keys($sources)) !== []) {
+                throw new RuntimeException('Every dental FAQ must remain a sourced clinician-review draft.');
+            }
         }
 
         DB::transaction(function () use ($document): void {

@@ -239,3 +239,18 @@ it('enforces independent per-model token and IRR ceilings with separate warning 
         ->and(AIRequest::query()->where('status', 'blocked')->count())->toBe(2)
         ->and(AIUsage::query()->count())->toBe(1);
 });
+
+it('blocks a non-fake provider when model-specific pricing is not configured', function (): void {
+    config([
+        'ai.capabilities.text.provider' => 'external-placeholder',
+        'ai.capabilities.text.model' => 'external-model-v1',
+        'ai.pricing_irr.models' => [],
+        'ai.pricing_irr.text' => ['input_per_1k' => 0, 'output_per_1k' => 0],
+    ]);
+
+    $response = app(AIProviderManager::class)->generateText('unpriced-provider', 'must not reach provider');
+
+    expect($response['status'])->toBe('rate_limited')
+        ->and(AIRequest::query()->sole()->status)->toBe('blocked')
+        ->and(AIUsage::query()->count())->toBe(0);
+});

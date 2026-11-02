@@ -85,7 +85,10 @@ final class AIControlService
         $budget = max(1, (int) $settings->monthly_budget_irr);
         $percentage = (int) floor(($spend / $budget) * 100);
         $provider = (string) config('ai.capabilities.text.provider', 'fake');
+        $credentialsConfigured = is_string(config('ai.capabilities.text.api_key'))
+            && trim((string) config('ai.capabilities.text.api_key')) !== '';
         $modelLimits = [];
+        $modelUsage = $this->monthlyModelUsage();
 
         $tokenLimits = (array) $settings->provider_token_limits;
         $budgetLimits = (array) $settings->model_budget_limits_irr;
@@ -109,7 +112,7 @@ final class AIControlService
                 $capabilityProvider = (string) config("ai.capabilities.{$capability}.provider", 'fake');
                 $capabilityKey = config("ai.capabilities.{$capability}.api_key");
 
-                if ($capabilityProvider !== 'fake' && (! is_string($capabilityKey) || trim($capabilityKey) === '')) {
+                if ($capabilityProvider !== 'fake' && (!is_string($capabilityKey) || trim($capabilityKey) === '')) {
                     $modelCredentialsConfigured = false;
                 }
             }
@@ -146,8 +149,9 @@ final class AIControlService
 
         return [
             'provider' => $provider,
+            'provider_credentials_configured' => $credentialsConfigured,
             'model' => (string) config('ai.capabilities.text.model', 'fake-v1'),
-            'provider_connection_status' => $provider === 'fake' ? 'fake' : 'unverified',
+            'provider_connection_status' => $provider === 'fake' ? 'fake' : ($credentialsConfigured ? 'unverified' : 'missing_credentials'),
             'monthly_spend_irr' => $spend,
             'monthly_budget_irr' => $settings->monthly_budget_irr,
             'percentage' => $percentage,
@@ -187,7 +191,7 @@ final class AIControlService
     private function monthlyModelUsage(): Collection
     {
         return AIUsage::query()
-            ->selectRaw('model, COALESCE(SUM(input_tokens + output_tokens), 0) AS tokens_used, COALESCE(SUM(estimated_cost_irr), 0) AS spend_irr')
+            ->selectRaw('model, COALESCE(SUM(input_tokens + output_tokens), 0) AS tokens_used, COALESCE(SUM(COALESCE(actual_cost_irr, estimated_cost_irr)), 0) AS spend_irr')
             ->whereBetween('day', [now('UTC')->startOfMonth()->toDateString(), now('UTC')->endOfMonth()->toDateString()])
             ->groupBy('model')
             ->get()

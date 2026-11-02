@@ -88,6 +88,17 @@ it('records model-specific token counts and estimated IRR cost without claiming 
         ->and($request->actual_cost_irr)->toBeNull();
 });
 
+it('uses actual provider billing instead of an estimate when actual cost is available', function (): void {
+    AIUsage::factory()->create([
+        'day' => now('UTC')->toDateString(),
+        'estimated_cost_irr' => 2_000_000,
+        'actual_cost_irr' => 10_500_000,
+    ]);
+
+    expect(app(AIControlService::class)->monthlySpendIrr())->toBe(10_500_000)
+        ->and(app(AIControlService::class)->summary()['blocked'])->toBeTrue();
+});
+
 it('reports provider quota as unknown when the fake provider exposes no billing API', function (): void {
     $summary = app(AIControlService::class)->summary();
 

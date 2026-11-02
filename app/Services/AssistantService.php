@@ -75,7 +75,9 @@ final class AssistantService
             return ['status' => 'disabled', 'answer' => $this->serviceUnavailableText($locale), 'sources' => []];
         }
 
-        $knowledgeItems = $this->knowledge->forKnowledge($locale);
+        $knowledgeItems = $this->knowledge->forKnowledge($locale)
+            ->filter(fn (array $item): bool => $this->isSafeKnowledgeItem($item))
+            ->values();
         $exactFaq = $knowledgeItems->first(fn (array $item): bool => str_starts_with($item['content_key'], 'dental-faq-')
             && $this->normalizeQuestion($item['title']) === $this->normalizeQuestion($message));
 
@@ -168,6 +170,13 @@ final class AssistantService
     {
 
         return preg_match('/(تشخیص\s*(بیماری|من)|من\s*چه\s*بیماری|what\s+(disease|condition)\s+do\s+i\s+have|diagnos(e|is|ing)|prescri(be|ption)|نسخه|دوز|مقدار\s*(دارو|آنتی.?بیوتیک)|آنتی.?بیوتیک\s*(بخور|مصرف)|antibiotic\s+dose|medication\s+dose|قیمت|هزینه|price|competitor|مقایسه\s*(با|با کلینیک)|ضمانت\s*(درمان|نتیجه))/iu', $message) === 1;
+    }
+
+    private function isSafeKnowledgeItem(array $item): bool
+    {
+        $content = (string) ($item['title'] ?? '')."\n".(string) ($item['text'] ?? '');
+
+        return preg_match('/(?:ignore\\s+(?:all|previous|prior)\\s+instructions|system\\s+prompt|developer\\s+message|reveal\\s+(?:the|your)\\s+(?:prompt|secret|api\\s*key)|api[_ -]?key\\s*[:=]|password\\s*[:=]|BEGIN [A-Z ]*PRIVATE KEY|دستور(?:ات)?\\s*(?:سیستم|پنهان)|پرامپت\\s*(?:اصلی|مخفی)|کلید\\s*API|رمز عبور\\s*[:=]|اطلاعات\\s*(?:داخلی|محرمانه))/iu', $content) !== 1;
     }
 
     private function normalizeQuestion(string $text): string

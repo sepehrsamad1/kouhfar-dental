@@ -86,12 +86,7 @@ jobs:
         run: npm run build
 
       - name: Check PHP formatting
-        run: |
-          vendor/bin/pint --test --diff || {
-            vendor/bin/pint
-            git diff -- . ':!composer.lock'
-            exit 1
-          }
+        run: vendor/bin/pint --test
 
       - name: Run PHP static analysis
         run: vendor/bin/phpstan analyse

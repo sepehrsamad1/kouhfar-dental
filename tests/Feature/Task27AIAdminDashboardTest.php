@@ -1,6 +1,7 @@
 <?php
 
 use App\AIUsage;
+use App\Services\AIControlService;
 use App\AuditLog;
 use App\StaffUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -35,6 +36,11 @@ it('allows an administrator to view and update the AI budget and emergency switc
         'request_count' => 1,
     ]);
 
+    app(AIControlService::class)->settings()->update([
+        'provider_token_limits' => ['fake-v1' => 15],
+        'model_budget_limits_irr' => ['fake-v1' => 3_000],
+    ]);
+
     $admin = task27Staff('admin');
     $this->post(route('staff.login.store'), [
         'email' => $admin->email,
@@ -48,7 +54,9 @@ it('allows an administrator to view and update the AI budget and emergency switc
         ->assertSee('assistant')
         ->assertSee('سرویس خارجی متصل نیست')
         ->assertSee('سقف داخلی توکن ماهانه')
-        ->assertSee('سقف مالی ماهانه مدل');
+        ->assertSee('سقف مالی ماهانه مدل')
+        ->assertSee('هشدار مصرف توکن مدل fake-v1')
+        ->assertSee('هشدار بودجه مدل fake-v1');
 
     $this->patch(route('staff.ai.update'), [
         'monthly_budget_irr' => 15_000_000,

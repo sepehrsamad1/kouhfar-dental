@@ -29,22 +29,30 @@ it('blocks provider calls at the approved monthly IRR budget ceiling', function 
     $settings = app(AIControlService::class)->settings();
     $settings->update(['monthly_budget_irr' => 10_000_000]);
 
-    AIUsage::factory()->create([
-        'day' => now('UTC')->toDateString(),
+    AIRequest::factory()->create([
+        'status' => 'succeeded',
+        'provider' => 'fake',
+        'model' => 'fake-task27-model',
+        'capability' => 'text',
+        'created_at' => now('UTC')->toImmutable(),
         'estimated_cost_irr' => 10_000_000,
     ]);
 
     $result = app(AIProviderManager::class)->generateText('budget-test', 'must not reach provider');
 
     expect($result['status'])->toBe('rate_limited')
-        ->and(AIRequest::query()->count())->toBe(1)
-        ->and(AIRequest::query()->sole()->status)->toBe('blocked')
+        ->and(AIRequest::query()->where('status', 'blocked')->count())->toBe(1)
+        ->and(AIRequest::query()->where('status', 'succeeded')->count())->toBe(1)
         ->and(app(AIControlService::class)->summary()['blocked'])->toBeTrue();
 });
 
 it('raises the approved 50, 80 and 100 percent financial thresholds from fake usage data', function (): void {
-    $usage = AIUsage::factory()->create([
-        'day' => now('UTC')->toDateString(),
+    $usage = AIRequest::factory()->create([
+        'status' => 'succeeded',
+        'provider' => 'fake',
+        'model' => 'fake-task27-model',
+        'capability' => 'text',
+        'created_at' => now('UTC')->toImmutable(),
         'estimated_cost_irr' => 5_000_000,
     ]);
 
@@ -89,8 +97,12 @@ it('records model-specific token counts and estimated IRR cost without claiming 
 });
 
 it('uses actual provider billing instead of an estimate when actual cost is available', function (): void {
-    AIUsage::factory()->create([
-        'day' => now('UTC')->toDateString(),
+    AIRequest::factory()->create([
+        'status' => 'succeeded',
+        'provider' => 'fake',
+        'model' => 'fake-task27-model',
+        'capability' => 'text',
+        'created_at' => now('UTC')->toImmutable(),
         'estimated_cost_irr' => 2_000_000,
         'actual_cost_irr' => 10_500_000,
     ]);
@@ -103,9 +115,12 @@ it('uses actual provider billing for an independent model budget when available'
     $settings = app(AIControlService::class)->settings();
     $settings->update(['model_budget_limits_irr' => ['fake-task27-model' => 5_000]]);
 
-    AIUsage::factory()->create([
-        'day' => now('UTC')->toDateString(),
+    AIRequest::factory()->create([
+        'status' => 'succeeded',
+        'provider' => 'fake',
         'model' => 'fake-task27-model',
+        'capability' => 'text',
+        'created_at' => now('UTC')->toImmutable(),
         'estimated_cost_irr' => 2_000,
         'actual_cost_irr' => 5_500,
     ]);
@@ -128,19 +143,24 @@ it('serves an exact approved FAQ without provider usage when the monthly budget 
         ->where('locale', 'fa')
         ->firstOrFail();
 
-    AIUsage::factory()->create([
-        'day' => now('UTC')->toDateString(),
+    AIRequest::factory()->create([
+        'status' => 'succeeded',
+        'provider' => 'fake',
+        'model' => 'fake-task27-model',
+        'capability' => 'text',
+        'created_at' => now('UTC')->toImmutable(),
         'estimated_cost_irr' => 10_000_000,
     ]);
 
+    $requestCount = AIRequest::query()->count();
     $response = app(AssistantService::class)->respond($faq->bodyData()['title'], 'fa');
 
     expect($response['status'])->toBe('succeeded')
         ->and($response['answer'])->toBe($faq->bodyData()['text'])
         ->and($response['sources'][0]['content_key'])->toBe('dental-faq-KDF-001')
         ->and($response['sources'][0]['references'][0]['url'])->toStartWith('https://')
-        ->and(AIRequest::query()->count())->toBe(0)
-        ->and(AIUsage::query()->count())->toBe(1);
+        ->and(AIRequest::query()->count())->toBe($requestCount)
+        ->and(AIUsage::query()->count())->toBe(0);
 });
 
 it('honours emergency disable before serving a direct FAQ answer', function (): void {
@@ -201,16 +221,16 @@ it('enforces independent per-model token and IRR ceilings with separate warning 
         'model_budget_limits_irr' => ['fake-task27-model' => 5_000],
     ]);
 
-    $usage = AIUsage::factory()->create([
-        'day' => now('UTC')->toDateString(),
+    $usage = AIRequest::factory()->create([
+        'status' => 'succeeded',
         'feature' => 'assistant',
         'provider' => 'fake',
         'model' => 'fake-task27-model',
         'capability' => 'text',
+        'created_at' => now('UTC')->toImmutable(),
         'input_tokens' => 70,
         'output_tokens' => 20,
         'estimated_cost_irr' => 4_000,
-        'request_count' => 1,
     ]);
 
     $model = app(AIControlService::class)->summary()['model_limits']['fake-task27-model'];
@@ -238,7 +258,7 @@ it('enforces independent per-model token and IRR ceilings with separate warning 
 
     expect($budgetLimited['status'])->toBe('rate_limited')
         ->and(AIRequest::query()->where('status', 'blocked')->count())->toBe(2)
-        ->and(AIUsage::query()->count())->toBe(1);
+        ->and(AIUsage::query()->count())->toBe(0);
 });
 
 it('blocks a non-fake provider when model-specific pricing is not configured', function (): void {

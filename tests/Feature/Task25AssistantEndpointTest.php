@@ -13,7 +13,7 @@ uses(RefreshDatabase::class);
 beforeEach(function (): void {
     Cache::flush();
     $request = request();
-    foreach (array_filter([$request->ip(), $request->hasSession() ? $request->session()->getId() : null]) as $identity) {
+    foreach (array_filter([$request->ip(), $request->hasSession() ? $request->session()->getId() : null, '127.0.0.1', 'cli']) as $identity) {
         RateLimiter::clear('ai:'.substr(hash('sha256', 'assistant|'.$identity), 0, 24).':'.now('UTC')->format('Y-m-d-H-i'));
     }
     $authenticatedUser = request()->user('staff');

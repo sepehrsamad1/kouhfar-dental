@@ -79,7 +79,9 @@ final class AIControlService
         return true;
     }
 
-    /** @return array<string, mixed> */
+    /**
+     * @return  array<string, mixed>
+     */
     public function summary(): array
     {
         $settings = $this->settings();
@@ -167,8 +169,8 @@ final class AIControlService
     }
 
     /**
-     * @param array<string, int> $providerTokenLimits
-     * @param array<string, int> $modelBudgetLimitsIrr
+     * @param  array<string, int>  $providerTokenLimits
+     * @param  array<string, int>  $modelBudgetLimitsIrr
      */
     public function update(
         int $monthlyBudgetIrr,
@@ -188,7 +190,7 @@ final class AIControlService
     }
 
     /**
-     * @return Collection<string, object{tokens_used: int, spend_irr: float}>
+     * @return  Collection<string, object{tokens_used: int, spend_irr: float}>
      */
     private function monthlyModelUsage(): Collection
     {
@@ -201,7 +203,9 @@ final class AIControlService
             ->keyBy('model');
     }
 
-    /** @return array<string, list<string>> */
+    /**
+     * @return  array<string, list<string>>
+     */
     private function configuredModels(): array
     {
         $models = [];

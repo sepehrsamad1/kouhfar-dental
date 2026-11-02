@@ -25,7 +25,7 @@ final class AIControlService
     {
         $spend = AIRequest::query()
             ->whereBetween('created_at', [now('UTC')->startOfMonth(), now('UTC')->endOfMonth()])
-            ->whereIn('status', ['succeeded'])
+            ->whereIn('status', ['succeeded', 'failed'])
             ->selectRaw('COALESCE(SUM(COALESCE(actual_cost_irr, estimated_cost_irr)), 0) AS spend')
             ->value('spend');
 
@@ -37,6 +37,7 @@ final class AIControlService
         return (int) AIRequest::query()
             ->where('model', $model)
             ->whereBetween('created_at', [now('UTC')->startOfMonth(), now('UTC')->endOfMonth()])
+            ->whereIn('status', ['succeeded', 'failed'])
             ->selectRaw('COALESCE(SUM(input_tokens + output_tokens), 0) AS total')
             ->value('total');
     }
@@ -194,6 +195,7 @@ final class AIControlService
         return AIRequest::query()
             ->selectRaw('model, COALESCE(SUM(input_tokens + output_tokens), 0) AS tokens_used, COALESCE(SUM(COALESCE(actual_cost_irr, estimated_cost_irr)), 0) AS spend_irr')
             ->whereBetween('created_at', [now('UTC')->startOfMonth(), now('UTC')->endOfMonth()])
+            ->whereIn('status', ['succeeded', 'failed'])
             ->groupBy('model')
             ->get()
             ->keyBy('model');

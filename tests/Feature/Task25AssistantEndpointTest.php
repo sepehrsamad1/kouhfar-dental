@@ -3,6 +3,7 @@
 use App\ContentItem;
 use App\Enums\ContentItemStatus;
 use App\Enums\ContentKind;
+use App\StaffUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\RateLimiter;
@@ -15,7 +16,8 @@ beforeEach(function (): void {
     foreach (array_filter([$request->ip(), $request->hasSession() ? $request->session()->getId() : null]) as $identity) {
         RateLimiter::clear('ai:'.substr(hash('sha256', 'assistant|'.$identity), 0, 24).':'.now('UTC')->format('Y-m-d-H-i'));
     }
-    $identity = request()->user('staff')?->getAuthIdentifier();
+    $authenticatedUser = request()->user('staff');
+    $identity = $authenticatedUser instanceof StaffUser ? $authenticatedUser->getAuthIdentifier() : null;
     if ($identity === null) {
         $identity = request()->hasSession() ? request()->session()->getId() : request()->ip();
     }

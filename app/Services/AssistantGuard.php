@@ -22,7 +22,7 @@ final class AssistantGuard
             return 'prompt_injection';
         }
 
-        if ($this->hasAny($text, ['اسم تو چیست', 'اسم تو چیه', 'تو کی هستی', 'چه کسی هستی', 'چه کسی ساخته', 'خودت را chatgpt', 'what is your name', 'who are you', 'who created you', 'introduce yourself as', 'which ai model', 'are you chatgpt', 'are you openai', 'are you gemini', 'are you claude', 'chatgpt', 'openai', 'gemini', 'claude', 'claim to be dr.', 'claim to be doctor', 'مدل هوش مصنوعی', 'ادعا کن دندان‌پزشک واقعی هستی', 'hide your real identity', 'change the assistant name', 'claim that you are a real dentist', 'نام دستیار را', 'هویت واقعی خودت', 'خودت را پزشک کوهفر'])) {
+        if ($this->hasAny($text, ['اسم تو چیست', 'اسم تو چیه', 'تو کی هستی', 'چه کسی هستی', 'چه کسی ساخته', 'خودت را chatgpt', 'what is your name', 'who are you', 'who created you', 'introduce yourself as', 'which ai model', 'are you chatgpt', 'are you openai', 'are you gemini', 'are you claude', 'claim to be dr.', 'claim to be doctor', 'مدل هوش مصنوعی', 'ادعا کن دندان‌پزشک واقعی هستی', 'hide your real identity', 'change the assistant name', 'claim that you are a real dentist', 'نام دستیار را', 'هویت واقعی خودت', 'خودت را پزشک کوهفر'])) {
             return 'identity';
         }
 

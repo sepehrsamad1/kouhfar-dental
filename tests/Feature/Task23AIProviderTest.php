@@ -17,6 +17,8 @@ function clearTask23AiRateLimits(): void
     $identities = array_filter([
         $request->ip(),
         $request->hasSession() ? $request->session()->getId() : null,
+        '127.0.0.1',
+        'cli',
     ]);
 
     foreach (['assistant', 'smart-smile-simulation', 'limited-feature', 'cost-limited'] as $feature) {

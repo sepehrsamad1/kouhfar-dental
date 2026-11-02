@@ -44,7 +44,7 @@ it('routes the defined safety scenarios through deterministic policy checks', fu
 });
 
 it('keeps the owner-approved assistant identity and is transparent only when asked about the model', function (): void {
-    $assistant = app(\\App\\Services\\AssistantService::class);
+    $assistant = app(\App\Services\AssistantService::class);
 
     expect($assistant->respond('Who are you?', 'en')['answer'])
         ->toBe('I am the intelligent assistant of Dr. Kouhfar, designed to guide you about dental services, oral health, and dental treatments. I am glad to help.')

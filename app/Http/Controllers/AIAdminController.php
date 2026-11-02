@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\AIControlSetting;
 use App\AIRequest;
 use App\AIUsage;
 use App\Services\AIControlService;

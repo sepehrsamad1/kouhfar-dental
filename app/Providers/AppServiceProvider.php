@@ -25,6 +25,7 @@ use App\Practitioner;
 use App\Resource;
 use App\ScheduleException;
 use App\Service;
+use App\Services\AIControlService;
 use App\Services\AIProviderManager;
 use App\Services\AIRequestRecorder;
 use App\Services\AIUsageRecorder;
@@ -34,6 +35,7 @@ use App\Services\SystemClock;
 use App\StaffUser;
 use App\WorkingHour;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -49,10 +51,14 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(AIRequestRecorder::class);
         $this->app->singleton(AIUsageRecorder::class);
         $this->app->singleton(AIProviderManager::class);
+        $this->app->singleton(AIControlService::class);
     }
 
     public function boot(): void
     {
+        View::composer('layouts.staff', function ($view): void {
+            $view->with('aiControlSummary', app(AIControlService::class)->summary());
+        });
         Gate::policy(Patient::class, PatientPolicy::class);
         Gate::policy(Appointment::class, AppointmentPolicy::class);
         Gate::policy(Service::class, ServicePolicy::class);

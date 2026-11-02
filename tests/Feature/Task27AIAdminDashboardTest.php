@@ -1,10 +1,10 @@
 <?php
 
+use App\AIControlSetting;
 use App\AIRequest;
 use App\AIUsage;
-use App\AIControlSetting;
-use App\Services\AIControlService;
 use App\AuditLog;
+use App\Services\AIControlService;
 use App\StaffUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 

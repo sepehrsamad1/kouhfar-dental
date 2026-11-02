@@ -243,8 +243,8 @@ final class AssistantService
     {
 
         return $locale === 'en'
-            ? 'This may be a dental or medical emergency. If you have severe difficulty breathing or swallowing, rapidly increasing swelling of the mouth, face, throat or neck, uncontrolled heavy bleeding, loss of consciousness, or serious facial trauma, seek emergency medical care immediately. In Iran, call 115 for emergency medical services. Do not wait for an AI response or routine dental appointment.'
-            : 'این علائم می‌توانند نشانه یک وضعیت اورژانسی دندانپزشکی یا پزشکی باشند. اگر دچار مشکل شدید در تنفس یا بلع، تورم سریع یا شدید دهان، صورت، گلو یا گردن، خونریزی شدید و کنترل‌نشده، بیهوشی یا آسیب شدید صورت شده‌اید، فوراً به خدمات اورژانسی پزشکی مراجعه کنید. در ایران برای خدمات اورژانس پزشکی با ۱۱۵ تماس بگیرید. برای پاسخ هوش مصنوعی یا نوبت معمول دندانپزشکی منتظر نمانید.';
+            ? 'This may be a dental or medical emergency. If you have severe difficulty breathing or swallowing, rapidly increasing swelling of the mouth, face, throat or neck, uncontrolled heavy bleeding, loss of consciousness, or serious facial trauma, seek emergency medical care immediately. Contact local emergency medical services or go to the nearest emergency department. Do not wait for an AI response or routine dental appointment.'
+            : 'این علائم می‌توانند نشانه یک وضعیت اورژانسی دندانپزشکی یا پزشکی باشند. اگر دچار مشکل شدید در تنفس یا بلع، تورم سریع یا شدید دهان، صورت، گلو یا گردن، خونریزی شدید و کنترل‌نشده، بیهوشی یا آسیب شدید صورت شده‌اید، فوراً با خدمات اورژانس پزشکی محل تماس بگیرید یا به نزدیک‌ترین مرکز اورژانس مراجعه کنید. برای پاسخ هوش مصنوعی یا نوبت معمول دندانپزشکی منتظر نمانید.';
     }
 
     private function identityResponse(string $locale, string $message): string

@@ -30,7 +30,7 @@ The public booking POST in `routes/api.php` explicitly adds `web` middleware and
 | `POST /staff/content/{contentItem}/version` | `ContentItemPolicy::createVersion`; admin and published state only | `Task20ContentWorkflowTest`: immutable published versions and new version creation | PARTIAL |
 | `PATCH /staff/configuration/services/{service}` | `ServicePolicy::update`; admin only | `ClinicConfigurationTest`: reception denied, admin allowed, stale version rejected, confirmed appointment impact blocked | PARTIAL |
 | `PATCH /staff/configuration/practitioners/{practitioner}` and `/services` | `PractitionerPolicy::update`; admin only | `ClinicConfigurationTest`: practitioner-service assignment and version/appointment constraints | PARTIAL |
-| `PATCH /staff/configuration/resources/{resource}` | `ResourcePolicy::update`; admin only | Configuration role separation exists; individual resource-ID denial needs direct test | OPEN — add direct endpoint IDOR case |
+| `PATCH /staff/configuration/resources/{resource}` | `ResourcePolicy::update`; admin only | `ClinicConfigurationTest`: direct object-route attempts by reception and practitioner are forbidden and leave the resource unchanged; admin update succeeds. | PARTIAL — specific resource endpoint regression added; other dynamic-object route matrices remain incomplete |
 | `PATCH/DELETE /staff/configuration/{clinic-hours,working-hours,breaks,exceptions}/{id}` | Corresponding Policies; admin only | `ClinicConfigurationTest`: clinic-hour update/delete and schedule overlap checks; Task 18 covers forms | PARTIAL — direct cross-object role tests not exhaustive |
 | `PATCH /staff/ai` | `manage-configuration` Gate; admin only | `Task27AIAdminDashboardTest` covers dashboard controls and validation | PARTIAL |
 

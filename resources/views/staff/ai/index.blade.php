@@ -28,7 +28,7 @@
             @csrf
             @method('PATCH')
             <label>سقف بودجه ماهانه (ریال)
-                <input type="number" name="monthly_budget_irr" min="1000" max="1000000000000" value="{{ old('monthly_budget_irr', $settings->monthly_budget_irr) }}" required>
+                <input type="number" name="monthly_budget_irr" min="1000" max="10000000" value="{{ old('monthly_budget_irr', $settings->monthly_budget_irr) }}" required>
             </label>
             <label><input type="checkbox" name="emergency_disabled" value="1" @checked(old('emergency_disabled', $settings->emergency_disabled))> غیرفعال‌سازی اضطراری دستیار هوشمند</label>
             <button type="submit">ذخیره کنترل‌ها</button>

@@ -25,9 +25,6 @@ final class AssistantService
         $this->controls = $controls;
     }
 
-    /**
-     * @return  array{status: string, answer: string, sources: array<int, array<string, mixed>>}
-     */
     public function respond(string $message, string $locale = 'fa'): array
     {
         $message = trim($message);
@@ -181,10 +178,6 @@ final class AssistantService
         return preg_match('/(?:ignore\\s+(?:all\\s+)?(?:previous|prior)\\s+instructions|ignore\\s+all\\s+instructions|(?:تمام|همه)\\s+(?:دستورالعمل(?:های)?|دستورات)\\s+(?:قبلی|پیشین)\\s+را\\s+نادیده|system\\s+prompt|developer\\s+message|reveal\\s+(?:the|your)\\s+(?:prompt|secret|api\\s*key)|api[_ -]?key\\s*[:=]|password\\s*[:=]|BEGIN [A-Z ]*PRIVATE KEY|دستور(?:ات)?\\s*(?:سیستم|پنهان)|پرامپت\\s*(?:اصلی|مخفی)|کلید\\s*API|رمز عبور\\s*[:=]|اطلاعات\\s*(?:داخلی|محرمانه))/iu', $content) !== 1;
     }
 
-    /**
-     * @param  array<int, array<string, mixed>>  $references
-     * @return  array<int, array<string, mixed>>
-     */
     private function safeSourceReferences(array $references): array
     {
         $allowedHosts = [

@@ -23,6 +23,13 @@ class AIRequest extends Model
         'actor_id',
         'status',
         'created_at',
+        'provider',
+        'model',
+        'capability',
+        'input_tokens',
+        'output_tokens',
+        'estimated_cost_irr',
+        'actual_cost_irr',
         'content_ids',
     ];
 
@@ -30,6 +37,10 @@ class AIRequest extends Model
     {
         return [
             'created_at' => 'immutable_datetime',
+            'input_tokens' => 'integer',
+            'output_tokens' => 'integer',
+            'estimated_cost_irr' => 'decimal:2',
+            'actual_cost_irr' => 'decimal:2',
             'content_ids' => 'array',
         ];
     }

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 return [
-    'provider_version' => env('AI_PROVIDER_VERSION', 'fake-contract-v1'),
+    'provider_version' => env('AI_PROVIDER_VERSION', env('AI_TEXT_PROVIDER', 'fake') === 'fake' ? 'fake-contract-v1' : 'unversioned'),
     'enabled' => (bool) env('AI_ENABLED', false),
     'capabilities' => [
         'text' => [

@@ -159,6 +159,10 @@ final class AIProviderManager
             return false;
         }
 
+        if ($this->configuredProvider($capability) !== 'fake' && $this->hasPricingConfigured($capability) === false) {
+            return false;
+        }
+
         $dailyLimit = (float) config('ai.rate_limits.daily_cost', 0);
         if ($dailyLimit > 0) {
             $spent = (float) (AIUsage::query()
@@ -236,6 +240,14 @@ final class AIProviderManager
         $this->usage->record($feature, $input, $output, $cost, null, $provider, $model, $capability, $estimatedCostIrr);
 
         return ['provider' => $provider, 'model' => $model, 'estimated_cost_irr' => $estimatedCostIrr];
+    }
+
+    private function hasPricingConfigured(string $capability): bool
+    {
+        $modelPricing = (array) config('ai.pricing_irr.models', []);
+        $rates = (array) ($modelPricing[$this->configuredModel($capability)] ?? config("ai.pricing_irr.{$capability}", []));
+
+        return (float) ($rates['input_per_1k'] ?? 0) + (float) ($rates['output_per_1k'] ?? 0) > 0;
     }
 
     private function configuredProvider(string $capability): string

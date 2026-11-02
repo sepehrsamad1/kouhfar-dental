@@ -586,6 +586,17 @@ const AI=(()=>{
       return parsed.href;
     }catch{return null}
   }
+  const approvedSourceHosts=new Set([
+    'www.mouthhealthy.org','www.ada.org','www.nhs.uk','www.cdc.gov',
+    'www.nidcr.nih.gov','aaoms.org','www.kapd.ir','app.shdh.ir'
+  ]);
+  function safeReferenceUrl(url){
+    try{
+      const parsed=new URL(url);
+      if(parsed.protocol!=='https:'||!approvedSourceHosts.has(parsed.hostname))return null;
+      return parsed.href;
+    }catch{return null}
+  }
   function bot(text,sources=[],status='succeeded'){
     const n=el('div','msg msg--bot');
     const body=el('div','msg__body');
@@ -600,6 +611,7 @@ const AI=(()=>{
       const list=el('div','msg__sources');
       const label=el('div','msg__sourcesLabel','منابع تأییدشده');
       list.appendChild(label);
+      let referenceCount=0;
       sources.slice(0,5).forEach(source=>{
         const label=`${String(source.title||source.content_key||'منبع')} · نسخه ${Number(source.version)||1}`;
         const url=safeSourceUrl(source?.url);
@@ -612,6 +624,23 @@ const AI=(()=>{
         }
         node.textContent=label;
         list.appendChild(node);
+
+        if(Array.isArray(source.references)){
+          source.references.slice(0,3).forEach(reference=>{
+            if(referenceCount>=3)return;
+            const referenceUrl=safeReferenceUrl(reference?.url);
+            const referenceNode=referenceUrl?document.createElement('a'):document.createElement('span');
+            referenceNode.className='msg__source msg__source--external';
+            if(referenceUrl){
+              referenceNode.href=referenceUrl;
+              referenceNode.target='_blank';
+              referenceNode.rel='noopener noreferrer';
+            }
+            referenceNode.textContent=String(reference?.title||reference?.organization||'منبع علمی');
+            list.appendChild(referenceNode);
+            referenceCount++;
+          });
+        }
       });
       if(list.children.length>1)n.appendChild(list);
     }

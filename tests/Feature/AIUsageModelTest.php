@@ -13,9 +13,14 @@ it('disables automatic timestamps and casts usage fields', function () {
         ->and($usage->getFillable())->toBe([
             'day',
             'feature',
+            'provider',
+            'model',
+            'capability',
             'input_tokens',
             'output_tokens',
             'cost_estimate',
+            'estimated_cost_irr',
+            'actual_cost_irr',
             'request_count',
         ])
         ->and($usage->getCasts())
@@ -24,6 +29,8 @@ it('disables automatic timestamps and casts usage fields', function () {
             'input_tokens' => 'integer',
             'output_tokens' => 'integer',
             'request_count' => 'integer',
+            'estimated_cost_irr' => 'decimal:2',
+            'actual_cost_irr' => 'decimal:2',
         ]);
 });
 

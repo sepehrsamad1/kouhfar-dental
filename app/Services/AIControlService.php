@@ -41,10 +41,13 @@ final class AIControlService
 
     public function monthlySpendForModel(string $model): int
     {
-        return (int) round((float) AIUsage::query()
+        $spend = AIUsage::query()
             ->where('model', $model)
             ->whereBetween('day', [now('UTC')->startOfMonth()->toDateString(), now('UTC')->endOfMonth()->toDateString()])
-            ->sum('estimated_cost_irr'));
+            ->selectRaw('COALESCE(SUM(COALESCE(actual_cost_irr, estimated_cost_irr)), 0) AS spend')
+            ->value('spend');
+
+        return (int) round((float) $spend);
     }
 
     public function allowsRequests(?string $model = null): bool

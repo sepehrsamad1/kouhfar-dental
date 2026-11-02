@@ -49,7 +49,7 @@ final class AIControlService
             'monthly_budget_irr' => $budget,
             'percentage' => $percentage,
             'alerts' => array_values(array_filter([50, 80, 100], static fn (int $level): bool => $percentage >= $level)),
-            'blocked' => $settings->emergency_disabled || $spend >= $settings->monthly_budget_irr,
+            'blocked' => $settings->emergency_disabled || $spend >= $budget,
             'emergency_disabled' => $settings->emergency_disabled,
             'provider_quota_status' => 'unknown',
             'provider_quota_alert_percentages' => [80, 95],
@@ -59,7 +59,7 @@ final class AIControlService
     public function update(int $monthlyBudgetIrr, bool $emergencyDisabled): void
     {
         if ($monthlyBudgetIrr < 1_000 || $monthlyBudgetIrr > 10_000_000) {
-            throw new \\InvalidArgumentException('Monthly AI budget must remain within the owner-approved IRR ceiling.');
+            throw new \InvalidArgumentException('Monthly AI budget must remain within the owner-approved IRR ceiling.');
         }
 
         DB::transaction(function () use ($monthlyBudgetIrr, $emergencyDisabled): void {

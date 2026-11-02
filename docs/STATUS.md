@@ -4,7 +4,7 @@ Last updated: 2026-11-02
 
 ## Task 28 — Security and Privacy Audit
 
-Status: LATEST BRANCH REVISION CI-PASSED / TASK ACCEPTANCE BLOCKED — branch `task/28-security-privacy-audit`; CI run #860 passed on commit `dcea4e623065571d8669b9e098e9680077dfbb83`. The `__Secure-` cookie-name change and regression test passed. Production use with real patient data remains blocked.
+Status: LATEST BRANCH REVISION CI-PASSED / TASK ACCEPTANCE BLOCKED — branch `task/28-security-privacy-audit`; CI run #862 passed on commit `c06720ddc041ad42786d47f7d74dbbc99b21bab0`. The `__Secure-` cookie-name change and regression test passed. Production use with real patient data remains blocked.
 
 - Target: OWASP ASVS v5.0.0 Level 2 (scoped engineering assessment, not certification).
 - Code remediations and regression tests: login redirect validation, production-default Secure session cookies, practitioner patient-edit/mobile-reveal privilege boundary, immediate session revocation on staff deactivation, SQL-looking search input, mass-assignment defenses and Kavenegar SSRF/redirect/credential-leak controls.

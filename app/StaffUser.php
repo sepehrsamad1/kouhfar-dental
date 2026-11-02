@@ -20,6 +20,7 @@ class StaffUser extends Model implements AuthenticatableContract
         'password_hash',
         'mfa_totp_secret',
         'mfa_recovery_codes',
+        'mfa_last_totp_counter',
     ];
 
     protected $fillable = [
@@ -37,6 +38,7 @@ class StaffUser extends Model implements AuthenticatableContract
             'mfa_totp_secret' => 'encrypted',
             'mfa_recovery_codes' => 'encrypted:array',
             'mfa_enabled_at' => 'immutable_datetime',
+            'mfa_last_totp_counter' => 'integer',
         ];
     }
 

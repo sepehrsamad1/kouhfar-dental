@@ -19,6 +19,7 @@
                 @endcan
                 @can('manage-configuration')
                     <a href="{{ route('staff.configuration.index') }}">تنظیمات کلینیک</a>
+                    <a href="{{ route('staff.ai.index') }}">مدیریت دستیار هوشمند</a>
                 @endcan
                 @can('view-audit-log')
                     <a href="{{ route('staff.admin.audit') }}">گزارش حسابرسی</a>
@@ -36,6 +37,14 @@
     </nav>
 
     <main class="staff-main">
+        @if (!empty($aiControlSummary['alerts']))
+            <div class="staff-alert staff-alert--error" role="alert">
+                هشدار مصرف API: {{ end($aiControlSummary['alerts']) }}٪ از سقف بودجه ماهانه مصرف شده است. مصرف تخمینی {{ number_format($aiControlSummary['monthly_spend_irr']) }} از {{ number_format($aiControlSummary['monthly_budget_irr']) }} ریال.
+            </div>
+        @endif
+        @if (!empty($aiControlSummary['blocked']))
+            <div class="staff-alert staff-alert--error" role="alert">درخواست‌های جدید دستیار هوشمند به دلیل رسیدن به سقف بودجه یا غیرفعال‌سازی اضطراری متوقف شده‌اند.</div>
+        @endif
         @if (session('success'))
             <div class="staff-alert staff-alert--status" role="status">{{ session('success') }}</div>
         @endif

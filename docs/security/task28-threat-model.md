@@ -46,7 +46,7 @@
 
 | Abuse case | Existing / added control | Remaining exposure |
 |---|---|---|
-| Patient/appointment IDOR | Policy/Gate checks; practitioner-scoped list queries; tests for practitioner patient isolation and staff roles | Complete route-by-route object authorization matrix and negative tests remain open. |
+| Patient/appointment IDOR | Policy/Gate checks; practitioner-scoped list queries; Task 28 now denies practitioner patient edits and full-mobile reveal while retaining masked assigned-patient view and own-appointment completion. Regression test covers endpoint and rendered control. | Complete route-by-route object authorization matrix and negative tests remain open. |
 | Mass assignment | Form Requests, validated payloads, explicit patient field assignment; new hostile-field regression test | Audit all remaining write paths; CI pending. |
 | Open redirect after staff login | Local-path allowlist strengthened to reject schemes, hosts, backslashes and control characters; regression test added | CI pending; verify reverse-proxy/path normalization in deployed environment. |
 | CSRF on staff mutations | Laravel web middleware; appointment API route explicitly includes web middleware | Production-browser negative test and proxy/cookie behavior not verified. |

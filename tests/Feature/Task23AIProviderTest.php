@@ -103,7 +103,7 @@ it('blocks calls after the configured per-minute limit', function (): void {
     expect($first['status'])->toBe('succeeded')
         ->and($second['status'])->toBe('rate_limited')
         ->and(AIRequest::query()->count())->toBe(2)
-        ->and(AIRequest::query()->latest('created_at')->first()->status)->toBe('blocked');
+        ->and(AIRequest::query()->where('status', 'blocked')->count())->toBe(1);
 });
 
 it('enforces the configured daily cost ceiling before invoking a provider', function (): void {

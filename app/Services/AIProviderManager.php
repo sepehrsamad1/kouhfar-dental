@@ -170,7 +170,14 @@ final class AIProviderManager
             }
         }
 
-        $key = 'ai:'.substr(hash('sha256', $feature), 0, 24).':'.now('UTC')->format('Y-m-d-H-i');
+        $request = request();
+        $identity = $request->user()?->getAuthIdentifier();
+
+        if ($identity === null) {
+            $identity = $request->hasSession() ? $request->session()->getId() : $request->ip();
+        }
+
+        $key = 'ai:'.substr(hash('sha256', $feature.'|'.(string) ($identity ?? 'cli')), 0, 24).':'.now('UTC')->format('Y-m-d-H-i');
         $limit = max(1, (int) config('ai.rate_limits.per_minute', 10));
 
         if (RateLimiter::tooManyAttempts($key, $limit)) {

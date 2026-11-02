@@ -93,7 +93,7 @@ jobs:
       - name: Check PHP formatting
         env:
           COLUMNS: 300
-        run: vendor/bin/pint --test --diff
+        run: vendor/bin/pint --test
 
       - name: Run PHP static analysis
         run: vendor/bin/phpstan analyse

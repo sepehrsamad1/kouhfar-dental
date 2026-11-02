@@ -35,6 +35,7 @@
             @foreach ($summary['model_limits'] as $model => $limits)
                 <article>
                     <h3>محدودیت مستقل مدل: {{ $model }}</h3>
+                    <p>ارائه‌دهنده‌ها: {{ implode(', ', $limits['providers']) }} | وضعیت کلید Backend: {{ $limits['credentials_configured'] ? 'تنظیم شده یا برای ارائه‌دهنده آزمایشی لازم نیست' : 'تنظیم نشده' }}</p>
                     <label>سقف داخلی توکن ماهانه
                         <input type="number" name="provider_token_limits[{{ $model }}]" min="1" max="1000000000000" value="{{ old('provider_token_limits.'.$model, data_get($settings->provider_token_limits, $model, '')) }}" placeholder="بدون سقف مستقل">
                     </label>

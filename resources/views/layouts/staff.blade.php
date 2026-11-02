@@ -39,7 +39,7 @@
     <main class="staff-main">
         @if (!empty($aiControlSummary['alerts']))
             <div class="staff-alert staff-alert--error" role="alert">
-                هشدار مصرف API: {{ end($aiControlSummary['alerts']) }}٪ از سقف بودجه ماهانه مصرف شده است. مصرف تخمینی {{ number_format($aiControlSummary['monthly_spend_irr']) }} از {{ number_format($aiControlSummary['monthly_budget_irr']) }} ریال.
+                هشدار مصرف API: {{ collect($aiControlSummary['alerts'])->last() }}٪ از سقف بودجه ماهانه مصرف شده است. مصرف تخمینی {{ number_format($aiControlSummary['monthly_spend_irr']) }} از {{ number_format($aiControlSummary['monthly_budget_irr']) }} ریال.
             </div>
         @endif
         @if (!empty($aiControlSummary['blocked']))
@@ -49,12 +49,12 @@
         @foreach (($aiControlSummary['model_limits'] ?? []) as $model => $limits)
             @if (!empty($limits['token_alerts']))
                 <div class="staff-alert staff-alert--error" role="alert">
-                    هشدار مصرف توکن مدل {{ $model }}: {{ end($limits['token_alerts']) }}٪ از سقف داخلی ماهانه مصرف شده است.
+                    هشدار مصرف توکن مدل {{ $model }}: {{ collect($limits['token_alerts'])->last() }}٪ از سقف داخلی ماهانه مصرف شده است.
                 </div>
             @endif
             @if (!empty($limits['budget_alerts']))
                 <div class="staff-alert staff-alert--error" role="alert">
-                    هشدار بودجه مدل {{ $model }}: {{ end($limits['budget_alerts']) }}٪ از سقف مالی مستقل مصرف شده است.
+                    هشدار بودجه مدل {{ $model }}: {{ collect($limits['budget_alerts'])->last() }}٪ از سقف مالی مستقل مصرف شده است.
                 </div>
             @endif
             @if (!empty($limits['blocked']))

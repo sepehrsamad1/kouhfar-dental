@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\AuditLog;
 use App\Services\TotpService;
 use App\StaffUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;

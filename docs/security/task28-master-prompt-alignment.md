@@ -44,7 +44,7 @@ The user's instruction to continue the Task 28 workflow without repeated chat co
 
 ## Current execution boundary
 
-Latest CI verification on the task branch: GitHub Actions run #979 passed on revision `3282ab38d55df8d3b5cd7cb01a70ed6aada4821c`. It includes the completed-job history migration/model/listener and its model contract test, in addition to the existing Laravel/Pest, browser, migration, static-analysis, build, dependency-audit and full-history secret-scan checks. Earlier counts and finding-specific evidence remain historical run #937 evidence.
+Latest fully successful CI verification remains run #979 on revision `3282ab38d55df8d3b5cd7cb01a70ed6aada4821c`. The newer run #1006 passed Gitleaks, dependency audits and JavaScript lint/typecheck/build but failed Pint on one `fully_qualified_strict_types` finding in `DeletionRequestWorkflowTest.php`; PHPStan, migrations, Laravel tests and browser tests were skipped. A formatter correction is committed as `994288e4456d2f100148d3685f883646c8028463` and awaits a new CI run. Run #979 includes the completed-job history migration/model/listener and its model contract test. Earlier counts and finding-specific evidence remain historical run #937 evidence.
 
 Still not proven: full route-by-route IDOR/CSRF/DOM-XSS/distributed rate-limit verification; full database/files backup and isolated restore; physically separate backup destination, key/ACL and monitoring; production TLS/proxy/database/storage/secrets/logging controls; provider/network URL-path credential redaction; and operational MFA identity-proofing.
 

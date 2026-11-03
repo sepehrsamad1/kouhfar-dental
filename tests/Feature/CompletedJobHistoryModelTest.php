@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\\CompletedJobHistory;
+use App\CompletedJobHistory;
 
 it('stores only metadata for completed queue jobs', function (): void {
     $history = new CompletedJobHistory;

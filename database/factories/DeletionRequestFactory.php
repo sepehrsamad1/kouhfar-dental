@@ -19,7 +19,7 @@ class DeletionRequestFactory extends Factory
         return [
             'target_type' => 'Patient',
             'target_id' => fake()->uuid(),
-            'requested_by' => fake()->uuid(),
+            'requested_by' => null,
             'approved_by' => null,
             'status' => 'pending',
             'created_at' => now(),

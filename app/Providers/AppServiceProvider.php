@@ -58,6 +58,15 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Queue::after(function (JobProcessed $event): void {
+            CompletedJobHistory::query()->create([
+                'job_class' => $event->job->resolveName(),
+                'queue_name' => $event->job->getQueue(),
+                'attempts' => $event->job->attempts(),
+                'completed_at' => now('UTC'),
+            ]);
+        });
+
         View::composer('layouts.staff', function ($view): void {
             $view->with('aiControlSummary', app(AIControlService::class)->summary());
         });

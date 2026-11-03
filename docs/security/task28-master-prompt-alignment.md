@@ -44,7 +44,7 @@ The user's instruction to continue the Task 28 workflow without repeated chat co
 
 ## Current execution boundary
 
-Already CI-verified on the task branch: 302 Laravel/Pest tests (24,617 assertions), 36 Playwright tests, PostgreSQL migrations, Pint, PHPStan, JS lint/typecheck/build, Composer/npm audits, full-history Gitleaks and Task 27 deterministic evaluation (run #937, revision `26174c376f6dd9a2c610932333f645e8fa22c3cc`).
+Latest CI verification on the task branch: GitHub Actions run #979 passed on revision `3282ab38d55df8d3b5cd7cb01a70ed6aada4821c`. It includes the completed-job history migration/model/listener and its model contract test, in addition to the existing Laravel/Pest, browser, migration, static-analysis, build, dependency-audit and full-history secret-scan checks. Earlier counts and finding-specific evidence remain historical run #937 evidence.
 
 Still not proven: full route-by-route IDOR/CSRF/DOM-XSS/distributed rate-limit verification; full database/files backup and isolated restore; physically separate backup destination, key/ACL and monitoring; production TLS/proxy/database/storage/secrets/logging controls; provider/network URL-path credential redaction; and operational MFA identity-proofing.
 

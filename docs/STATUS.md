@@ -1,6 +1,6 @@
 # Project status
 
-Last updated: 2026-11-03
+Last updated: 2026-11-03 (master prompt alignment register added)
 
 ## Task 28 — Security and Privacy Audit
 
@@ -13,6 +13,7 @@ Status: IMPLEMENTATION CI-VERIFIED / TASK ACCEPTANCE AND PRODUCTION RELEASE BLOC
 - MeliPayamak OTP adapter: added and tested with fake HTTP responses; disabled by default. The booking OTP challenge lifecycle is not implemented, so booking remains fail-closed until expiry/attempt/resend policy is approved.
 - Backup: daily encrypted audit-log backup and monthly authenticated temporary-table restore check are implemented. Separate physical storage, key/ACL provisioning, monitoring and full isolated recovery evidence remain open.
 - CI evidence: 302 Laravel/Pest tests passed (24,617 assertions); 36 Playwright browser tests passed; PostgreSQL migrations, Pint, PHPStan, JavaScript lint/typecheck/build, Composer audit, npm audit and full-history Gitleaks passed. Task 27 deterministic evaluation passed.
+- Master prompt alignment: [policy-by-policy execution register](security/task28-master-prompt-alignment.md) records all 19 proposed policies, current evidence, implementation boundaries and owner/legal/deployment blockers. The 12-month Smart Smile final-output choice from the current conversation is recorded as a user-selected engineering baseline, not a formal clinic-owner approval.
 - Artifacts: responsive screenshot sets for Tasks 12, 16, 19, 20, 26 and 27, plus Task 27 AI evaluation report, were uploaded. See [Task 28 status](task28-status.md), [ASVS checklist](security/task28-asvs-checklist.md), [full ASVS requirement register](security/task28-asvs-v5.0.0-level2-register.csv), [route authorization matrix](security/task28-route-authorization-matrix.md), [threat model](security/task28-threat-model.md), [privacy impact assessment](security/task28-privacy-impact-assessment.md), [data inventory](security/task28-data-inventory.md), [third-party flows](security/task28-third-party-flows.md), [findings register](security/task28-findings.md), [clinic-owner decisions](security/task28-owner-decisions.md), [staff MFA runbook](security/staff-mfa-runbook.md) and [MeliPayamak OTP runbook](security/melipayamak-otp-runbook.md).
 - Release blockers: high retention/backup finding SEC-28-003 remains open for unresolved categories and deployment evidence; Smart Smile consent-token TTL; queue/failed-job/outbox/deletion-request retention; MFA lost-device/recovery reset procedure; booking OTP expiry/attempt/resend policy; production infrastructure and separate-backup-storage evidence; full route-by-route IDOR/CSRF/DOM-XSS/distributed rate-limit verification; supplementary secret-surface review; Kavenegar/MeliPayamak URL-path credential exposure decision before provider activation.
 - Do not merge Task 28 as complete or mark it verified for production until all high findings are closed and required privacy/retention decisions are approved.

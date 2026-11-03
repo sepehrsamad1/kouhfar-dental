@@ -12,6 +12,8 @@
 
 ## Implemented on this branch
 
+- Added nullable indexed `result_generated_at` to Smart Smile sessions. Successful simulation completion records a UTC timestamp; upload/retry/failure/revocation clears it. This is preparatory metadata only: no 12-month purge or consent-token TTL is active. OpenAPI contract and synthetic feature assertions updated; new commits are awaiting CI verification.
+
 - Hardened staff login intended-redirect validation; restricted patient edits and full mobile reveal to admin/reception; revoked sessions immediately when staff are deactivated.
 - Hardened session cookies: Secure outside local/testing, HttpOnly, SameSite=Lax and `__Secure-` production/staging name.
 - Added patient search SQL-looking input and hostile mass-assignment regression tests.
@@ -35,7 +37,7 @@
 - Idempotency records: delete after the existing 24-hour expiry.
 - Staff MFA: TOTP plus one-time recovery codes.
 - MeliPayamak: purchased provider for backend OTP delivery; its token is a deployment secret.
-- Consent/Smart Smile retention and token TTL remain undecided. Queue/failed-job payloads, notification outbox and deletion-request retention remain undecided.
+- Consent evidence retention and Smart Smile token TTL remain undecided. The user selected 12 months for the final Smart Smile output as an engineering baseline, and the code now records its generation time; automated expiry remains disabled pending formal owner/legal policy reconciliation. Queue/failed-job payloads, notification outbox and deletion-request retention remain undecided.
 
 See [clinic-owner decisions](security/task28-owner-decisions.md).
 
@@ -59,7 +61,7 @@ The CI workflow sets `STAFF_MFA_REQUIRED=false` only for legacy browser screensh
 
 ## Open release blockers
 
-- **High — SEC-28-003 retention/backup controls incomplete:** approved cleanup is implemented for login-attempt hashes, AI operational rows and Idempotency records. Retention for consent/Smart Smile metadata, queue/failed-job payloads, notification outbox/error metadata and deletion requests remains undecided. Separate physical backup storage, encryption-key/ACL provisioning, monitoring and a full isolated database recovery exercise remain deployment gates. Original audit logs and patient/CRM records must not be automatically deleted.
+- **High — SEC-28-003 retention/backup controls incomplete:** approved cleanup is implemented for login-attempt hashes, AI operational rows and Idempotency records. Consent evidence retention and token TTL remain undecided; Smart Smile output expiry is not yet automated. Queue/failed-job payloads, notification outbox/error metadata and deletion requests remain undecided. Separate physical backup storage, encryption-key/ACL provisioning, monitoring and a full isolated database recovery exercise remain deployment gates. Original audit logs and patient/CRM records must not be automatically deleted.
 - **Medium — SEC-28-004 Smart Smile consent token:** TTL and post-expiry/revocation behavior still need owner approval.
 - **Medium — booking OTP lifecycle:** MeliPayamak adapter is tested with synthetic HTTP responses, but no live provider call has been made. The challenge record/hash/expiry/attempt/resend flow is not yet implemented. Current booking behavior remains fail-closed with `PHONE_VERIFICATION_NOT_READY`. Owner approval is needed for code lifetime, maximum attempts and resend/rate-limit policy.
 - **Medium — MFA recovery operations:** enrollment and one-time recovery codes are implemented, but a controlled, audited lost-authenticator/recovery-code reset process and identity-proofing procedure must be defined before staff rollout.

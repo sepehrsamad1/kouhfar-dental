@@ -22,6 +22,7 @@ class SmartSmileSession extends Model
         'media_asset_id',
         'status',
         'result',
+        'result_generated_at',
     ];
 
     protected function casts(): array
@@ -29,6 +30,7 @@ class SmartSmileSession extends Model
         return [
             'consented_at' => 'immutable_datetime',
             'revoked_at' => 'immutable_datetime',
+            'result_generated_at' => 'immutable_datetime',
             'result' => 'array',
         ];
     }

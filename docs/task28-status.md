@@ -1,22 +1,21 @@
 # Task 28 — Security and Privacy Audit
 
-**Status: IMPLEMENTATION CI-VERIFIED — TASK ACCEPTANCE AND PRODUCTION RELEASE REMAIN BLOCKED by SEC-28-003, open owner decisions and deployment/verification evidence.**
+**Status: IMPLEMENTATION IN PROGRESS — acceptance and production release remain blocked by SEC-28-003, open owner decisions and deployment/verification evidence.**
 
 ## Task identity
 
 - Task: 28 — Security and Privacy Audit
 - Branch: `task/28-security-privacy-audit`
-- Latest CI-verified revision: `3282ab38d55df8d3b5cd7cb01a70ed6aada4821c` (GitHub Actions run [#979](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41684593114), completed successfully).
-- Target standard: OWASP ASVS v5.0.0 Level 2 (scoped engineering assessment, not certification)
+- Last fully CI-verified revision: `3282ab38d55df8d3b5cd7cb01a70ed6aada4821c` (GitHub Actions run [#979](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41684593114), completed successfully).
+- Latest attempted revision before formatting correction: `0d02648672c99113731726ced253ea5e5c241cd6` (run [#994](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41687964747)); full-history Gitleaks, dependency audits, JavaScript lint/typecheck/build passed, but Pint failed on two PHP files. PHPStan, migrations, Laravel tests and browser tests were skipped. Formatting correction is committed but awaits a new CI run.
+- Target standard: OWASP ASVS v5.0.0 Level 2 (scoped engineering assessment, not certification).
 - Scope: repository source/configuration/migrations/tests/CI. No production or third-party systems were tested.
 
 ## Implemented on this branch
 
 - Notification attempt tracking: added nullable indexed `last_attempt_at`; the sender records UTC attempt time before dispatch and preserves the existing successful `sent_at` behavior. Retry feature test asserts the timestamp. No outbox retention deletion is enabled because the owner decision remains open.
 - Completed-job metadata groundwork: added `completed_job_history` with job class, queue name, attempt count and UTC completion time only. A queue-after callback records successful jobs; serialized payloads, exception text and patient/job arguments are deliberately excluded. Model contract test added. CI run #979 includes these commits and passed. The proposed 7-day retention is not activated while the owner decision remains open.
-
-- Added nullable indexed `result_generated_at` to Smart Smile sessions. Successful simulation completion records a UTC timestamp; upload/retry/failure/revocation clears it. This is preparatory metadata only: no 12-month purge or consent-token TTL is active. OpenAPI contract and synthetic feature assertions updated; these changes are included in CI run #979.
-
+- Added nullable indexed `result_generated_at` to Smart Smile sessions. Successful simulation completion records a UTC timestamp; upload/retry/failure/revocation clears it. This is preparatory metadata only: no 12-month purge or consent-token TTL is active.
 - Hardened staff login intended-redirect validation; restricted patient edits and full mobile reveal to admin/reception; revoked sessions immediately when staff are deactivated.
 - Hardened session cookies: Secure outside local/testing, HttpOnly, SameSite=Lax and `__Secure-` production/staging name.
 - Added patient search SQL-looking input and hostile mass-assignment regression tests.
@@ -29,6 +28,7 @@
 - Added Laravel-native audit-log backup commands using a consistent database snapshot, AES-256-GCM authenticated chunk encryption, per-backup salt/key derivation, an explicitly configured absolute backup path, 90-day minimum backup-copy retention, and no database-specific dump utility.
 - Scheduled encrypted audit-log backups daily at 02:00 Asia/Tehran and authenticated temporary-table restore verification monthly at 04:00 on day 1. This is not a full isolated disaster-recovery exercise.
 - Added Composer/npm dependency audits and full-history Gitleaks to CI, plus threat model, ASVS checklist, privacy impact assessment, data inventory/retention register, third-party flow inventory, findings register, owner decision register and operational runbooks.
+- Deletion request workflow groundwork: added review and closure metadata, active-admin-only web endpoints, transaction-locked state transitions, allowlisted reason codes and audit events. Closing a request records a non-destructive disposition only; it does not delete patient/CRM records or media.
 
 ## Owner decisions recorded
 
@@ -40,16 +40,13 @@
 - Idempotency records: delete after the existing 24-hour expiry.
 - Staff MFA: TOTP plus one-time recovery codes.
 - MeliPayamak: purchased provider for backend OTP delivery; its token is a deployment secret.
-- Consent evidence retention and Smart Smile token TTL remain undecided. The user selected 12 months for the final Smart Smile output as an engineering baseline, and the code now records its generation time; automated expiry remains disabled pending formal owner/legal policy reconciliation. Queue/failed-job payloads, notification outbox and deletion-request retention remain undecided. Metadata-only successful-job history is CI-verified in run #979; no retention purge is enabled.
+- Consent evidence retention and Smart Smile token TTL remain undecided. The user selected 12 months for the final Smart Smile output as an engineering baseline, and the code records its generation time; automated expiry remains disabled pending formal owner/legal policy reconciliation. Queue/failed-job payloads, notification outbox and deletion-request retention remain undecided. Metadata-only successful-job history is CI-verified in run #979; no retention purge is enabled.
 
 See [clinic-owner decisions](security/task28-owner-decisions.md).
 
-- Deletion request workflow groundwork: added review and closure metadata, active-admin-only web endpoints, transaction-locked state transitions, allowlisted reason codes and audit events. Closing a request records a non-destructive disposition only; it does not delete patient/CRM records or media. Migration and feature tests await CI verification.
-
 ## Automated verification status
 
-Revision `3282ab38d55df8d3b5cd7cb01a70ed6aada4821c` passed [GitHub Actions CI run #979](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41684593114). The completed-job history migration/model/listener and its model contract test are included in this successful run.
-
+Revision `3282ab38d55df8d3b5cd7cb01a70ed6aada4821c` passed CI run #979:
 - 302 Laravel/Pest tests passed (24,617 assertions).
 - 36 Playwright browser tests passed.
 - PostgreSQL migrations passed.
@@ -58,11 +55,8 @@ Revision `3282ab38d55df8d3b5cd7cb01a70ed6aada4821c` passed [GitHub Actions CI ru
 - JavaScript lint, typecheck and production asset build passed.
 - Task 27 deterministic release evaluation passed.
 - Full-history Gitleaks secret scan passed.
-- Responsive screenshot artifacts for Tasks 12, 16, 19, 20, 26 and 27, plus the Task 27 AI evaluation report, were uploaded successfully.
 
-This verifies the source revision under the automated CI environment and synthetic test data. It is not a production penetration test, live MeliPayamak/Kavenegar/AI provider test, GitHub secret-alert review, independent infrastructure audit or full disaster-recovery exercise.
-
-The CI workflow sets `STAFF_MFA_REQUIRED=false` only for legacy browser screenshot fixtures. Dedicated MFA feature tests set it to true and verify the MFA flow. The repository `.env.example` defaults it to true.
+Run #994 subsequently failed at Pint only; downstream checks were skipped, not failed. The two formatting findings were import order in `DeletionRequestController.php`, and strict fully-qualified type/import ordering in `DeletionRequestWorkflowTest.php`. The correction is now committed and needs a successful rerun before claiming verification.
 
 ## Open release blockers
 

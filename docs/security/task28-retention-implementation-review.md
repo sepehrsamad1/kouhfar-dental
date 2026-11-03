@@ -4,6 +4,13 @@ Reviewed against branch code at commit `2b192bb7f29cf1b801cbe1f7d52faca7adbaf7d9
 
 ## Findings
 
+### R28-RET-01 update — result timestamp added
+- Added nullable, indexed `result_generated_at` to `smart_smile_sessions` in migration `2026_11_03_000001_add_result_generated_at_to_smart_smile_sessions_table.php`.
+- Successful `ProcessSmartSmile` completion writes the UTC generation timestamp. Queue start, failed processing, new upload and user revocation clear it.
+- The model casts the field as immutable datetime; the factory and feature test cover the new state.
+- This is metadata only. No automatic 12-month purge is enabled, and consent token TTL/evidence retention remain unchanged and unresolved.
+
+
 ### R28-RET-01 — Smart Smile result and consent evidence share one lifecycle
 - `smart_smile_sessions` stores consent token hash, consent version, consent timestamp, revocation timestamp and result JSON in one row.
 - `SmartSmileService::grantConsent()` creates a token hash but no expiry timestamp.
@@ -53,6 +60,6 @@ Reviewed against branch code at commit `2b192bb7f29cf1b801cbe1f7d52faca7adbaf7d9
 
 ## Verification and release boundary
 
-No code changes were made in this review step. No test run was triggered. Existing CI run #937 predates this review document and does not verify any new implementation.
+The Smart Smile result timestamp migration, model/service/job/factory/test changes and OpenAPI contract update were committed after the earlier review. No test run has yet been observed for these commits. Existing CI run #937 predates these changes and does not verify them.
 
 Task 28 remains blocked by SEC-28-003 and the other documented release gates. This review does not establish production readiness, legal compliance or ASVS certification.

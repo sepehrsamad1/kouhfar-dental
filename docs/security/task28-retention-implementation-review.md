@@ -4,6 +4,14 @@ Reviewed against branch code at commit `2b192bb7f29cf1b801cbe1f7d52faca7adbaf7d9
 
 ## Findings
 
+### R28-RET-04 update — notification attempt time is now recorded
+- Added nullable indexed `last_attempt_at` to `notification_outbox`.
+- `SendAppointmentNotification` records UTC attempt time and increments attempts immediately before provider dispatch; successful delivery still records `sent_at` and clears `last_error`.
+- Added a regression assertion that a retry followed by successful delivery leaves a non-null attempt timestamp.
+- Failed-job callback still records a generic failure message after retries are exhausted. A dedicated `failed_at` is not added separately because `last_attempt_at` identifies the last provider attempt; policy-specific retention remains disabled.
+- The owner decision register still leaves outbox/error retention open. Do not activate 12-month/30-day deletion until the owner approves the policy and message-body/data classification is verified.
+
+
 ### R28-RET-03 update — failed queue job cleanup added
 - `security:prune-expired-data` now deletes `failed_jobs` rows whose `failed_at` is older than 30 days.
 - The cleanup does not touch `jobs` rows, including reserved/running work.

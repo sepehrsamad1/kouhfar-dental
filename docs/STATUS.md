@@ -4,7 +4,7 @@ Last updated: 2026-11-03 (Task 28 completed-job metadata groundwork added)
 
 ## Task 28 — Security and Privacy Audit
 
-Status: IMPLEMENTATION CI-VERIFIED / TASK ACCEPTANCE AND PRODUCTION RELEASE BLOCKED — branch `task/28-security-privacy-audit`; CI run [#968](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41655203664) passed on code revision `f3b91292bede46ce0e82c6e30291adb78a606e9b`; subsequent completed-job metadata commits await a new CI run. Production use with real patient data remains blocked.
+Status: IMPLEMENTATION CI-VERIFIED / TASK ACCEPTANCE AND PRODUCTION RELEASE BLOCKED — branch `task/28-security-privacy-audit`; latest CI run [#979](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41684593114) passed on revision `3282ab38d55df8d3b5cd7cb01a70ed6aada4821c`, including completed-job metadata migration/model/listener and the model contract test. This does not close owner-policy or deployment blockers. Production use with real patient data remains blocked.
 
 - Target: OWASP ASVS v5.0.0 Level 2 (scoped engineering assessment, not certification).
 - Security changes: login redirect validation, production-default Secure session cookies, practitioner patient-edit/mobile-reveal privilege boundary, immediate session revocation on staff deactivation, SQL-looking search input, mass-assignment defenses and Kavenegar SSRF/redirect controls.

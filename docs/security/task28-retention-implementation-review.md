@@ -1,6 +1,6 @@
 # Task 28 — Retention implementation review
 
-Reviewed against branch code at commit `2b192bb7f29cf1b801cbe1f7d52faca7adbaf7d9`. This is a source inspection only; no application tests or production data were run.
+Reviewed against branch `task/28-security-privacy-audit`. The metadata-only completed-job history groundwork below is newly committed and awaits CI verification. No production data was used.
 
 ## Findings
 
@@ -11,6 +11,12 @@ Reviewed against branch code at commit `2b192bb7f29cf1b801cbe1f7d52faca7adbaf7d9
 - Failed-job callback still records a generic failure message after retries are exhausted. A dedicated `failed_at` is not added separately because `last_attempt_at` identifies the last provider attempt; policy-specific retention remains disabled.
 - The owner decision register still leaves outbox/error retention open. Do not activate 12-month/30-day deletion until the owner approves the policy and message-body/data classification is verified.
 
+
+### R28-RET-03 update — metadata-only completed-job history groundwork
+- Added `completed_job_history` with only job class, queue name, attempt count and UTC completion timestamp. It intentionally stores no serialized payload, exception text, patient identifier or job arguments.
+- Registered a Laravel queue-after callback to record successfully processed jobs. Failed jobs are not written to this completed table; the existing `failed_jobs` store remains separate.
+- Added a model contract test. End-to-end event behavior and migration execution await the next CI run.
+- The proposed seven-day retention period is not activated because queue-history retention remains an open owner decision.
 
 ### R28-RET-03 update — failed queue job cleanup added
 - `security:prune-expired-data` now deletes `failed_jobs` rows whose `failed_at` is older than 30 days.
@@ -40,11 +46,10 @@ Reviewed against branch code at commit `2b192bb7f29cf1b801cbe1f7d52faca7adbaf7d9
 - Soft-deleted media is hard-purged after 30 days.
 - This supports the 90-day raw/pre-consultation input policy, subject to checking the media purge command and storage lifecycle end-to-end.
 
-### R28-RET-03 — Queue and failed-job retention are not implemented
-- Database queue rows use integer Unix timestamps in `jobs.created_at`; failed jobs use `failed_jobs.failed_at`.
-- `PruneExpiredSecurityData` currently prunes login attempts, AI operational rows and expired idempotency records only.
-- No 7-day successful-job or 30-day failed-job cleanup is present.
-- Cleanup must avoid deleting reserved/running jobs. It should delete only old, unreserved database queue rows and failed-job records older than the policy window. Batch metadata is a separate category and should not be purged without a policy.
+### R28-RET-03 — queue history and failed-job cleanup status
+- Successful-job metadata history is now represented by `completed_job_history`; only class, queue name, attempts and completion timestamp are captured.
+- Failed queue payloads older than 30 days are pruned by the current command. A dedicated regression test for that branch is still missing.
+- No retention cleanup is enabled for `completed_job_history`, `jobs` or `job_batches`. The proposed seven-day successful history and 30-day failed payload windows remain subject to explicit owner policy approval; running/reserved jobs and batch metadata must not be deleted speculatively.
 
 ### R28-RET-04 — Notification outbox lacks a precise failure timestamp
 - `notification_outbox` includes `scheduled_at`, `sent_at`, `attempts` and `last_error`, but no `last_attempt_at` or `failed_at`.
@@ -66,15 +71,15 @@ Reviewed against branch code at commit `2b192bb7f29cf1b801cbe1f7d52faca7adbaf7d9
 
 ## Next engineering sequence
 
-1. Add separate Smart Smile output expiry without deleting consent evidence or prematurely deleting the session.
-2. Add safe cleanup for old unreserved successful queue rows (7 days) and failed-job rows (30 days), with deterministic tests.
-3. Add `last_attempt_at` / failure timestamp to notification outbox, populate it on every attempt and implement distinct 12-month sent / 30-day failed retention.
-4. Complete deletion-request lifecycle and audit model before implementing request retention or any data deletion.
+1. Verify completed-job metadata event capture and migration in CI, then add boundary/retention tests after policy approval.
+2. Add a precise failure timestamp for notification delivery and tests; keep purge disabled until retention is approved.
+3. Complete the deletion-request review/audit lifecycle without automatically deleting patient or CRM records.
+4. Keep Smart Smile result expiry separate from consent evidence and token expiry.
 5. Keep consent evidence and token expiry separate; do not guess a consent retention duration or token TTL where the source/owner record does not supply one.
 6. Add tests for boundary timestamps, active/reserved jobs, retries, soft-delete/hard-purge behavior, and idempotent repeated cleanup.
 
 ## Verification and release boundary
 
-The Smart Smile result timestamp migration, model/service/job/factory/test changes and OpenAPI contract update were committed after the earlier review. No test run has yet been observed for these commits. Existing CI run #937 predates these changes and does not verify them.
+The Smart Smile result timestamp migration, notification attempt tracking, and completed-job metadata groundwork are committed on the task branch. CI run #968 passed commit `f3b91292bede46ce0e82c6e30291adb78a606e9b`, but predates the latest completed-job history commits; a new CI run is required to verify them.
 
 Task 28 remains blocked by SEC-28-003 and the other documented release gates. This review does not establish production readiness, legal compliance or ASVS certification.

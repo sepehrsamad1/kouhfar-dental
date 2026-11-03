@@ -44,6 +44,8 @@
 
 See [clinic-owner decisions](security/task28-owner-decisions.md).
 
+- Deletion request workflow groundwork: added review and closure metadata, active-admin-only web endpoints, transaction-locked state transitions, allowlisted reason codes and audit events. Closing a request records a non-destructive disposition only; it does not delete patient/CRM records or media. Migration and feature tests await CI verification.
+
 ## Automated verification status
 
 Revision `3282ab38d55df8d3b5cd7cb01a70ed6aada4821c` passed [GitHub Actions CI run #979](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41684593114). The completed-job history migration/model/listener and its model contract test are included in this successful run.

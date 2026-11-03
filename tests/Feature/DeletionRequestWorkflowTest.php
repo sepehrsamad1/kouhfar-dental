@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
 
 function deletionWorkflowAdmin(): \App\StaffUser

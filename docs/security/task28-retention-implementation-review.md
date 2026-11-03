@@ -57,7 +57,15 @@ Reviewed against branch `task/28-security-privacy-audit`. The metadata-only comp
 - Failed-notification metadata cannot be aged accurately from the last failure because `last_error` is overwritten without a corresponding timestamp. Using `scheduled_at` as a substitute would be inaccurate.
 - Add a timestamp field and update the sender's success/failure paths before implementing the 30-day failed-notification retention.
 
-### R28-RET-05 — Deletion request lifecycle is a placeholder
+### R28-RET-05 update — audited, non-destructive review lifecycle groundwork
+- Added review actor/time, resolution time and a bounded resolution code to deletion requests.
+- Added active-admin-only review and close actions with row locking, explicit state transitions, allowlisted reason codes and audit events.
+- Closing a request records an administrative disposition only. It does not delete or anonymize patient/CRM/appointment/consent/media records, rewrite backups, or propagate deletion to providers.
+- Added synthetic feature coverage for authorization, invalid transitions, audit events and preservation of the referenced patient record. These changes await CI verification.
+- The request retention period, legal exception handling, requester identity verification, correction workflow, backup restoration suppression and third-party propagation remain unresolved. This is not a complete statutory data-subject request workflow.
+- The 30-day target remains an operational SLA, not a scheduled deletion period. Patient/CRM indefinite retention remains the recorded owner decision and must not be silently overridden.
+
+### R28-RET-05 — Remaining closure requirements
 - `DeletionRequest` stores target type/id, requester, approver, status and creation time.
 - No execution timestamp, completion outcome, exception reason, or propagation evidence is represented in the model shown.
 - A 30-day handling target must be treated as an operational SLA, not a scheduled deletion of patient/CRM records. The prior owner decision to retain patient/CRM history indefinitely remains a separate rule and must not be overridden by a deletion-request cleanup.

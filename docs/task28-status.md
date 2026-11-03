@@ -56,7 +56,7 @@ Revision `3282ab38d55df8d3b5cd7cb01a70ed6aada4821c` passed CI run #979:
 - Task 27 deterministic release evaluation passed.
 - Full-history Gitleaks secret scan passed.
 
-Run #994 subsequently failed at Pint only; downstream checks were skipped, not failed. The two formatting findings were import order in `DeletionRequestController.php`, and strict fully-qualified type/import ordering in `DeletionRequestWorkflowTest.php`. The correction is now committed and needs a successful rerun before claiming verification.
+Run #1001 failed at Pint only; downstream PHPStan, migrations, Laravel tests and browser tests were skipped, not failed. The sole reported file was `DeletionRequestWorkflowTest.php`, with `fully_qualified_strict_types` and `ordered_imports`. The test now uses fully-qualified class references without imports; formatting correction is committed as `21edde071d8816622e44a49cd745502acf1e5fd3` and awaits CI rerun.
 
 ## Open release blockers
 

@@ -7,7 +7,7 @@
 - Task: 28 — Security and Privacy Audit
 - Branch: `task/28-security-privacy-audit`
 - Last fully CI-verified revision: `3282ab38d55df8d3b5cd7cb01a70ed6aada4821c` (GitHub Actions run [#979](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41684593114), completed successfully).
-- Latest completed CI revision: `8da9caa37f77829fc8aaf0654eb2bf25c886e00f` (run [#1006](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41693885280)); Gitleaks, dependency audits and JavaScript lint/typecheck/build passed. Pint reported one remaining `fully_qualified_strict_types` issue in `DeletionRequestWorkflowTest.php`; PHPStan, migrations, Laravel tests and browser tests were skipped, not failed. The test now uses sorted application/framework imports and fully-qualified global exception classes in commit `994288e4456d2f100148d3685f883646c8028463`; awaiting CI rerun.
+- Latest completed CI revision: `e6288cd8ffe43f77d90f9d99bc8a895f2ea2d41a` (run [#1012](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41701925876)); Gitleaks, Composer/npm audits and JavaScript lint/typecheck/build passed. Pint failed on `DeletionRequestWorkflowTest.php` with `fully_qualified_strict_types` and `ordered_imports`; PHPStan, migrations, Laravel tests and browser tests were skipped, not failed. Commit `f217378d2218a13991c8ff974f471680908f0499` restores the `App\\StaffUser` import for static factory calls while keeping the return type fully-qualified; awaiting CI.
 - Target standard: OWASP ASVS v5.0.0 Level 2 (scoped engineering assessment, not certification).
 - Scope: repository source/configuration/migrations/tests/CI. No production or third-party systems were tested.
 

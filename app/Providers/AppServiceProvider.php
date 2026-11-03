@@ -6,6 +6,7 @@ namespace App\Providers;
 
 use App\AI\FakeAIProvider;
 use App\AIRequest;
+use App\CompletedJobHistory;
 use App\Appointment;
 use App\ContentItem;
 use App\MediaAsset;
@@ -35,7 +36,9 @@ use App\Services\SmsProviderManager;
 use App\Services\SystemClock;
 use App\StaffUser;
 use App\WorkingHour;
+use Illuminate\Queue\Events\JobProcessed;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 

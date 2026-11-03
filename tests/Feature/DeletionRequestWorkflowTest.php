@@ -6,6 +6,7 @@ use App\AuditLog;
 use App\DeletionRequest;
 use App\Patient;
 use App\Services\DeletionRequestWorkflow;
+use App\StaffUser;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 

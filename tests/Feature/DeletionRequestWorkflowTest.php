@@ -94,3 +94,37 @@ it('does not delete or mutate the referenced patient record when a request is cl
 
     expect(\App\Patient::query()->whereKey($patient->getKey())->exists())->toBeTrue();
 });
+
+it('exposes review and close actions only through authenticated staff routes', function (): void {
+    $this->withoutMiddleware(\\App\\Http\\Middleware\\EnsureStaffSessionIsFresh::class);
+    $admin = deletionWorkflowAdmin();
+    $request = DeletionRequest::factory()->create();
+
+    $this->actingAs($admin, 'staff')
+        ->postJson(route('staff.deletion-requests.review', $request), [
+            'decision' => 'accept_for_assessment',
+        ])
+        ->assertOk()
+        ->assertJsonPath('status', 'under_review');
+
+    $this->actingAs($admin, 'staff')
+        ->postJson(route('staff.deletion-requests.close', $request), [
+            'resolution_code' => 'retained_by_policy',
+        ])
+        ->assertOk()
+        ->assertJsonPath('status', 'closed');
+});
+
+it('denies deletion request workflow endpoints to reception staff', function (): void {
+    $this->withoutMiddleware(\\App\\Http\\Middleware\\EnsureStaffSessionIsFresh::class);
+    $reception = StaffUser::factory()->active()->create(['role' => 'reception']);
+    $request = DeletionRequest::factory()->create();
+
+    $this->actingAs($reception, 'staff')
+        ->postJson(route('staff.deletion-requests.review', $request), [
+            'decision' => 'accept_for_assessment',
+        ])
+        ->assertForbidden();
+
+    expect($request->refresh()->status)->toBe('pending');
+});

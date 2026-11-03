@@ -1,6 +1,6 @@
 # Task 28 — Retention implementation review
 
-Reviewed against branch `task/28-security-privacy-audit`. The metadata-only completed-job history groundwork below is newly committed and awaits CI verification. No production data was used.
+Reviewed against branch `task/28-security-privacy-audit`. The metadata-only completed-job history groundwork below passed CI run [#979](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41684593114) on revision `3282ab38d55df8d3b5cd7cb01a70ed6aada4821c`. No production data was used. No production data was used.
 
 ## Findings
 

@@ -4,6 +4,13 @@ Reviewed against branch code at commit `2b192bb7f29cf1b801cbe1f7d52faca7adbaf7d9
 
 ## Findings
 
+### R28-RET-03 update — failed queue job cleanup added
+- `security:prune-expired-data` now deletes `failed_jobs` rows whose `failed_at` is older than 30 days.
+- The cleanup does not touch `jobs` rows, including reserved/running work.
+- Laravel's database queue removes successfully completed jobs from `jobs`; there is no completed-job history table in this configuration. Therefore a 7-day successful-job history retention cannot be implemented against the current schema without introducing a separate job-history store. `job_batches` is a distinct table and is not pruned because its retention policy is not specified.
+- A dedicated regression test for the new failed-job branch has not yet been committed. CI must pass before this change is considered verified.
+
+
 ### R28-RET-01 update — result timestamp added
 - Added nullable, indexed `result_generated_at` to `smart_smile_sessions` in migration `2026_11_03_000001_add_result_generated_at_to_smart_smile_sessions_table.php`.
 - Successful `ProcessSmartSmile` completion writes the UTC generation timestamp. Queue start, failed processing, new upload and user revocation clear it.

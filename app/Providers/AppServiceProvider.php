@@ -6,8 +6,8 @@ namespace App\Providers;
 
 use App\AI\FakeAIProvider;
 use App\AIRequest;
-use App\CompletedJobHistory;
 use App\Appointment;
+use App\CompletedJobHistory;
 use App\ContentItem;
 use App\MediaAsset;
 use App\Notifications\SmsChannel;

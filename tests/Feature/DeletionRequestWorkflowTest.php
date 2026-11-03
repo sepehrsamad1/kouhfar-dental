@@ -7,7 +7,6 @@ use App\DeletionRequest;
 use App\Services\DeletionRequestWorkflow;
 use App\StaffUser;
 use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use InvalidArgumentException;
 use LogicException;
@@ -96,7 +95,7 @@ it('does not delete or mutate the referenced patient record when a request is cl
 });
 
 it('exposes review and close actions only through authenticated staff routes', function (): void {
-    $this->withoutMiddleware(\\App\\Http\\Middleware\\EnsureStaffSessionIsFresh::class);
+    $this->withoutMiddleware(\App\Http\Middleware\EnsureStaffSessionIsFresh::class);
     $admin = deletionWorkflowAdmin();
     $request = DeletionRequest::factory()->create();
 
@@ -116,7 +115,7 @@ it('exposes review and close actions only through authenticated staff routes', f
 });
 
 it('denies deletion request workflow endpoints to reception staff', function (): void {
-    $this->withoutMiddleware(\\App\\Http\\Middleware\\EnsureStaffSessionIsFresh::class);
+    $this->withoutMiddleware(\App\Http\Middleware\EnsureStaffSessionIsFresh::class);
     $reception = StaffUser::factory()->active()->create(['role' => 'reception']);
     $request = DeletionRequest::factory()->create();
 

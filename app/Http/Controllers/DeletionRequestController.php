@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\\Http\\Controllers;
+namespace App\Http\Controllers;
 
-use App\\DeletionRequest;
-use App\\Services\\DeletionRequestWorkflow;
-use App\\StaffUser;
-use Illuminate\\Http\\JsonResponse;
-use Illuminate\\Http\\Request;
+use App\DeletionRequest;
+use App\Services\DeletionRequestWorkflow;
+use App\StaffUser;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 final class DeletionRequestController
 {

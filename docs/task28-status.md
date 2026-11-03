@@ -7,7 +7,7 @@
 - Task: 28 — Security and Privacy Audit
 - Branch: `task/28-security-privacy-audit`
 - Last fully CI-verified revision: `3282ab38d55df8d3b5cd7cb01a70ed6aada4821c` (GitHub Actions run [#979](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41684593114), completed successfully).
-- Latest CI revision: `e2860c2e8d29b86863bc9f9adb76997cbb601292` (run [#1001](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41692092189)); full-history Gitleaks, dependency audits, JavaScript lint/typecheck/build passed, but Pint failed on `tests/Feature/DeletionRequestWorkflowTest.php` (`fully_qualified_strict_types`, `ordered_imports`). PHPStan, migrations, Laravel tests and browser tests were skipped, not failed. Formatting-only correction committed as `21edde071d8816622e44a49cd745502acf1e5fd3`; awaiting CI rerun.
+- Latest completed CI revision: `8da9caa37f77829fc8aaf0654eb2bf25c886e00f` (run [#1006](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41693885280)); Gitleaks, dependency audits and JavaScript lint/typecheck/build passed. Pint reported one remaining `fully_qualified_strict_types` issue in `DeletionRequestWorkflowTest.php`; PHPStan, migrations, Laravel tests and browser tests were skipped, not failed. The test now uses sorted application/framework imports and fully-qualified global exception classes in commit `994288e4456d2f100148d3685f883646c8028463`; awaiting CI rerun.
 - Target standard: OWASP ASVS v5.0.0 Level 2 (scoped engineering assessment, not certification).
 - Scope: repository source/configuration/migrations/tests/CI. No production or third-party systems were tested.
 

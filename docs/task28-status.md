@@ -12,6 +12,8 @@
 
 ## Implemented on this branch
 
+- Notification attempt tracking: added nullable indexed `last_attempt_at`; the sender records UTC attempt time before dispatch and preserves the existing successful `sent_at` behavior. Retry feature test now asserts the timestamp. No outbox retention deletion is enabled because the owner decision remains open. CI verification is pending.
+
 - Added nullable indexed `result_generated_at` to Smart Smile sessions. Successful simulation completion records a UTC timestamp; upload/retry/failure/revocation clears it. This is preparatory metadata only: no 12-month purge or consent-token TTL is active. OpenAPI contract and synthetic feature assertions updated; new commits are awaiting CI verification.
 
 - Hardened staff login intended-redirect validation; restricted patient edits and full mobile reveal to admin/reception; revoked sessions immediately when staff are deactivated.

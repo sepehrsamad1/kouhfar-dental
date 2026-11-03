@@ -6,13 +6,14 @@
 
 - Task: 28 — Security and Privacy Audit
 - Branch: `task/28-security-privacy-audit`
-- Code revision verified: `26174c376f6dd9a2c610932333f645e8fa22c3cc`
+- Latest previously CI-verified revision: `f3b91292bede46ce0e82c6e30291adb78a606e9b`
 - Target standard: OWASP ASVS v5.0.0 Level 2 (scoped engineering assessment, not certification)
 - Scope: repository source/configuration/migrations/tests/CI. No production or third-party systems were tested.
 
 ## Implemented on this branch
 
-- Notification attempt tracking: added nullable indexed `last_attempt_at`; the sender records UTC attempt time before dispatch and preserves the existing successful `sent_at` behavior. Retry feature test now asserts the timestamp. No outbox retention deletion is enabled because the owner decision remains open. CI verification is pending.
+- Notification attempt tracking: added nullable indexed `last_attempt_at`; the sender records UTC attempt time before dispatch and preserves the existing successful `sent_at` behavior. Retry feature test asserts the timestamp. No outbox retention deletion is enabled because the owner decision remains open.
+- Completed-job metadata groundwork: added `completed_job_history` with job class, queue name, attempt count and UTC completion time only. A queue-after callback records successful jobs; serialized payloads, exception text and patient/job arguments are deliberately excluded. Model contract test added. The latest CI run #968 predates these commits; new CI verification is pending. The proposed 7-day retention is not activated while the owner decision remains open.
 
 - Added nullable indexed `result_generated_at` to Smart Smile sessions. Successful simulation completion records a UTC timestamp; upload/retry/failure/revocation clears it. This is preparatory metadata only: no 12-month purge or consent-token TTL is active. OpenAPI contract and synthetic feature assertions updated; new commits are awaiting CI verification.
 
@@ -39,13 +40,13 @@
 - Idempotency records: delete after the existing 24-hour expiry.
 - Staff MFA: TOTP plus one-time recovery codes.
 - MeliPayamak: purchased provider for backend OTP delivery; its token is a deployment secret.
-- Consent evidence retention and Smart Smile token TTL remain undecided. The user selected 12 months for the final Smart Smile output as an engineering baseline, and the code now records its generation time; automated expiry remains disabled pending formal owner/legal policy reconciliation. Queue/failed-job payloads, notification outbox and deletion-request retention remain undecided.
+- Consent evidence retention and Smart Smile token TTL remain undecided. The user selected 12 months for the final Smart Smile output as an engineering baseline, and the code now records its generation time; automated expiry remains disabled pending formal owner/legal policy reconciliation. Queue/failed-job payloads, notification outbox and deletion-request retention remain undecided. Metadata-only successful-job history groundwork is committed but awaits CI; no retention purge is enabled.
 
 See [clinic-owner decisions](security/task28-owner-decisions.md).
 
 ## Automated verification status
 
-Code revision `26174c376f6dd9a2c610932333f645e8fa22c3cc` passed [GitHub Actions CI run #937](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41531856270).
+Revision `f3b91292bede46ce0e82c6e30291adb78a606e9b` passed [GitHub Actions CI run #968](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41655203664). Latest completed-job history commits are newer than that run and await CI.
 
 - 302 Laravel/Pest tests passed (24,617 assertions).
 - 36 Playwright browser tests passed.

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\AuditLog;
 use App\DeletionRequest;
+use App\Patient;
 use App\Services\DeletionRequestWorkflow;
 use App\StaffUser;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -81,7 +82,7 @@ it('prevents repeated or out-of-order transitions', function (): void {
 
 it('does not delete or mutate the referenced patient record when a request is closed', function (): void {
     $admin = deletionWorkflowAdmin();
-    $patient = \App\Patient::factory()->create();
+    $patient = Patient::factory()->create();
     $request = DeletionRequest::factory()->create([
         'target_type' => 'Patient',
         'target_id' => $patient->getKey(),
@@ -91,7 +92,7 @@ it('does not delete or mutate the referenced patient record when a request is cl
     $reviewed = $workflow->review($request, $admin, 'accept_for_assessment');
     $workflow->close($reviewed, $admin, 'retained_by_policy');
 
-    expect(\App\Patient::query()->whereKey($patient->getKey())->exists())->toBeTrue();
+    expect(Patient::query()->whereKey($patient->getKey())->exists())->toBeTrue();
 });
 
 it('exposes review and close actions only through authenticated staff routes', function (): void {

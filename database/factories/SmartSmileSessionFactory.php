@@ -22,6 +22,7 @@ class SmartSmileSessionFactory extends Factory
             'media_asset_id' => null,
             'status' => 'consented',
             'result' => null,
+            'result_generated_at' => null,
         ];
     }
 }

@@ -43,6 +43,9 @@ Route::middleware(['auth:staff', 'staff.session.fresh', PreventStoreCache::class
     Route::delete('/staff/media/{mediaAsset}', [MediaAssetController::class, 'delete'])->name('staff.media.delete');
     Route::post('/staff/logout', [StaffAuthController::class, 'destroy'])->name('staff.logout');
     Route::get('/staff/mfa/recovery-codes', [StaffAuthController::class, 'recoveryCodes'])->name('staff.mfa.recovery-codes');
+    Route::post('/staff/deletion-requests/{deletionRequest}/review', [DeletionRequestController::class, 'review'])->name('staff.deletion-requests.review');
+    Route::post('/staff/deletion-requests/{deletionRequest}/close', [DeletionRequestController::class, 'close'])->name('staff.deletion-requests.close');
+
     Route::get('/staff/admin/audit', function () {
         Gate::authorize('view-audit-log');
 

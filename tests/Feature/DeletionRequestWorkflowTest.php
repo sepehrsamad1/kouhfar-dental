@@ -2,50 +2,58 @@
 
 declare(strict_types=1);
 
-uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
+use App\AuditLog;
+use App\DeletionRequest;
+use App\Patient;
+use App\Services\DeletionRequestWorkflow;
+use App\StaffUser;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-function deletionWorkflowAdmin(): \App\StaffUser
+uses(RefreshDatabase::class);
+
+function deletionWorkflowAdmin(): StaffUser
 {
-    return \App\StaffUser::factory()->active()->create(['role' => 'admin']);
+    return StaffUser::factory()->active()->create(['role' => 'admin']);
 }
 
 it('moves a pending request through review and closes it with an audited non-destructive outcome', function (): void {
     $admin = deletionWorkflowAdmin();
-    $request = \App\DeletionRequest::factory()->create();
+    $request = DeletionRequest::factory()->create();
 
-    $reviewed = app(\App\Services\DeletionRequestWorkflow::class)->review($request, $admin, 'accept_for_assessment');
+    $reviewed = app(DeletionRequestWorkflow::class)->review($request, $admin, 'accept_for_assessment');
 
     expect($reviewed->status)->toBe('under_review')
         ->and($reviewed->reviewed_by)->toBe($admin->getKey())
         ->and($reviewed->reviewed_at)->not->toBeNull()
         ->and($reviewed->approved_by)->toBeNull();
 
-    $closed = app(\App\Services\DeletionRequestWorkflow::class)->close($reviewed, $admin, 'retained_by_policy');
+    $closed = app(DeletionRequestWorkflow::class)->close($reviewed, $admin, 'retained_by_policy');
 
     expect($closed->status)->toBe('closed')
         ->and($closed->resolved_at)->not->toBeNull()
         ->and($closed->resolution_code)->toBe('retained_by_policy')
-        ->and(\App\AuditLog::query()->where('action', 'deletion_request.reviewed')->count())->toBe(1)
-        ->and(\App\AuditLog::query()->where('action', 'deletion_request.closed')->count())->toBe(1);
+        ->and(AuditLog::query()->where('action', 'deletion_request.reviewed')->count())->toBe(1)
+        ->and(AuditLog::query()->where('action', 'deletion_request.closed')->count())->toBe(1);
 });
 
 it('rejects inactive and non-admin actors', function (): void {
-    $request = \App\DeletionRequest::factory()->create();
-    $workflow = app(\App\Services\DeletionRequestWorkflow::class);
+    $request = DeletionRequest::factory()->create();
+    $workflow = app(DeletionRequestWorkflow::class);
 
-    expect(fn () => $workflow->review($request, \App\StaffUser::factory()->active()->create(['role' => 'reception']), 'accept_for_assessment'))
-        ->toThrow(\Illuminate\Auth\Access\AuthorizationException::class);
+    expect(fn () => $workflow->review($request, StaffUser::factory()->active()->create(['role' => 'reception']), 'accept_for_assessment'))
+        ->toThrow(AuthorizationException::class);
 
-    $inactiveAdmin = \App\StaffUser::factory()->create(['role' => 'admin', 'is_active' => false]);
+    $inactiveAdmin = StaffUser::factory()->create(['role' => 'admin', 'is_active' => false]);
 
     expect(fn () => $workflow->review($request, $inactiveAdmin, 'accept_for_assessment'))
-        ->toThrow(\Illuminate\Auth\Access\AuthorizationException::class);
+        ->toThrow(AuthorizationException::class);
 });
 
 it('requires allowlisted rejection and resolution codes', function (): void {
     $admin = deletionWorkflowAdmin();
-    $request = \App\DeletionRequest::factory()->create();
-    $workflow = app(\App\Services\DeletionRequestWorkflow::class);
+    $request = DeletionRequest::factory()->create();
+    $workflow = app(DeletionRequestWorkflow::class);
 
     expect(fn () => $workflow->review($request, $admin, 'reject'))
         ->toThrow(\InvalidArgumentException::class);
@@ -58,8 +66,8 @@ it('requires allowlisted rejection and resolution codes', function (): void {
 
 it('prevents repeated or out-of-order transitions', function (): void {
     $admin = deletionWorkflowAdmin();
-    $request = \App\DeletionRequest::factory()->create();
-    $workflow = app(\App\Services\DeletionRequestWorkflow::class);
+    $request = DeletionRequest::factory()->create();
+    $workflow = app(DeletionRequestWorkflow::class);
 
     $reviewed = $workflow->review($request, $admin, 'accept_for_assessment');
 
@@ -72,23 +80,23 @@ it('prevents repeated or out-of-order transitions', function (): void {
 
 it('does not delete or mutate the referenced patient record when a request is closed', function (): void {
     $admin = deletionWorkflowAdmin();
-    $patient = \App\Patient::factory()->create();
-    $request = \App\DeletionRequest::factory()->create([
+    $patient = Patient::factory()->create();
+    $request = DeletionRequest::factory()->create([
         'target_type' => 'Patient',
         'target_id' => $patient->getKey(),
     ]);
-    $workflow = app(\App\Services\DeletionRequestWorkflow::class);
+    $workflow = app(DeletionRequestWorkflow::class);
 
     $reviewed = $workflow->review($request, $admin, 'accept_for_assessment');
     $workflow->close($reviewed, $admin, 'retained_by_policy');
 
-    expect(\App\Patient::query()->whereKey($patient->getKey())->exists())->toBeTrue();
+    expect(Patient::query()->whereKey($patient->getKey())->exists())->toBeTrue();
 });
 
 it('exposes review and close actions only through authenticated staff routes', function (): void {
     $this->withoutMiddleware(\App\Http\Middleware\EnsureStaffSessionIsFresh::class);
     $admin = deletionWorkflowAdmin();
-    $request = \App\DeletionRequest::factory()->create();
+    $request = DeletionRequest::factory()->create();
 
     $this->actingAs($admin, 'staff')
         ->postJson(route('staff.deletion-requests.review', $request), [
@@ -107,8 +115,8 @@ it('exposes review and close actions only through authenticated staff routes', f
 
 it('denies deletion request workflow endpoints to reception staff', function (): void {
     $this->withoutMiddleware(\App\Http\Middleware\EnsureStaffSessionIsFresh::class);
-    $reception = \App\StaffUser::factory()->active()->create(['role' => 'reception']);
-    $request = \App\DeletionRequest::factory()->create();
+    $reception = StaffUser::factory()->active()->create(['role' => 'reception']);
+    $request = DeletionRequest::factory()->create();
 
     $this->actingAs($reception, 'staff')
         ->postJson(route('staff.deletion-requests.review', $request), [

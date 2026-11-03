@@ -20,6 +20,10 @@ class DeletionRequest extends Model
         'target_id',
         'requested_by',
         'approved_by',
+        'reviewed_by',
+        'reviewed_at',
+        'resolved_at',
+        'resolution_code',
         'status',
         'created_at',
     ];
@@ -28,6 +32,8 @@ class DeletionRequest extends Model
     {
         return [
             'created_at' => 'immutable_datetime',
+            'reviewed_at' => 'immutable_datetime',
+            'resolved_at' => 'immutable_datetime',
         ];
     }
 }

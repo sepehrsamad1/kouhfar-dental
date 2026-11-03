@@ -98,7 +98,8 @@ it('processes through the fake provider and never exposes clinical findings', fu
 
     expect($session->status)->toBe('completed')
         ->and($session->result['message'])->toContain('غیرتشخیصی')
-        ->and($session->result['message'])->not->toContain('بیماری');
+        ->and($session->result['message'])->not->toContain('بیماری')
+        ->and($session->result_generated_at)->not->toBeNull();
 });
 
 it('allows deletion through the consent token and soft-deletes the private image', function (): void {
@@ -113,7 +114,8 @@ it('allows deletion through the consent token and soft-deletes the private image
         ->assertJsonPath('status', 'deleted');
 
     expect(SmartSmileSession::query()->find($session->id)->status)->toBe('deleted')
-        ->and(MediaAsset::withTrashed()->find($session->media_asset_id)->deleted_at)->not->toBeNull();
+        ->and(MediaAsset::withTrashed()->find($session->media_asset_id)->deleted_at)->not->toBeNull()
+        ->and(SmartSmileSession::query()->find($session->id)->result_generated_at)->toBeNull();
 });
 
 it('rejects revoked consent and cannot access session data without the token', function (): void {

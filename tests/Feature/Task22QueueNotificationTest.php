@@ -155,6 +155,7 @@ it('retries a failed provider call without changing the outbox payload', functio
 
     expect($outbox->refresh()->attempts)->toBe(2)
         ->and($outbox->sent_at)->not->toBeNull()
+        ->and($outbox->last_attempt_at)->not->toBeNull()
         ->and($fake->messages)->toHaveCount(1);
 });
 

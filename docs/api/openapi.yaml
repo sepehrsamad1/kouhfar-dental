@@ -32,6 +32,22 @@ x-task-12-staff-web-routes:
     - { method: POST, path: /staff/configuration/exceptions, access: admin }
     - { method: PATCH, path: /staff/configuration/exceptions/{exception}, access: admin }
     - { method: DELETE, path: /staff/configuration/exceptions/{exception}, access: admin }
+x-task-28-deletion-request-workflow:
+  description: >-
+    Authenticated staff web actions for review and administrative closure of a
+    deletion request. These actions record an assessment outcome only. They do
+    not delete patient, CRM, appointment, consent, media, backup or audit data.
+    Active administrators only; Laravel session authentication and CSRF apply.
+  states: [pending, under_review, rejected, closed]
+  reviewDecisions: [accept_for_assessment, reject]
+  rejectionReasonCodes: [identity_not_verified, outside_scope, duplicate_request]
+  resolutionCodes: [retained_by_policy, legal_hold, correction_completed, no_action_required]
+  routes:
+    - { method: POST, path: /staff/deletion-requests/{deletionRequest}/review, access: active-admin }
+    - { method: POST, path: /staff/deletion-requests/{deletionRequest}/close, access: active-admin }
+  securityBoundary: >-
+    Closing a request is not proof of physical erasure. No automatic deletion,
+    anonymization, backup rewrite or third-party propagation is performed.
 tags:
   - { name: public }
   - { name: staff }

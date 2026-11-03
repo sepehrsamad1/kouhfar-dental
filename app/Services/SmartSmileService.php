@@ -63,6 +63,7 @@ final class SmartSmileService
             'media_asset_id' => $asset->id,
             'status' => 'queued',
             'result' => null,
+            'result_generated_at' => null,
         ])->save();
 
         ProcessSmartSmile::dispatch($session->id);
@@ -84,6 +85,7 @@ final class SmartSmileService
             'revoked_at' => now('UTC'),
             'status' => 'deleted',
             'result' => null,
+            'result_generated_at' => null,
         ])->save();
     }
 

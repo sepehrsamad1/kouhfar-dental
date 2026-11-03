@@ -6,13 +6,12 @@ use App\AuditLog;
 use App\DeletionRequest;
 use App\Patient;
 use App\Services\DeletionRequestWorkflow;
-use App\StaffUser;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
-function deletionWorkflowAdmin(): StaffUser
+function deletionWorkflowAdmin(): \App\StaffUser
 {
     return StaffUser::factory()->active()->create(['role' => 'admin']);
 }

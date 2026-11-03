@@ -15,7 +15,7 @@
 - Notification attempt tracking: added nullable indexed `last_attempt_at`; the sender records UTC attempt time before dispatch and preserves the existing successful `sent_at` behavior. Retry feature test asserts the timestamp. No outbox retention deletion is enabled because the owner decision remains open.
 - Completed-job metadata groundwork: added `completed_job_history` with job class, queue name, attempt count and UTC completion time only. A queue-after callback records successful jobs; serialized payloads, exception text and patient/job arguments are deliberately excluded. Model contract test added. CI run #979 includes these commits and passed. The proposed 7-day retention is not activated while the owner decision remains open.
 
-- Added nullable indexed `result_generated_at` to Smart Smile sessions. Successful simulation completion records a UTC timestamp; upload/retry/failure/revocation clears it. This is preparatory metadata only: no 12-month purge or consent-token TTL is active. OpenAPI contract and synthetic feature assertions updated; new commits are awaiting CI verification.
+- Added nullable indexed `result_generated_at` to Smart Smile sessions. Successful simulation completion records a UTC timestamp; upload/retry/failure/revocation clears it. This is preparatory metadata only: no 12-month purge or consent-token TTL is active. OpenAPI contract and synthetic feature assertions updated; these changes are included in CI run #979.
 
 - Hardened staff login intended-redirect validation; restricted patient edits and full mobile reveal to admin/reception; revoked sessions immediately when staff are deactivated.
 - Hardened session cookies: Secure outside local/testing, HttpOnly, SameSite=Lax and `__Secure-` production/staging name.
@@ -46,7 +46,7 @@ See [clinic-owner decisions](security/task28-owner-decisions.md).
 
 ## Automated verification status
 
-Revision `3282ab38d55df8d3b5cd7cb01a70ed6aada4821c` passed [GitHub Actions CI run #979](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41684593114). Latest completed-job history commits are newer than that run and await CI.
+Revision `3282ab38d55df8d3b5cd7cb01a70ed6aada4821c` passed [GitHub Actions CI run #979](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41684593114). The completed-job history migration/model/listener and its model contract test are included in this successful run.
 
 - 302 Laravel/Pest tests passed (24,617 assertions).
 - 36 Playwright browser tests passed.

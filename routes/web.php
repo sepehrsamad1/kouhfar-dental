@@ -7,6 +7,7 @@ use App\Http\Controllers\AssistantController;
 use App\Http\Controllers\AvailabilityController;
 use App\Http\Controllers\ClinicConfigurationController;
 use App\Http\Controllers\ContentItemController;
+use App\Http\Controllers\DeletionRequestController;
 use App\Http\Controllers\MediaAssetController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\SmartSmileController;

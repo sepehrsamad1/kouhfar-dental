@@ -143,7 +143,9 @@ export function initBookingWizard(deps = {}) {
     }
 
     function invalidateAttemptIfPayloadChanged() {
-        if (state.attempt && state.attempt.fingerprint !== payloadFingerprint(currentPayload())) state.attempt = null;
+        const fingerprint = payloadFingerprint(currentPayload());
+        if (state.attempt && state.attempt.fingerprint !== fingerprint) state.attempt = null;
+        if (state.otpFingerprint && state.otpFingerprint !== fingerprint) clearOtpVerification();
     }
 
     function attemptFor(payload) {
@@ -162,6 +164,7 @@ export function initBookingWizard(deps = {}) {
         state.date = '';
         state.slot = null;
         state.attempt = null;
+        clearOtpVerification();
         renderDates();
         timesWrap.replaceChildren();
         $('#bkTimeSub').textContent = 'ساعت‌های خالی برای تاریخ انتخابی';
@@ -264,7 +267,8 @@ export function initBookingWizard(deps = {}) {
         state.date = button.dataset.date;
         state.slot = null;
         state.attempt = null;
-        $$('.bk__date', datesWrap).forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
+        clearOtpVerification();
+        $('.bk__date', datesWrap).forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
         clearErrors();
         loadAvailability();
         sync();
@@ -318,7 +322,8 @@ export function initBookingWizard(deps = {}) {
         if (!button) return;
         state.slot = { start_at: button.dataset.startAt };
         state.attempt = null;
-        $$('.bk__time', timesWrap).forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
+        clearOtpVerification();
+        $('.bk__time', timesWrap).forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
         announce(button.getAttribute('aria-label') ?? '');
         clearErrors();
         sync();
@@ -470,8 +475,8 @@ export function initBookingWizard(deps = {}) {
     });
 
     verifyOtpButton.addEventListener('click', async () => {
-        const code = normalizeDigits(otpInput.value).replace(/\\D/g, '');
-        if (!state.otpChallengeId || !/^\\d{4,10}$/.test(code) || state.otpBusy) {
+        const code = normalizeDigits(otpInput.value).replace(/\D/g, '');
+        if (!state.otpChallengeId || !/^\d{4,10}$/.test(code) || state.otpBusy) {
             otpStatus.textContent = 'کد ۴ تا ۱۰ رقمی را وارد کنید.';
             return;
         }
@@ -495,7 +500,7 @@ export function initBookingWizard(deps = {}) {
     });
 
     otpInput.addEventListener('input', () => {
-        otpInput.value = normalizeDigits(otpInput.value).replace(/\\D/g, '').slice(0, 10);
+        otpInput.value = normalizeDigits(otpInput.value).replace(/\D/g, '').slice(0, 10);
     });
 
     next.addEventListener('click', () => {
@@ -535,9 +540,8 @@ export function initBookingWizard(deps = {}) {
         datesWrap.replaceChildren(); timesWrap.replaceChildren();
         $('#bkDetails').hidden = true;
         nameInput.value = ''; phoneInput.value = '';
-        otpInput.value = ''; otpInput.disabled = true; verifyOtpButton.disabled = true; sendOtpButton.disabled = false;
-        otpStatus.textContent = '';
-        Object.assign(state, { otpChallengeId: null, verificationGrant: null, otpFingerprint: null, otpBusy: false });
+        clearOtpVerification();
+        state.otpBusy = false;
         fieldError('full_name', false); fieldError('mobile', false); clearErrors();
     }
 

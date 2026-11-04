@@ -16,6 +16,7 @@ final class PhoneVerificationIntent
             'full_name' => trim((string) $payload['full_name']),
             'mobile' => (string) $payload['mobile'],
             'service_id' => (string) $payload['service_id'],
+            'idempotency_key' => (string) $payload['idempotency_key'],
             'start_at' => (new DateTimeImmutable((string) $payload['start_at']))
                 ->setTimezone(new DateTimeZone('UTC'))
                 ->format('Y-m-d\\TH:i:s\\Z'),

@@ -21,6 +21,10 @@ use Illuminate\Support\Facades\DB;
 
 uses(RefreshDatabase::class);
 
+beforeEach(function (): void {
+    config(['booking.phone_verification_required' => false]);
+});
+
 function bookingFixture(): array
 {
     $service = Service::factory()->create([

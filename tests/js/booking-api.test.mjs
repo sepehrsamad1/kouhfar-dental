@@ -83,11 +83,11 @@ test('409 conflict maps to safe copy; no retry for HTTP 4xx or 500', async () =>
     }
 });
 
-test('phone verification not configured fails safely and is not retried', async () => {
-    const fixture = mock([response(503, { code: 'PHONE_VERIFICATION_NOT_READY', message: 'provider secret missing' }), response(201, { status: 'pending', start_at: payload.start_at, end_at: '2026-10-29T10:00:00Z' })]);
-    await assert.rejects(createBookingApi({ fetch: fixture.fetch, document, sleep: wait }).create(payload, 'verification-gate-key-123456'), (error) => {
-        assert.equal(error.code, 'PHONE_VERIFICATION_NOT_READY');
-        assert.match(messageFor(error.code), /راه‌اندازی نشده/);
+test('disabled OTP provider fails safely and issuance is not retried', async () => {
+    const fixture = mock([response(503, { code: 'OTP_UNAVAILABLE', message: 'provider secret missing' }), response(202, { challenge_id: 'f2bd7d1c-2d4f-4b84-90a3-0cb3b8f9b1a2', expires_in: 300 })]);
+    await assert.rejects(createBookingApi({ fetch: fixture.fetch, document, sleep: wait }).issueOtp(payload.mobile), (error) => {
+        assert.equal(error.code, 'OTP_UNAVAILABLE');
+        assert.match(messageFor(error.code), /ارسال کد تأیید فعلاً در دسترس نیست/);
         assert.doesNotMatch(messageFor(error.code), /provider secret/);
         return true;
     });

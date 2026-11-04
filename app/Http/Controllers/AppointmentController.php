@@ -8,6 +8,7 @@ use App\Domain\Booking\AppointmentBookingException;
 use App\Domain\Booking\AppointmentCreator;
 use App\Http\Requests\AppointmentStoreRequest;
 use App\Services\Otp\PhoneVerificationService;
+use App\Services\Otp\PhoneVerificationException;
 use RuntimeException;
 use Illuminate\Http\JsonResponse;
 

@@ -5,23 +5,15 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\BookingOtpChallenge;
-use App\Notifications\Otp\OtpProvider;
 use App\Support\IranianPhoneNumber;
 use Carbon\CarbonImmutable;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use RuntimeException;
 use Throwable;
 
 final class BookingOtpService
 {
-    private const TTL_MINUTES = 5;
-    private const MAX_ATTEMPTS = 5;
-    private const RESEND_COOLDOWN_SECONDS = 60;
-    private const PHONE_15_MINUTE_LIMIT = 3;
-    private const PHONE_HOURLY_LIMIT = 5;
-    private const IP_HOURLY_LIMIT = 10;
-
     public function __construct(private readonly OtpProviderManager $providers)
     {
     }
@@ -31,19 +23,21 @@ final class BookingOtpService
         $normalized = IranianPhoneNumber::normalize($phone);
         $phoneHash = $this->digest('phone', $normalized);
         $ipHash = $this->digest('ip', $ip);
-        $challengeId = (string) \Illuminate\Support\Str::uuid();
+        $challengeId = (string) Str::uuid();
 
         DB::transaction(function () use ($phoneHash, $ipHash, $challengeId): void {
+            // PostgreSQL advisory lock makes phone-specific limits atomic across app nodes.
             DB::selectOne('select pg_advisory_xact_lock(hashtextextended(?, 0))', ['booking-otp:'.$phoneHash]);
             $now = CarbonImmutable::now('UTC');
+            $cooldown = (int) config('booking.otp.resend_cooldown_seconds', 60);
 
             $last = BookingOtpChallenge::query()
                 ->where('phone_hash', $phoneHash)
                 ->latest('created_at')
                 ->first();
 
-            if ($last !== null && $last->created_at->diffInSeconds($now) < self::RESEND_COOLDOWN_SECONDS) {
-                throw new RuntimeException('OTP rate limit exceeded.');
+            if ($last !== null && $last->created_at->greaterThan($now->subSeconds($cooldown))) {
+                throw new BookingOtpRateLimitException;
             }
 
             $phone15 = BookingOtpChallenge::query()->where('phone_hash', $phoneHash)
@@ -53,10 +47,10 @@ final class BookingOtpService
             $ipHour = BookingOtpChallenge::query()->where('ip_hash', $ipHash)
                 ->where('created_at', '>=', $now->subHour())->count();
 
-            if ($phone15 >= self::PHONE_15_MINUTE_LIMIT
-                || $phoneHour >= self::PHONE_HOURLY_LIMIT
-                || $ipHour >= self::IP_HOURLY_LIMIT) {
-                throw new RuntimeException('OTP rate limit exceeded.');
+            if ($phone15 >= (int) config('booking.otp.phone_send_limit_15_minutes', 3)
+                || $phoneHour >= (int) config('booking.otp.phone_send_limit_1_hour', 5)
+                || $ipHour >= (int) config('booking.otp.ip_send_limit_1_hour', 10)) {
+                throw new BookingOtpRateLimitException;
             }
 
             BookingOtpChallenge::query()
@@ -70,7 +64,7 @@ final class BookingOtpService
                 'ip_hash' => $ipHash,
                 'status' => 'dispatching',
                 'attempts' => 0,
-                'expires_at' => $now->addMinutes(self::TTL_MINUTES),
+                'expires_at' => $now->addMinutes((int) config('booking.otp.ttl_minutes', 5)),
                 'created_at' => $now,
                 'updated_at' => $now,
             ]);
@@ -82,15 +76,16 @@ final class BookingOtpService
                 throw new RuntimeException('OTP provider response is invalid.');
             }
 
+            $now = CarbonImmutable::now('UTC');
             $updated = BookingOtpChallenge::query()
                 ->whereKey($challengeId)
                 ->where('status', 'dispatching')
-                ->where('expires_at', '>', CarbonImmutable::now('UTC'))
+                ->where('expires_at', '>', $now)
                 ->update([
                     'code_hash' => $this->digest('code', $challengeId.'|'.$code),
                     'status' => 'pending',
-                    'last_sent_at' => CarbonImmutable::now('UTC'),
-                    'updated_at' => CarbonImmutable::now('UTC'),
+                    'last_sent_at' => $now,
+                    'updated_at' => $now,
                 ]);
 
             if ($updated !== 1) {
@@ -124,7 +119,8 @@ final class BookingOtpService
                 return false;
             }
 
-            if ($challenge->attempts >= self::MAX_ATTEMPTS) {
+            $maxAttempts = (int) config('booking.otp.max_attempts', 5);
+            if ($challenge->attempts >= $maxAttempts) {
                 $challenge->forceFill(['status' => 'exhausted'])->save();
 
                 return false;
@@ -135,7 +131,7 @@ final class BookingOtpService
                 $attempts = $challenge->attempts + 1;
                 $challenge->forceFill([
                     'attempts' => $attempts,
-                    'status' => $attempts >= self::MAX_ATTEMPTS ? 'exhausted' : 'pending',
+                    'status' => $attempts >= $maxAttempts ? 'exhausted' : 'pending',
                 ])->save();
 
                 return false;

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\VerificationChallenge;
+use App\Service;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
@@ -18,7 +19,7 @@ it('sends an OTP through the configured provider and stores only a hash', functi
         'example.test/otp/*' => Http::response(['code' => '3741437414', 'status' => 'ok'], 200),
     ]);
 
-    $service = \\App\\Service::factory()->create(['is_active' => true, 'is_public_bookable' => true]);
+    $service = Service::factory()->create(['is_active' => true, 'is_public_bookable' => true]);
 
     $response = $this->postJson('/api/v1/phone-verification/send', [
         'mobile' => '۰۹۱۲۳۴۵۶۷۸۹',
@@ -41,7 +42,7 @@ it('sends an OTP through the configured provider and stores only a hash', functi
 
 it('verifies the OTP and returns a grant without exposing the OTP code', function (): void {
     Http::fake(['example.test/otp/*' => Http::response(['code' => '3741437414'], 200)]);
-    $service = \\App\\Service::factory()->create(['is_active' => true, 'is_public_bookable' => true]);
+    $service = Service::factory()->create(['is_active' => true, 'is_public_bookable' => true]);
     $sent = $this->postJson('/api/v1/phone-verification/send', [
         'mobile' => '09123456789',
         'full_name' => 'Synthetic Booker',
@@ -59,7 +60,7 @@ it('verifies the OTP and returns a grant without exposing the OTP code', functio
 
 it('counts invalid OTP attempts and rejects the challenge after five attempts', function (): void {
     Http::fake(['example.test/otp/*' => Http::response(['code' => '3741437414'], 200)]);
-    $service = \\App\\Service::factory()->create(['is_active' => true, 'is_public_bookable' => true]);
+    $service = Service::factory()->create(['is_active' => true, 'is_public_bookable' => true]);
     $sent = $this->postJson('/api/v1/phone-verification/send', [
         'mobile' => '09123456789',
         'full_name' => 'Synthetic Booker',
@@ -79,7 +80,7 @@ it('counts invalid OTP attempts and rejects the challenge after five attempts', 
 
 it('fails closed when the provider is not configured', function (): void {
     config(['services.melipayamak.otp_url' => null]);
-    $service = \\App\\Service::factory()->create(['is_active' => true, 'is_public_bookable' => true]);
+    $service = Service::factory()->create(['is_active' => true, 'is_public_bookable' => true]);
 
     $this->postJson('/api/v1/phone-verification/send', [
         'mobile' => '09123456789',

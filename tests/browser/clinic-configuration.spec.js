@@ -5,7 +5,7 @@ test.describe('Task 12 staff configuration responsive checks', () => {
         await page.goto('/staff/login');
         await page.locator('#email').fill('browser-admin@example.invalid');
         await page.locator('#password').fill('BrowserOnlyPassword!2026');
-        await page.getByRole('button', { name: 'ورود' }).click();
+        await page.getByRole('button', { name: 'ورود', exact: true }).click();
         await expect(page).toHaveURL(/\/staff$/);
 
         for (const width of [375, 768, 1440]) {

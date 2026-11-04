@@ -131,6 +131,17 @@ export function initBookingWizard(deps = {}) {
         return JSON.stringify([payload.service_id, payload.start_at, payload.full_name, payload.mobile]);
     }
 
+    function clearOtpVerification() {
+        state.otpChallengeId = null;
+        state.verificationGrant = null;
+        state.otpFingerprint = null;
+        otpInput.value = '';
+        otpInput.disabled = true;
+        verifyOtpButton.disabled = true;
+        sendOtpButton.disabled = false;
+        otpStatus.textContent = '';
+    }
+
     function invalidateAttemptIfPayloadChanged() {
         if (state.attempt && state.attempt.fingerprint !== payloadFingerprint(currentPayload())) state.attempt = null;
     }
@@ -447,6 +458,7 @@ export function initBookingWizard(deps = {}) {
             verifyOtpButton.disabled = false;
             otpInput.focus();
             otpStatus.textContent = 'کد پیامکی ارسال شد. تا ۵ دقیقه اعتبار دارد.';
+            setTimeout(() => { sendOtpButton.disabled = false; }, Math.max(0, (challenge.resend_after ?? 60) * 1000));
         } catch (error) {
             otpStatus.textContent = '';
             showErrors([messageFor(error?.code, lang)]);

@@ -48,7 +48,8 @@ export function currentLanguage(documentRef = globalThis.document) {
 export function messageFor(code, lang = currentLanguage()) {
     const normalized = String(code ?? '').toUpperCase();
     const key = ({
-        PHONE_VERIFICATION_REQUIRED: 'phone_verification_required', OTP_SEND_FAILED: 'otp_send_failed', OTP_INVALID_OR_EXPIRED: 'otp_invalid_or_expired', PHONE_VERIFICATION_INVALID: 'phone_verification_invalid',\n        SLOT_UNAVAILABLE: 'slot_unavailable', IDEMPOTENCY_CONFLICT: 'idempotency_conflict',
+        PHONE_VERIFICATION_REQUIRED: 'phone_verification_required', OTP_SEND_FAILED: 'otp_send_failed', OTP_INVALID_OR_EXPIRED: 'otp_invalid_or_expired', PHONE_VERIFICATION_INVALID: 'phone_verification_invalid',
+        SLOT_UNAVAILABLE: 'slot_unavailable', IDEMPOTENCY_CONFLICT: 'idempotency_conflict',
         REQUEST_IN_PROGRESS: 'request_in_progress', PHONE_VERIFICATION_NOT_READY: 'phone_verification_not_ready', VALIDATION_FAILED: 'validation_failed',
         UNAUTHENTICATED: 'unauthenticated', FORBIDDEN: 'forbidden', NOT_FOUND: 'not_found',
         CONFLICT: 'conflict', RATE_LIMITED: 'rate_limited', CSRF_INVALID: 'csrf_invalid',

@@ -19,7 +19,9 @@ final class PublicPhoneVerificationController
 {
     public function send(Request $request, PhoneVerificationService $verification): JsonResponse
     {
+        $request->merge(['idempotency_key' => $request->header('Idempotency-Key')]);
         $data = $request->validate([
+            'idempotency_key' => ['required', 'string', 'min:16', 'max:200', 'regex:/^[A-Za-z0-9._~-]+$/'],
             'mobile' => ['required', 'string', 'max:32'],
             'full_name' => ['required', 'string', 'min:3', 'max:200'],
             'service_id' => ['required', 'uuid', Rule::exists('services', 'id')->where(

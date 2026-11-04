@@ -9,7 +9,9 @@ import { currentLanguage } from './error-messages.js';
 export const API = Object.freeze({
     services: '/api/v1/services',
     availability: (serviceId, date) => `/api/v1/availability/${encodeURIComponent(serviceId)}?date=${encodeURIComponent(date)}`,
-    create: '/api/v1/appointments',\n    otpSend: '/api/v1/phone-verification/send',\n    otpVerify: '/api/v1/phone-verification/verify',
+    create: '/api/v1/appointments',
+    otpSend: '/api/v1/phone-verification/send',
+    otpVerify: '/api/v1/phone-verification/verify',
 });
 
 const RETRYABLE = new Set([502, 503, 504]);
@@ -66,7 +68,8 @@ export function createBookingApi(deps = {}) {
             headers['Content-Type'] = 'application/json';
             headers['X-CSRF-TOKEN'] = csrfToken(doc);
         }
-        if (idempotencyKey) headers['Idempotency-Key'] = idempotencyKey;\n        if (verificationGrant) headers['X-Phone-Verification-Grant'] = verificationGrant;
+        if (idempotencyKey) headers['Idempotency-Key'] = idempotencyKey;
+        if (verificationGrant) headers['X-Phone-Verification-Grant'] = verificationGrant;
         try {
             response = await fetcher(url, {
                 method, credentials: 'same-origin', cache: 'no-store', headers,

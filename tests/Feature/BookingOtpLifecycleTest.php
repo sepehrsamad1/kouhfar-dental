@@ -104,6 +104,20 @@ it('enforces resend cooldown and per-phone hourly issuance limits', function ():
         ->toThrow(BookingOtpRateLimitException::class);
 });
 
+it('enforces the five-send hourly phone limit independently of the fifteen-minute limit', function (): void {
+    $otp = app(BookingOtpService::class);
+
+    foreach (['12:00:00', '12:13:00', '12:26:00', '12:39:00', '12:52:00'] as $time) {
+        Carbon::setTestNow('2026-11-04T'.$time.'Z');
+        $otp->issue('09120000001', '192.0.2.15');
+    }
+
+    Carbon::setTestNow('2026-11-04T13:00:00Z');
+
+    expect(fn () => $otp->issue('09120000001', '192.0.2.15'))
+        ->toThrow(BookingOtpRateLimitException::class);
+});
+
 it('enforces the ten-send hourly IP limit across different phone numbers', function (): void {
     $otp = app(BookingOtpService::class);
 

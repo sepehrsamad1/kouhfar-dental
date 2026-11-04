@@ -33,7 +33,7 @@ final class BookingOtpController
                 ->header('Cache-Control', 'no-store, private');
         }
 
-        return response()->json(['challenge_id' => $challengeId, 'expires_in' => 300], 202)
+        return response()->json(['challenge_id' => $challengeId, 'expires_in' => (int) config('booking.otp.ttl_minutes', 5) * 60], 202)
             ->header('Cache-Control', 'no-store, private');
     }
 

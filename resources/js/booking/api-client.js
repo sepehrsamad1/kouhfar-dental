@@ -7,13 +7,15 @@ import { currentLanguage } from './error-messages.js';
 /** @typedef {{ service_id:string, start_at:string, full_name:string, mobile:string }} BookingPayload */
 
 export const API = Object.freeze({
+    otpIssue: '/api/v1/booking-otp/issue',
+    otpVerify: '/api/v1/booking-otp/verify',
     services: '/api/v1/services',
     availability: (serviceId, date) => `/api/v1/availability/${encodeURIComponent(serviceId)}?date=${encodeURIComponent(date)}`,
     create: '/api/v1/appointments',
 });
 
 const RETRYABLE = new Set([502, 503, 504]);
-const ALLOWED_FIELDS = new Set(['full_name', 'mobile', 'service_id', 'start_at']);
+const ALLOWED_FIELDS = new Set(['full_name', 'mobile', 'service_id', 'start_at', 'otp_challenge_id', 'challenge_id', 'code']);
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 export class BookingApiError extends Error {
@@ -108,6 +110,22 @@ export function createBookingApi(deps = {}) {
     );
 
     return {
+        async issueOtp(mobile, signal) {
+            const { status, json } = await request(API.otpIssue, { method: 'POST', body: { mobile }, signal, timeoutMs: 10000 });
+            if (status !== 202 || !UUID.test(json.challenge_id) || json.expires_in !== 300) {
+                throw new BookingApiError('INVALID_RESPONSE', { status, kind: 'invalid' });
+            }
+            return { challengeId: json.challenge_id, expiresIn: json.expires_in };
+        },
+        async verifyOtp(challengeId, code, signal) {
+            const { status, json } = await request(API.otpVerify, {
+                method: 'POST', body: { challenge_id: challengeId, code }, signal, timeoutMs: 10000,
+            });
+            if (status !== 200 || json.verified !== true) {
+                throw new BookingApiError('INVALID_RESPONSE', { status, kind: 'invalid' });
+            }
+            return true;
+        },
         /** @returns {Promise<PublicService[]>} */
         async services(signal) {
             const { json } = await get(API.services, signal);

@@ -47,9 +47,9 @@ Reviewed against branch `task/28-security-privacy-audit`. The metadata-only comp
 - This supports the 90-day raw/pre-consultation input policy, subject to checking the media purge command and storage lifecycle end-to-end.
 
 ### R28-RET-03 — queue history and failed-job cleanup status
-- Successful-job metadata history is now represented by `completed_job_history`; only class, queue name, attempts and completion timestamp are captured.
-- Failed queue payloads older than 30 days are pruned by the current command. A dedicated regression test for that branch is still missing.
-- No retention cleanup is enabled for `completed_job_history`, `jobs` or `job_batches`. The proposed seven-day successful history and 30-day failed payload windows remain subject to explicit owner policy approval; running/reserved jobs and batch metadata must not be deleted speculatively.
+- Successful-job metadata history is represented by `completed_job_history`; only class, queue name, attempts and completion timestamp are captured.
+- Failed queue payloads are not pruned. The cleanup command preserves `failed_jobs` regardless of age, covered by a synthetic regression test.
+- No retention cleanup is enabled for `completed_job_history`, `jobs`, `job_batches` or `failed_jobs`; their retention remains subject to explicit owner policy approval. Running/reserved jobs and batch metadata must not be deleted speculatively.
 
 ### R28-RET-04 — Notification outbox attempt metadata
 - Added nullable indexed `last_attempt_at` to `notification_outbox`; the sender records UTC attempt time before provider dispatch.

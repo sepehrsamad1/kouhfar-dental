@@ -56,12 +56,12 @@ it('requires allowlisted rejection and resolution codes', function (): void {
     $workflow = app(DeletionRequestWorkflow::class);
 
     expect(fn () => $workflow->review($request, $admin, 'reject'))
-        ->toThrow(InvalidArgumentException::class);
+        ->toThrow(\\InvalidArgumentException::class);
 
     $reviewed = $workflow->review($request, $admin, 'accept_for_assessment');
 
     expect(fn () => $workflow->close($reviewed, $admin, 'delete_everything'))
-        ->toThrow(InvalidArgumentException::class);
+        ->toThrow(\\InvalidArgumentException::class);
 });
 
 it('prevents repeated or out-of-order transitions', function (): void {
@@ -72,10 +72,10 @@ it('prevents repeated or out-of-order transitions', function (): void {
     $reviewed = $workflow->review($request, $admin, 'accept_for_assessment');
 
     expect(fn () => $workflow->review($reviewed, $admin, 'accept_for_assessment'))
-        ->toThrow(LogicException::class);
+        ->toThrow(\\LogicException::class);
 
     expect(fn () => $workflow->close($request, $admin, 'legal_hold'))
-        ->toThrow(LogicException::class);
+        ->toThrow(\\LogicException::class);
 });
 
 it('does not delete or mutate the referenced patient record when a request is closed', function (): void {

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Otp;
 
 use App\VerificationChallenge;
+use App\Services\Otp\PhoneVerificationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;

@@ -21,7 +21,7 @@ it('sends an OTP through the configured provider and stores only a hash', functi
 
     $service = Service::factory()->create(['is_active' => true, 'is_public_bookable' => true]);
 
-    $response = $this->postJson('/api/v1/phone-verification/send', [
+    $response = $this->withHeader('Idempotency-Key', 'otp-public-test-0001')->postJson('/api/v1/phone-verification/send', [
         'mobile' => '۰۹۱۲۳۴۵۶۷۸۹',
         'full_name' => 'Synthetic Booker',
         'service_id' => $service->id,

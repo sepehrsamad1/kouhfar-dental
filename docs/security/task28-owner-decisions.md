@@ -1,6 +1,6 @@
 # Task 28 — Clinic-owner decisions for security and privacy closure
 
-**Status: OWNER DECISIONS UPDATED — decisions below are recorded from the clinic owner's instructions on 2026-11-03. This is an engineering decision record, not legal advice or production approval.**
+**Status: OWNER DECISIONS UPDATED — original decisions recorded on 2026-11-03; booking OTP limits additionally approved on 2026-11-04. This is an engineering decision record, not legal advice or production approval.**
 
 ## Approved decisions
 
@@ -50,4 +50,4 @@ This media policy is separate from the owner's decision to retain patient/CRM re
 - Keep live AI/SMS integrations disabled until provider identity, secrets, data flows and required approval are verified.
 - Record implementation and test evidence separately from policy approval. A documented policy is not proof that a backup job, separate storage volume, or restore process is operational.
 
-**Approval record:** Owner decisions recorded from the clinic owner's explicit instructions dated 2026-11-03. Approver identity/signature and formal legal review remain outside this engineering record.
+**Approval record:** Original owner decisions were recorded from explicit instructions dated 2026-11-03; the booking OTP policy in OD-28-17 was explicitly approved on 2026-11-04. Approver identity/signature and formal legal review remain outside this engineering record.

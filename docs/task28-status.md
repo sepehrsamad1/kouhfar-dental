@@ -75,3 +75,13 @@ Run #1012 passed Gitleaks, Composer/npm audits and JavaScript lint/typecheck/bui
 Do not merge Task 28 as complete or mark it production-ready while SEC-28-003 or other release blockers remain open, or while required privacy/retention decisions and deployment evidence are outstanding.
 
 No real patient data, patient images, real credentials, production commands, destructive database operations, live AI provider or live SMS provider were used.
+
+## Booking OTP lifecycle — owner-approved policy (2026-11-04)
+
+- Implemented a database-backed challenge lifecycle and public issue/verify endpoints, integrated with the booking request and existing booking wizard.
+- Policy values explicitly approved by the user: 5-minute challenge TTL; 5 failed attempts; 60-second resend cooldown; 3 sends per phone per 15 minutes; 5 sends per phone per hour; 10 sends per IP per hour.
+- The database stores HMAC digests only for the normalized phone, client IP and provider-generated code. It does not store plaintext OTP values. The code digest is cleared after successful verification and terminal expiry, exhaustion or invalidation.
+- PostgreSQL advisory locks serialize both phone and IP quotas across application nodes. New issuance invalidates prior active challenges. A verified challenge is consumed under row lock in the same transaction as appointment creation.
+- Added synthetic-only feature coverage for success, wrong code, expiry, attempt exhaustion, resend cooldown, phone/IP quotas, invalidation, replay/consumption and provider failure; added browser API contract coverage.
+- SMS_OTP_DRIVER remains `null` by default. MeliPayamak remains disabled pending deployment secret injection and separate clinic approval. No live SMS requests were made.
+- **Open owner decision OD-28-18:** retention duration for OTP challenge metadata. No automatic purge is enabled until approved.

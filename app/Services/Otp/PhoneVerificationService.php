@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Otp;
 
 use App\VerificationChallenge;
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
@@ -72,7 +73,7 @@ final class PhoneVerificationService
 
             if ($challenge === null || $challenge->purpose !== $purpose
                 || $challenge->verified_at !== null || $challenge->consumed_at !== null
-                || $challenge->expires_at->isPast() || $challenge->attempts >= self::MAX_ATTEMPTS) {
+                || CarbonImmutable::parse((string) $challenge->expires_at)->isPast() || $challenge->attempts >= self::MAX_ATTEMPTS) {
                 return null;
             }
 

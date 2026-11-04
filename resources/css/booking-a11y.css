@@ -20,3 +20,24 @@
 #bk .bk__opts[aria-busy="true"], #bk .bk__dates[aria-busy="true"], #bk .bk__times[aria-busy="true"] {
     opacity: .6; pointer-events: none;
 }
+
+/* Task 28: compact, accessible OTP controls within the booking review step. */
+.bk__otp {
+    display: grid;
+    gap: var(--s-3);
+    margin-block-start: var(--s-5);
+    padding: var(--s-4);
+    border: 1px solid var(--line, currentColor);
+    border-radius: 14px;
+}
+.bk__otp h3 { margin: 0; font-size: var(--t-sm); }
+.bk__otpActions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: var(--s-3);
+}
+.bk__otpActions .field { flex: 1 1 180px; min-width: 0; }
+.bk__otpActions input { width: 100%; }
+.bk__otpActions button:disabled { opacity: .55; cursor: not-allowed; }
+#bkOtpStatus { min-height: 1.5em; margin: 0; }

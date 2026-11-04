@@ -37,12 +37,6 @@ final class PruneExpiredSecurityData extends Command
                 ->delete();
         }
 
-        if (Schema::hasTable('failed_jobs')) {
-            $counts['failed queue jobs'] = DB::table('failed_jobs')
-                ->where('failed_at', '<', $now->copy()->subDays(30))
-                ->delete();
-        }
-
         if (Schema::hasTable('idempotency_records')) {
             $counts['expired idempotency records'] = DB::table('idempotency_records')
                 ->where('expires_at', '<=', $now)

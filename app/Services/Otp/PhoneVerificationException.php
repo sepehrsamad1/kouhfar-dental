@@ -6,6 +6,4 @@ namespace App\Services\Otp;
 
 use RuntimeException;
 
-final class PhoneVerificationException extends RuntimeException
-{
-}
+final class PhoneVerificationException extends RuntimeException {}

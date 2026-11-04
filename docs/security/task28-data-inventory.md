@@ -40,7 +40,7 @@ This is an application-level inventory, not a legal determination. It identifies
 - Staff sessions: approved 15-minute idle and 8-hour absolute timeouts.
 - Cookies: Secure and HttpOnly enabled; SameSite=Lax unless compatibility tests justify Strict.
 - AI: provider-independent architecture is required; real credentials are to be supplied securely later. Keep AI disabled until provider/model, pricing and safety gates are verified.
-- SMS/OTP: MeliPayamak has been purchased and its provider-generated OTP adapter is implemented and fake-HTTP tested. The token is read from deployment secrets; the adapter is disabled by default. The booking OTP challenge lifecycle is not yet implemented, so booking remains fail-closed until expiry, attempt and resend policy is approved and the flow is tested.
+- SMS/OTP: the database-backed booking OTP lifecycle is implemented and synthetic-tested. The challenge table stores keyed digests of phone, IP and provider-generated code, plus status/attempt/timestamps; the plaintext code is not stored. Approved limits (OD-28-17): 5-minute TTL, 5 failed attempts, 60-second cooldown, 3 sends/phone/15 minutes, 5 sends/phone/hour, 10 sends/IP/hour. OTP challenge metadata retention remains undecided (OD-28-18), so no purge is enabled. MeliPayamak remains disabled by default; live activation requires deployment secret injection and separate clinic approval. URL-path token exposure remains SEC-28-015.
 - Rate limits: strict for staff login and OTP, flexible for public read-only pages, and appropriate booking limits with IP/account anti-abuse controls.
 
 Task 21 media retention remains separate and unchanged: 90 days for unconverted Smart Smile/pre-consultation uploads; 2 years for patient/clinical media anchored to the later of media creation and the patient's last historical appointment; early soft-delete and hard purge after the applicable window or 30 days after soft-delete.
@@ -52,7 +52,7 @@ Task 21 media retention remains separate and unchanged: 90 days for unconverted 
 3. Deployment evidence for separate backup storage, encryption-key provisioning, scheduled execution, monitoring and a full isolated restore exercise.
 4. Staff/practitioner profile retention and the purpose/access/reason-code policy for patient-match flags.
 5. Audited administrator identity-proofing and reset process for staff who lose their authenticator and all recovery codes.
-6. MeliPayamak booking OTP code lifetime, maximum attempts, resend cooldown and rate-limit policy. The provider adapter exists, but the challenge lifecycle remains disabled/fail-closed.
+6. OTP challenge metadata retention (OD-28-18), provider/network URL-path access-log review (SEC-28-015), deployment secret injection and separate clinic approval before live MeliPayamak activation.
 7. Kavenegar URL-path API-key exposure approval or selection of a header-auth provider.
 
 Clinic-owner decisions are recorded in [task28-owner-decisions.md](task28-owner-decisions.md). The inventory must still be checked against the deployed database, object store, backups, provider consoles and log sinks before production.

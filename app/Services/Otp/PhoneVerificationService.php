@@ -41,7 +41,6 @@ final class PhoneVerificationService
             VerificationChallenge::query()
                 ->where('mobile_normalized', $mobile)
                 ->where('purpose', $purpose)
-                ->whereNull('verified_at')
                 ->whereNull('consumed_at')
                 ->update(['expires_at' => now('UTC')]);
 

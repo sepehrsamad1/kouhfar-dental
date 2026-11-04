@@ -1,10 +1,10 @@
 # Project status
 
-Last updated: 2026-11-04 (Task 28 booking OTP lifecycle implementation and CI verification pending)
+Last updated: 2026-11-04 (Task 28 booking OTP lifecycle and security/privacy implementation CI-verified; production blockers remain)
 
 ## Task 28 — Security and Privacy Audit
 
-Status: IMPLEMENTATION IN PROGRESS / ACCEPTANCE AND PRODUCTION RELEASE BLOCKED — branch `task/28-security-privacy-audit`. The prior fully successful CI run #979 passed on revision `3282ab38d55df8d3b5cd7cb01a70ed6aada4821c`. Latest completed run [#1012](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41701925876) passed full-history Gitleaks, Composer/npm audits and JavaScript lint/typecheck/build, but Pint failed on `tests/Feature/DeletionRequestWorkflowTest.php` with `fully_qualified_strict_types` and `ordered_imports`. PHPStan, migrations, Laravel tests and browser tests were skipped, not failed. Commit `f217378d2218a13991c8ff974f471680908f0499` restores the `App\\StaffUser` import for static factory calls while keeping the return type fully-qualified; it awaits CI verification. This does not close owner-policy or deployment blockers. Production use with real patient data remains blocked.
+Status: IMPLEMENTATION IN PROGRESS / ACCEPTANCE AND PRODUCTION RELEASE BLOCKED — branch `task/28-security-privacy-audit`. Latest CI run [#1091](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41855615836), commit `64d2992d47d461e28538a85f7964c2befbbcf1a2`, completed successfully: 322 Laravel/Pest tests (24,708 assertions), 36 Playwright browser tests, PostgreSQL migrations, Pint, PHPStan, Composer/npm audits, JavaScript lint/typecheck/build, Task 27 deterministic release evaluation and full-history Gitleaks. This does not close owner-policy or deployment blockers. Production use with real patient data remains blocked.
 
 - Target: OWASP ASVS v5.0.0 Level 2 (scoped engineering assessment, not certification).
 - Security changes: login redirect validation, production-default Secure session cookies, practitioner patient-edit/mobile-reveal privilege boundary, immediate session revocation on staff deactivation, SQL-looking search input, mass-assignment defenses and Kavenegar SSRF/redirect controls.

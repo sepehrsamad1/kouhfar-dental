@@ -69,7 +69,7 @@ final class StaffOtpAuthController
 
     public function verify(Request $request, PhoneVerificationService $verification): RedirectResponse
     {
-        $data = $request->validate(['code' => ['required', 'string', 'regex:/^\d{4,10}$/']]);
+        $data = $request->validate(['code' => ['required', 'string', 'digits_between:4,10']]);
         $challengeId = $request->session()->get('staff_otp_challenge_id');
 
         try {

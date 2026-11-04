@@ -146,6 +146,7 @@ test('keyboard can complete the flow and announces Persian date/time', async ({ 
     await focus('#bkNext'); await page.keyboard.press('Enter');
     await focus('#bkName'); await page.keyboard.type('کاربر آزمایشی');
     await page.keyboard.press('Tab'); await page.keyboard.type('09000000000');
+    await focus('#bkNext'); await page.keyboard.press('Enter');
     await focus('#bkOtpSend'); await page.keyboard.press('Enter');
     await focus('#bkOtpCode'); await page.keyboard.type('123456');
     await focus('#bkOtpVerify'); await page.keyboard.press('Enter');

@@ -5,6 +5,7 @@ use App\StaffUser;
 it('allows only the planned staff user fields', function () {
     expect((new StaffUser)->getFillable())->toBe([
         'email',
+        'mobile_normalized',
         'display_name',
         'role',
         'is_active',

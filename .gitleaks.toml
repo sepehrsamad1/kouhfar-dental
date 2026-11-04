@@ -1,8 +1,8 @@
 [extend]
 useDefault = true
 
-[[allowlists]]
-description = "Ignore the single historical commit that introduced a synthetic-only MeliPayamak provider test fixture; the fixture is now generated at runtime and is not a live credential."
+[allowlist]
+description = "Ignore the single historical commit that introduced a synthetic-only MeliPayamak provider test fixture; the fixture is generated at runtime and is not a live credential."
 commits = [
   "e4406c721c452b9933d3aa412ec8192889912434",
 ]

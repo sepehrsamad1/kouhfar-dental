@@ -53,8 +53,10 @@ final class StaffOtpAuthController
                 hash('sha256', $staff->getKey().'|'.$mobile),
             );
         } catch (RuntimeException) {
-            $request->session()->put('staff_otp_challenge_id', (string) Str::uuid());
-            $request->session()->put('staff_otp_mobile', $mobile);
+            if ($request->session()->has('staff_otp_challenge_id') === false) {
+                $request->session()->put('staff_otp_challenge_id', (string) Str::uuid());
+                $request->session()->put('staff_otp_mobile', $mobile);
+            }
 
             return back()->with('status', self::GENERIC_STATUS);
         }

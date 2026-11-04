@@ -414,6 +414,13 @@
               <input id="bkPhone" dir="ltr" inputmode="numeric" autocomplete="tel" placeholder="09xxxxxxxxx" maxlength="13">
               <span class="field__err" id="ePhone"></span>
             </div>
+            <div class="field bk__otpField" id="bkOtpField">
+              <button class="btn btn--ghost" type="button" id="bkSendOtp">ارسال کد تأیید پیامکی</button>
+              <label for="bkOtpCode">کد پیامکی</label>
+              <input id="bkOtpCode" dir="ltr" inputmode="numeric" autocomplete="one-time-code" placeholder="کد ۴ تا ۱۰ رقمی" maxlength="10" disabled>
+              <button class="btn btn--ghost" type="button" id="bkVerifyOtp" disabled>تأیید کد</button>
+              <span class="field__err" id="bkOtpStatus" role="status" aria-live="polite"></span>
+            </div>
           </div>
         </section>
 

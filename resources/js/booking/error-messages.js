@@ -8,6 +8,9 @@ export const ERROR_MESSAGES = Object.freeze({
     idempotency_conflict: { fa: 'اطلاعات این درخواست تغییر کرده است. لطفاً رزرو را دوباره بررسی کنید.', en: 'The request details changed. Please review your booking again.' },
     request_in_progress: { fa: 'درخواست شما هنوز در حال پردازش است. لطفاً چند لحظه صبر کنید.', en: 'Your request is still being processed. Please wait a moment.' },
     phone_verification_not_ready: { fa: 'تأیید شماره موبایل برای رزرو آنلاین هنوز راه‌اندازی نشده است. لطفاً با کلینیک تماس بگیرید.', en: 'Mobile verification for online booking is not set up yet. Please contact the clinic.' },
+    otp_unavailable: { fa: 'ارسال کد تأیید فعلاً در دسترس نیست. لطفاً بعداً تلاش کنید یا با کلینیک تماس بگیرید.', en: 'OTP delivery is unavailable. Please try later or contact the clinic.' },
+    otp_invalid_or_expired: { fa: 'کد تأیید نامعتبر است یا مهلت آن تمام شده است.', en: 'The verification code is invalid or expired.' },
+    phone_verification_required: { fa: 'برای ثبت رزرو، ابتدا شماره موبایل را تأیید کنید.', en: 'Verify your mobile number before submitting the booking.' },
     validation_failed: { fa: 'برخی اطلاعات نیاز به اصلاح دارد. لطفاً موارد مشخص‌شده را بررسی کنید.', en: 'Some details need correcting. Please review the highlighted fields.' },
     unauthenticated: { fa: 'امکان انجام این درخواست وجود ندارد. لطفاً صفحه را تازه‌سازی کنید.', en: 'This request could not be completed. Please refresh the page.' },
     forbidden: { fa: 'امکان انجام این درخواست وجود ندارد.', en: 'This request cannot be completed.' },
@@ -45,7 +48,7 @@ export function messageFor(code, lang = currentLanguage()) {
     const normalized = String(code ?? '').toUpperCase();
     const key = ({
         SLOT_UNAVAILABLE: 'slot_unavailable', IDEMPOTENCY_CONFLICT: 'idempotency_conflict',
-        REQUEST_IN_PROGRESS: 'request_in_progress', PHONE_VERIFICATION_NOT_READY: 'phone_verification_not_ready', VALIDATION_FAILED: 'validation_failed',
+        REQUEST_IN_PROGRESS: 'request_in_progress', PHONE_VERIFICATION_NOT_READY: 'phone_verification_not_ready', OTP_UNAVAILABLE: 'otp_unavailable', OTP_INVALID_OR_EXPIRED: 'otp_invalid_or_expired', PHONE_VERIFICATION_REQUIRED: 'phone_verification_required', VALIDATION_FAILED: 'validation_failed',
         UNAUTHENTICATED: 'unauthenticated', FORBIDDEN: 'forbidden', NOT_FOUND: 'not_found',
         CONFLICT: 'conflict', RATE_LIMITED: 'rate_limited', CSRF_INVALID: 'csrf_invalid',
         INTERNAL: 'internal',

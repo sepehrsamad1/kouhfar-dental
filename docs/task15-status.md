@@ -32,12 +32,11 @@
 
 ## Remaining before production
 
-- Rotate the OTP endpoint token that was exposed during initial setup. Never reuse that token.
-- On a local or staging environment, set the newly rotated full endpoint URL in `MELIPAYAMAK_OTP_URL` inside `.env` or the deployment secret store. Do not commit it or paste it into chat.
+- For the controlled local/staging test, the user has explicitly chosen to continue with the existing MeliPayamak endpoint token and accepts the exposure risk. Use it only in the local/staging `.env` as `MELIPAYAMAK_OTP_URL`; do not commit it, place it in source control, or repeat it in chat. This choice is not a production security recommendation.
 - Set `BOOKING_PHONE_VERIFICATION_REQUIRED=true`, clear cached config with `php artisan config:clear`, and apply migrations on the test environment.
 - Manually test delivery and code verification using an authorized real phone number on local/staging. Complete a test booking only in a non-production database.
 - For staff OTP, populate `staff_users.mobile_normalized` for a staff account only after an administrator verifies ownership of that number, then test login and retain password login as fallback.
 - Confirm provider contract, production budget, retention/cleanup policy and staff mobile enrollment procedure.
 - Review logs, rate limits, and abuse monitoring under production traffic.
 
-No production deployment, real SMS send, or production credential activation has been performed.
+No production deployment, real SMS send, or production credential activation has been performed. The existing endpoint token is being retained only for the user-requested controlled test.

@@ -27,7 +27,11 @@ final class BookingOtpService
 
         DB::transaction(function () use ($phoneHash, $ipHash, $challengeId): void {
             // PostgreSQL advisory lock makes phone-specific limits atomic across app nodes.
-            DB::selectOne('select pg_advisory_xact_lock(hashtextextended(?, 0))', ['booking-otp:'.$phoneHash]);
+            $lockKeys = ['booking-otp:ip:'.$ipHash, 'booking-otp:phone:'.$phoneHash];
+            sort($lockKeys, SORT_STRING);
+            foreach ($lockKeys as $lockKey) {
+                DB::selectOne('select pg_advisory_xact_lock(hashtextextended(?, 0))', [$lockKey]);
+            }
             $now = CarbonImmutable::now('UTC');
             $cooldown = (int) config('booking.otp.resend_cooldown_seconds', 60);
 

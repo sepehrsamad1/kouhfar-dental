@@ -18,6 +18,7 @@ class StaffUser extends Model implements AuthenticatableContract
 
     protected $hidden = [
         'password_hash',
+        'mobile_normalized',
     ];
 
     protected $fillable = [

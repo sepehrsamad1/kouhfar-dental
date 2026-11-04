@@ -1,6 +1,6 @@
 # Task 28 — Retention implementation review
 
-Reviewed against branch `task/28-security-privacy-audit`. The metadata-only completed-job history groundwork below passed CI run [#979](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41684593114) on revision `3282ab38d55df8d3b5cd7cb01a70ed6aada4821c`. No production data was used. No production data was used.
+Reviewed against branch `task/28-security-privacy-audit`. The metadata-only completed-job history groundwork below passed CI run [#979](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41684593114) on revision `3282ab38d55df8d3b5cd7cb01a70ed6aada4821c`. No production data was used.
 
 ## Findings
 
@@ -18,11 +18,11 @@ Reviewed against branch `task/28-security-privacy-audit`. The metadata-only comp
 - Added a model contract test. End-to-end event behavior and migration execution await the next CI run.
 - The proposed seven-day retention period is not activated because queue-history retention remains an open owner decision.
 
-### R28-RET-03 update — failed queue job cleanup added
-- `security:prune-expired-data` now deletes `failed_jobs` rows whose `failed_at` is older than 30 days.
-- The cleanup does not touch `jobs` rows, including reserved/running work.
-- Laravel's database queue removes successfully completed jobs from `jobs`; there is no completed-job history table in this configuration. Therefore a 7-day successful-job history retention cannot be implemented against the current schema without introducing a separate job-history store. `job_batches` is a distinct table and is not pruned because its retention policy is not specified.
-- A dedicated regression test for the new failed-job branch has not yet been committed. CI must pass before this change is considered verified.
+### R28-RET-03 update — failed queue job retention remains disabled
+- The owner decision register leaves failed-job payload retention undecided. A proposed 30-day period is not an approved policy.
+- Removed the speculative `failed_jobs` deletion from `security:prune-expired-data`; the cleanup command must not delete failed-job rows until the owner approves a retention rule.
+- Added a synthetic regression test proving a failed-job row older than 30 days is preserved by the cleanup command.
+- The command does not touch `jobs` (including reserved/running work) or `job_batches`. Their retention remains undecided and no cleanup is enabled.
 
 
 ### R28-RET-01 update — result timestamp added
@@ -51,11 +51,11 @@ Reviewed against branch `task/28-security-privacy-audit`. The metadata-only comp
 - Failed queue payloads older than 30 days are pruned by the current command. A dedicated regression test for that branch is still missing.
 - No retention cleanup is enabled for `completed_job_history`, `jobs` or `job_batches`. The proposed seven-day successful history and 30-day failed payload windows remain subject to explicit owner policy approval; running/reserved jobs and batch metadata must not be deleted speculatively.
 
-### R28-RET-04 — Notification outbox lacks a precise failure timestamp
-- `notification_outbox` includes `scheduled_at`, `sent_at`, `attempts` and `last_error`, but no `last_attempt_at` or `failed_at`.
-- Successful metadata can be aged from `sent_at` for the proposed 12-month period.
-- Failed-notification metadata cannot be aged accurately from the last failure because `last_error` is overwritten without a corresponding timestamp. Using `scheduled_at` as a substitute would be inaccurate.
-- Add a timestamp field and update the sender's success/failure paths before implementing the 30-day failed-notification retention.
+### R28-RET-04 — Notification outbox attempt metadata
+- Added nullable indexed `last_attempt_at` to `notification_outbox`; the sender records UTC attempt time before provider dispatch.
+- Successful delivery continues to set `sent_at` and clear `last_error`; exhausted retries record a generic failure message without exposing provider details.
+- A dedicated `failed_at` field is not currently required to describe the most recent attempt, but retention remains disabled because the owner has not approved a retention period for outbox/error metadata.
+- Do not infer a retention age from `scheduled_at` or delete outbox records until policy and message-body/data classification are approved.
 
 ### R28-RET-05 update — audited, non-destructive review lifecycle groundwork
 - Added review actor/time, resolution time and a bounded resolution code to deletion requests.

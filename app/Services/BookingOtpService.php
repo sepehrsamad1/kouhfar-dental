@@ -14,7 +14,12 @@ use Throwable;
 
 final class BookingOtpService
 {
-    public function __construct(private readonly OtpProviderManager $providers) {}
+    private readonly OtpProviderManager $providers;
+
+    public function __construct(OtpProviderManager $providers)
+    {
+        $this->providers = $providers;
+    }
 
     public function issue(string $phone, string $ip): string
     {
@@ -39,7 +44,7 @@ final class BookingOtpService
                 ->first();
 
             if ($last !== null && $last->created_at->greaterThan($now->subSeconds($cooldown))) {
-                throw new BookingOtpRateLimitException();
+                throw new BookingOtpRateLimitException;
             }
 
             $phone15 = BookingOtpChallenge::query()->where('phone_hash', $phoneHash)
@@ -129,7 +134,7 @@ final class BookingOtpService
             }
 
             $expected = $this->digest('code', $challengeId.'|'.$code);
-            if (!is_string($challenge->code_hash) || !hash_equals($challenge->code_hash, $expected)) {
+            if (! is_string($challenge->code_hash) || ! hash_equals($challenge->code_hash, $expected)) {
                 $attempts = $challenge->attempts + 1;
                 $challenge->forceFill([
                     'attempts' => $attempts,

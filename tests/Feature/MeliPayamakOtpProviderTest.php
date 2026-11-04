@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Http;
 use RuntimeException;
 
 beforeEach(function (): void {
-    config()->set('notifications.otp.melipayamak.token', '0123456789abcdef0123456789abcdef');
+    config()->set('notifications.otp.melipayamak.token', str_repeat('a', 32));
 });
 
 it('posts only the normalized recipient to the fixed MeliPayamak OTP endpoint and returns provider code', function (): void {
@@ -52,7 +52,7 @@ it('rejects malformed provider responses without exposing provider details', fun
         test()->fail('Expected provider failure.');
     } catch (RuntimeException $exception) {
         expect($exception->getMessage())->toBe('MeliPayamak OTP delivery failed.')
-            ->and($exception->getMessage())->not->toContain('0123456789abcdef');
+            ->and($exception->getMessage())->not->toContain(str_repeat('a', 32));
     }
 });
 

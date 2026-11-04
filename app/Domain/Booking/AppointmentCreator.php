@@ -17,6 +17,7 @@ use App\Practitioner;
 use App\Resource;
 use App\Service;
 use App\Support\IranianPhoneNumber;
+use App\Services\BookingOtpService;
 use Carbon\CarbonImmutable;
 use DateTimeImmutable;
 use DateTimeZone;
@@ -36,6 +37,7 @@ final class AppointmentCreator
     public function __construct(
         AppointmentStateMachine $states,
         AvailabilityRepository $availability,
+        BookingOtpService $bookingOtp,
     ) {
         $this->states = $states;
         $this->availability = $availability;\n        $this->bookingOtp = $bookingOtp;
@@ -211,6 +213,14 @@ final class AppointmentCreator
                     409,
                     ['code' => 'SLOT_UNAVAILABLE', 'message' => 'The selected slot is no longer available.'],
                 );
+            }
+
+            if (config('booking.phone_verification_required')) {
+                if (! is_string($otpChallengeId) || $otpChallengeId === '') {
+                    throw new AppointmentBookingException('PHONE_VERIFICATION_REQUIRED', 'Phone verification is required.');
+                }
+
+                $this->bookingOtp->consume($otpChallengeId, $normalizedInput['mobile']);
             }
 
             AppointmentEvent::query()->create([

@@ -29,7 +29,7 @@ final class MeliPayamakOtpProvider
             }
 
             $code = $response->json('code');
-            if ((! is_string($code) && ! is_int($code)) || ! preg_match('/^\d{4,10}$/', (string) $code)) {
+            if (! is_string($code) || ! preg_match('/^\d{4,10}$/', $code)) {
                 throw new RuntimeException('OTP provider returned an invalid response.');
             }
 

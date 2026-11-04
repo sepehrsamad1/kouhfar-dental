@@ -7,6 +7,8 @@ namespace App\Http\Controllers;
 use App\Domain\Booking\AppointmentBookingException;
 use App\Domain\Booking\AppointmentCreator;
 use App\Http\Requests\AppointmentStoreRequest;
+use App\Services\Otp\PhoneVerificationService;
+use RuntimeException;
 use Illuminate\Http\JsonResponse;
 
 final class AppointmentController
@@ -24,8 +26,12 @@ final class AppointmentController
                 $request->validated(),
                 (string) $request->validated('idempotency_key'),
                 $scope,
+                $grant,
+                $verification,
             );
-        } catch (RuntimeException) {\n            return response()->json(['code' => 'PHONE_VERIFICATION_INVALID'], 403);\n        } catch (AppointmentBookingException $exception) {
+        } catch (RuntimeException) {
+            return response()->json(['code' => 'PHONE_VERIFICATION_INVALID'], 403);
+        } catch (AppointmentBookingException $exception) {
             return response()->json([
                 'code' => $exception->codeName,
                 'message' => $exception->getMessage(),

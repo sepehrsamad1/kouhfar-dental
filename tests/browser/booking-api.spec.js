@@ -34,17 +34,23 @@ async function stubCatalog(page) {
 const appointment = (status = 'pending') => ({
     status,
     start_at: SLOT,
-    end_at: '2026-10-29T06:00:00Z',
-    expires_at: '2026-10-29T06:30:00Z',
+    end_at: new Date(Date.parse(SLOT) + 30 * 60 * 1000).toISOString(),
+    expires_at: new Date(Date.parse(SLOT) + 60 * 60 * 1000).toISOString(),
 });
 
 async function fillToReview(page) {
     await page.locator('[data-book]').first().click();
     await page.locator('#bkServices .bk__opt').first().click();
     await page.locator('#bkNext').click();
-    await page.locator('#bkDates .bk__date').nth(1).click();
+    const dateButton = page.locator('#bkDates .bk__date').nth(1);
+    await dateButton.click();
+    await expect(dateButton).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.locator('#bkNext')).toHaveAttribute('aria-disabled', 'false');
     await page.locator('#bkNext').click();
-    await page.locator('#bkTimes .bk__time').first().click();
+    const timeButton = page.locator('#bkTimes .bk__time').first();
+    await timeButton.click();
+    await expect(timeButton).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.locator('#bkNext')).toHaveAttribute('aria-disabled', 'false');
     await page.locator('#bkNext').click();
     await page.fill('#bkName', 'کاربر آزمایشی');
     await page.fill('#bkPhone', '09000000000'); // synthetic, non-routable test value

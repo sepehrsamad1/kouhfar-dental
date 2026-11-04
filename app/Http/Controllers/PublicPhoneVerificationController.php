@@ -64,7 +64,7 @@ final class PublicPhoneVerificationController
     {
         $data = $request->validate([
             'challenge_id' => ['required', 'uuid'],
-            'code' => ['required', 'string', 'regex:/^\\d{4,10}$/'],
+            'code' => ['required', 'string', 'digits_between:4,10'],
         ]);
 
         try {

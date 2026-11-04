@@ -75,7 +75,7 @@ final class AppointmentCreator
                     $verificationGrant,
                     $normalizedInput['mobile'],
                     PhoneVerificationService::PUBLIC_BOOKING,
-                    PhoneVerificationIntent::hash($normalizedInput),
+                    PhoneVerificationIntent::hash([...$normalizedInput, 'idempotency_key' => $idempotencyKey]),
                     $idempotencyKey,
                 );
             }

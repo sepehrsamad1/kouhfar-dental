@@ -129,8 +129,8 @@ export function createBookingApi(deps = {}) {
             // Discard staff/resource identifiers even if the server mistakenly includes them.
             return slots.map(({ start_at, end_at }) => ({ start_at, end_at }));
         },
-        async sendOtp(payload, signal) {
-            const { status, json } = await request(API.otpSend, { method: 'POST', body: payload, signal, timeoutMs: 10000 });
+        async sendOtp(payload, idempotencyKey, signal) {
+            const { status, json } = await request(API.otpSend, { method: 'POST', body: payload, idempotencyKey, signal, timeoutMs: 10000 });
             if (status !== 202 || typeof json.challenge_id !== 'string') throw new BookingApiError('INVALID_RESPONSE', { kind: 'invalid' });
             return json;
         },

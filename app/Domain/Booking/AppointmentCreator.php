@@ -68,7 +68,7 @@ final class AppointmentCreator
 
             if (config('booking.phone_verification_required')) {
                 if ($verificationGrant === null || $verification === null) {
-                    throw new \RuntimeException('Phone verification is required.');
+                    throw new \App\Services\Otp\PhoneVerificationException('Phone verification is required.');
                 }
 
                 $verification->consumeGrant(

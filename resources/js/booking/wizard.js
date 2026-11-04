@@ -275,7 +275,7 @@ export function initBookingWizard(deps = {}) {
         state.slot = null;
         state.attempt = null;
         clearOtpVerification();
-        $('.bk__date', datesWrap).forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
+        $$('.bk__date', datesWrap).forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
         clearErrors();
         loadAvailability();
         sync();
@@ -330,7 +330,7 @@ export function initBookingWizard(deps = {}) {
         state.slot = { start_at: button.dataset.startAt };
         state.attempt = null;
         clearOtpVerification();
-        $('.bk__time', timesWrap).forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
+        $$('.bk__time', timesWrap).forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
         announce(button.getAttribute('aria-label') ?? '');
         clearErrors();
         sync();

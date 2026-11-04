@@ -9,7 +9,5 @@ regexes = [
   '''[0-9]{10}[a-f]{6}[0-9]{10}[a-f]{6}''',
 ]
 paths = [
-  '''MeliPayamakOtpProviderTest\.php,
-]
-'',
+  '''MeliPayamakOtpProviderTest\.php$''',
 ]

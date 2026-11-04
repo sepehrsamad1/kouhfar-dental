@@ -10,7 +10,7 @@ async function loginAsAdmin(page) {
     await page.goto('/staff/login');
     await page.getByLabel('ایمیل').fill('browser-admin@example.invalid');
     await page.getByLabel('رمز عبور').fill('BrowserOnlyPassword!2026');
-    await page.getByRole('button', { name: 'ورود' }).click();
+    await page.getByRole('button', { name: 'ورود', exact: true }).click();
     await expect(page).toHaveURL(/\/staff$/);
 }
 

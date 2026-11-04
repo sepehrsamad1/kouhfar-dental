@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
@@ -13,10 +14,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $code_hash
  * @property string $status
  * @property int $attempts
- * @property \Carbon\CarbonImmutable $expires_at
- * @property \Carbon\CarbonImmutable|null $last_sent_at
- * @property \Carbon\CarbonImmutable|null $verified_at
- * @property \Carbon\CarbonImmutable|null $consumed_at
+ * @property CarbonImmutable $expires_at
+ * @property CarbonImmutable|null $last_sent_at
+ * @property CarbonImmutable|null $verified_at
+ * @property CarbonImmutable|null $consumed_at
  */
 class BookingOtpChallenge extends Model
 {

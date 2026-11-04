@@ -85,3 +85,4 @@ No real patient data, patient images, real credentials, production commands, des
 - Added synthetic-only feature coverage for success, wrong code, expiry, attempt exhaustion, resend cooldown, phone/IP quotas, invalidation, replay/consumption and provider failure; added browser API contract coverage.
 - SMS_OTP_DRIVER remains `null` by default. MeliPayamak remains disabled pending deployment secret injection and separate clinic approval. No live SMS requests were made.
 - **Open owner decision OD-28-18:** retention duration for OTP challenge metadata. No automatic purge is enabled until approved.
+- Production TLS/proxy, DB privileges, storage ACLs, secret injection, backup separation/key ACLs, general distributed throttles and live provider activation are tracked in [the deployment verification checklist](security/task28-deployment-verification-checklist.md).

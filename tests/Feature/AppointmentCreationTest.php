@@ -105,7 +105,7 @@ it('requires a verified phone challenge and consumes it atomically with a public
     config([
         'booking.phone_verification_required' => true,
         'notifications.otp.driver' => 'melipayamak',
-        'notifications.otp.melipayamak.token' => 'synthetic-test-token-0123456789',
+        'notifications.otp.melipayamak.token' => str_repeat('a', 32),
     ]);
     Http::fake(['console.melipayamak.com/*' => Http::response(['code' => '123456'], 200)]);
 

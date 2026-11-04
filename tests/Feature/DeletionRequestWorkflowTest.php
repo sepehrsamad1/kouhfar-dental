@@ -10,8 +10,6 @@ use App\Services\DeletionRequestWorkflow;
 use App\StaffUser;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use InvalidArgumentException;
-use LogicException;
 
 uses(RefreshDatabase::class);
 
@@ -77,7 +75,7 @@ it('prevents repeated or out-of-order transitions', function (): void {
     expect(fn () => $workflow->review($reviewed, $admin, 'accept_for_assessment'))
         ->toThrow(LogicException::class);
 
-    expect(fn () => $workflow->close($request, $admin, 'legal_hold'))
+    expect(fn () => $workflow->close($request, $admin, 'retained_by_policy'))
         ->toThrow(LogicException::class);
 });
 

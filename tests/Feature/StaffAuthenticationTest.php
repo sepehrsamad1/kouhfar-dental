@@ -6,6 +6,7 @@ use App\Session as StaffSession;
 use App\StaffUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Schema;
 
@@ -126,6 +127,46 @@ it('invalidates the authenticated session on logout', function (): void {
 
     $this->assertGuest('staff');
     expect(StaffSession::query()->find($registryId)->revoked_at)->not->toBeNull();
+});
+
+
+it('supports staff OTP login while preserving password login', function (): void {
+    config(['services.melipayamak.otp_url' => 'https://example.test/otp/test-token']);
+    Http::fake(['example.test/otp/*' => Http::response(['code' => '3741437414'], 200)]);
+
+    $staff = makeStaffUser([
+        'email' => 'otp-staff@example.invalid',
+        'mobile_normalized' => '09123456789',
+        'is_active' => true,
+    ]);
+
+    $this->post(route('staff.login.otp.send'), ['mobile' => '09123456789'])
+        ->assertRedirect(route('staff.login'))
+        ->assertSessionHas('status');
+
+    $this->post(route('staff.login.otp.verify'), ['code' => '3741437414'])
+        ->assertRedirect(route('staff.dashboard'));
+
+    $this->assertAuthenticatedAs($staff, 'staff');
+    expect(session('staff_registry_session_id'))->not->toBeNull();
+    expect(StaffSession::query()->where('user_id', $staff->id)->exists())->toBeTrue();
+});
+
+it('does not reveal whether a staff OTP phone number exists', function (): void {
+    Http::fake();
+
+    $this->post(route('staff.login.otp.send'), ['mobile' => '09120000099'])
+        ->assertRedirect(route('staff.login'))
+        ->assertSessionHas('status');
+
+    Http::assertNothingSent();
+
+    $this->from(route('staff.login'))
+        ->post(route('staff.login.otp.verify'), ['code' => '123456'])
+        ->assertRedirect(route('staff.login'))
+        ->assertSessionHasErrors('code');
+
+    $this->assertGuest('staff');
 });
 
 it('enforces an approved idle timeout when configured', function (): void {

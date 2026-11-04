@@ -139,11 +139,11 @@ it('supports staff OTP login while preserving password login', function (): void
         'is_active' => true,
     ]);
 
-    $this->post(route('staff.login.otp.send'), ['mobile' => '09123456789'])
+    $this->from(route('staff.login'))->post(route('staff.login.otp.send'), ['mobile' => '09123456789'])
         ->assertRedirect(route('staff.login'))
         ->assertSessionHas('status');
 
-    $this->post(route('staff.login.otp.verify'), ['code' => '3741437414'])
+    $this->from(route('staff.login'))->post(route('staff.login.otp.verify'), ['code' => '3741437414'])
         ->assertRedirect(route('staff.dashboard'));
 
     $this->assertAuthenticatedAs($staff, 'staff');

@@ -13,6 +13,7 @@ use App\IdempotencyRecord;
 use App\Practitioner;
 use App\Resource;
 use App\Service;
+use App\Services\BookingOtpService;
 use App\WorkingHour;
 use Carbon\Carbon;
 use Illuminate\Database\QueryException;
@@ -109,7 +110,7 @@ it('requires a verified phone challenge and consumes it atomically with a public
     Http::fake(['console.melipayamak.com/*' => Http::response(['code' => '123456'], 200)]);
 
     [$service] = bookingFixture();
-    $otp = app(\App\Services\BookingOtpService::class);
+    $otp = app(BookingOtpService::class);
     $challengeId = $otp->issue('09120000001', '192.0.2.40');
     expect($otp->verify($challengeId, '123456'))->toBeTrue();
 

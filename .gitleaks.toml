@@ -2,12 +2,7 @@
 useDefault = true
 
 [[allowlists]]
-description = "Historical synthetic MeliPayamak provider-contract test token only; no live credential. Match both the exact fixture value and its dedicated test file."
-condition = "AND"
-regexTarget = "line"
-regexes = [
-  '''[0-9]{10}[a-f]{6}[0-9]{10}[a-f]{6}''',
-]
-paths = [
-  '''MeliPayamakOtpProviderTest\.php$''',
+description = "Ignore the single historical commit that introduced a synthetic-only MeliPayamak provider test fixture; the fixture is now generated at runtime and is not a live credential."
+commits = [
+  "e4406c721c452b9933d3aa412ec8192889912434",
 ]

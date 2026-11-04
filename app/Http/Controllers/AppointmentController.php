@@ -6,9 +6,9 @@ namespace App\Http\Controllers;
 
 use App\Domain\Booking\AppointmentBookingException;
 use App\Domain\Booking\AppointmentCreator;
+use App\Services\BookingOtpVerificationException;
 use App\Http\Requests\AppointmentStoreRequest;
 use Illuminate\Http\JsonResponse;
-use RuntimeException;
 
 final class AppointmentController
 {
@@ -27,7 +27,7 @@ final class AppointmentController
                 'code' => $exception->codeName,
                 'message' => $exception->getMessage(),
             ], 409);
-        } catch (RuntimeException) {
+        } catch (BookingOtpVerificationException) {
             return response()->json([
                 'code' => 'PHONE_VERIFICATION_REQUIRED',
                 'message' => 'Phone verification is required.',

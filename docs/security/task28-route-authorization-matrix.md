@@ -6,7 +6,7 @@
 
 All routes declared in `routes/web.php` are subject to Laravel's `web` middleware stack. The protected staff route group additionally applies `auth:staff`, `staff.session.fresh`, and `PreventStoreCache`. Staff login and MFA enrollment/challenge routes remain guest routes with a short-lived pending session; the authenticated staff session is created only after TOTP or a one-time recovery code succeeds. Staff authorization is enforced in controllers through Policies/Gates; hiding a UI action is not treated as authorization.
 
-The public booking POST in `routes/api.php` explicitly adds `web` middleware and `throttle:30,1`. Public services and availability are read-only and throttled. Smart Smile endpoints are declared in `routes/web.php`, so they inherit the web middleware stack and also have route-specific throttles.
+Public booking and OTP POSTs in `routes/api.php` explicitly add `web` middleware and `throttle:30,1`. OTP issuance additionally enforces database-backed phone and IP quotas under PostgreSQL advisory locks. Public services and availability are read-only and throttled. Smart Smile endpoints are declared in `routes/web.php`, so they inherit the web middleware stack and also have route-specific throttles.
 
 ## Staff object routes
 
@@ -38,7 +38,9 @@ The public booking POST in `routes/api.php` explicitly adds `web` middleware and
 
 | Route | Control reviewed | Existing regression evidence | Assessment |
 |---|---|---|---|
-| `POST /api/v1/appointments` | Form Request validation, web/CSRF middleware, throttle, idempotency and concurrency-safe creator; phone-verification gate fails closed with `PHONE_VERIFICATION_NOT_READY` | `AppointmentCreationTest`, `AppointmentConcurrencyTest`, `PublicBookingUiApiTest` | PARTIAL — MeliPayamak OTP adapter exists but challenge lifecycle is not implemented; production-browser CSRF and distributed throttle tests remain open |
+| `POST /api/v1/booking-otp/issue` | Form Request validation, web/CSRF middleware, route throttle, phone/IP keyed hashes, atomic PostgreSQL quotas, resend cooldown, prior-challenge invalidation; provider failure fails closed | `BookingOtpLifecycleTest`, synthetic MeliPayamak HTTP contract tests | PARTIAL — production provider activation and provider/network URL-path log review remain deployment gates |
+| `POST /api/v1/booking-otp/verify` | Web/CSRF middleware, route throttle, challenge row lock, expiry, five-attempt exhaustion and one-time verification; OTP never returned to client | `BookingOtpLifecycleTest`, booking API contract tests | PARTIAL — production-browser CSRF test remains open |
+| `POST /api/v1/appointments` | Form Request validation, web/CSRF middleware, throttle, idempotency and concurrency-safe creator; requires verified challenge bound to same phone and consumes it in the booking transaction | `AppointmentCreationTest`, `AppointmentConcurrencyTest`, `PublicBookingUiApiTest`, `BookingOtpLifecycleTest` | PARTIAL — production-browser CSRF and general distributed throttle tests remain open |
 | `GET /api/v1/availability/{service}` and `GET /booking/availability/{service}` | Public-bookable service filtering and throttling | `AvailabilityEndpointTest`, browser booking tests | PARTIAL |
 | `POST /api/v1/smart-smile/consent` | Feature/release gate, route throttle, random bearer token, hashed token at rest | `Task26SmartSmileTest`: disabled gate and consent flow | PARTIAL — consent evidence retention/TTL not approved |
 | `POST /api/v1/smart-smile/upload` | Form Request token shape, MIME/size checks, consent resolution, private image processing, one upload per consent | Smart Smile and media tests cover consent-required and invalid uploads | PARTIAL |
@@ -56,7 +58,7 @@ Staff MFA: TOTP is required by default for every staff account. The dedicated fe
 | Stored XSS | Blade escaped rendering; content workflow script-markup regression test | PARTIAL — no full DOM/reflected payload corpus |
 | Open redirect | Intended URL parser rejects external schemes/hosts, protocol-relative paths, backslashes and control chars; regression test passed in CI #937 | PASS for reviewed staff-login redirect path |
 | Session lifecycle / MFA | Rotation, logout revocation, deactivated-account revocation, 15-minute idle and 8-hour absolute timeouts; TOTP enrollment, replay prevention, one-time recovery codes and MFA attempt throttling are tested in CI #937 | PARTIAL — lost-authenticator/admin reset process and production configuration still need verification |
-| Rate limiting | Route throttles, per-email+IP password-login throttling, and per-account MFA throttle (5 failures / 5 minutes); OTP adapter has no challenge/resend flow yet; shared distributed backend behavior not verified | PARTIAL |
+| Rate limiting | Route throttles, per-email+IP password-login throttling, per-account MFA throttle (5 failures / 5 minutes), and database-backed OTP quotas: 3 sends/phone/15 minutes, 5 sends/phone/hour, 10 sends/IP/hour, 60-second cooldown; OTP phone/IP quota locks are PostgreSQL-backed and atomic across app nodes | PARTIAL — shared backend for general Laravel route throttles still requires deployment verification |
 | Upload abuse | MIME sniffing, decode/re-encode, size/pixel bounds, private storage and signed downloads; automated tests passed | PASS for tested application-level image controls |
 | SSRF | No user-controlled URL fetch found; dormant Kavenegar adapter has fixed HTTPS allowlist, redirect disabled, synthetic negative tests passed in CI #937; MeliPayamak adapter uses fixed HTTPS host and disables redirects | PARTIAL — Kavenegar credential URL-path residual risk and deployment log review remain open |
 | Secret scanning | Full-history Gitleaks passed in CI #937; Composer and npm audits passed; GitHub secret alerts and non-text artifact/log review not accessible through repository CI evidence | PARTIAL |
@@ -66,7 +68,7 @@ Staff MFA: TOTP is required by default for every staff account. The dedicated fe
 - A full HTTP-level negative test for every dynamic object route and every staff role.
 - Browser-enforced CSRF rejection outside the Laravel test harness.
 - DOM-XSS payload corpus and response security-header/CSP review.
-- Rate-limit behavior across multiple application nodes.
+- General Laravel route-throttle behavior across multiple application nodes (OTP issuance quotas themselves use PostgreSQL advisory locks).
 - Production TLS/proxy, database runtime privileges, private storage ACLs, secret injection, backups and log-sink controls.
 - GitHub secret-alert dashboard and third-party/provider-side log review.
 

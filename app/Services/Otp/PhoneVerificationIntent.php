@@ -27,7 +27,7 @@ final class PhoneVerificationIntent
                 JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES,
             ));
         } catch (JsonException $exception) {
-            throw new \\LogicException('Could not hash phone verification intent.', 0, $exception);
+            throw new \LogicException('Could not hash phone verification intent.', 0, $exception);
         }
     }
 }

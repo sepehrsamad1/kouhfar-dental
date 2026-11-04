@@ -6,8 +6,8 @@ namespace App\Http\Controllers;
 
 use App\Domain\Booking\AppointmentBookingException;
 use App\Domain\Booking\AppointmentCreator;
-use App\Services\BookingOtpVerificationException;
 use App\Http\Requests\AppointmentStoreRequest;
+use App\Services\BookingOtpVerificationException;
 use Illuminate\Http\JsonResponse;
 
 final class AppointmentController

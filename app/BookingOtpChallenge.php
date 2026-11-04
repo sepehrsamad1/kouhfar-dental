@@ -12,6 +12,7 @@ class BookingOtpChallenge extends Model
     use HasUuids;
 
     protected $fillable = [
+        'id',
         'phone_hash',
         'ip_hash',
         'code_hash',

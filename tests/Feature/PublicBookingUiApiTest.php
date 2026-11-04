@@ -55,8 +55,8 @@ it('fails closed when owner-required phone verification is not configured', func
             'service_id' => $service->id,
             'start_at' => '2026-10-29T09:30:00Z',
         ])
-        ->assertStatus(503)
-        ->assertJsonPath('code', 'PHONE_VERIFICATION_NOT_READY');
+        ->assertStatus(403)
+        ->assertJsonPath('code', 'PHONE_VERIFICATION_REQUIRED');
     expect(Appointment::query()->count())->toBe(0);
 });
 

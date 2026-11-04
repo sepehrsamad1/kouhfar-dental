@@ -15,6 +15,6 @@ Route::get('/v1/availability/{service}', PublicAvailabilityController::class)
     ->middleware('throttle:60,1')
     ->name('api.v1.availability.show');
 
-Route::post('/v1/appointments', [AppointmentController::class, 'store'])
+Route::post('/v1/phone-verification/send', [PublicPhoneVerificationController::class, 'send'])\n    ->middleware(['web', 'throttle:10,1'])\n    ->name('api.v1.phone-verification.send');\n\nRoute::post('/v1/phone-verification/verify', [PublicPhoneVerificationController::class, 'verify'])\n    ->middleware(['web', 'throttle:20,1'])\n    ->name('api.v1.phone-verification.verify');\n\nRoute::post('/v1/appointments', [AppointmentController::class, 'store'])
     ->middleware(['web', 'throttle:30,1'])
     ->name('api.v1.appointments.store');

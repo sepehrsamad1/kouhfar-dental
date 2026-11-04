@@ -31,17 +31,17 @@ final class AppointmentCreator
 
     private AppointmentStateMachine $states;
 
-    private AvailabilityRepository $availability;
+    private AvailabilityRepository $availability;\n\n    private BookingOtpService $bookingOtp;
 
     public function __construct(
         AppointmentStateMachine $states,
         AvailabilityRepository $availability,
     ) {
         $this->states = $states;
-        $this->availability = $availability;
+        $this->availability = $availability;\n        $this->bookingOtp = $bookingOtp;
     }
 
-    public function create(array $input, string $idempotencyKey, string $ownerScope = 'public:appointment:create:v1'): array
+    public function create(array $input, string $idempotencyKey, string $ownerScope = 'public:appointment:create:v1', ?string $otpChallengeId = null): array
     {
         $normalizedInput = [
             'full_name' => trim($input['full_name']),
@@ -54,7 +54,7 @@ final class AppointmentCreator
 
         $requestHash = hash('sha256', $this->canonicalJson($normalizedInput));
 
-        return DB::transaction(function () use ($normalizedInput, $idempotencyKey, $ownerScope, $requestHash): array {
+        return DB::transaction(function () use ($normalizedInput, $idempotencyKey, $ownerScope, $requestHash, $otpChallengeId): array {
             $record = $this->lockIdempotencyRecord($ownerScope, $idempotencyKey, $requestHash);
 
             if ($record->response_status !== 0 && $record->response_body !== null) {

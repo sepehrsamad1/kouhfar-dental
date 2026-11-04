@@ -5,7 +5,6 @@ declare(strict_types=1);
 use App\Notifications\Otp\MeliPayamakOtpProvider;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
-use RuntimeException;
 
 beforeEach(function (): void {
     config()->set('notifications.otp.melipayamak.token', str_repeat('a', 32));
@@ -18,7 +17,7 @@ it('posts only the normalized recipient to the fixed MeliPayamak OTP endpoint an
 
     expect($code)->toBe('3741437414');
 
-    Http::assertSent(fn (Request $request): bool => $request->url() === 'https://console.melipayamak.com/api/send/otp/0123456789abcdef0123456789abcdef'
+    Http::assertSent(fn (Request $request): bool => $request->url() === 'https://console.melipayamak.com/api/send/otp/'.str_repeat('a', 32)
         && $request->method() === 'POST'
         && $request->hasHeader('Content-Type', 'application/json')
         && $request->data() === ['to' => '09123456789']);

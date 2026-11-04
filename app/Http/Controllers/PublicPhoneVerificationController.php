@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Services\Otp\PhoneVerificationException;
 use App\Services\Otp\PhoneVerificationIntent;
 use App\Services\Otp\PhoneVerificationService;
-use App\Services\Otp\PhoneVerificationException;
 use App\Support\IranianPhoneNumber;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

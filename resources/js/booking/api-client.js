@@ -4,7 +4,7 @@ import { currentLanguage } from './error-messages.js';
 /** @typedef {{ id:string, name_fa:string, duration_minutes?:number }} PublicService */
 /** @typedef {{ start_at:string, end_at:string, display_local?:string, timezone?:string }} PublicSlot */
 /** @typedef {{ status:'pending'|'confirmed', start_at:string, end_at:string, expires_at:string }} BookingResult */
-/** @typedef {{ service_id:string, start_at:string, full_name:string, mobile:string }} BookingPayload */
+/** @typedef {{ service_id:string, start_at:string, full_name:string, mobile:string, otp_challenge_id?:string }} BookingPayload */
 
 export const API = Object.freeze({
     otpIssue: '/api/v1/booking-otp/issue',

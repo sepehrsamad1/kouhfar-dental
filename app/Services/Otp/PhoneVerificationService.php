@@ -13,13 +13,21 @@ use Illuminate\Support\Str;
 final class PhoneVerificationService
 {
     public const PUBLIC_BOOKING = 'public_booking';
+
     public const STAFF_LOGIN = 'staff_login';
 
     private const TTL_MINUTES = 5;
+
     private const MAX_ATTEMPTS = 5;
+
     private const RESEND_SECONDS = 60;
 
-    public function __construct(private readonly MeliPayamakOtpProvider $provider) {}
+    private readonly MeliPayamakOtpProvider $provider;
+
+    public function __construct(MeliPayamakOtpProvider $provider)
+    {
+        $this->provider = $provider;
+    }
 
     public function start(string $mobile, string $purpose, string $intentHash): VerificationChallenge
     {

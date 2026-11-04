@@ -37,14 +37,18 @@ final class PhoneVerificationService
         }
 
         $key = 'otp-send:'.hash('sha256', $purpose.'|'.$mobile);
-        if (RateLimiter::tooManyAttempts($key, 1)) {
+        $code = RateLimiter::attempt(
+            $key,
+            1,
+            fn (): string => $this->provider->send($mobile),
+            self::RESEND_SECONDS,
+        );
+
+        if ($code === false) {
             throw new PhoneVerificationException('OTP resend cooldown is active.');
         }
 
-        // Provider errors do not create a challenge or consume the resend window.
-        $code = $this->provider->send($mobile);
-
-        return DB::transaction(function () use ($mobile, $purpose, $intentHash, $key, $code): VerificationChallenge {
+        return DB::transaction(function () use ($mobile, $purpose, $intentHash, $code): VerificationChallenge {
             VerificationChallenge::query()
                 ->where('mobile_normalized', $mobile)
                 ->where('purpose', $purpose)
@@ -59,8 +63,6 @@ final class PhoneVerificationService
                 'attempts' => 0,
                 'expires_at' => now('UTC')->addMinutes(self::TTL_MINUTES),
             ]);
-
-            RateLimiter::hit($key, self::RESEND_SECONDS);
 
             return $challenge;
         });

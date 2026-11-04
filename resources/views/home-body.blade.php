@@ -422,6 +422,19 @@
           <h2 class="bk__h">تأیید رزرو</h2>
           <p class="bk__sub">اطلاعات را بررسی کنید و رزرو را تأیید نمایید.</p>
           <div class="bk__review" id="bkReview"></div>
+          <div class="bk__otp" aria-labelledby="bkOtpHeading">
+            <h3 id="bkOtpHeading">تأیید شماره موبایل</h3>
+            <p class="bk__sub">برای ثبت رزرو، کد ارسال‌شده به شماره موبایل را وارد و تأیید کنید.</p>
+            <div class="bk__otpActions">
+              <button type="button" class="btn btn--ghost" id="bkOtpSend">ارسال کد تأیید</button>
+              <label class="field" for="bkOtpCode">
+                <span>کد یک‌بارمصرف</span>
+                <input id="bkOtpCode" dir="ltr" inputmode="numeric" autocomplete="one-time-code" maxlength="12" placeholder="کد پیامک‌شده">
+              </label>
+              <button type="button" class="btn btn--ghost" id="bkOtpVerify">تأیید کد</button>
+            </div>
+            <p class="bk__sub" id="bkOtpStatus" role="status" aria-live="polite"></p>
+          </div>
         </section>
 
         <!-- confirmation -->

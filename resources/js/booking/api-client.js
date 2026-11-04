@@ -10,6 +10,8 @@ export const API = Object.freeze({
     services: '/api/v1/services',
     availability: (serviceId, date) => `/api/v1/availability/${encodeURIComponent(serviceId)}?date=${encodeURIComponent(date)}`,
     create: '/api/v1/appointments',
+    otpSend: '/api/v1/phone-verification/send',
+    otpVerify: '/api/v1/phone-verification/verify',
 });
 
 const RETRYABLE = new Set([502, 503, 504]);
@@ -57,7 +59,7 @@ export function createBookingApi(deps = {}) {
     const fetcher = deps.fetch ?? globalThis.fetch.bind(globalThis);
     const doc = deps.document ?? globalThis.document;
 
-    async function request(url, { method = 'GET', body, signal, timeoutMs = 10000, idempotencyKey } = {}) {
+    async function request(url, { method = 'GET', body, signal, timeoutMs = 10000, idempotencyKey, verificationGrant } = {}) {
         const timeout = new AbortController();
         const timer = setTimeout(() => timeout.abort(new DOMException('Timeout', 'TimeoutError')), timeoutMs);
         let response;
@@ -67,6 +69,7 @@ export function createBookingApi(deps = {}) {
             headers['X-CSRF-TOKEN'] = csrfToken(doc);
         }
         if (idempotencyKey) headers['Idempotency-Key'] = idempotencyKey;
+        if (verificationGrant) headers['X-Phone-Verification-Grant'] = verificationGrant;
         try {
             response = await fetcher(url, {
                 method, credentials: 'same-origin', cache: 'no-store', headers,
@@ -126,11 +129,21 @@ export function createBookingApi(deps = {}) {
             // Discard staff/resource identifiers even if the server mistakenly includes them.
             return slots.map(({ start_at, end_at }) => ({ start_at, end_at }));
         },
+        async sendOtp(payload, idempotencyKey, signal) {
+            const { status, json } = await request(API.otpSend, { method: 'POST', body: payload, idempotencyKey, signal, timeoutMs: 10000 });
+            if (status !== 202 || typeof json.challenge_id !== 'string') throw new BookingApiError('INVALID_RESPONSE', { kind: 'invalid' });
+            return json;
+        },
+        async verifyOtp(challengeId, code, signal) {
+            const { status, json } = await request(API.otpVerify, { method: 'POST', body: { challenge_id: challengeId, code }, signal, timeoutMs: 10000 });
+            if (status !== 200 || typeof json.verification_grant !== 'string') throw new BookingApiError('INVALID_RESPONSE', { kind: 'invalid' });
+            return json.verification_grant;
+        },
         /** @param {BookingPayload} payload @param {string} idempotencyKey @param {AbortSignal} [signal] @returns {Promise<BookingResult>} */
-        async create(payload, idempotencyKey, signal) {
+        async create(payload, idempotencyKey, signal, verificationGrant) {
             if (typeof idempotencyKey !== 'string' || idempotencyKey.length < 16) throw new BookingApiError('UNKNOWN');
             const { status, json } = await withRetry(
-                () => request(API.create, { method: 'POST', body: payload, idempotencyKey, signal, timeoutMs: 15000 }),
+                () => request(API.create, { method: 'POST', body: payload, idempotencyKey, verificationGrant, signal, timeoutMs: 15000 }),
                 { retries: 2, shouldRetry: (error) => retryable(error, { post: true }), signal, sleep: deps.sleep, random: deps.random },
             );
             const result = json;

@@ -7,19 +7,17 @@ namespace App\Http\Controllers;
 use App\Domain\Booking\AppointmentBookingException;
 use App\Domain\Booking\AppointmentCreator;
 use App\Http\Requests\AppointmentStoreRequest;
+use App\Services\Otp\PhoneVerificationException;
+use App\Services\Otp\PhoneVerificationService;
 use Illuminate\Http\JsonResponse;
 
 final class AppointmentController
 {
-    public function store(AppointmentStoreRequest $request, AppointmentCreator $creator): JsonResponse
+    public function store(AppointmentStoreRequest $request, AppointmentCreator $creator, PhoneVerificationService $verification): JsonResponse
     {
-        // D8 is now owner-confirmed as required. Task 15 has not yet implemented OTP/provider
-        // verification, so never create an unverified public appointment while the gate is on.
-        if (config('booking.phone_verification_required')) {
-            return response()->json([
-                'code' => 'PHONE_VERIFICATION_NOT_READY',
-                'message' => 'Phone verification is required but is not configured.',
-            ], 503);
+        $grant = $request->header('X-Phone-Verification-Grant');
+        if (config('booking.phone_verification_required') && (is_string($grant) === false || $grant === '')) {
+            return response()->json(['code' => 'PHONE_VERIFICATION_REQUIRED'], 403);
         }
 
         try {
@@ -28,7 +26,11 @@ final class AppointmentController
                 $request->validated(),
                 (string) $request->validated('idempotency_key'),
                 $scope,
+                $grant,
+                $verification,
             );
+        } catch (PhoneVerificationException) {
+            return response()->json(['code' => 'PHONE_VERIFICATION_INVALID'], 403);
         } catch (AppointmentBookingException $exception) {
             return response()->json([
                 'code' => $exception->codeName,

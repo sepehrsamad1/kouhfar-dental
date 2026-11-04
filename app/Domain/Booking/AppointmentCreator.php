@@ -16,6 +16,9 @@ use App\Patient;
 use App\Practitioner;
 use App\Resource;
 use App\Service;
+use App\Services\Otp\PhoneVerificationException;
+use App\Services\Otp\PhoneVerificationIntent;
+use App\Services\Otp\PhoneVerificationService;
 use App\Support\IranianPhoneNumber;
 use Carbon\CarbonImmutable;
 use DateTimeImmutable;
@@ -41,7 +44,7 @@ final class AppointmentCreator
         $this->availability = $availability;
     }
 
-    public function create(array $input, string $idempotencyKey, string $ownerScope = 'public:appointment:create:v1'): array
+    public function create(array $input, string $idempotencyKey, string $ownerScope = 'public:appointment:create:v1', ?string $verificationGrant = null, ?PhoneVerificationService $verification = null): array
     {
         $normalizedInput = [
             'full_name' => trim($input['full_name']),
@@ -54,7 +57,7 @@ final class AppointmentCreator
 
         $requestHash = hash('sha256', $this->canonicalJson($normalizedInput));
 
-        return DB::transaction(function () use ($normalizedInput, $idempotencyKey, $ownerScope, $requestHash): array {
+        return DB::transaction(function () use ($normalizedInput, $idempotencyKey, $ownerScope, $requestHash, $verificationGrant, $verification): array {
             $record = $this->lockIdempotencyRecord($ownerScope, $idempotencyKey, $requestHash);
 
             if ($record->response_status !== 0 && $record->response_body !== null) {
@@ -62,6 +65,20 @@ final class AppointmentCreator
                     'status' => $record->response_status,
                     'body' => $record->response_body,
                 ];
+            }
+
+            if (config('booking.phone_verification_required')) {
+                if ($verificationGrant === null || $verification === null) {
+                    throw new PhoneVerificationException('Phone verification is required.');
+                }
+
+                $verification->consumeGrant(
+                    $verificationGrant,
+                    $normalizedInput['mobile'],
+                    PhoneVerificationService::PUBLIC_BOOKING,
+                    PhoneVerificationIntent::hash([...$normalizedInput, 'idempotency_key' => $idempotencyKey]),
+                    $idempotencyKey,
+                );
             }
 
             $now = CarbonImmutable::now('UTC');

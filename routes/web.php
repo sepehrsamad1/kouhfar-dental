@@ -12,6 +12,7 @@ use App\Http\Controllers\PatientController;
 use App\Http\Controllers\SmartSmileController;
 use App\Http\Controllers\StaffAppointmentController;
 use App\Http\Controllers\StaffAuthController;
+use App\Http\Controllers\StaffOtpAuthController;
 use App\Http\Middleware\PreventStoreCache;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
@@ -28,6 +29,8 @@ Route::delete('/api/v1/smart-smile', [SmartSmileController::class, 'delete'])->m
 Route::middleware('guest:staff')->group(function (): void {
     Route::get('/staff/login', [StaffAuthController::class, 'create'])->name('staff.login');
     Route::post('/staff/login', [StaffAuthController::class, 'store'])->name('staff.login.store');
+    Route::post('/staff/login/otp/send', [StaffOtpAuthController::class, 'send'])->middleware('throttle:5,1')->name('staff.login.otp.send');
+    Route::post('/staff/login/otp/verify', [StaffOtpAuthController::class, 'verify'])->middleware('throttle:10,1')->name('staff.login.otp.verify');
 });
 
 Route::middleware(['auth:staff', 'staff.session.fresh', PreventStoreCache::class])->group(function (): void {

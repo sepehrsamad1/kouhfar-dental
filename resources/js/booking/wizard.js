@@ -25,10 +25,19 @@ export function initBookingWizard(deps = {}) {
     const live = $('#bkLive');
     const nameInput = $('#bkName');
     const phoneInput = $('#bkPhone');
+    const otpInput = $('#bkOtpCode');
+    const otpLabel = $('label[for="bkOtpCode"]');
+    const sendOtpButton = $('#bkSendOtp');
+    const verifyOtpButton = $('#bkVerifyOtp');
+    const otpStatus = $('#bkOtpStatus');
+    otpInput.hidden = true;
+    otpLabel.hidden = true;
+    verifyOtpButton.hidden = true;
     const STEPS = ['انتخاب خدمت', 'انتخاب تاریخ', 'انتخاب ساعت', 'اطلاعات تماس', 'تأیید رزرو'];
     const state = {
         step: 1, service: null, date: '', slot: null, services: [], submitting: false,
         attempt: null, result: null, servicesLoaded: false, servicesLoading: false,
+        otpChallengeId: null, verificationGrant: null, otpFingerprint: null, otpBusy: false,
     };
     let servicesAbort = null;
     let availabilityAbort = null;
@@ -126,8 +135,24 @@ export function initBookingWizard(deps = {}) {
         return JSON.stringify([payload.service_id, payload.start_at, payload.full_name, payload.mobile]);
     }
 
+    function clearOtpVerification() {
+        state.otpChallengeId = null;
+        state.verificationGrant = null;
+        state.otpFingerprint = null;
+        otpInput.value = '';
+        otpInput.disabled = true;
+        otpInput.hidden = true;
+        otpLabel.hidden = true;
+        verifyOtpButton.disabled = true;
+        verifyOtpButton.hidden = true;
+        sendOtpButton.disabled = false;
+        otpStatus.textContent = '';
+    }
+
     function invalidateAttemptIfPayloadChanged() {
-        if (state.attempt && state.attempt.fingerprint !== payloadFingerprint(currentPayload())) state.attempt = null;
+        const fingerprint = payloadFingerprint(currentPayload());
+        if (state.attempt && state.attempt.fingerprint !== fingerprint) state.attempt = null;
+        if (state.otpFingerprint && state.otpFingerprint !== fingerprint) clearOtpVerification();
     }
 
     function attemptFor(payload) {
@@ -146,6 +171,7 @@ export function initBookingWizard(deps = {}) {
         state.date = '';
         state.slot = null;
         state.attempt = null;
+        clearOtpVerification();
         renderDates();
         timesWrap.replaceChildren();
         $('#bkTimeSub').textContent = 'ساعت‌های خالی برای تاریخ انتخابی';
@@ -248,6 +274,7 @@ export function initBookingWizard(deps = {}) {
         state.date = button.dataset.date;
         state.slot = null;
         state.attempt = null;
+        clearOtpVerification();
         $$('.bk__date', datesWrap).forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
         clearErrors();
         loadAvailability();
@@ -302,6 +329,7 @@ export function initBookingWizard(deps = {}) {
         if (!button) return;
         state.slot = { start_at: button.dataset.startAt };
         state.attempt = null;
+        clearOtpVerification();
         $$('.bk__time', timesWrap).forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
         announce(button.getAttribute('aria-label') ?? '');
         clearErrors();
@@ -331,7 +359,7 @@ export function initBookingWizard(deps = {}) {
         if (state.step === 1) return Boolean(state.service);
         if (state.step === 2) return Boolean(state.date);
         if (state.step === 3) return Boolean(state.slot);
-        if (state.step === 4) return validName() && validPhone();
+        if (state.step === 4) return validName() && validPhone() && Boolean(state.verificationGrant) && state.otpFingerprint === payloadFingerprint(currentPayload());
         return true;
     }
 
@@ -378,7 +406,7 @@ export function initBookingWizard(deps = {}) {
     }
 
     async function submit() {
-        if (state.submitting || !state.service || !state.slot) return;
+        if (state.submitting || !state.service || !state.slot || !state.verificationGrant) return;
         const payload = currentPayload();
         const attempt = attemptFor(payload);
         state.submitting = true;
@@ -392,7 +420,7 @@ export function initBookingWizard(deps = {}) {
         announce(uiMessage('submitting', lang));
 
         try {
-            const result = await api.create(payload, attempt.key);
+            const result = await api.create(payload, attempt.key, undefined, state.verificationGrant);
             // Only render confirmation after a real 201 with a valid pending/confirmed appointment result.
             state.result = result;
             state.attempt = null;
@@ -425,6 +453,70 @@ export function initBookingWizard(deps = {}) {
             }
         }
     }
+
+    sendOtpButton.addEventListener('click', async () => {
+        if (!validName(true) || !validPhone(true) || state.otpBusy) return;
+        state.otpBusy = true;
+        sendOtpButton.disabled = true;
+        otpStatus.textContent = 'در حال ارسال کد…';
+        clearErrors();
+        try {
+            const payload = currentPayload();
+            const attempt = attemptFor(payload);
+            const challenge = await api.sendOtp(payload, attempt.key);
+            if (payloadFingerprint(currentPayload()) !== payloadFingerprint(payload)) return;
+            state.otpChallengeId = challenge.challenge_id;
+            state.verificationGrant = null;
+            state.otpFingerprint = payloadFingerprint(payload);
+            otpInput.disabled = false;
+            otpInput.hidden = false;
+            otpLabel.hidden = false;
+            verifyOtpButton.disabled = false;
+            verifyOtpButton.hidden = false;
+            otpInput.focus();
+            otpStatus.textContent = 'کد پیامکی ارسال شد. تا ۵ دقیقه اعتبار دارد.';
+            setTimeout(() => { sendOtpButton.disabled = false; }, Math.max(0, (challenge.resend_after ?? 60) * 1000));
+        } catch (error) {
+            otpStatus.textContent = '';
+            showErrors([messageFor(error?.code, lang)]);
+            sendOtpButton.disabled = false;
+        } finally {
+            state.otpBusy = false;
+            sync();
+        }
+    });
+
+    verifyOtpButton.addEventListener('click', async () => {
+        const code = normalizeDigits(otpInput.value).replace(/\D/g, '');
+        if (!state.otpChallengeId || !/^\d{4,10}$/.test(code) || state.otpBusy) {
+            otpStatus.textContent = 'کد ۴ تا ۱۰ رقمی را وارد کنید.';
+            return;
+        }
+        state.otpBusy = true;
+        verifyOtpButton.disabled = true;
+        otpStatus.textContent = 'در حال بررسی کد…';
+        try {
+            const verifiedFingerprint = payloadFingerprint(currentPayload());
+            const grant = await api.verifyOtp(state.otpChallengeId, code);
+            if (payloadFingerprint(currentPayload()) !== verifiedFingerprint) return;
+            state.verificationGrant = grant;
+            state.otpFingerprint = verifiedFingerprint;
+            otpInput.value = '';
+            otpStatus.textContent = 'شماره موبایل با موفقیت تأیید شد.';
+        } catch (error) {
+            state.verificationGrant = null;
+            otpStatus.textContent = '';
+            showErrors([messageFor(error?.code, lang)]);
+            verifyOtpButton.disabled = false;
+        } finally {
+            state.otpBusy = false;
+            sync();
+        }
+    });
+
+    otpInput.addEventListener('input', () => {
+        otpInput.value = normalizeDigits(otpInput.value).replace(/\D/g, '').slice(0, 10);
+    });
 
     next.addEventListener('click', () => {
         if (state.submitting) return;
@@ -463,6 +555,8 @@ export function initBookingWizard(deps = {}) {
         datesWrap.replaceChildren(); timesWrap.replaceChildren();
         $('#bkDetails').hidden = true;
         nameInput.value = ''; phoneInput.value = '';
+        clearOtpVerification();
+        state.otpBusy = false;
         fieldError('full_name', false); fieldError('mobile', false); clearErrors();
     }
 

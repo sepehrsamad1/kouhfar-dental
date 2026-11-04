@@ -26,9 +26,13 @@ export function initBookingWizard(deps = {}) {
     const nameInput = $('#bkName');
     const phoneInput = $('#bkPhone');
     const otpInput = $('#bkOtpCode');
+    const otpLabel = $('label[for="bkOtpCode"]');
     const sendOtpButton = $('#bkSendOtp');
     const verifyOtpButton = $('#bkVerifyOtp');
     const otpStatus = $('#bkOtpStatus');
+    otpInput.hidden = true;
+    otpLabel.hidden = true;
+    verifyOtpButton.hidden = true;
     const STEPS = ['انتخاب خدمت', 'انتخاب تاریخ', 'انتخاب ساعت', 'اطلاعات تماس', 'تأیید رزرو'];
     const state = {
         step: 1, service: null, date: '', slot: null, services: [], submitting: false,
@@ -137,7 +141,10 @@ export function initBookingWizard(deps = {}) {
         state.otpFingerprint = null;
         otpInput.value = '';
         otpInput.disabled = true;
+        otpInput.hidden = true;
+        otpLabel.hidden = true;
         verifyOtpButton.disabled = true;
+        verifyOtpButton.hidden = true;
         sendOtpButton.disabled = false;
         otpStatus.textContent = '';
     }
@@ -460,7 +467,10 @@ export function initBookingWizard(deps = {}) {
             state.verificationGrant = null;
             state.otpFingerprint = payloadFingerprint(payload);
             otpInput.disabled = false;
+            otpInput.hidden = false;
+            otpLabel.hidden = false;
             verifyOtpButton.disabled = false;
+            verifyOtpButton.hidden = false;
             otpInput.focus();
             otpStatus.textContent = 'کد پیامکی ارسال شد. تا ۵ دقیقه اعتبار دارد.';
             setTimeout(() => { sendOtpButton.disabled = false; }, Math.max(0, (challenge.resend_after ?? 60) * 1000));

@@ -1,13 +1,13 @@
 # Task 28 — Security and Privacy Audit
 
-**Status: IMPLEMENTATION IN PROGRESS — acceptance and production release remain blocked by SEC-28-003, open owner decisions and deployment/verification evidence.**
+**Status: IMPLEMENTATION IN PROGRESS — latest CI run #1091 passed; acceptance and production release remain blocked by SEC-28-003, open owner decisions and deployment/verification evidence.**
 
 ## Task identity
 
 - Task: 28 — Security and Privacy Audit
 - Branch: `task/28-security-privacy-audit`
-- Last fully CI-verified revision: `3282ab38d55df8d3b5cd7cb01a70ed6aada4821c` (GitHub Actions run [#979](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41684593114), completed successfully).
-- Latest completed CI revision: `e6288cd8ffe43f77d90f9d99bc8a895f2ea2d41a` (run [#1012](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41701925876)); Gitleaks, Composer/npm audits and JavaScript lint/typecheck/build passed. Pint failed on `DeletionRequestWorkflowTest.php` with `fully_qualified_strict_types` and `ordered_imports`; PHPStan, migrations, Laravel tests and browser tests were skipped, not failed. Commit `f217378d2218a13991c8ff974f471680908f0499` restores the `App\\StaffUser` import for static factory calls while keeping the return type fully-qualified; awaiting CI.
+- Latest fully CI-verified revision: `64d2992d47d461e28538a85f7964c2befbbcf1a2` (GitHub Actions run [#1091](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41855615836), completed successfully on 2026-11-04).
+- Latest CI run #1091 passed on the current branch head. It includes full-history Gitleaks, Composer/npm audits, JavaScript lint/typecheck/build, Pint, PHPStan, PostgreSQL migrations, 322 Laravel/Pest tests (24,708 assertions), Task 27 deterministic release evaluation and 36 Playwright browser tests. Earlier CI failures were corrected and are superseded by this successful run.
 - Target standard: OWASP ASVS v5.0.0 Level 2 (scoped engineering assessment, not certification).
 - Scope: repository source/configuration/migrations/tests/CI. No production or third-party systems were tested.
 
@@ -46,9 +46,9 @@ See [clinic-owner decisions](security/task28-owner-decisions.md).
 
 ## Automated verification status
 
-Revision `3282ab38d55df8d3b5cd7cb01a70ed6aada4821c` passed CI run #979:
-- 302 Laravel/Pest tests passed (24,617 assertions).
-- 36 Playwright browser tests passed.
+Latest successful GitHub Actions run [#1091](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41855615836), commit `64d2992d47d461e28538a85f7964c2befbbcf1a2`, completed successfully:
+- 322 Laravel/Pest tests passed (24,708 assertions), including the full booking OTP lifecycle and failed-job retention regression.
+- 36 Playwright browser tests passed, including keyboard completion of the booking OTP flow.
 - PostgreSQL migrations passed.
 - Pint formatting check and PHPStan static analysis passed.
 - Composer dependency audit and npm audit passed.
@@ -56,7 +56,7 @@ Revision `3282ab38d55df8d3b5cd7cb01a70ed6aada4821c` passed CI run #979:
 - Task 27 deterministic release evaluation passed.
 - Full-history Gitleaks secret scan passed.
 
-Run #1012 passed Gitleaks, Composer/npm audits and JavaScript lint/typecheck/build, then failed Pint on `DeletionRequestWorkflowTest.php` with `fully_qualified_strict_types` and `ordered_imports`. PHPStan, migrations, Laravel tests and browser tests were skipped, not failed. Commit `f217378d2218a13991c8ff974f471680908f0499` restores the `App\\StaffUser` import used by static factory calls while retaining the fully-qualified return type; it awaits CI verification.
+This verifies the current code revision in CI only. It does not verify production TLS/proxy, external provider logs, secret injection, storage/backup ACLs, or live SMS delivery.
 
 ## Open release blockers
 

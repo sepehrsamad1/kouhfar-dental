@@ -41,6 +41,7 @@ final class StaffOtpAuthController
         if ($staff === null) {
             // Keep the public response identical; no challenge or SMS is created for unknown numbers.
             $request->session()->put('staff_otp_challenge_id', (string) Str::uuid());
+            $request->session()->put('staff_otp_mobile', $mobile);
 
             return back()->with('status', self::GENERIC_STATUS);
         }
@@ -56,6 +57,7 @@ final class StaffOtpAuthController
         }
 
         $request->session()->put('staff_otp_challenge_id', $challenge->getKey());
+        $request->session()->put('staff_otp_mobile', $mobile);
 
         return back()->with('status', self::GENERIC_STATUS);
     }
@@ -113,7 +115,7 @@ final class StaffOtpAuthController
                 return $staff;
             });
 
-            $request->session()->forget('staff_otp_challenge_id');
+            $request->session()->forget(['staff_otp_challenge_id', 'staff_otp_mobile']);
             $this->authenticate($staff, $request);
 
             return redirect()->to($this->safeIntendedUrl());

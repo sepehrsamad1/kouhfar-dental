@@ -27,7 +27,7 @@ final class PhoneVerificationService
     public function start(string $mobile, string $purpose, string $intentHash): VerificationChallenge
     {
         if (! in_array($purpose, [self::PUBLIC_BOOKING, self::STAFF_LOGIN], true)) {
-            throw new RuntimeException('Unsupported verification purpose.');
+            throw new PhoneVerificationException('Unsupported verification purpose.');
         }
 
         $key = 'otp-send:'.hash('sha256', $purpose.'|'.$mobile);

@@ -158,7 +158,7 @@ final class BookingOtpService
             || $challenge->consumed_at !== null
             || $challenge->expires_at->lessThanOrEqualTo(CarbonImmutable::now('UTC'))
             || ! hash_equals($challenge->phone_hash, $this->digest('phone', $normalized))) {
-            throw new RuntimeException('Phone verification is required.');
+            throw new BookingOtpVerificationException('Phone verification is required.');
         }
 
         $challenge->forceFill([

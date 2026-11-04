@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use App\Appointment;
+use App\BookingOtpChallenge;
+use Illuminate\Support\Facades\Http;
 use App\Service;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -44,7 +46,7 @@ it('renders a same-origin CSRF token for the public booking POST', function (): 
     $this->get('/')->assertOk()->assertSee('name="csrf-token"', false);
 });
 
-it('fails closed when owner-required phone verification is not configured', function (): void {
+it('fails closed when a public booking omits its verified OTP challenge', function (): void {
     config(['booking.phone_verification_required' => true]);
     $service = Service::factory()->create(['is_active' => true, 'is_public_bookable' => true]);
 
@@ -55,9 +57,22 @@ it('fails closed when owner-required phone verification is not configured', func
             'service_id' => $service->id,
             'start_at' => '2026-10-29T09:30:00Z',
         ])
-        ->assertStatus(503)
-        ->assertJsonPath('code', 'PHONE_VERIFICATION_NOT_READY');
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['otp_challenge_id']);
+
     expect(Appointment::query()->count())->toBe(0);
+});
+
+it('keeps booking SMS disabled by default and fails closed without a provider', function (): void {
+    config(['notifications.otp.driver' => 'null']);
+    Http::fake();
+
+    $this->postJson('/api/v1/booking-otp/issue', ['mobile' => '09120000001'])
+        ->assertStatus(503)
+        ->assertJsonPath('code', 'OTP_UNAVAILABLE');
+
+    expect(BookingOtpChallenge::query()->where('status', 'delivery_failed')->count())->toBe(1);
+    Http::assertNothingSent();
 });
 
 it('keeps staff-only modules and routes out of the public Vite bundle', function (): void {

@@ -5,8 +5,8 @@ declare(strict_types=1);
 use App\Appointment;
 use App\BookingOtpChallenge;
 use App\Service;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Http;
 
 uses(RefreshDatabase::class);
 

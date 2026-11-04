@@ -24,11 +24,16 @@ export function initBookingWizard(deps = {}) {
     const errors = $('#bkErrors');
     const live = $('#bkLive');
     const nameInput = $('#bkName');
-    const phoneInput = $('#bkPhone');\n    const otpInput = $('#bkOtpCode');\n    const sendOtpButton = $('#bkSendOtp');\n    const verifyOtpButton = $('#bkVerifyOtp');\n    const otpStatus = $('#bkOtpStatus');
+    const phoneInput = $('#bkPhone');
+    const otpInput = $('#bkOtpCode');
+    const sendOtpButton = $('#bkSendOtp');
+    const verifyOtpButton = $('#bkVerifyOtp');
+    const otpStatus = $('#bkOtpStatus');
     const STEPS = ['انتخاب خدمت', 'انتخاب تاریخ', 'انتخاب ساعت', 'اطلاعات تماس', 'تأیید رزرو'];
     const state = {
         step: 1, service: null, date: '', slot: null, services: [], submitting: false,
-        attempt: null, result: null, servicesLoaded: false, servicesLoading: false,\n        otpChallengeId: null, verificationGrant: null, otpFingerprint: null, otpBusy: false,
+        attempt: null, result: null, servicesLoaded: false, servicesLoading: false,
+        otpChallengeId: null, verificationGrant: null, otpFingerprint: null, otpBusy: false,
     };
     let servicesAbort = null;
     let availabilityAbort = null;
@@ -517,7 +522,10 @@ export function initBookingWizard(deps = {}) {
         $$('.bk__opt', servicesWrap).forEach((button) => button.setAttribute('aria-pressed', 'false'));
         datesWrap.replaceChildren(); timesWrap.replaceChildren();
         $('#bkDetails').hidden = true;
-        nameInput.value = ''; phoneInput.value = '';\n        otpInput.value = ''; otpInput.disabled = true; verifyOtpButton.disabled = true; sendOtpButton.disabled = false;\n        otpStatus.textContent = '';\n        Object.assign(state, { otpChallengeId: null, verificationGrant: null, otpFingerprint: null, otpBusy: false });
+        nameInput.value = ''; phoneInput.value = '';
+        otpInput.value = ''; otpInput.disabled = true; verifyOtpButton.disabled = true; sendOtpButton.disabled = false;
+        otpStatus.textContent = '';
+        Object.assign(state, { otpChallengeId: null, verificationGrant: null, otpFingerprint: null, otpBusy: false });
         fieldError('full_name', false); fieldError('mobile', false); clearErrors();
     }
 

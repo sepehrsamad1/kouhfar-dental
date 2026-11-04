@@ -42,6 +42,9 @@ final class PublicPhoneVerificationController
                 PhoneVerificationService::PUBLIC_BOOKING,
                 $intentHash,
             );
+        } catch (PhoneVerificationException) {
+            return response()->json(['code' => 'RATE_LIMITED'], 429)
+                ->header('Cache-Control', 'no-store, private');
         } catch (RuntimeException) {
             return response()->json(['code' => 'OTP_SEND_FAILED'], 503)
                 ->header('Cache-Control', 'no-store, private');

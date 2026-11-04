@@ -25,10 +25,15 @@ export function initBookingWizard(deps = {}) {
     const live = $('#bkLive');
     const nameInput = $('#bkName');
     const phoneInput = $('#bkPhone');
+    const otpCodeInput = $('#bkOtpCode');
+    const otpSendButton = $('#bkOtpSend');
+    const otpVerifyButton = $('#bkOtpVerify');
+    const otpStatus = $('#bkOtpStatus');
     const STEPS = ['انتخاب خدمت', 'انتخاب تاریخ', 'انتخاب ساعت', 'اطلاعات تماس', 'تأیید رزرو'];
     const state = {
         step: 1, service: null, date: '', slot: null, services: [], submitting: false,
         attempt: null, result: null, servicesLoaded: false, servicesLoading: false,
+        otpChallengeId: null, otpVerified: false, otpSending: false, otpVerifying: false,
     };
     let servicesAbort = null;
     let availabilityAbort = null;
@@ -332,6 +337,7 @@ export function initBookingWizard(deps = {}) {
         if (state.step === 2) return Boolean(state.date);
         if (state.step === 3) return Boolean(state.slot);
         if (state.step === 4) return validName() && validPhone();
+        if (state.step === 5) return state.otpVerified && Boolean(state.otpChallengeId);
         return true;
     }
 
@@ -353,6 +359,8 @@ export function initBookingWizard(deps = {}) {
         back.hidden = state.step <= 1;
         if (!state.submitting) next.textContent = state.step === 5 ? 'تأیید و ثبت رزرو' : 'مرحله بعد';
         next.setAttribute('aria-disabled', String(!canAdvance()));
+        if (otpSendButton) otpSendButton.disabled = state.submitting || state.otpSending || state.otpVerifying;
+        if (otpVerifyButton) otpVerifyButton.disabled = state.submitting || state.otpSending || state.otpVerifying || !state.otpChallengeId || !otpCodeInput?.value.trim();
         if (state.step === 5) review($('#bkReview'));
     }
 
@@ -378,7 +386,7 @@ export function initBookingWizard(deps = {}) {
     }
 
     async function submit() {
-        if (state.submitting || !state.service || !state.slot) return;
+        if (state.submitting || !state.service || !state.slot || !state.otpVerified || !state.otpChallengeId) return;
         const payload = currentPayload();
         const attempt = attemptFor(payload);
         state.submitting = true;
@@ -392,7 +400,7 @@ export function initBookingWizard(deps = {}) {
         announce(uiMessage('submitting', lang));
 
         try {
-            const result = await api.create(payload, attempt.key);
+            const result = await api.create({ ...payload, otp_challenge_id: state.otpChallengeId }, attempt.key);
             // Only render confirmation after a real 201 with a valid pending/confirmed appointment result.
             state.result = result;
             state.attempt = null;
@@ -408,7 +416,13 @@ export function initBookingWizard(deps = {}) {
             back.disabled = false;
             if (error?.kind === 'aborted') { sync(); return; }
             const code = String(error?.code ?? 'UNKNOWN').toUpperCase();
-            if (code === 'SLOT_UNAVAILABLE') {
+            if (code === 'PHONE_VERIFICATION_REQUIRED' || code === 'OTP_INVALID_OR_EXPIRED') {
+                state.otpVerified = false;
+                state.otpChallengeId = null;
+                if (otpStatus) otpStatus.textContent = 'اعتبار تأیید شماره تمام شده است؛ دوباره کد بگیرید و تأیید کنید.';
+                sync();
+                showErrors([messageFor(code, lang)]);
+            } else if (code === 'SLOT_UNAVAILABLE') {
                 state.slot = null;
                 goTo(3);
                 loadAvailability();
@@ -425,6 +439,57 @@ export function initBookingWizard(deps = {}) {
             }
         }
     }
+
+    async function sendOtp() {
+        if (state.otpSending || !validPhone(true)) return;
+        state.otpSending = true;
+        state.otpVerified = false;
+        state.otpChallengeId = null;
+        if (otpStatus) otpStatus.textContent = 'در حال ارسال کد تأیید…';
+        sync();
+        try {
+            const result = await api.issueOtp(normalizePhone(phoneInput.value));
+            state.otpChallengeId = result.challengeId;
+            if (otpCodeInput) otpCodeInput.value = '';
+            if (otpStatus) otpStatus.textContent = 'کد تأیید ارسال شد. تا ۵ دقیقه فرصت دارید آن را وارد کنید.';
+            clearErrors();
+        } catch (error) {
+            if (otpStatus) otpStatus.textContent = '';
+            showErrors([messageFor(error?.code, lang)]);
+        } finally {
+            state.otpSending = false;
+            sync();
+        }
+    }
+
+    async function verifyOtp() {
+        if (state.otpVerifying || !state.otpChallengeId || !otpCodeInput) return;
+        const code = normalizeDigits(otpCodeInput.value).replace(/\\D/g, '');
+        if (!/^[0-9]{4,12}$/.test(code)) {
+            showErrors(['کد تأیید را به‌درستی وارد کنید.']);
+            return;
+        }
+        state.otpVerifying = true;
+        if (otpStatus) otpStatus.textContent = 'در حال بررسی کد…';
+        sync();
+        try {
+            await api.verifyOtp(state.otpChallengeId, code);
+            state.otpVerified = true;
+            if (otpStatus) otpStatus.textContent = 'شماره موبایل با موفقیت تأیید شد.';
+            clearErrors();
+        } catch (error) {
+            state.otpVerified = false;
+            if (otpStatus) otpStatus.textContent = 'کد معتبر نیست یا مهلت آن تمام شده است.';
+            showErrors([messageFor(error?.code, lang)]);
+        } finally {
+            state.otpVerifying = false;
+            sync();
+        }
+    }
+
+    otpSendButton?.addEventListener('click', sendOtp);
+    otpVerifyButton?.addEventListener('click', verifyOtp);
+    otpCodeInput?.addEventListener('input', () => sync());
 
     next.addEventListener('click', () => {
         if (state.submitting) return;
@@ -444,7 +509,13 @@ export function initBookingWizard(deps = {}) {
 
     back.addEventListener('click', () => { if (state.step > 1 && !state.submitting) goTo(state.step - 1); });
     [nameInput, phoneInput].forEach((input) => input.addEventListener('input', () => {
-        if (input === phoneInput) phoneInput.value = normalizePhone(phoneInput.value).slice(0, 11);
+        if (input === phoneInput) {
+            phoneInput.value = normalizePhone(phoneInput.value).slice(0, 11);
+            state.otpChallengeId = null;
+            state.otpVerified = false;
+            if (otpCodeInput) otpCodeInput.value = '';
+            if (otpStatus) otpStatus.textContent = '';
+        }
         invalidateAttemptIfPayloadChanged();
         sync();
     }));
@@ -463,6 +534,9 @@ export function initBookingWizard(deps = {}) {
         datesWrap.replaceChildren(); timesWrap.replaceChildren();
         $('#bkDetails').hidden = true;
         nameInput.value = ''; phoneInput.value = '';
+        state.otpChallengeId = null; state.otpVerified = false;
+        if (otpCodeInput) otpCodeInput.value = '';
+        if (otpStatus) otpStatus.textContent = '';
         fieldError('full_name', false); fieldError('mobile', false); clearErrors();
     }
 

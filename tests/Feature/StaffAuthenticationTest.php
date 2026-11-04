@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Session as StaffSession;
 use App\StaffUser;
+use App\VerificationChallenge;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
@@ -142,6 +143,12 @@ it('supports staff OTP login while preserving password login', function (): void
     $this->from(route('staff.login'))->post(route('staff.login.otp.send'), ['mobile' => '09123456789'])
         ->assertRedirect(route('staff.login'))
         ->assertSessionHas('status');
+
+    $challenge = VerificationChallenge::query()->findOrFail(session('staff_otp_challenge_id'));
+    expect(Hash::check('3741437414', $challenge->code_hash))->toBeTrue()
+        ->and($challenge->purpose)->toBe('staff_login');
+    Http::assertSent(fn ($request) => $request->url() === 'https://example.test/otp/test-token'
+        && $request['to'] === '09123456789');
 
     $this->from(route('staff.login'))->post(route('staff.login.otp.verify'), ['code' => '3741437414'])
         ->assertRedirect(route('staff.dashboard'));

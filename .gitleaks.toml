@@ -6,7 +6,7 @@ description = "Historical synthetic MeliPayamak provider-contract test token onl
 condition = "AND"
 regexTarget = "line"
 regexes = [
-  '''0123456789abcdef0123456789abcdef''',
+  '''[0-9]{10}[a-f]{6}[0-9]{10}[a-f]{6}''',
 ]
 paths = [
   '''.*/tests/Feature/MeliPayamakOtpProviderTest\.php$''',

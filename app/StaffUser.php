@@ -22,6 +22,7 @@ class StaffUser extends Model implements AuthenticatableContract
 
     protected $fillable = [
         'email',
+        'mobile_normalized',
         'display_name',
         'role',
         'is_active',

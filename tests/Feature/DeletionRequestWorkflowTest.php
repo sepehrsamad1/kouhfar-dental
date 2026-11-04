@@ -75,7 +75,9 @@ it('prevents repeated or out-of-order transitions', function (): void {
     expect(fn () => $workflow->review($reviewed, $admin, 'accept_for_assessment'))
         ->toThrow(LogicException::class);
 
-    expect(fn () => $workflow->close($request, $admin, 'retained_by_policy'))
+    $pending = DeletionRequest::factory()->create();
+
+    expect(fn () => $workflow->close($pending, $admin, 'retained_by_policy'))
         ->toThrow(LogicException::class);
 });
 

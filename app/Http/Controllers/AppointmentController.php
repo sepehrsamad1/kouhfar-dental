@@ -7,8 +7,8 @@ namespace App\Http\Controllers;
 use App\Domain\Booking\AppointmentBookingException;
 use App\Domain\Booking\AppointmentCreator;
 use App\Http\Requests\AppointmentStoreRequest;
-use App\Services\Otp\PhoneVerificationService;
 use App\Services\Otp\PhoneVerificationException;
+use App\Services\Otp\PhoneVerificationService;
 use Illuminate\Http\JsonResponse;
 
 final class AppointmentController
@@ -16,7 +16,7 @@ final class AppointmentController
     public function store(AppointmentStoreRequest $request, AppointmentCreator $creator, PhoneVerificationService $verification): JsonResponse
     {
         $grant = $request->header('X-Phone-Verification-Grant');
-        if (config('booking.phone_verification_required') && (! is_string($grant) || $grant === '')) {
+        if (config('booking.phone_verification_required') && (is_string($grant) === false || $grant === '')) {
             return response()->json(['code' => 'PHONE_VERIFICATION_REQUIRED'], 403);
         }
 

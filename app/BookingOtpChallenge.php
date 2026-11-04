@@ -34,6 +34,8 @@ class BookingOtpChallenge extends Model
         'last_sent_at',
         'verified_at',
         'consumed_at',
+        'created_at',
+        'updated_at',
     ];
 
     protected function casts(): array

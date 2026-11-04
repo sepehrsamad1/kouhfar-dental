@@ -462,7 +462,8 @@ export function initBookingWizard(deps = {}) {
         clearErrors();
         try {
             const payload = currentPayload();
-            const challenge = await api.sendOtp(payload);
+            const attempt = attemptFor(payload);
+            const challenge = await api.sendOtp(payload, attempt.key);
             if (payloadFingerprint(currentPayload()) !== payloadFingerprint(payload)) return;
             state.otpChallengeId = challenge.challenge_id;
             state.verificationGrant = null;

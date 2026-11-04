@@ -2,11 +2,12 @@
 useDefault = true
 
 [[allowlists]]
-description = "Pre-existing synthetic MeliPayamak provider-contract test token; not a credential and no live provider calls are made by this test."
-regexTarget = "secret"
+description = "Historical synthetic MeliPayamak provider-contract test token only; no live credential. Match both the exact fixture value and its dedicated test file."
+condition = "AND"
+regexTarget = "line"
 regexes = [
   '''0123456789abcdef0123456789abcdef''',
 ]
 paths = [
-  '''tests/Feature/MeliPayamakOtpProviderTest\.php''',
+  '''.*/tests/Feature/MeliPayamakOtpProviderTest\.php$''',
 ]

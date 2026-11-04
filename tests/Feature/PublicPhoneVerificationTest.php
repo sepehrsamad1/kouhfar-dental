@@ -82,7 +82,6 @@ it('counts invalid OTP attempts and rejects the challenge after five attempts', 
     expect(VerificationChallenge::query()->findOrFail($sent->json('challenge_id'))->attempts)->toBe(5);
 });
 
-
 it('binds a verification grant to its exact booking intent and consumes it only once', function (): void {
     Http::fake(['example.test/otp/*' => Http::response(['code' => '3741437414'], 200)]);
     $service = Service::factory()->create(['is_active' => true, 'is_public_bookable' => true]);

@@ -105,3 +105,20 @@ it('prunes idempotency records only after their 24-hour expiry', function (): vo
     expect(IdempotencyRecord::query()->find($expired->id))->toBeNull()
         ->and(IdempotencyRecord::query()->find($active->id))->not->toBeNull();
 });
+
+it('does not prune failed queue jobs while their retention policy remains undecided', function (): void {
+    $uuid = (string) Str::uuid();
+
+    DB::table('failed_jobs')->insert([
+        'uuid' => $uuid,
+        'connection' => 'database',
+        'queue' => 'default',
+        'payload' => json_encode(['displayName' => 'SyntheticFailedJob'], JSON_THROW_ON_ERROR),
+        'exception' => 'Synthetic failure metadata only.',
+        'failed_at' => now('UTC')->subDays(31),
+    ]);
+
+    Artisan::call('security:prune-expired-data');
+
+    expect(DB::table('failed_jobs')->where('uuid', $uuid)->exists())->toBeTrue();
+});

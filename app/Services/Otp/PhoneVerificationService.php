@@ -19,13 +19,11 @@ final class PhoneVerificationService
     private const MAX_ATTEMPTS = 5;
     private const RESEND_SECONDS = 60;
 
-    public function __construct(private readonly MeliPayamakOtpProvider $provider)
-    {
-    }
+    public function __construct(private readonly MeliPayamakOtpProvider $provider) {}
 
     public function start(string $mobile, string $purpose, string $intentHash): VerificationChallenge
     {
-        if (! in_array($purpose, [self::PUBLIC_BOOKING, self::STAFF_LOGIN], true)) {
+        if (in_array($purpose, [self::PUBLIC_BOOKING, self::STAFF_LOGIN], true) === false) {
             throw new PhoneVerificationException('Unsupported verification purpose.');
         }
 
@@ -70,7 +68,7 @@ final class PhoneVerificationService
                 return null;
             }
 
-            if (! Hash::check($code, $challenge->code_hash)) {
+            if (Hash::check($code, $challenge->code_hash) === false) {
                 $challenge->increment('attempts');
 
                 return null;
@@ -110,7 +108,7 @@ final class PhoneVerificationService
         if ($challenge === null || $challenge->purpose !== $purpose
             || $challenge->mobile_normalized !== $mobile
             || $challenge->verified_at === null || $challenge->expires_at->isPast()
-            || ! hash_equals($challenge->intent_hash, $intentHash)
+            || hash_equals($challenge->intent_hash, $intentHash) === false
             || $challenge->consumed_at !== null) {
             throw new PhoneVerificationException('A valid phone verification grant is required.');
         }

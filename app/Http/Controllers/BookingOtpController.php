@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Services\BookingOtpRateLimitException;
 use App\Services\BookingOtpService;
 use App\Support\IranianPhoneNumber;
 use Illuminate\Http\JsonResponse;
@@ -23,8 +24,13 @@ final class BookingOtpController
             $challengeId = $otp->issue($phone, (string) $request->ip());
         } catch (InvalidArgumentException) {
             throw ValidationException::withMessages(['mobile' => ['The mobile number is invalid.']]);
+        } catch (BookingOtpRateLimitException) {
+            return response()->json(['code' => 'RATE_LIMITED'], 429)
+                ->header('Retry-After', '60')
+                ->header('Cache-Control', 'no-store, private');
         } catch (RuntimeException) {
-            return response()->json(['code' => 'OTP_UNAVAILABLE'], 503);
+            return response()->json(['code' => 'OTP_UNAVAILABLE'], 503)
+                ->header('Cache-Control', 'no-store, private');
         }
 
         return response()->json(['challenge_id' => $challengeId, 'expires_in' => 300], 202)

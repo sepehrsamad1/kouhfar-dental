@@ -148,8 +148,11 @@ test('keyboard can complete the flow and announces Persian date/time', async ({ 
     await page.keyboard.press('Tab'); await page.keyboard.type('09000000000');
     await focus('#bkNext'); await page.keyboard.press('Enter');
     await focus('#bkOtpSend'); await page.keyboard.press('Enter');
+    await expect(page.locator('#bkOtpStatus')).toContainText('کد تأیید ارسال شد');
     await focus('#bkOtpCode'); await page.keyboard.type('123456');
+    await expect(page.locator('#bkOtpVerify')).toBeEnabled();
     await focus('#bkOtpVerify'); await page.keyboard.press('Enter');
+    await expect(page.locator('#bkOtpStatus')).toContainText('شماره موبایل با موفقیت تأیید شد');
     await focus('#bkNext'); await page.keyboard.press('Enter');
     await expect(page.locator('#bkRef')).toHaveText('در انتظار تأیید کلینیک');
 });

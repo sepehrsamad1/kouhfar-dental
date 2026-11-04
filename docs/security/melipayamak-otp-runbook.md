@@ -30,6 +30,4 @@ Do not store the full token-bearing endpoint in source control, logs, tickets, s
 
 ## Current implementation boundary
 
-The provider adapter and HTTP contract tests are present. No live provider call has been made. The public booking controller continues to fail closed with `PHONE_VERIFICATION_NOT_READY` while the booking OTP challenge lifecycle is not yet implemented. Do not enable `SMS_OTP_DRIVER=melipayamak` in production until the challenge expiry, attempt/resend limits, storage and verification flow are implemented and tested.
-
-The OTP challenge lifetime and attempt/resend policy must be confirmed before implementing that flow; they are not inferred from the provider's sample response. The provider sample does not specify code expiry or retry limits.
+The provider adapter and booking challenge lifecycle are implemented and covered by synthetic HTTP/feature tests. No live provider call has been made. `SMS_OTP_DRIVER` remains `null` by default; the booking UI/API therefore fails closed until a deployment operator supplies the provider secret and the clinic separately approves activation. Never enable live sending merely to make local tests pass.

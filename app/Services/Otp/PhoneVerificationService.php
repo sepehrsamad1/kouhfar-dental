@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
-use RuntimeException;
 
 final class PhoneVerificationService
 {
@@ -33,7 +32,7 @@ final class PhoneVerificationService
 
         $key = 'otp-send:'.hash('sha256', $purpose.'|'.$mobile);
         if (RateLimiter::tooManyAttempts($key, 1)) {
-            throw new RuntimeException('OTP resend cooldown is active.');
+            throw new PhoneVerificationException('OTP resend cooldown is active.');
         }
 
         // Provider errors do not create a challenge or consume the resend window.
@@ -89,7 +88,7 @@ final class PhoneVerificationService
         });
 
         if ($grant === null) {
-            throw new RuntimeException('Verification code is invalid or expired.');
+            throw new PhoneVerificationException('Verification code is invalid or expired.');
         }
 
         return $grant;
@@ -115,7 +114,7 @@ final class PhoneVerificationService
             || $challenge->verified_at === null || $challenge->expires_at->isPast()
             || ! hash_equals($challenge->intent_hash, $intentHash)
             || $challenge->consumed_at !== null) {
-            throw new RuntimeException('A valid phone verification grant is required.');
+            throw new PhoneVerificationException('A valid phone verification grant is required.');
         }
 
         $challenge->forceFill([

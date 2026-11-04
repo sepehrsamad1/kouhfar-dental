@@ -463,6 +463,7 @@ export function initBookingWizard(deps = {}) {
         try {
             const payload = currentPayload();
             const challenge = await api.sendOtp(payload);
+            if (payloadFingerprint(currentPayload()) !== payloadFingerprint(payload)) return;
             state.otpChallengeId = challenge.challenge_id;
             state.verificationGrant = null;
             state.otpFingerprint = payloadFingerprint(payload);
@@ -494,8 +495,11 @@ export function initBookingWizard(deps = {}) {
         verifyOtpButton.disabled = true;
         otpStatus.textContent = 'در حال بررسی کد…';
         try {
-            state.verificationGrant = await api.verifyOtp(state.otpChallengeId, code);
-            state.otpFingerprint = payloadFingerprint(currentPayload());
+            const verifiedFingerprint = payloadFingerprint(currentPayload());
+            const grant = await api.verifyOtp(state.otpChallengeId, code);
+            if (payloadFingerprint(currentPayload()) !== verifiedFingerprint) return;
+            state.verificationGrant = grant;
+            state.otpFingerprint = verifiedFingerprint;
             otpInput.value = '';
             otpStatus.textContent = 'شماره موبایل با موفقیت تأیید شد.';
         } catch (error) {

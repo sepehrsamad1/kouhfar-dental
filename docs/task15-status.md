@@ -38,7 +38,6 @@
 - Manually test delivery and code verification using an authorized real phone number on local/staging. Complete a test booking only in a non-production database.
 - For staff OTP, populate `staff_users.mobile_normalized` for a staff account only after an administrator verifies ownership of that number, then test login and retain password login as fallback.
 - Confirm provider contract, production budget, retention/cleanup policy and staff mobile enrollment procedure.
-- Rotate the endpoint token exposed during initial testing before production.
 - Review logs, rate limits, and abuse monitoring under production traffic.
 
 No production deployment, real SMS send, or production credential activation has been performed.

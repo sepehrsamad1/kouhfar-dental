@@ -41,6 +41,9 @@ it('stores only keyed hashes, verifies once, and consumes the challenge once', f
     expect($otp->verify($challengeId, '123456'))->toBeTrue()
         ->and($otp->verify($challengeId, '123456'))->toBeFalse();
 
+    expect(fn () => DB::transaction(fn () => $otp->consume($challengeId, '09120000002')))
+        ->toThrow(RuntimeException::class, 'Phone verification is required.');
+
     DB::transaction(fn () => $otp->consume($challengeId, '09120000001'));
     expect($challenge->fresh()->status)->toBe('consumed')
         ->and($challenge->fresh()->consumed_at)->not->toBeNull();

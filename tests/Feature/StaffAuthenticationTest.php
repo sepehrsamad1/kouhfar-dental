@@ -129,7 +129,6 @@ it('invalidates the authenticated session on logout', function (): void {
     expect(StaffSession::query()->find($registryId)->revoked_at)->not->toBeNull();
 });
 
-
 it('supports staff OTP login while preserving password login', function (): void {
     config(['services.melipayamak.otp_url' => 'https://example.test/otp/test-token']);
     Http::fake(['example.test/otp/*' => Http::response(['code' => '3741437414'], 200)]);

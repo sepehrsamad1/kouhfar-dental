@@ -154,7 +154,7 @@ it('supports staff OTP login while preserving password login', function (): void
 it('does not reveal whether a staff OTP phone number exists', function (): void {
     Http::fake();
 
-    $this->post(route('staff.login.otp.send'), ['mobile' => '09120000099'])
+    $this->from(route('staff.login'))->post(route('staff.login.otp.send'), ['mobile' => '09120000099'])
         ->assertRedirect(route('staff.login'))
         ->assertSessionHas('status');
 

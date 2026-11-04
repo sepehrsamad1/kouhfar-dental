@@ -3,8 +3,12 @@
 declare(strict_types=1);
 
 use App\Service;
+use App\Services\Otp\PhoneVerificationException;
+use App\Services\Otp\PhoneVerificationIntent;
+use App\Services\Otp\PhoneVerificationService;
 use App\VerificationChallenge;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 
@@ -76,6 +80,59 @@ it('counts invalid OTP attempts and rejects the challenge after five attempts', 
     }
 
     expect(VerificationChallenge::query()->findOrFail($sent->json('challenge_id'))->attempts)->toBe(5);
+});
+
+
+it('binds a verification grant to its exact booking intent and consumes it only once', function (): void {
+    Http::fake(['example.test/otp/*' => Http::response(['code' => '3741437414'], 200)]);
+    $service = Service::factory()->create(['is_active' => true, 'is_public_bookable' => true]);
+    $idempotencyKey = 'otp-public-single-use-0001';
+    $payload = [
+        'mobile' => '09123456789',
+        'full_name' => 'Synthetic Booker',
+        'service_id' => $service->id,
+        'start_at' => '2026-11-10T09:30:00Z',
+    ];
+
+    $sent = $this->withHeader('Idempotency-Key', $idempotencyKey)
+        ->postJson('/api/v1/phone-verification/send', $payload)
+        ->assertAccepted();
+
+    $verified = $this->postJson('/api/v1/phone-verification/verify', [
+        'challenge_id' => $sent->json('challenge_id'),
+        'code' => '3741437414',
+    ])->assertOk();
+
+    $grant = $verified->json('verification_grant');
+    $verification = app(PhoneVerificationService::class);
+    $intentHash = PhoneVerificationIntent::hash([...$payload, 'idempotency_key' => $idempotencyKey]);
+    $differentIntentHash = PhoneVerificationIntent::hash([...$payload, 'idempotency_key' => 'different-booking-attempt']);
+
+    expect(fn () => DB::transaction(fn () => $verification->consumeGrant(
+        $grant,
+        $payload['mobile'],
+        PhoneVerificationService::PUBLIC_BOOKING,
+        $differentIntentHash,
+        $idempotencyKey,
+    )))->toThrow(PhoneVerificationException::class);
+
+    DB::transaction(fn () => $verification->consumeGrant(
+        $grant,
+        $payload['mobile'],
+        PhoneVerificationService::PUBLIC_BOOKING,
+        $intentHash,
+        $idempotencyKey,
+    ));
+
+    expect(fn () => DB::transaction(fn () => $verification->consumeGrant(
+        $grant,
+        $payload['mobile'],
+        PhoneVerificationService::PUBLIC_BOOKING,
+        $intentHash,
+        $idempotencyKey,
+    )))->toThrow(PhoneVerificationException::class);
+
+    expect(VerificationChallenge::query()->findOrFail($sent->json('challenge_id'))->consumed_at)->not->toBeNull();
 });
 
 it('fails closed when the provider is not configured', function (): void {

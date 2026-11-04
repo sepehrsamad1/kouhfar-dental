@@ -17,6 +17,8 @@ use App\Practitioner;
 use App\Resource;
 use App\Service;
 use App\Support\IranianPhoneNumber;
+use App\Services\Otp\PhoneVerificationIntent;
+use App\Services\Otp\PhoneVerificationService;
 use Carbon\CarbonImmutable;
 use DateTimeImmutable;
 use DateTimeZone;
@@ -66,7 +68,7 @@ final class AppointmentCreator
 
             if (config('booking.phone_verification_required')) {
                 if ($verificationGrant === null || $verification === null) {
-                    throw new \\RuntimeException('Phone verification is required.');
+                    throw new \RuntimeException('Phone verification is required.');
                 }
 
                 $verification->consumeGrant(

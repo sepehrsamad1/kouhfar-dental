@@ -15,7 +15,7 @@ uses(RefreshDatabase::class);
 beforeEach(function (): void {
     config([
         'notifications.otp.driver' => 'melipayamak',
-        'notifications.otp.melipayamak.token' => 'synthetic-test-token-0123456789',
+        'notifications.otp.melipayamak.token' => str_repeat('a', 32),
     ]);
     Carbon::setTestNow('2026-11-04T12:00:00Z');
 });

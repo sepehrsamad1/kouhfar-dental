@@ -17,7 +17,7 @@ final class VerificationChallenge extends Model
         'consumed_at', 'consumed_key_hash',
     ];
 
-    protected $hidden = ['code_hash', 'grant_hash', 'intent_hash', 'consumed_key_hash'];
+    protected $hidden = ['mobile_normalized', 'code_hash', 'grant_hash', 'intent_hash', 'consumed_key_hash'];
 
     protected function casts(): array
     {

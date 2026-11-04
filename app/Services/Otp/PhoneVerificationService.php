@@ -75,7 +75,7 @@ final class PhoneVerificationService
 
             if ($challenge === null || $challenge->purpose !== $purpose
                 || $challenge->verified_at !== null || $challenge->consumed_at !== null
-                || CarbonImmutable::parse((string) $challenge->expires_at)->isPast() || $challenge->attempts >= self::MAX_ATTEMPTS) {
+                || CarbonImmutable::parse((string) $challenge->expires_at, 'UTC')->isPast() || $challenge->attempts >= self::MAX_ATTEMPTS) {
                 return null;
             }
 
@@ -118,7 +118,7 @@ final class PhoneVerificationService
 
         if ($challenge === null || $challenge->purpose !== $purpose
             || $challenge->mobile_normalized !== $mobile
-            || $challenge->verified_at === null || CarbonImmutable::parse((string) $challenge->expires_at)->isPast()
+            || $challenge->verified_at === null || CarbonImmutable::parse((string) $challenge->expires_at, 'UTC')->isPast()
             || hash_equals($challenge->intent_hash, $intentHash) === false
             || $challenge->consumed_at !== null) {
             throw new PhoneVerificationException('A valid phone verification grant is required.');

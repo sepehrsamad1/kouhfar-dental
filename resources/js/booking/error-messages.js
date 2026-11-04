@@ -7,6 +7,10 @@ export const ERROR_MESSAGES = Object.freeze({
     slot_unavailable: { fa: 'این ساعت دیگر خالی نیست. لطفاً ساعت دیگری انتخاب کنید.', en: 'That time is no longer available. Please choose another slot.' },
     idempotency_conflict: { fa: 'اطلاعات این درخواست تغییر کرده است. لطفاً رزرو را دوباره بررسی کنید.', en: 'The request details changed. Please review your booking again.' },
     request_in_progress: { fa: 'درخواست شما هنوز در حال پردازش است. لطفاً چند لحظه صبر کنید.', en: 'Your request is still being processed. Please wait a moment.' },
+    phone_verification_required: { fa: 'ابتدا شماره موبایل خود را با کد پیامکی تأیید کنید.', en: 'Please verify your mobile number with the SMS code first.' },
+    otp_send_failed: { fa: 'ارسال کد تأیید ممکن نشد. لطفاً کمی بعد دوباره تلاش کنید.', en: 'The verification code could not be sent. Please try again shortly.' },
+    otp_invalid_or_expired: { fa: 'کد واردشده نادرست است یا اعتبار آن تمام شده است.', en: 'The code is incorrect or has expired.' },
+    phone_verification_invalid: { fa: 'تأیید شماره معتبر نیست. لطفاً شماره را دوباره تأیید کنید.', en: 'Phone verification is not valid. Please verify your number again.' },
     phone_verification_not_ready: { fa: 'تأیید شماره موبایل برای رزرو آنلاین هنوز راه‌اندازی نشده است. لطفاً با کلینیک تماس بگیرید.', en: 'Mobile verification for online booking is not set up yet. Please contact the clinic.' },
     validation_failed: { fa: 'برخی اطلاعات نیاز به اصلاح دارد. لطفاً موارد مشخص‌شده را بررسی کنید.', en: 'Some details need correcting. Please review the highlighted fields.' },
     unauthenticated: { fa: 'امکان انجام این درخواست وجود ندارد. لطفاً صفحه را تازه‌سازی کنید.', en: 'This request could not be completed. Please refresh the page.' },
@@ -44,7 +48,7 @@ export function currentLanguage(documentRef = globalThis.document) {
 export function messageFor(code, lang = currentLanguage()) {
     const normalized = String(code ?? '').toUpperCase();
     const key = ({
-        SLOT_UNAVAILABLE: 'slot_unavailable', IDEMPOTENCY_CONFLICT: 'idempotency_conflict',
+        PHONE_VERIFICATION_REQUIRED: 'phone_verification_required', OTP_SEND_FAILED: 'otp_send_failed', OTP_INVALID_OR_EXPIRED: 'otp_invalid_or_expired', PHONE_VERIFICATION_INVALID: 'phone_verification_invalid',\n        SLOT_UNAVAILABLE: 'slot_unavailable', IDEMPOTENCY_CONFLICT: 'idempotency_conflict',
         REQUEST_IN_PROGRESS: 'request_in_progress', PHONE_VERIFICATION_NOT_READY: 'phone_verification_not_ready', VALIDATION_FAILED: 'validation_failed',
         UNAUTHENTICATED: 'unauthenticated', FORBIDDEN: 'forbidden', NOT_FOUND: 'not_found',
         CONFLICT: 'conflict', RATE_LIMITED: 'rate_limited', CSRF_INVALID: 'csrf_invalid',

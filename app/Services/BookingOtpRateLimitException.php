@@ -6,6 +6,4 @@ namespace App\Services;
 
 use RuntimeException;
 
-final class BookingOtpRateLimitException extends RuntimeException
-{
-}
+final class BookingOtpRateLimitException extends RuntimeException {}

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\PublicAvailabilityController;
-use App\Http\Controllers\PublicServicesController;
 use App\Http\Controllers\PublicPhoneVerificationController;
+use App\Http\Controllers\PublicServicesController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/v1/services', PublicServicesController::class)

@@ -32,7 +32,9 @@ final class AppointmentCreator
 
     private AppointmentStateMachine $states;
 
-    private AvailabilityRepository $availability;\n\n    private BookingOtpService $bookingOtp;
+    private AvailabilityRepository $availability;
+
+    private BookingOtpService $bookingOtp;
 
     public function __construct(
         AppointmentStateMachine $states,
@@ -40,7 +42,8 @@ final class AppointmentCreator
         BookingOtpService $bookingOtp,
     ) {
         $this->states = $states;
-        $this->availability = $availability;\n        $this->bookingOtp = $bookingOtp;
+        $this->availability = $availability;
+        $this->bookingOtp = $bookingOtp;
     }
 
     public function create(array $input, string $idempotencyKey, string $ownerScope = 'public:appointment:create:v1', ?string $otpChallengeId = null): array

@@ -1,6 +1,6 @@
 # Task 28 — Security findings register
 
-Assessment baseline: `main` commit `ff290289488378ff1b70ebabac66f3fefa0da937`; remediation branch `task/28-security-privacy-audit`. Latest code verification: [CI run #979](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41684593114), revision `3282ab38d55df8d3b5cd7cb01a70ed6aada4821c`. Earlier finding-specific retests remain cited at their original runs.
+Assessment baseline: `main` commit `ff290289488378ff1b70ebabac66f3fefa0da937`; remediation branch `task/28-security-privacy-audit`. Latest full-branch verification: [CI run #1091](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41855615836), revision `64d2992d47d461e28538a85f7964c2befbbcf1a2` (322 Laravel/Pest tests, 36 Playwright browser tests, migrations, static analysis, dependency audits and Gitleaks passed). Earlier finding-specific retests remain cited at their original runs.
 
 Severity meanings for this register:
 - **Critical:** direct compromise or broad unauthorized disclosure/control with severe impact.

@@ -4,10 +4,16 @@ declare(strict_types=1);
 
 namespace App;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property CarbonImmutable|null $created_at
+ * @property CarbonImmutable|null $reviewed_at
+ * @property CarbonImmutable|null $resolved_at
+ */
 class DeletionRequest extends Model
 {
     use HasFactory;

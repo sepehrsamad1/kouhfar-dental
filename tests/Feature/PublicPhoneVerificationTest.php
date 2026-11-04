@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\VerificationChallenge;
 use App\Service;
+use App\VerificationChallenge;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
@@ -43,7 +43,7 @@ it('sends an OTP through the configured provider and stores only a hash', functi
 it('verifies the OTP and returns a grant without exposing the OTP code', function (): void {
     Http::fake(['example.test/otp/*' => Http::response(['code' => '3741437414'], 200)]);
     $service = Service::factory()->create(['is_active' => true, 'is_public_bookable' => true]);
-    $sent = $this->postJson('/api/v1/phone-verification/send', [
+    $sent = $this->withHeader('Idempotency-Key', 'otp-public-test-0001')->postJson('/api/v1/phone-verification/send', [
         'mobile' => '09123456789',
         'full_name' => 'Synthetic Booker',
         'service_id' => $service->id,

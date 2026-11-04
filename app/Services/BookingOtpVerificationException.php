@@ -6,6 +6,4 @@ namespace App\Services;
 
 use RuntimeException;
 
-final class BookingOtpVerificationException extends RuntimeException
-{
-}
+final class BookingOtpVerificationException extends RuntimeException {}

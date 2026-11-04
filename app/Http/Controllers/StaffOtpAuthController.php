@@ -53,7 +53,10 @@ final class StaffOtpAuthController
                 hash('sha256', $staff->getKey().'|'.$mobile),
             );
         } catch (RuntimeException) {
-            return back()->withErrors(['mobile' => 'در حال حاضر ارسال کد ورود ممکن نیست. کمی بعد تلاش کنید.']);
+            $request->session()->put('staff_otp_challenge_id', (string) Str::uuid());
+            $request->session()->put('staff_otp_mobile', $mobile);
+
+            return back()->with('status', self::GENERIC_STATUS);
         }
 
         $request->session()->put('staff_otp_challenge_id', $challenge->getKey());

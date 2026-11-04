@@ -1,0 +1,12 @@
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Pre-existing synthetic MeliPayamak provider-contract test token; not a credential and no live provider calls are made by this test."
+regexTarget = "secret"
+regexes = [
+  '''0123456789abcdef0123456789abcdef''',
+]
+paths = [
+  '''tests/Feature/MeliPayamakOtpProviderTest\.php''',
+]

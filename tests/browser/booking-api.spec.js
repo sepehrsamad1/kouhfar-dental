@@ -19,7 +19,15 @@ async function stubCatalog(page) {
     await page.route(`${API}availability/**`, (route) => route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ data: { date: TOMORROW, timezone: 'Asia/Tehran', slots: [{ start_at: SLOT, end_at: '2026-10-29T06:00:00Z' }] } }),
+        body: JSON.stringify({ data: { date: TOMORROW, timezone: 'Asia/Tehran', slots: [{ start_at: SLOT, end_at: new Date(Date.parse(SLOT) + 30 * 60 * 1000).toISOString() }] } }),
+    }));
+    await page.route(`${API}phone-verification/send`, (route) => route.fulfill({
+        status: 202, contentType: 'application/json',
+        body: JSON.stringify({ challenge_id: 'browser-otp-challenge', resend_after: 0 }),
+    }));
+    await page.route(`${API}phone-verification/verify`, (route) => route.fulfill({
+        status: 200, contentType: 'application/json',
+        body: JSON.stringify({ verification_grant: 'browser-only-verification-grant' }),
     }));
 }
 
@@ -40,6 +48,11 @@ async function fillToReview(page) {
     await page.locator('#bkNext').click();
     await page.fill('#bkName', 'کاربر آزمایشی');
     await page.fill('#bkPhone', '09000000000'); // synthetic, non-routable test value
+    await page.locator('#bkSendOtp').click();
+    await expect(page.locator('#bkOtpCode')).toBeVisible();
+    await page.locator('#bkOtpCode').fill('123456');
+    await page.locator('#bkVerifyOtp').click();
+    await expect(page.locator('#bkOtpStatus')).toContainText('با موفقیت تأیید شد');
     await page.locator('#bkNext').click();
     await expect(page.locator('.bk__pane[data-step="5"]')).toHaveClass(/is-now/);
 }
@@ -119,6 +132,11 @@ test('keyboard can complete the flow and announces Persian date/time', async ({ 
     await focus('#bkNext'); await page.keyboard.press('Enter');
     await focus('#bkName'); await page.keyboard.type('کاربر آزمایشی');
     await page.keyboard.press('Tab'); await page.keyboard.type('09000000000');
+    await focus('#bkSendOtp'); await page.keyboard.press('Enter');
+    await expect(page.locator('#bkOtpCode')).toBeVisible();
+    await page.keyboard.type('123456');
+    await focus('#bkVerifyOtp'); await page.keyboard.press('Enter');
+    await expect(page.locator('#bkOtpStatus')).toContainText('با موفقیت تأیید شد');
     await focus('#bkNext'); await page.keyboard.press('Enter');
     await focus('#bkNext'); await page.keyboard.press('Enter');
     await expect(page.locator('#bkRef')).toHaveText('در انتظار تأیید کلینیک');

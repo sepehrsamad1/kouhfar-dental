@@ -8,7 +8,7 @@ The owner supplied a MeliPayamak OTP endpoint for testing. The endpoint token is
 
 1. The public form sends the normalized mobile number plus the exact booking intent (name, service and start time) to `POST /api/v1/phone-verification/send`.
 2. The backend sends the OTP through `MeliPayamakOtpProvider`, stores only a password hash of the provider-returned code, and returns a short-lived challenge ID.
-3. The user submits the code to `POST /api/v1/phone-verification/verify`. The backend returns a random, short-lived verification grant only after a successful server-side comparison.
+3. The challenge is bound to the booking idempotency key as well as the normalized phone and canonical booking intent. The user submits the code to `POST /api/v1/phone-verification/verify`. The backend returns a random, short-lived verification grant only after a successful server-side comparison.
 4. Appointment creation requires that grant in `X-Phone-Verification-Grant`. The grant is bound to the normalized phone and canonical booking intent, then consumed under the same database transaction as appointment creation.
 5. A grant cannot be used for another phone, another service/time/name, another purpose, or a second booking.
 
@@ -30,4 +30,4 @@ The existing email/password login remains available. A separate optional OTP flo
 
 ## Security notes
 
-Codes are stored only as hashes. Grants are random, stored as hashes, purpose-specific, phone-specific, intent-specific, short-lived and single-use. Rate limits apply to send/verify routes and resend attempts. All public endpoints return generic errors and no-store cache headers where appropriate. The existing password login is not removed or weakened.
+Codes are stored only as hashes. Grants are random, stored as hashes, purpose-specific, phone-specific, intent-specific, short-lived and single-use. Rate limits apply to send/verify routes and resend attempts; the per-phone resend cooldown is reserved before the provider call to limit repeated provider requests, including failures. All public endpoints return generic errors and no-store cache headers where appropriate. The existing password login is not removed or weakened.

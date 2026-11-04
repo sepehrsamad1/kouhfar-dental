@@ -21,7 +21,9 @@ Do not store the full token-bearing endpoint in source control, logs, tickets, s
 - Redirects are disabled; the adapter uses a fixed HTTPS host and does not accept a caller-supplied endpoint.
 - The adapter does not retry a send automatically because a retry could create duplicate messages or charges.
 - The returned code is a server-side verification value. Never return it to the browser, write it to application logs, include it in exception text, or expose it to support staff.
-- Persist only an HMAC-SHA-256 digest of the provider code in the OTP challenge record; phone and IP identifiers are also keyed digests. No plaintext OTP is stored.\n- Challenge lifetime: 5 minutes; maximum failed verification attempts: 5; resend cooldown: 60 seconds; phone issuance limits: 3 per 15 minutes and 5 per hour; IP issuance limit: 10 per hour. These values were approved for this implementation on 2026-11-04.\n- A new issuance invalidates all prior pending/verified challenges for that phone. Verification is one-time and the challenge is consumed in the same database transaction that creates the appointment.
+- Persist only an HMAC-SHA-256 digest of the provider code in the OTP challenge record; phone and IP identifiers are also keyed digests. No plaintext OTP is stored.
+- Challenge lifetime: 5 minutes; maximum failed verification attempts: 5; resend cooldown: 60 seconds; phone issuance limits: 3 per 15 minutes and 5 per hour; IP issuance limit: 10 per hour. These values were approved for this implementation on 2026-11-04.
+- A new issuance invalidates all prior pending/verified challenges for that phone. Verification is one-time and the challenge is consumed in the same database transaction that creates the appointment.
 - Normalize Iranian phone numbers before calling the adapter.
 - Keep the provider token out of Git and rotate it if it is ever exposed outside approved secret handling.
 - Because the token is a path segment, obtain provider confirmation of access-log retention/redaction and review any reverse-proxy/network logs before enabling live sends. The repository cannot verify provider-side logging or retention.

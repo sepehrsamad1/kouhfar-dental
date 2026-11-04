@@ -29,7 +29,7 @@ final class AppointmentController
                 $grant,
                 $verification,
             );
-        } catch (RuntimeException) {
+        } catch (PhoneVerificationException) {
             return response()->json(['code' => 'PHONE_VERIFICATION_INVALID'], 403);
         } catch (AppointmentBookingException $exception) {
             return response()->json([

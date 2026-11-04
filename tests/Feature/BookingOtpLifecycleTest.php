@@ -9,7 +9,6 @@ use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
-use RuntimeException;
 
 uses(RefreshDatabase::class);
 
@@ -19,7 +18,6 @@ beforeEach(function (): void {
         'notifications.otp.melipayamak.token' => 'synthetic-test-token-0123456789',
     ]);
     Carbon::setTestNow('2026-11-04T12:00:00Z');
-    Http::fake(['console.melipayamak.com/*' => Http::response(['code' => '123456'], 200)]);
 });
 
 afterEach(function (): void {
@@ -27,6 +25,7 @@ afterEach(function (): void {
 });
 
 it('stores only keyed hashes, verifies once, and consumes the challenge once', function (): void {
+    Http::fake(['console.melipayamak.com/*' => Http::response(['code' => '123456'], 200)]);
     $otp = app(BookingOtpService::class);
     $challengeId = $otp->issue('09120000001', '192.0.2.10');
     $challenge = BookingOtpChallenge::query()->findOrFail($challengeId);
@@ -53,6 +52,7 @@ it('stores only keyed hashes, verifies once, and consumes the challenge once', f
 });
 
 it('exhausts a challenge after five incorrect codes', function (): void {
+    Http::fake(['console.melipayamak.com/*' => Http::response(['code' => '123456'], 200)]);
     $otp = app(BookingOtpService::class);
     $challengeId = $otp->issue('09120000001', '192.0.2.10');
 
@@ -66,6 +66,7 @@ it('exhausts a challenge after five incorrect codes', function (): void {
 });
 
 it('expires a challenge after five minutes', function (): void {
+    Http::fake(['console.melipayamak.com/*' => Http::response(['code' => '123456'], 200)]);
     $otp = app(BookingOtpService::class);
     $challengeId = $otp->issue('09120000001', '192.0.2.10');
 
@@ -76,6 +77,7 @@ it('expires a challenge after five minutes', function (): void {
 });
 
 it('invalidates the previous challenge when a new code is issued', function (): void {
+    Http::fake(['console.melipayamak.com/*' => Http::response(['code' => '123456'], 200)]);
     $otp = app(BookingOtpService::class);
     $first = $otp->issue('09120000001', '192.0.2.10');
 
@@ -88,6 +90,7 @@ it('invalidates the previous challenge when a new code is issued', function (): 
 });
 
 it('enforces resend cooldown and per-phone hourly issuance limits', function (): void {
+    Http::fake(['console.melipayamak.com/*' => Http::response(['code' => '123456'], 200)]);
     $otp = app(BookingOtpService::class);
     $otp->issue('09120000001', '192.0.2.10');
 
@@ -105,6 +108,7 @@ it('enforces resend cooldown and per-phone hourly issuance limits', function ():
 });
 
 it('enforces the five-send hourly phone limit independently of the fifteen-minute limit', function (): void {
+    Http::fake(['console.melipayamak.com/*' => Http::response(['code' => '123456'], 200)]);
     $otp = app(BookingOtpService::class);
 
     foreach (['12:00:00', '12:13:00', '12:26:00', '12:39:00', '12:52:00'] as $time) {
@@ -119,6 +123,7 @@ it('enforces the five-send hourly phone limit independently of the fifteen-minut
 });
 
 it('enforces the ten-send hourly IP limit across different phone numbers', function (): void {
+    Http::fake(['console.melipayamak.com/*' => Http::response(['code' => '123456'], 200)]);
     $otp = app(BookingOtpService::class);
 
     for ($index = 1; $index <= 10; $index++) {
@@ -144,6 +149,7 @@ it('records provider failure without persisting a code or exposing provider deta
 });
 
 it('serves issue and verify endpoints without returning the OTP value', function (): void {
+    Http::fake(['console.melipayamak.com/*' => Http::response(['code' => '123456'], 200)]);
     $issue = $this->postJson('/api/v1/booking-otp/issue', ['mobile' => '09120000001'])
         ->assertAccepted()
         ->assertHeader('Cache-Control', 'no-store, private')

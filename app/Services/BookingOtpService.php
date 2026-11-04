@@ -60,7 +60,7 @@ final class BookingOtpService
             BookingOtpChallenge::query()
                 ->where('phone_hash', $phoneHash)
                 ->whereIn('status', ['dispatching', 'pending', 'verified'])
-                ->update(['status' => 'invalidated', 'updated_at' => $now]);
+                ->update(['status' => 'invalidated', 'code_hash' => null, 'updated_at' => $now]);
 
             BookingOtpChallenge::query()->create([
                 'id' => $challengeId,
@@ -118,14 +118,14 @@ final class BookingOtpService
 
             $now = CarbonImmutable::now('UTC');
             if ($challenge->expires_at->lessThanOrEqualTo($now)) {
-                $challenge->forceFill(['status' => 'expired'])->save();
+                $challenge->forceFill(['status' => 'expired', 'code_hash' => null])->save();
 
                 return false;
             }
 
             $maxAttempts = (int) config('booking.otp.max_attempts', 5);
             if ($challenge->attempts >= $maxAttempts) {
-                $challenge->forceFill(['status' => 'exhausted'])->save();
+                $challenge->forceFill(['status' => 'exhausted', 'code_hash' => null])->save();
 
                 return false;
             }
@@ -136,12 +136,13 @@ final class BookingOtpService
                 $challenge->forceFill([
                     'attempts' => $attempts,
                     'status' => $attempts >= $maxAttempts ? 'exhausted' : 'pending',
+                    'code_hash' => $attempts >= $maxAttempts ? null : $challenge->code_hash,
                 ])->save();
 
                 return false;
             }
 
-            $challenge->forceFill(['status' => 'verified', 'verified_at' => $now])->save();
+            $challenge->forceFill(['status' => 'verified', 'verified_at' => $now, 'code_hash' => null])->save();
 
             return true;
         }, 3);

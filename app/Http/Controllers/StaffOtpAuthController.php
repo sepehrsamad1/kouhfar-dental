@@ -8,16 +8,16 @@ use App\LoginAttempt;
 use App\Services\Otp\PhoneVerificationService;
 use App\Session as StaffSession;
 use App\StaffUser;
-use App\VerificationChallenge;
 use App\Support\IranianPhoneNumber;
+use App\VerificationChallenge;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
-use RuntimeException;
 use InvalidArgumentException;
+use RuntimeException;
 
 final class StaffOtpAuthController
 {
@@ -71,7 +71,7 @@ final class StaffOtpAuthController
         $challengeId = $request->session()->get('staff_otp_challenge_id');
 
         try {
-            if (! is_string($challengeId) || $challengeId === '') {
+            if (is_string($challengeId) === false || $challengeId === '') {
                 throw new RuntimeException('Invalid login challenge.');
             }
 
@@ -103,7 +103,7 @@ final class StaffOtpAuthController
                 }
 
                 $expectedIntent = hash('sha256', $staff->getKey().'|'.$challenge->mobile_normalized);
-                if (! hash_equals($challenge->intent_hash, $expectedIntent)) {
+                if (hash_equals($challenge->intent_hash, $expectedIntent) === false) {
                     throw new RuntimeException('Invalid login challenge.');
                 }
 
@@ -159,7 +159,7 @@ final class StaffOtpAuthController
 
         $parts = parse_url($intended);
         if ($parts === false || isset($parts['scheme']) || isset($parts['host']) || isset($parts['user']) || isset($parts['pass'])
-            || ! str_starts_with($intended, '/') || str_starts_with($intended, '//')) {
+            || str_starts_with($intended, '/') === false || str_starts_with($intended, '//')) {
             return route('staff.dashboard');
         }
 

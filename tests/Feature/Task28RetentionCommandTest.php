@@ -252,3 +252,42 @@ it('prunes only closed or rejected deletion requests after three years', functio
         ->and(DB::table('deletion_requests')->where('id', $oldPending)->exists())->toBeTrue()
         ->and(DB::table('deletion_requests')->where('id', $oldLegalHold)->exists())->toBeTrue();
 });
+
+it('prunes sent and stale failed notification outbox rows at their separate deadlines', function (): void {
+    $oldSent = (string) Str::uuid();
+    $recentSent = (string) Str::uuid();
+    $oldFailed = (string) Str::uuid();
+    $recentFailed = (string) Str::uuid();
+
+    foreach ([
+        [$oldSent, now('UTC')->subMonths(13), null],
+        [$recentSent, now('UTC')->subMonths(11), null],
+        [$oldFailed, null, now('UTC')->subDays(31)],
+        [$recentFailed, null, now('UTC')->subDays(29)],
+    ] as [$id, $sentAt, $lastAttemptAt]) {
+        DB::table('notification_outbox')->insert([
+            'id' => $id,
+            'channel' => 'sms',
+            'recipient_hash' => hash('sha256', 'synthetic-'.$id),
+            'template' => 'synthetic-test',
+            'payload_ref' => 'synthetic-only',
+            'status' => $sentAt === null ? 'failed' : 'sent',
+            'attempts' => 1,
+            'created_at' => now('UTC')->subDays(400),
+            'sent_at' => $sentAt,
+            'last_attempt_at' => $lastAttemptAt ?? now('UTC')->subDays(400),
+            'last_error' => $sentAt === null ? 'Synthetic delivery failure.' : null,
+            'appointment_id' => null,
+            'type' => null,
+            'dedupe_key' => null,
+            'scheduled_at' => null,
+        ]);
+    }
+
+    Artisan::call('security:prune-expired-data');
+
+    expect(DB::table('notification_outbox')->where('id', $oldSent)->exists())->toBeFalse()
+        ->and(DB::table('notification_outbox')->where('id', $recentSent)->exists())->toBeTrue()
+        ->and(DB::table('notification_outbox')->where('id', $oldFailed)->exists())->toBeFalse()
+        ->and(DB::table('notification_outbox')->where('id', $recentFailed)->exists())->toBeTrue();
+});

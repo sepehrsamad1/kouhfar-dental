@@ -1,10 +1,10 @@
 # Project status
 
-Last updated: 2026-11-04 (Task 28 booking OTP lifecycle and security/privacy implementation CI-verified; production blockers remain)
+Last updated: 2026-11-05 (Task 28 local-prototype retention defaults implemented; CI verification pending; production blockers remain)
 
 ## Task 28 — Security and Privacy Audit
 
-Status: IMPLEMENTATION IN PROGRESS / ACCEPTANCE AND PRODUCTION RELEASE BLOCKED — branch `task/28-security-privacy-audit`. Latest CI run [#1091](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41855615836), commit `64d2992d47d461e28538a85f7964c2befbbcf1a2`, completed successfully: 322 Laravel/Pest tests (24,708 assertions), 36 Playwright browser tests, PostgreSQL migrations, Pint, PHPStan, Composer/npm audits, JavaScript lint/typecheck/build, Task 27 deterministic release evaluation and full-history Gitleaks. This does not close owner-policy or deployment blockers. Production use with real patient data remains blocked.
+Status: IMPLEMENTATION IN PROGRESS / ACCEPTANCE AND PRODUCTION RELEASE BLOCKED — branch `task/28-security-privacy-audit`. Latest pre-change CI run [#1094](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41856375577) passed on commit `de8d23133f777966c81728c2094e3e284814e60f` (322 Laravel/Pest tests, 24,708 assertions, 36 Playwright tests, migrations, Pint, PHPStan, dependency audits, JS lint/typecheck/build, Task 27 evaluation and Gitleaks). Prototype retention changes are newer and await a fresh CI run. Production use with real patient data remains blocked.
 
 - Target: OWASP ASVS v5.0.0 Level 2 (scoped engineering assessment, not certification).
 - Security changes: login redirect validation, production-default Secure session cookies, practitioner patient-edit/mobile-reveal privilege boundary, immediate session revocation on staff deactivation, SQL-looking search input, mass-assignment defenses and Kavenegar SSRF/redirect controls.
@@ -19,6 +19,12 @@ Status: IMPLEMENTATION IN PROGRESS / ACCEPTANCE AND PRODUCTION RELEASE BLOCKED �
 - Deployment checklist: production TLS/proxy, DB runtime privileges, private storage ACLs, secret injection, backup separation/key ACLs, general distributed throttles and live provider activation are itemized in docs/security/task28-deployment-verification-checklist.md.
 - Release blockers: high retention/backup finding SEC-28-003 remains open for unresolved categories and deployment evidence; Smart Smile consent-token TTL; queue/failed-job/outbox/deletion-request retention; MFA lost-device/recovery reset; OTP challenge metadata retention (OD-28-18); production infrastructure and separate-backup-storage evidence; full route-by-route IDOR/CSRF/DOM-XSS/distributed rate-limit verification; supplementary secret-surface review; Kavenegar/MeliPayamak URL-path credential exposure decisions before provider activation.
 - Do not merge Task 28 as complete or mark it verified for production until all high findings are closed and required privacy/retention decisions are approved.
+
+## Task 28 — Prototype policy update (2026-11-05)
+
+User-authorized provisional local-test defaults are now recorded and partially implemented: Smart Smile token 24 hours / result 365 days; successful-job metadata 7 days; failed jobs 30 days; sent notifications 12 months; stale failed notification details 30 days; terminal OTP metadata 30 days; closed/rejected deletion requests 3 years. Consent evidence is not automatically deleted. Staff profile and patient-match cleanup remain non-automated until lifecycle evidence exists. Synthetic boundary tests were added. Latest changes are pending CI.
+
+These periods are engineering assumptions for a local prototype, not universal legal standards. MeliPayamak, Kavenegar and live AI remain disabled. Production TLS/proxy, DB/storage/secrets, full DB/files backup and isolated recovery, provider log redaction, complete IDOR/CSRF/DOM-XSS and operational MFA recovery remain open release gates.
 
 ## Task 27 — AI evaluation, safety gates, dental knowledge and cost controls
 

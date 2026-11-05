@@ -6,7 +6,7 @@
 
 - Task: 28 — Security and Privacy Audit
 - Branch: `task/28-security-privacy-audit`
-- Latest fully CI-verified revision: `05f307a15e8ce69480253f1bd1bde24d3969f423` (GitHub Actions run [#1149](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41949121638), completed successfully on 2026-11-05).
+- Latest fully CI-verified application revision before MeliPayamak local-setup follow-up: `05f307a15e8ce69480253f1bd1bde24d3969f423` (GitHub Actions run [#1149](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41949121638), completed successfully on 2026-11-05). SMS follow-up changes are awaiting their own CI run.
 - CI run #1149 passed on the current prototype branch head: full-history Gitleaks, Composer/npm audits, JavaScript lint/typecheck/build, Pint, PHPStan, PostgreSQL migrations, 328 Laravel/Pest tests (24,731 assertions), Task 27 deterministic release evaluation and 36 Playwright browser tests. Composer audit reports no security advisories after updating affected Symfony components to 7.4.23.
 - Target standard: OWASP ASVS v5.0.0 Level 2 (scoped engineering assessment, not certification).
 - Scope: repository source/configuration/migrations/tests/CI. No production or third-party systems were tested.
@@ -24,7 +24,7 @@
 - Added a 10-minute pending-MFA enrollment/challenge window. Production default is `STAFF_MFA_REQUIRED=true`. CI disables the requirement only for legacy browser screenshot fixtures; dedicated feature tests explicitly enable and exercise MFA.
 - Added approved retention cleanup: login-attempt hashes after 90 days, AI request/usage operational rows after 12 months, and Idempotency records at their existing 24-hour expiry. The cleanup command is scheduled daily.
 - Configured local daily application log rotation with a 30-day retention window.
-- Added a MeliPayamak provider-generated OTP adapter behind `OtpProviderManager`. It uses a fixed HTTPS host, redirects disabled, TLS verification enabled, no automatic retries, and a deployment-only token. It remains disabled by default. The booking challenge lifecycle and approved limits are now implemented; live sending remains blocked pending deployment secret injection and separate clinic activation approval.
+- MeliPayamak provider-generated OTP is integrated with the public booking challenge lifecycle. It posts only the normalized mobile as JSON, validates provider `status`/`code`, uses TLS verification, disables redirects and automatic retries, returns generic errors, and persists only an HMAC digest of the code. The user authorized controlled local prototype use. The committed default remains disabled; local activation is documented and requires the token in ignored `.env`, not Git. SQLite local prototype issuance now uses file-cache locks; PostgreSQL uses advisory locks for multi-node quotas. No live SMS has been sent by CI or by this change.
 - Added Laravel-native audit-log backup commands using a consistent database snapshot, AES-256-GCM authenticated chunk encryption, per-backup salt/key derivation, an explicitly configured absolute backup path, 90-day minimum backup-copy retention, and no database-specific dump utility.
 - Scheduled encrypted audit-log backups daily at 02:00 Asia/Tehran and authenticated temporary-table restore verification monthly at 04:00 on day 1. This is not a full isolated disaster-recovery exercise.
 - Added Composer/npm dependency audits and full-history Gitleaks to CI, plus threat model, ASVS checklist, privacy impact assessment, data inventory/retention register, third-party flow inventory, findings register, owner decision register and operational runbooks.
@@ -45,7 +45,7 @@ The user delegated the remaining engineering defaults for a local synthetic-data
 - Patient-match flags: unresolved until human review; resolved flags target 90 days, but no automatic merge or purge is enabled without a reviewed lifecycle.
 - Backups: daily, 35-day rolling planning target for future full DB/files backup; RPO <=24 hours, RTO <=8 hours. Current code backs up audit logs only.
 - Lost MFA device: controlled admin identity verification, revoke sessions, reset factor, re-enroll, issue new one-time recovery codes and audit the action. Runbook only; no self-service reset UI.
-- MeliPayamak, Kavenegar and live AI remain disabled.
+- MeliPayamak can be enabled for a controlled local prototype by setting `SMS_OTP_DRIVER=melipayamak` and `MELIPAYAMAK_OTP_TOKEN` in the ignored local `.env`; the committed default and CI remain disabled. Kavenegar and live AI remain disabled.
 
 These are engineering defaults for synthetic local testing, not universal legal standards or production approval.
 

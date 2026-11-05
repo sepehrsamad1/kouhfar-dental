@@ -49,3 +49,22 @@ Latest fully successful CI verification remains run #979 on revision `3282ab38d5
 Still not proven: full route-by-route IDOR/CSRF/DOM-XSS/distributed rate-limit verification; full database/files backup and isolated restore; physically separate backup destination, key/ACL and monitoring; production TLS/proxy/database/storage/secrets/logging controls; provider/network URL-path credential redaction; and operational MFA identity-proofing.
 
 **Release remains blocked.** This register is an engineering alignment document, not legal advice, owner signature, production approval, or ASVS certification.
+
+## User-authorized local prototype defaults (2026-11-05)
+
+This section supersedes the earlier proposed / owner-decision-required execution state for local prototype engineering only. The user explicitly delegated these choices and stated that the first target is a local test prototype using synthetic data. It does not waive legal review or authorize production use.
+
+- Consent evidence: six-year planning baseline after last related processing; no automated deletion is enabled.
+- Smart Smile bearer token: 24-hour TTL; expiry blocks status/read and upload, while explicit deletion remains possible using the original token.
+- Smart Smile result: clear result JSON after 365 days, preserving consent/session evidence. Raw input media continues at 90 days.
+- Completed-job metadata: 7 days. Failed queue rows: 30 days. Do not purge pending/running work or batches.
+- Sent notification outbox rows: 12 months. Stale failed notification rows: 30 days after last attempt.
+- Deletion request records: 3 years after closure/rejection; pending and under-review requests remain. The 30-day handling target is an operational goal, not a statutory promise.
+- OTP terminal challenge metadata: 30 days. Existing rate and lifecycle controls remain.
+- Staff/practitioner operational profile after deactivation: 90-day planning default, not automated because a reliable deactivation timestamp is not modeled.
+- Patient-match flags: unresolved stays until human review; resolved flags target 90 days, but no purge or automatic merge is enabled until reviewed workflow/audit support exists.
+- Backups: daily encrypted backups, 35-day rolling planning target for a future full DB/files backup; RPO <=24 hours, RTO <=8 hours; quarterly isolated recovery test target. Current code implements audit-log backups only and does not prove full-system recovery.
+- MFA lost-device recovery: controlled administrator identity verification, session revocation, factor reset, fresh enrollment, one-time recovery codes and audit. Operational process only; no reset UI is claimed.
+- Keep MeliPayamak, Kavenegar and live AI disabled.
+
+The retention periods are practical engineering defaults, not a universal standard. GDPR storage limitation requires a purpose-specific and justified period; the applicable legal basis and statutory duties must be checked before real patient data or production.

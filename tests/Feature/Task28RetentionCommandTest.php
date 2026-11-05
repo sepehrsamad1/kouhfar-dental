@@ -200,6 +200,7 @@ it('prunes only closed or rejected deletion requests after three years', functio
     $oldClosed = (string) Str::uuid();
     $recentClosed = (string) Str::uuid();
     $oldPending = (string) Str::uuid();
+    $oldLegalHold = (string) Str::uuid();
 
     DB::table('deletion_requests')->insert([
         [
@@ -223,6 +224,16 @@ it('prunes only closed or rejected deletion requests after three years', functio
             'resolution_code' => 'retained_by_policy',
         ],
         [
+            'id' => $oldLegalHold,
+            'target_type' => 'patient',
+            'target_id' => (string) Str::uuid(),
+            'status' => 'closed',
+            'created_at' => now('UTC')->subYears(4),
+            'reviewed_at' => now('UTC')->subYears(4),
+            'resolved_at' => now('UTC')->subYears(4),
+            'resolution_code' => 'legal_hold',
+        ],
+        [
             'id' => $oldPending,
             'target_type' => 'patient',
             'target_id' => (string) Str::uuid(),
@@ -238,5 +249,6 @@ it('prunes only closed or rejected deletion requests after three years', functio
 
     expect(DB::table('deletion_requests')->where('id', $oldClosed)->exists())->toBeFalse()
         ->and(DB::table('deletion_requests')->where('id', $recentClosed)->exists())->toBeTrue()
-        ->and(DB::table('deletion_requests')->where('id', $oldPending)->exists())->toBeTrue();
+        ->and(DB::table('deletion_requests')->where('id', $oldPending)->exists())->toBeTrue()
+        ->and(DB::table('deletion_requests')->where('id', $oldLegalHold)->exists())->toBeTrue();
 });

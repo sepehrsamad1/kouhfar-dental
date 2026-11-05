@@ -45,14 +45,16 @@
 - [ ] Run authorized staging abuse tests across two application nodes and verify the shared route-throttle state.
 - [ ] Monitor rate-limit responses and provider delivery failures without recording OTP codes, raw phone numbers or token-bearing URLs.
 
-## 6. Operational owner decisions still required
+## 6. Prototype defaults and remaining production approvals
 
-- [ ] Approve retention duration for OTP challenge metadata (OD-28-18). No automatic purge is currently enabled.
-- [ ] Approve Smart Smile consent-token TTL and post-expiry/revocation behavior (SEC-28-004).
-- [ ] Approve retention for consent evidence, queue/failed-job payloads, notification outbox/error metadata and deletion requests (SEC-28-003).
-- [ ] Define the controlled, audited lost-authenticator/recovery-code reset and staff identity-proofing process.
-- [ ] Decide staff/practitioner profile retention and patient-match flag policy (OD-28-10).
+The following are now provisional local-prototype defaults: OTP terminal metadata 30 days; Smart Smile token 24 hours and result payload 365 days; completed-job history 7 days; failed queue records 30 days; sent notifications 12 months; stale failed notifications 30 days; closed/rejected deletion requests 3 years. Consent evidence is not auto-purged. Staff profile and patient-match cleanup remain manual because lifecycle evidence is not modeled.
+
+- [ ] Reconcile every prototype retention period with clinic/legal requirements before real patient data.
+- [ ] Define and approve the controlled, audited lost-authenticator/recovery-code reset and staff identity-proofing process before staff rollout.
 - [ ] Confirm formal clinic approval for enabling live MeliPayamak SMS and review residual URL-path credential exposure (SEC-28-015).
+- [ ] Confirm formal approval and provider/network log redaction before enabling Kavenegar.
+- [ ] Confirm Smart Smile consent evidence retention and legal basis before production.
+- [ ] Provision full database/files backups, separate storage, encryption key/ACLs, monitoring and isolated restore evidence; current repository backup covers audit logs only.
 
 ## Evidence record
 

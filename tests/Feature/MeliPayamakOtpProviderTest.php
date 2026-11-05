@@ -63,3 +63,15 @@ it('does not follow provider redirects', function (): void {
 
     Http::assertSentCount(1);
 });
+
+it('rejects provider-declared errors even when a code is also present', function (): void {
+    Http::fake(fn () => Http::response([
+        'code' => '3741437410',
+        'status' => 'synthetic provider error',
+    ], 200));
+
+    expect(fn () => (new MeliPayamakOtpProvider)->sendCode('09123456789'))
+        ->toThrow(RuntimeException::class, 'MeliPayamak OTP delivery failed.');
+
+    Http::assertSentCount(1);
+});

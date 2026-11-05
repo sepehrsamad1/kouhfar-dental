@@ -24,22 +24,29 @@ final class SmartSmileService
     public function grantConsent(): array
     {
         $token = Str::random(64);
+        $now = now('UTC');
 
         $session = SmartSmileSession::query()->create([
             'consent_token_hash' => hash('sha256', $token),
             'consent_version' => (string) config('smart_smile.consent_version', 'v1'),
-            'consented_at' => now('UTC'),
+            'consented_at' => $now,
+            'token_expires_at' => $now->copy()->addHours((int) config('smart_smile.token_ttl_hours', 24)),
             'status' => 'consented',
         ]);
 
         return ['session' => $session, 'token' => $token];
     }
 
-    public function resolve(string $token): ?SmartSmileSession
+    public function resolve(string $token, bool $allowExpiredForDeletion = false): ?SmartSmileSession
     {
-        return SmartSmileSession::query()
-            ->where('consent_token_hash', hash('sha256', $token))
-            ->first();
+        $query = SmartSmileSession::query()
+            ->where('consent_token_hash', hash('sha256', $token));
+
+        if (! $allowExpiredForDeletion) {
+            $query->where('token_expires_at', '>', now('UTC'));
+        }
+
+        return $query->first();
     }
 
     public function upload(SmartSmileSession $session, UploadedFile $file): SmartSmileSession
@@ -64,6 +71,7 @@ final class SmartSmileService
             'status' => 'queued',
             'result' => null,
             'result_generated_at' => null,
+            'result_expires_at' => null,
         ])->save();
 
         ProcessSmartSmile::dispatch($session->id);
@@ -86,6 +94,7 @@ final class SmartSmileService
             'status' => 'deleted',
             'result' => null,
             'result_generated_at' => null,
+            'result_expires_at' => null,
         ])->save();
     }
 

@@ -8,5 +8,7 @@ return [
     'consent_version' => 'v1',
     'consent_scope' => 'smart-smile-image-analysis',
     'retention_days' => 90,
+    'token_ttl_hours' => 24,
+    'result_retention_days' => 365,
     'max_uploads_per_consent' => 1,
 ];

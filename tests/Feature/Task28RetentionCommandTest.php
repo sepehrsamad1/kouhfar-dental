@@ -196,7 +196,6 @@ it('prunes terminal booking OTP metadata after 30 days and keeps recent challeng
         ->and(DB::table('booking_otp_challenges')->where('id', $recentId)->exists())->toBeTrue();
 });
 
-
 it('prunes only closed or rejected deletion requests after three years', function (): void {
     $oldClosed = (string) Str::uuid();
     $recentClosed = (string) Str::uuid();
@@ -241,4 +240,3 @@ it('prunes only closed or rejected deletion requests after three years', functio
         ->and(DB::table('deletion_requests')->where('id', $recentClosed)->exists())->toBeTrue()
         ->and(DB::table('deletion_requests')->where('id', $oldPending)->exists())->toBeTrue();
 });
-

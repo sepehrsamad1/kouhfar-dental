@@ -86,3 +86,20 @@ No real patient data, patient images, real credentials, production commands, des
 - SMS_OTP_DRIVER remains `null` by default. MeliPayamak remains disabled pending deployment secret injection and separate clinic approval. No live SMS requests were made.
 - **Open owner decision OD-28-18:** retention duration for OTP challenge metadata. No automatic purge is enabled until approved.
 - Production TLS/proxy, DB privileges, storage ACLs, secret injection, backup separation/key ACLs, general distributed throttles and live provider activation are tracked in [the deployment verification checklist](security/task28-deployment-verification-checklist.md).
+
+## Prototype retention and lifecycle defaults (2026-11-05)
+
+The user delegated the remaining engineering defaults for the local prototype. The following implementation was added on the Task 28 branch and is awaiting CI verification:
+
+- Smart Smile token lifetime is 24 hours. Expired tokens cannot upload or read status; the original token remains able to request deletion after expiry. Consent/session evidence is retained.
+- Smart Smile result payloads expire after 365 days. Cleanup clears only the result JSON; it does not delete the session or consent evidence. Raw Smart Smile input media continues to use the existing 90-day policy.
+- Successful-job metadata is retained 7 days; failed queue records 30 days. Running/pending jobs and batch records are not age-pruned.
+- Sent notification outbox rows are retained 12 months; stale failed notification rows 30 days after last attempt.
+- Closed/rejected deletion request rows are retained 3 years; pending and under-review requests are preserved. Patient/CRM records and original audit logs are not deleted.
+- Terminal booking OTP challenge metadata is retained 30 days; active challenges are preserved.
+- Existing 90-day login hash, 12-month AI operational metadata, 24-hour idempotency and 30-day local log policies remain.
+- Consent evidence uses a provisional six-year planning baseline but is not automatically purged. Staff-profile 90-day and resolved patient-match 90-day periods remain documented planning defaults only because the current schema/workflow lacks safe deactivation/review lifecycle evidence.
+
+Added migration 2026_11_05_000001_add_task28_smart_smile_expiry.php, bounded cleanup logic and synthetic boundary tests. These changes are not yet CI-verified at this point in the document. See security/task28-owner-decisions.md for the complete policy and prototype/production boundary.
+
+Important: the periods above are not universal legal standards. They are temporary local-prototype engineering defaults selected by the user. Real patient data, production deployment and live provider activation remain blocked pending legal/clinic review and deployment evidence.

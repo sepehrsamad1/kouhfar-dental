@@ -62,6 +62,24 @@ final class PruneExpiredSecurityData extends Command
                 ->delete();
         }
 
+        if (Schema::hasTable('deletion_requests')
+            && Schema::hasColumn('deletion_requests', 'reviewed_at')
+            && Schema::hasColumn('deletion_requests', 'resolved_at')) {
+            $counts['closed deletion requests'] = DB::table('deletion_requests')
+                ->where(function ($query) use ($now): void {
+                    $query->where(function ($closed) use ($now): void {
+                        $closed->where('status', 'closed')
+                            ->whereNotNull('resolved_at')
+                            ->where('resolved_at', '<', $now->copy()->subYears(3));
+                    })->orWhere(function ($rejected) use ($now): void {
+                        $rejected->where('status', 'rejected')
+                            ->whereNotNull('reviewed_at')
+                            ->where('reviewed_at', '<', $now->copy()->subYears(3));
+                    });
+                })
+                ->delete();
+        }
+
         if (Schema::hasTable('completed_job_history')) {
             $counts['completed job history'] = DB::table('completed_job_history')
                 ->where('completed_at', '<', $now->copy()->subDays(7))

@@ -242,5 +242,3 @@ it('prunes only closed or rejected deletion requests after three years', functio
         ->and(DB::table('deletion_requests')->where('id', $oldPending)->exists())->toBeTrue();
 });
 
-
-});

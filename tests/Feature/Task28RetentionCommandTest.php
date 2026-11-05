@@ -196,4 +196,51 @@ it('prunes terminal booking OTP metadata after 30 days and keeps recent challeng
         ->and(DB::table('booking_otp_challenges')->where('id', $recentId)->exists())->toBeTrue();
 });
 
+
+it('prunes only closed or rejected deletion requests after three years', function (): void {
+    $oldClosed = (string) Str::uuid();
+    $recentClosed = (string) Str::uuid();
+    $oldPending = (string) Str::uuid();
+
+    DB::table('deletion_requests')->insert([
+        [
+            'id' => $oldClosed,
+            'target_type' => 'patient',
+            'target_id' => (string) Str::uuid(),
+            'status' => 'closed',
+            'created_at' => now('UTC')->subYears(4),
+            'reviewed_at' => now('UTC')->subYears(4),
+            'resolved_at' => now('UTC')->subYears(4),
+            'resolution_code' => 'retained_by_policy',
+        ],
+        [
+            'id' => $recentClosed,
+            'target_type' => 'patient',
+            'target_id' => (string) Str::uuid(),
+            'status' => 'closed',
+            'created_at' => now('UTC')->subYears(2),
+            'reviewed_at' => now('UTC')->subYears(2),
+            'resolved_at' => now('UTC')->subYears(2),
+            'resolution_code' => 'retained_by_policy',
+        ],
+        [
+            'id' => $oldPending,
+            'target_type' => 'patient',
+            'target_id' => (string) Str::uuid(),
+            'status' => 'pending',
+            'created_at' => now('UTC')->subYears(4),
+            'reviewed_at' => null,
+            'resolved_at' => null,
+            'resolution_code' => null,
+        ],
+    ]);
+
+    Artisan::call('security:prune-expired-data');
+
+    expect(DB::table('deletion_requests')->where('id', $oldClosed)->exists())->toBeFalse()
+        ->and(DB::table('deletion_requests')->where('id', $recentClosed)->exists())->toBeTrue()
+        ->and(DB::table('deletion_requests')->where('id', $oldPending)->exists())->toBeTrue();
+});
+
+
 });

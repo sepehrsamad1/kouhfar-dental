@@ -7,6 +7,7 @@ namespace App\Services;
 use App\BookingOtpChallenge;
 use App\Support\IranianPhoneNumber;
 use Carbon\CarbonImmutable;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use RuntimeException;
@@ -28,54 +29,74 @@ final class BookingOtpService
         $ipHash = $this->digest('ip', $ip);
         $challengeId = (string) Str::uuid();
 
-        DB::transaction(function () use ($phoneHash, $ipHash, $challengeId): void {
-            // PostgreSQL advisory locks make phone and IP quotas atomic across app nodes.
+        $createChallenge = function () use ($phoneHash, $ipHash, $challengeId): void {
+            DB::transaction(function () use ($phoneHash, $ipHash, $challengeId): void {
+                // PostgreSQL advisory locks enforce atomic quotas across application nodes.
+                if (DB::connection()->getDriverName() === 'pgsql') {
+                    $lockKeys = ['booking-otp:ip:'.$ipHash, 'booking-otp:phone:'.$phoneHash];
+                    sort($lockKeys, SORT_STRING);
+
+                    foreach ($lockKeys as $lockKey) {
+                        DB::selectOne('select pg_advisory_xact_lock(hashtextextended(?, 0))', [$lockKey]);
+                    }
+                }
+
+                $now = CarbonImmutable::now('UTC');
+                $cooldown = (int) config('booking.otp.resend_cooldown_seconds', 60);
+
+                $last = BookingOtpChallenge::query()
+                    ->where('phone_hash', $phoneHash)
+                    ->latest('created_at')
+                    ->first();
+
+                if ($last !== null && $last->created_at->greaterThan($now->subSeconds($cooldown))) {
+                    throw new BookingOtpRateLimitException;
+                }
+
+                $phone15 = BookingOtpChallenge::query()->where('phone_hash', $phoneHash)
+                    ->where('created_at', '>=', $now->subMinutes(15))->count();
+                $phoneHour = BookingOtpChallenge::query()->where('phone_hash', $phoneHash)
+                    ->where('created_at', '>=', $now->subHour())->count();
+                $ipHour = BookingOtpChallenge::query()->where('ip_hash', $ipHash)
+                    ->where('created_at', '>=', $now->subHour())->count();
+
+                if ($phone15 >= (int) config('booking.otp.phone_send_limit_15_minutes', 3)
+                    || $phoneHour >= (int) config('booking.otp.phone_send_limit_1_hour', 5)
+                    || $ipHour >= (int) config('booking.otp.ip_send_limit_1_hour', 10)) {
+                    throw new BookingOtpRateLimitException;
+                }
+
+                BookingOtpChallenge::query()
+                    ->where('phone_hash', $phoneHash)
+                    ->whereIn('status', ['dispatching', 'pending', 'verified'])
+                    ->update(['status' => 'invalidated', 'code_hash' => null, 'updated_at' => $now]);
+
+                BookingOtpChallenge::query()->create([
+                    'id' => $challengeId,
+                    'phone_hash' => $phoneHash,
+                    'ip_hash' => $ipHash,
+                    'status' => 'dispatching',
+                    'attempts' => 0,
+                    'expires_at' => $now->addMinutes((int) config('booking.otp.ttl_minutes', 5)),
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ]);
+            }, 3);
+        };
+
+        if (DB::connection()->getDriverName() === 'sqlite') {
+            // SQLite is supported for a single-machine local prototype only. File cache
+            // locks serialize the local issuance path; production must use PostgreSQL
+            // advisory locks (or another shared atomic lock provider).
             $lockKeys = ['booking-otp:ip:'.$ipHash, 'booking-otp:phone:'.$phoneHash];
             sort($lockKeys, SORT_STRING);
-            foreach ($lockKeys as $lockKey) {
-                DB::selectOne('select pg_advisory_xact_lock(hashtextextended(?, 0))', [$lockKey]);
-            }
-            $now = CarbonImmutable::now('UTC');
-            $cooldown = (int) config('booking.otp.resend_cooldown_seconds', 60);
 
-            $last = BookingOtpChallenge::query()
-                ->where('phone_hash', $phoneHash)
-                ->latest('created_at')
-                ->first();
-
-            if ($last !== null && $last->created_at->greaterThan($now->subSeconds($cooldown))) {
-                throw new BookingOtpRateLimitException;
-            }
-
-            $phone15 = BookingOtpChallenge::query()->where('phone_hash', $phoneHash)
-                ->where('created_at', '>=', $now->subMinutes(15))->count();
-            $phoneHour = BookingOtpChallenge::query()->where('phone_hash', $phoneHash)
-                ->where('created_at', '>=', $now->subHour())->count();
-            $ipHour = BookingOtpChallenge::query()->where('ip_hash', $ipHash)
-                ->where('created_at', '>=', $now->subHour())->count();
-
-            if ($phone15 >= (int) config('booking.otp.phone_send_limit_15_minutes', 3)
-                || $phoneHour >= (int) config('booking.otp.phone_send_limit_1_hour', 5)
-                || $ipHour >= (int) config('booking.otp.ip_send_limit_1_hour', 10)) {
-                throw new BookingOtpRateLimitException;
-            }
-
-            BookingOtpChallenge::query()
-                ->where('phone_hash', $phoneHash)
-                ->whereIn('status', ['dispatching', 'pending', 'verified'])
-                ->update(['status' => 'invalidated', 'code_hash' => null, 'updated_at' => $now]);
-
-            BookingOtpChallenge::query()->create([
-                'id' => $challengeId,
-                'phone_hash' => $phoneHash,
-                'ip_hash' => $ipHash,
-                'status' => 'dispatching',
-                'attempts' => 0,
-                'expires_at' => $now->addMinutes((int) config('booking.otp.ttl_minutes', 5)),
-                'created_at' => $now,
-                'updated_at' => $now,
-            ]);
-        }, 3);
+            Cache::lock($lockKeys[0], 15)->block(5, function () use ($lockKeys, $createChallenge): void {
+                Cache::lock($lockKeys[1], 15)->block(5, $createChallenge);
+            });
+        } else {
+            $createChallenge();
+        }
 
         try {
             $code = $this->providers->resolve()->sendCode($normalized);

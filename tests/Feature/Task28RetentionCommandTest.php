@@ -170,4 +170,29 @@ it('prunes failed queue jobs after 30 days', function (): void {
 
     expect(DB::table('failed_jobs')->where('uuid', $oldUuid)->exists())->toBeFalse()
         ->and(DB::table('failed_jobs')->where('uuid', $recentUuid)->exists())->toBeTrue();
+
+it('prunes terminal booking OTP metadata after 30 days and keeps recent challenges', function (): void {
+    $oldId = (string) Str::uuid();
+    $recentId = (string) Str::uuid();
+
+    foreach ([[$oldId, 31], [$recentId, 29]] as [$id, $days]) {
+        DB::table('booking_otp_challenges')->insert([
+            'id' => $id,
+            'phone_hash' => hash('sha256', 'synthetic-phone-'.$id),
+            'ip_hash' => hash('sha256', 'synthetic-ip-'.$id),
+            'code_hash' => null,
+            'status' => 'consumed',
+            'attempts' => 1,
+            'expires_at' => now('UTC')->subDays($days),
+            'created_at' => now('UTC')->subDays($days),
+            'updated_at' => now('UTC')->subDays($days),
+        ]);
+    }
+
+    Artisan::call('security:prune-expired-data');
+
+    expect(DB::table('booking_otp_challenges')->where('id', $oldId)->exists())->toBeFalse()
+        ->and(DB::table('booking_otp_challenges')->where('id', $recentId)->exists())->toBeTrue();
+});
+
 });

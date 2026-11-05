@@ -23,6 +23,26 @@ async function stubCatalog(page) {
     }));
 }
 
+async function stubOtp(page) {
+    const challengeId = 'f2bd7d1c-2d4f-4b84-90a3-0cb3b8f9b1a2';
+    await page.route(`${API}booking-otp/issue`, (route) => route.fulfill({
+        status: 202, contentType: 'application/json',
+        body: JSON.stringify({ challenge_id: challengeId, expires_in: 300 }),
+    }));
+    await page.route(`${API}booking-otp/verify`, (route) => route.fulfill({
+        status: 200, contentType: 'application/json',
+        body: JSON.stringify({ verified: true }),
+    }));
+}
+
+async function completeOtp(page) {
+    await page.locator('#bkOtpSend').click();
+    await expect(page.locator('#bkOtpStatus')).toContainText('کد تأیید ارسال شد');
+    await page.fill('#bkOtpCode', '123456');
+    await page.locator('#bkOtpVerify').click();
+    await expect(page.locator('#bkOtpStatus')).toContainText('شماره موبایل با موفقیت تأیید شد');
+}
+
 const appointment = (status = 'pending') => ({
     status,
     start_at: SLOT,
@@ -46,6 +66,7 @@ async function fillToReview(page) {
 
 test('does not show success before the server confirms the appointment request', async ({ page }) => {
     await stubCatalog(page);
+    await stubOtp(page);
     let release;
     const waiting = new Promise((resolve) => { release = resolve; });
     await page.route(`${API}appointments`, async (route) => {
@@ -54,6 +75,7 @@ test('does not show success before the server confirms the appointment request',
     });
     await page.goto('/');
     await fillToReview(page);
+    await completeOtp(page);
     await page.locator('#bkNext').click();
     await expect(page.locator('.bk__pane[data-step="6"]')).not.toHaveClass(/is-now/);
     await expect(page.locator('#bkNext')).toHaveAttribute('aria-disabled', 'true');
@@ -65,12 +87,14 @@ test('does not show success before the server confirms the appointment request',
 
 test('slot conflict returns to available times and never renders raw server text', async ({ page }) => {
     await stubCatalog(page);
+    await stubOtp(page);
     await page.route(`${API}appointments`, (route) => route.fulfill({
         status: 409, contentType: 'application/json',
         body: JSON.stringify({ code: 'SLOT_UNAVAILABLE', message: 'SQLSTATE private database detail' }),
     }));
     await page.goto('/');
     await fillToReview(page);
+    await completeOtp(page);
     await page.locator('#bkNext').click();
     await expect(page.locator('.bk__pane[data-step="3"]')).toHaveClass(/is-now/);
     await expect(page.locator('#bkErrors')).toContainText('این ساعت دیگر خالی نیست');
@@ -80,6 +104,7 @@ test('slot conflict returns to available times and never renders raw server text
 
 test('ambiguous network failure retries with the identical idempotency key', async ({ page }) => {
     await stubCatalog(page);
+    await stubOtp(page);
     const keys = [];
     await page.route(`${API}appointments`, (route) => {
         keys.push(route.request().headers()['idempotency-key']);
@@ -88,6 +113,7 @@ test('ambiguous network failure retries with the identical idempotency key', asy
     });
     await page.goto('/');
     await fillToReview(page);
+    await completeOtp(page);
     await page.locator('#bkNext').click();
     await expect(page.locator('#bkRef')).toHaveText('در انتظار تأیید کلینیک');
     expect(keys.length).toBe(2);
@@ -96,6 +122,7 @@ test('ambiguous network failure retries with the identical idempotency key', asy
 
 test('keyboard can complete the flow and announces Persian date/time', async ({ page }) => {
     await stubCatalog(page);
+    await stubOtp(page);
     await page.route(`${API}appointments`, (route) => route.fulfill({ status: 201, contentType: 'application/json', body: JSON.stringify(appointment()) }));
     await page.goto('/');
     await page.locator('[data-book]').first().focus();
@@ -120,22 +147,32 @@ test('keyboard can complete the flow and announces Persian date/time', async ({ 
     await focus('#bkName'); await page.keyboard.type('کاربر آزمایشی');
     await page.keyboard.press('Tab'); await page.keyboard.type('09000000000');
     await focus('#bkNext'); await page.keyboard.press('Enter');
+    await focus('#bkOtpSend'); await page.keyboard.press('Enter');
+    await expect(page.locator('#bkOtpStatus')).toContainText('کد تأیید ارسال شد');
+    await focus('#bkOtpCode'); await page.keyboard.type('123456');
+    await expect(page.locator('#bkOtpVerify')).toBeEnabled();
+    await focus('#bkOtpVerify'); await page.keyboard.press('Enter');
+    await expect(page.locator('#bkOtpStatus')).toContainText('شماره موبایل با موفقیت تأیید شد');
     await focus('#bkNext'); await page.keyboard.press('Enter');
     await expect(page.locator('#bkRef')).toHaveText('در انتظار تأیید کلینیک');
 });
 
-test('owner-required OTP gate blocks creation until Task 15 is configured', async ({ page }) => {
+test('disabled SMS provider fails closed before booking', async ({ page }) => {
     await stubCatalog(page);
     let posts = 0;
+    await page.route(`${API}booking-otp/issue`, (route) => route.fulfill({
+        status: 503, contentType: 'application/json',
+        body: JSON.stringify({ code: 'OTP_UNAVAILABLE' }),
+    }));
     await page.route(`${API}appointments`, (route) => {
         posts += 1;
-        return route.fulfill({ status: 503, contentType: 'application/json', body: JSON.stringify({ code: 'PHONE_VERIFICATION_NOT_READY', message: 'provider config missing' }) });
+        return route.fulfill({ status: 201, contentType: 'application/json', body: JSON.stringify(appointment()) });
     });
     await page.goto('/');
     await fillToReview(page);
-    await page.locator('#bkNext').click();
-    await expect(page.locator('#bkErrors')).toContainText('تأیید شماره موبایل برای رزرو آنلاین هنوز راه‌اندازی نشده است');
+    await page.locator('#bkOtpSend').click();
+    await expect(page.locator('#bkErrors')).toContainText('ارسال کد تأیید فعلاً در دسترس نیست');
+    await expect(page.locator('#bkNext')).toHaveAttribute('aria-disabled', 'true');
     await expect(page.locator('.bk__pane[data-step="6"]')).not.toHaveClass(/is-now/);
-    await expect(page.locator('body')).not.toContainText('provider config missing');
-    expect(posts).toBe(1); // configuration failure is not pointlessly retried
+    expect(posts).toBe(0);
 });

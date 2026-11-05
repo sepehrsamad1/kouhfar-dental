@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Middleware;
 
 use App\Session as StaffSession;
+use App\StaffUser;
 use Carbon\CarbonImmutable;
 use Closure;
 use Illuminate\Http\Request;
@@ -23,9 +24,10 @@ class EnsureStaffSessionIsFresh
 
         $registryId = $request->session()->get('staff_registry_session_id');
         $registry = $registryId === null ? null : StaffSession::query()->find($registryId);
+        $staff = StaffUser::query()->find($guard->id());
 
-        if ($registry === null || $registry->revoked_at !== null) {
-            return $this->expire($request);
+        if ($registry === null || $registry->revoked_at !== null || $staff?->is_active !== true) {
+            return $this->expire($request, $registry);
         }
 
         $now = now('UTC');

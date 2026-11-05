@@ -29,6 +29,23 @@ test('uses the implemented Laravel endpoints and typed shapes', async () => {
     assert.equal(fixture.calls[1].url, API.availability(serviceId, '2026-10-29'));
 });
 
+test('issues and verifies booking OTP with CSRF and never receives an OTP value', async () => {
+    const challengeId = 'f2bd7d1c-2d4f-4b84-90a3-0cb3b8f9b1a2';
+    const fixture = mock([
+        response(202, { challenge_id: challengeId, expires_in: 300 }),
+        response(200, { verified: true }),
+    ]);
+    const api = createBookingApi({ fetch: fixture.fetch, document, sleep: wait });
+    const challenge = await api.issueOtp(payload.mobile);
+    assert.deepEqual(challenge, { challengeId, expiresIn: 300 });
+    assert.equal(await api.verifyOtp(challengeId, '123456'), true);
+    assert.equal(fixture.calls[0].url, API.otpIssue);
+    assert.equal(fixture.calls[1].url, API.otpVerify);
+    assert.equal(fixture.calls[0].init.headers['X-CSRF-TOKEN'], 'csrf-token-test');
+    assert.deepEqual(JSON.parse(fixture.calls[0].init.body), { mobile: payload.mobile });
+    assert.deepEqual(JSON.parse(fixture.calls[1].init.body), { challenge_id: challengeId, code: '123456' });
+});
+
 test('POST sends snake_case Laravel payload, CSRF, same-origin credentials and idempotency', async () => {
     const fixture = mock([response(201, { status: 'pending', start_at: payload.start_at, end_at: '2026-10-29T10:00:00Z', expires_at: '2026-10-29T10:30:00Z' })]);
     const result = await createBookingApi({ fetch: fixture.fetch, document, sleep: wait }).create(payload, 'booking-attempt-uuid-123456');
@@ -66,11 +83,11 @@ test('409 conflict maps to safe copy; no retry for HTTP 4xx or 500', async () =>
     }
 });
 
-test('phone verification not configured fails safely and is not retried', async () => {
-    const fixture = mock([response(503, { code: 'PHONE_VERIFICATION_NOT_READY', message: 'provider secret missing' }), response(201, { status: 'pending', start_at: payload.start_at, end_at: '2026-10-29T10:00:00Z' })]);
-    await assert.rejects(createBookingApi({ fetch: fixture.fetch, document, sleep: wait }).create(payload, 'verification-gate-key-123456'), (error) => {
-        assert.equal(error.code, 'PHONE_VERIFICATION_NOT_READY');
-        assert.match(messageFor(error.code), /راه‌اندازی نشده/);
+test('disabled OTP provider fails safely and issuance is not retried', async () => {
+    const fixture = mock([response(503, { code: 'OTP_UNAVAILABLE', message: 'provider secret missing' }), response(202, { challenge_id: 'f2bd7d1c-2d4f-4b84-90a3-0cb3b8f9b1a2', expires_in: 300 })]);
+    await assert.rejects(createBookingApi({ fetch: fixture.fetch, document, sleep: wait }).issueOtp(payload.mobile), (error) => {
+        assert.equal(error.code, 'OTP_UNAVAILABLE');
+        assert.match(messageFor(error.code), /ارسال کد تأیید فعلاً در دسترس نیست/);
         assert.doesNotMatch(messageFor(error.code), /provider secret/);
         return true;
     });

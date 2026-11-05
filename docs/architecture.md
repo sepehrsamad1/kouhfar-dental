@@ -1,5 +1,7 @@
 # Architecture (Package 3)
 
+> **Historical / superseded architecture note (Task 28):** This document describes the original Express + TypeScript + Prisma proposal and is retained only as historical Package 3 context. It is not the active implementation architecture. The owner-approved baseline is Laravel 13, PHP 8.3+, Blade, Vanilla JavaScript, Vite, PostgreSQL and Eloquent. Do not create or introduce a Node/Express/Prisma backend. For current implementation and security decisions, use the Laravel source, `docs/STATUS.md`, `docs/data-model.md` and the current task status documents.
+
 Status: design, not built. Depends on docs/product-spec.md (Package 2) and docs/ui-audit.md (Package 1). Decisions: docs/adr/README.md.
 
 ## 1. Shape of the system

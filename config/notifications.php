@@ -3,6 +3,12 @@
 declare(strict_types=1);
 
 return [
+    'otp' => [
+        'driver' => env('SMS_OTP_DRIVER', 'null'),
+        'melipayamak' => [
+            'token' => env('MELIPAYAMAK_OTP_TOKEN'),
+        ],
+    ],
     'sms' => [
         // Production capability is Kavenegar, but activation remains disabled until Task 15
         // supplies approved credentials/subscription. Tests and local development use log/null.

@@ -67,7 +67,9 @@ final class SmartSmileController
             return response()->json(['status' => 'disabled', 'non_diagnostic' => true], Response::HTTP_SERVICE_UNAVAILABLE);
         }
 
-        $session = $service->resolve($request->string('consent_token')->toString());
+        // Expiry prevents further reads/uploads, but the original bearer token
+        // remains usable for an explicit deletion request.
+        $session = $service->resolve($request->string('consent_token')->toString(), true);
 
         if ($session === null) {
             return response()->json(['status' => 'not_found', 'non_diagnostic' => true], Response::HTTP_NOT_FOUND);

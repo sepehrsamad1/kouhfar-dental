@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\Notifications\Sms;
 
 use App\Notifications\SmsMessage;
-use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 use RuntimeException;
+use Throwable;
 
 final class KavenegarSmsProvider implements SmsProvider
 {
+    private const APPROVED_ENDPOINT = 'https://api.kavenegar.com/v1';
+
     public function send(SmsMessage $message): void
     {
         $apiKey = config('notifications.sms.kavenegar.api_key');
@@ -21,18 +23,42 @@ final class KavenegarSmsProvider implements SmsProvider
             throw new RuntimeException('Kavenegar is not configured; SMS delivery remains disabled.');
         }
 
+        if (! $this->isApprovedEndpoint($endpoint)) {
+            throw new RuntimeException('Kavenegar endpoint is not approved.');
+        }
+
         try {
-            Http::asForm()
+            $response = Http::withOptions(['allow_redirects' => false])
+                ->asForm()
                 ->timeout(10)
                 ->retry(2, 250)
-                ->post($endpoint.'/'.$apiKey.'/sms/send.json', [
+                ->post(self::APPROVED_ENDPOINT.'/'.$apiKey.'/sms/send.json', [
                     'receptor' => $message->to,
                     'sender' => $sender,
                     'message' => $message->body,
-                ])
-                ->throw();
-        } catch (RequestException $exception) {
-            throw new RuntimeException('Kavenegar SMS delivery failed.', 0, $exception);
+                ]);
+
+            if (! $response->successful()) {
+                throw new RuntimeException('Kavenegar SMS delivery failed.');
+            }
+        } catch (Throwable) {
+            // Do not chain transport exceptions: their request URL may contain the API key.
+            throw new RuntimeException('Kavenegar SMS delivery failed.');
         }
+    }
+
+    private function isApprovedEndpoint(string $endpoint): bool
+    {
+        $parts = parse_url($endpoint);
+
+        return $parts !== false
+            && strtolower((string) ($parts['scheme'] ?? '')) === 'https'
+            && strtolower((string) ($parts['host'] ?? '')) === 'api.kavenegar.com'
+            && (! isset($parts['port']) || $parts['port'] === 443)
+            && rtrim((string) ($parts['path'] ?? ''), '/') === '/v1'
+            && ! isset($parts['user'])
+            && ! isset($parts['pass'])
+            && ! isset($parts['query'])
+            && ! isset($parts['fragment']);
     }
 }

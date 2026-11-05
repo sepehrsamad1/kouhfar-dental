@@ -7,6 +7,7 @@ use App\Http\Controllers\AssistantController;
 use App\Http\Controllers\AvailabilityController;
 use App\Http\Controllers\ClinicConfigurationController;
 use App\Http\Controllers\ContentItemController;
+use App\Http\Controllers\DeletionRequestController;
 use App\Http\Controllers\MediaAssetController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\SmartSmileController;
@@ -27,7 +28,11 @@ Route::delete('/api/v1/smart-smile', [SmartSmileController::class, 'delete'])->m
 
 Route::middleware('guest:staff')->group(function (): void {
     Route::get('/staff/login', [StaffAuthController::class, 'create'])->name('staff.login');
-    Route::post('/staff/login', [StaffAuthController::class, 'store'])->name('staff.login.store');
+    Route::post('/staff/login', [StaffAuthController::class, 'store'])->middleware('throttle:10,1')->name('staff.login.store');
+    Route::get('/staff/mfa/setup', [StaffAuthController::class, 'setup'])->name('staff.mfa.setup');
+    Route::post('/staff/mfa/setup', [StaffAuthController::class, 'completeSetup'])->middleware('throttle:10,1')->name('staff.mfa.setup.complete');
+    Route::get('/staff/mfa/challenge', [StaffAuthController::class, 'challenge'])->name('staff.mfa.challenge');
+    Route::post('/staff/mfa/challenge', [StaffAuthController::class, 'verify'])->middleware('throttle:10,1')->name('staff.mfa.verify');
 });
 
 Route::middleware(['auth:staff', 'staff.session.fresh', PreventStoreCache::class])->group(function (): void {
@@ -38,6 +43,10 @@ Route::middleware(['auth:staff', 'staff.session.fresh', PreventStoreCache::class
     Route::get('/staff/media/{mediaAsset}/download', [MediaAssetController::class, 'download'])->middleware('signed')->name('staff.media.download');
     Route::delete('/staff/media/{mediaAsset}', [MediaAssetController::class, 'delete'])->name('staff.media.delete');
     Route::post('/staff/logout', [StaffAuthController::class, 'destroy'])->name('staff.logout');
+    Route::get('/staff/mfa/recovery-codes', [StaffAuthController::class, 'recoveryCodes'])->name('staff.mfa.recovery-codes');
+    Route::post('/staff/deletion-requests/{deletionRequest}/review', [DeletionRequestController::class, 'review'])->name('staff.deletion-requests.review');
+    Route::post('/staff/deletion-requests/{deletionRequest}/close', [DeletionRequestController::class, 'close'])->name('staff.deletion-requests.close');
+
     Route::get('/staff/admin/audit', function () {
         Gate::authorize('view-audit-log');
 

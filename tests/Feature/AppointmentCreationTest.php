@@ -13,13 +13,19 @@ use App\IdempotencyRecord;
 use App\Practitioner;
 use App\Resource;
 use App\Service;
+use App\Services\BookingOtpService;
 use App\WorkingHour;
 use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 uses(RefreshDatabase::class);
+
+beforeEach(function (): void {
+    config(['booking.phone_verification_required' => false]);
+});
 
 function bookingFixture(): array
 {
@@ -93,6 +99,35 @@ it('creates one pending appointment transactionally and replays the same idempot
         ->and($appointment->expires_at?->toIso8601String())->toBe('2026-10-27T09:00:00+00:00')
         ->and(DB::table('appointment_practitioners')->where('appointment_id', $appointment->id)->where('active', true)->exists())->toBeTrue()
         ->and(DB::table('appointment_resources')->where('appointment_id', $appointment->id)->where('active', true)->exists())->toBeTrue();
+});
+
+it('requires a verified phone challenge and consumes it atomically with a public booking', function (): void {
+    config([
+        'booking.phone_verification_required' => true,
+        'notifications.otp.driver' => 'melipayamak',
+        'notifications.otp.melipayamak.token' => str_repeat('a', 32),
+    ]);
+    Http::fake(['console.melipayamak.com/*' => Http::response(['code' => '123456'], 200)]);
+
+    [$service] = bookingFixture();
+    $otp = app(BookingOtpService::class);
+    $challengeId = $otp->issue('09120000001', '192.0.2.40');
+    expect($otp->verify($challengeId, '123456'))->toBeTrue();
+
+    $payload = [...bookingPayload($service), 'otp_challenge_id' => $challengeId];
+    $response = $this->withHeader('Idempotency-Key', 'otp-booking-transaction-0001')
+        ->postJson('/api/v1/appointments', $payload);
+
+    $response->assertCreated()->assertJsonPath('status', 'pending')->assertJsonMissingPath('appointment_id');
+    expect(DB::table('booking_otp_challenges')->where('id', $challengeId)->value('status'))->toBe('consumed')
+        ->and(Appointment::query()->count())->toBe(1);
+
+    $replay = $this->withHeader('Idempotency-Key', 'otp-booking-transaction-0001')
+        ->postJson('/api/v1/appointments', $payload);
+    $replay->assertCreated();
+
+    expect(fn () => DB::transaction(fn () => $otp->consume($challengeId, '09120000001')))
+        ->toThrow(RuntimeException::class, 'Phone verification is required.');
 });
 
 it('creates and replays through the versioned public booking endpoint', function () {

@@ -1,38 +1,33 @@
-# Resume point (as of 2026-10-28)
+# Resume point (2026-11-05)
 
-Prompt source of truth: the Laravel 13, 32-task prompt pack.
+Prompt source of truth: the Laravel 13, 32-task prompt pack. For repository state, use `docs/STATUS.md`; for Task 28, use `docs/task28-status.md` and the security documents under `docs/security/`. This file is a current handoff, not a replacement for the original task prompts.
 
-## Status
+## Current state
 
-| Task | State | Notes |
-|---|---|---|
-| 01 UI audit | Docs done | Original browser screenshots and console log were not captured. |
-| 02 Requirements | Draft done | Some original product decisions remain open; see `docs/product-spec.md`. |
-| 03 Architecture and API contract | Design done | Original OpenAPI draft has planned endpoints that differ from current Task 13/14 routes. |
-| 04 Repo setup | Scaffold done | Lockfiles are present. Clean-clone verification and GitHub settings still need owner verification. |
-| 05 Laravel migration and existing UI integration | Verified | See task 05 documentation. |
-| 06 CI, testing, and developer tooling | Verified | PR #1 merged; CI passed. |
-| 07 Core Eloquent data model | Complete for approved scope (OTP deferred) | OTP/VerificationChallenge remain deferred. |
-| 08 Database migrations, seeders, and constraints | Verified | See task 08 documentation. |
-| 09 Staff authentication | Verified | See task 09 documentation. |
-| 10 Authorization and audit controls | Verified | See task 10 documentation. |
-| 11 Staff patient management | Verified | See task 11 documentation. |
-| 12 Services, practitioners, resources, and working hours | Merged; CI verified | PR #13 merged. |
-| 13 Availability engine and timezone-correct slot generation | Merged; CI verified | PR #14 merged. |
-| 14 Transactional appointment creation | Merged; CI verified | PR #15 merged; see `docs/task14-status.md`. |
-| 15 Public booking verification/tracking | Deferred | OTP is owner-confirmed; provider/policy requirements are intentionally being gathered before implementation. |
-| 16 Connect existing booking UI to real API | Merged; CI verified | PR #17 merged; see `docs/task16-status.md`. |
+- Task 27 is documented as CI-verified in `docs/STATUS.md`.
+- Task 28 local synthetic-data prototype implementation is complete on branch `task/28-security-privacy-audit`.
+- PR #30 is open: https://github.com/sepehrsamad1/kouhfar-dental/pull/30
+- Code verification: CI run #1149 passed on commit `05f307a15e8ce69480253f1bd1bde24d3969f423`: 328 Laravel/Pest tests (24,731 assertions), 36 Playwright tests, PostgreSQL migrations, Pint, PHPStan, Composer/npm audits, JavaScript lint/typecheck/build, Task 27 deterministic evaluation and full-history Gitleaks.
+- Documentation follow-up: CI run #1150 passed on docs-only commit `33a1db6f39f2ae8a60b028f3bf04b0b87ba03091`.
+- PR has not been merged. Do not merge without explicit owner authorization.
 
-## Current state and next step
+## Task 28 scope and production boundary
 
-The repository's `main` branch is currently at Task 16. Task 15 is intentionally deferred while the clinic/provider requirements are gathered. Do not implement SMS, OTP verification grants, privacy consent wording, tracking/status lookup, or anti-abuse policy that depends on unresolved owner decisions.
+The prototype uses synthetic patients, phone numbers and images only. MeliPayamak, Kavenegar and live AI providers remain disabled. No production or third-party systems were tested.
 
-Task 16 connects the existing Blade/Vite booking wizard to the real versioned service and availability APIs and the transactional appointment API from Tasks 13/14. It preserves the existing UI and remains fail-closed for phone verification.
+Production remains blocked pending full database/files backup and isolated restore evidence, separate backup storage/key/ACLs, TLS/proxy/database/storage/secrets/logging evidence, complete route-by-route IDOR/CSRF/DOM-XSS/distributed-rate-limit verification, clinic/legal retention review, provider URL-path log review and an approved lost-authenticator identity-proofing procedure. See the findings register for SEC-28-003, SEC-28-006, SEC-28-008, SEC-28-014 and SEC-28-015.
+
+Retention periods selected for the prototype are engineering defaults, not universal legal standards. Do not use real patient data or enable live providers until the remaining legal and operational controls are reviewed.
+
+## Next task
+
+The formal Task 29 definition was not found in the repository branch during the Task 28 review. Retrieve the exact Task 29 prompt from the original 32-task prompt pack before starting it; do not infer or invent the task scope.
 
 ## Rules for resuming
 
-- Do not redo verified tasks.
+- Do not redo verified tasks; confirm the current branch and CI status first.
 - Work on one task at a time and use a separate branch for each task.
-- Record each finished task here and in `docs/STATUS.md`.
-- Do not claim a task is verified without evidence.
+- Record task state in `docs/STATUS.md` and the task-specific status file.
+- Do not claim verification without CI or other explicit evidence.
 - Do not merge task branches to `main` without explicit owner authorization.
+- Keep production and third-party testing out of scope unless separately authorized in writing.

@@ -68,3 +68,10 @@ This section supersedes the earlier proposed / owner-decision-required execution
 - Keep MeliPayamak, Kavenegar and live AI disabled.
 
 The retention periods are practical engineering defaults, not a universal standard. GDPR storage limitation requires a purpose-specific and justified period; the applicable legal basis and statutory duties must be checked before real patient data or production.
+
+
+## Final local-prototype verification (2026-11-05)
+
+The local prototype retention and Smart Smile expiry implementation is CI-verified in [run #1149](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41949121638), commit `05f307a15e8ce69480253f1bd1bde24d3969f423`: 328 Laravel/Pest tests (24,731 assertions), 36 Playwright tests, PostgreSQL migrations, Pint, PHPStan, Composer/npm audits, JavaScript lint/typecheck/build, Task 27 deterministic evaluation and full-history Gitleaks all passed. The Composer audit found no security advisories after the Symfony 7.4.23 updates.
+
+This closes the local synthetic-data prototype engineering scope. It does not close production deployment evidence, legal/clinic retention approval, provider URL-path logging risk, full DB/files backup and isolated recovery, complete route-by-route security testing or operational MFA recovery.

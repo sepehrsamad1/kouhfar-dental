@@ -1,21 +1,21 @@
 # Task 28 — Security and Privacy Audit
 
-**Status: IMPLEMENTATION IN PROGRESS — latest CI run #1091 passed; acceptance and production release remain blocked by SEC-28-003, open owner decisions and deployment/verification evidence.**
+**Status: LOCAL PROTOTYPE IMPLEMENTATION COMPLETE — CI run #1149 passed on 2026-11-05. Production acceptance/release remains blocked by infrastructure evidence, legal/clinic review and external-provider controls.**
 
 ## Task identity
 
 - Task: 28 — Security and Privacy Audit
 - Branch: `task/28-security-privacy-audit`
-- Latest fully CI-verified revision: `64d2992d47d461e28538a85f7964c2befbbcf1a2` (GitHub Actions run [#1091](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41855615836), completed successfully on 2026-11-04).
-- Latest CI run #1091 passed on the current branch head. It includes full-history Gitleaks, Composer/npm audits, JavaScript lint/typecheck/build, Pint, PHPStan, PostgreSQL migrations, 322 Laravel/Pest tests (24,708 assertions), Task 27 deterministic release evaluation and 36 Playwright browser tests. Earlier CI failures were corrected and are superseded by this successful run.
+- Latest fully CI-verified revision: `05f307a15e8ce69480253f1bd1bde24d3969f423` (GitHub Actions run [#1149](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41949121638), completed successfully on 2026-11-05).
+- CI run #1149 passed on the current prototype branch head: full-history Gitleaks, Composer/npm audits, JavaScript lint/typecheck/build, Pint, PHPStan, PostgreSQL migrations, 328 Laravel/Pest tests (24,731 assertions), Task 27 deterministic release evaluation and 36 Playwright browser tests. Composer audit reports no security advisories after updating affected Symfony components to 7.4.23.
 - Target standard: OWASP ASVS v5.0.0 Level 2 (scoped engineering assessment, not certification).
 - Scope: repository source/configuration/migrations/tests/CI. No production or third-party systems were tested.
 
 ## Implemented on this branch
 
 - Notification attempt tracking: added nullable indexed `last_attempt_at`; the sender records UTC attempt time before dispatch and preserves the existing successful `sent_at` behavior. Retry feature test asserts the timestamp. No outbox retention deletion is enabled because the owner decision remains open.
-- Completed-job metadata groundwork: added `completed_job_history` with job class, queue name, attempt count and UTC completion time only. A queue-after callback records successful jobs; serialized payloads, exception text and patient/job arguments are deliberately excluded. Model contract test added. CI run #979 includes these commits and passed. The proposed 7-day retention is not activated while the owner decision remains open.
-- Added nullable indexed `result_generated_at` to Smart Smile sessions. Successful simulation completion records a UTC timestamp; upload/retry/failure/revocation clears it. This is preparatory metadata only: no 12-month purge or consent-token TTL is active.
+- Completed-job metadata groundwork: added `completed_job_history` with job class, queue name, attempt count and UTC completion time only. A queue-after callback records successful jobs; serialized payloads, exception text and patient/job arguments are deliberately excluded. Model contract test added. CI run #979 includes these commits and passed. Seven-day retention is implemented and covered by synthetic boundary tests.
+- Added nullable indexed `result_generated_at` to Smart Smile sessions. Successful simulation completion records a UTC timestamp; upload/retry/failure/revocation clears it. The prototype enforces a 24-hour bearer-token lifetime (deletion remains available after expiry) and clears result JSON after 365 days while preserving consent evidence.
 - Hardened staff login intended-redirect validation; restricted patient edits and full mobile reveal to admin/reception; revoked sessions immediately when staff are deactivated.
 - Hardened session cookies: Secure outside local/testing, HttpOnly, SameSite=Lax and `__Secure-` production/staging name.
 - Added patient search SQL-looking input and hostile mass-assignment regression tests.
@@ -30,49 +30,51 @@
 - Added Composer/npm dependency audits and full-history Gitleaks to CI, plus threat model, ASVS checklist, privacy impact assessment, data inventory/retention register, third-party flow inventory, findings register, owner decision register and operational runbooks.
 - Deletion request workflow groundwork: added review and closure metadata, active-admin-only web endpoints, transaction-locked state transitions, allowlisted reason codes and audit events. Closing a request records a non-destructive disposition only; it does not delete patient/CRM records or media.
 
-## Owner decisions recorded
+## Prototype defaults and owner decisions recorded
 
-- Patient/CRM records and original audit logs: indefinite retention; no automatic deletion.
-- Staff idle/absolute session timeouts: 15 minutes / 8 hours.
-- Login-attempt hashes: 90 days.
-- Application logs: local, 30 days.
-- AI operational request/usage records: 12 months.
-- Idempotency records: delete after the existing 24-hour expiry.
-- Staff MFA: TOTP plus one-time recovery codes.
-- MeliPayamak: purchased provider for backend OTP delivery; its token is a deployment secret.
-- Consent evidence retention and Smart Smile token TTL remain undecided. The user selected 12 months for the final Smart Smile output as an engineering baseline, and the code records its generation time; automated expiry remains disabled pending formal owner/legal policy reconciliation. Queue/failed-job payloads, notification outbox and deletion-request retention remain undecided. Metadata-only successful-job history is CI-verified in run #979; no retention purge is enabled.
+The user delegated the remaining engineering defaults for a local synthetic-data prototype. The complete temporary baseline is recorded in [the owner-decision register](security/task28-owner-decisions.md). Key values now implemented or recorded:
 
-See [clinic-owner decisions](security/task28-owner-decisions.md).
+- Consent evidence: six-year planning baseline; no automatic deletion in this prototype.
+- Smart Smile token: 24 hours; expiry blocks upload/status reads, but the original token can still request deletion.
+- Smart Smile result: 365 days; result payload is cleared without deleting consent evidence. Raw input media remains 90 days.
+- Completed-job metadata: 7 days; failed queue records: 30 days.
+- Sent notification outbox metadata: 12 months; stale failed notification metadata: 30 days.
+- Deletion request records: 3 years after closure/rejection; pending requests and legal holds are preserved. Handling target: 30 days.
+- Terminal OTP challenge metadata: 30 days; active challenges remain.
+- Staff/practitioner profile after deactivation: 90-day planning default, not automated without a reliable deactivation timestamp.
+- Patient-match flags: unresolved until human review; resolved flags target 90 days, but no automatic merge or purge is enabled without a reviewed lifecycle.
+- Backups: daily, 35-day rolling planning target for future full DB/files backup; RPO <=24 hours, RTO <=8 hours. Current code backs up audit logs only.
+- Lost MFA device: controlled admin identity verification, revoke sessions, reset factor, re-enroll, issue new one-time recovery codes and audit the action. Runbook only; no self-service reset UI.
+- MeliPayamak, Kavenegar and live AI remain disabled.
+
+These are engineering defaults for synthetic local testing, not universal legal standards or production approval.
 
 ## Automated verification status
 
-Latest successful GitHub Actions run [#1091](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41855615836), commit `64d2992d47d461e28538a85f7964c2befbbcf1a2`, completed successfully:
-- 322 Laravel/Pest tests passed (24,708 assertions), including the full booking OTP lifecycle and failed-job retention regression.
-- 36 Playwright browser tests passed, including keyboard completion of the booking OTP flow.
-- PostgreSQL migrations passed.
-- Pint formatting check and PHPStan static analysis passed.
-- Composer dependency audit and npm audit passed.
+GitHub Actions run [#1149](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41949121638), commit `05f307a15e8ce69480253f1bd1bde24d3969f423`, completed successfully on 2026-11-05:
+- 328 Laravel/Pest tests passed (24,731 assertions), including Smart Smile expiry/deletion, terminal OTP retention, completed/failed job retention, notification outbox retention and deletion-request/legal-hold boundaries.
+- 36 Playwright browser tests passed.
+- PostgreSQL migrations, Pint and PHPStan passed.
+- Composer audit and npm audit passed; Composer reports no security advisories after the Symfony 7.4.23 patch updates.
 - JavaScript lint, typecheck and production asset build passed.
 - Task 27 deterministic release evaluation passed.
-- Full-history Gitleaks secret scan passed.
+- Full-history Gitleaks scan passed.
 
-This verifies the current code revision in CI only. It does not verify production TLS/proxy, external provider logs, secret injection, storage/backup ACLs, or live SMS delivery.
+This is CI verification of the local prototype code only. It does not verify production TLS/proxy, external provider logs, secret injection, storage/backup ACLs, full DB/files backup or isolated recovery.
 
-## Open release blockers
+## Remaining production release blockers
 
-- **High — SEC-28-003 retention/backup controls incomplete:** approved cleanup is implemented for login-attempt hashes, AI operational rows and Idempotency records. Consent evidence retention and token TTL remain undecided; Smart Smile output expiry is not yet automated. Queue/failed-job payloads, notification outbox/error metadata and deletion requests remain undecided. Separate physical backup storage, encryption-key/ACL provisioning, monitoring and a full isolated database recovery exercise remain deployment gates. Original audit logs and patient/CRM records must not be automatically deleted.
-- **Medium — SEC-28-004 Smart Smile consent token:** TTL and post-expiry/revocation behavior still need owner approval.
-- **Booking OTP deployment gate:** the challenge lifecycle, booking UI integration and owner-approved limits are implemented with synthetic tests. No live provider call has been made. Keep `SMS_OTP_DRIVER=null` until deployment secrets and clinic activation are separately approved. OTP challenge metadata retention remains open as OD-28-18; provider URL-path log exposure remains SEC-28-015.
-- **Medium — MFA recovery operations:** enrollment and one-time recovery codes are implemented, but a controlled, audited lost-authenticator/recovery-code reset process and identity-proofing procedure must be defined before staff rollout.
-- **Medium — SEC-28-006 production controls:** TLS/proxy, database runtime privileges, private storage ACLs, secret injection, backup/log access and retention need deployment evidence.
-- **Medium — SEC-28-008 verification scope:** full route-by-route IDOR matrix, production-like CSRF negative tests, browser DOM-XSS corpus and distributed rate-limit behavior remain open.
-- **Medium — SEC-28-014 Kavenegar / SEC-28-015 MeliPayamak:** both provider credentials are carried in URL paths. Keep both live adapters disabled until provider/network access-log retention and redaction are reviewed and the clinic approves residual exposure or selects a header-auth provider.
-- **Medium — supplementary secret review:** automated Gitleaks and dependency audits passed; review GitHub secret alerts and external log/artifact surfaces separately.
-- **Open owner decision — OD-28-10:** staff/practitioner profile retention and patient-match flag policy.
+- **High — SEC-28-003:** prototype retention defaults and cleanup are implemented and CI-verified. Full DB/files backup, separate physical backup storage, key/ACL provisioning, monitoring and a full isolated recovery exercise remain unverified. Consent evidence is not automatically purged.
+- **Medium — SEC-28-006:** production TLS/proxy, database runtime privileges, private storage ACLs, secret injection and log/backup access controls require deployment evidence.
+- **Medium — SEC-28-008:** full route-by-route IDOR matrix, production-like CSRF negative tests, DOM-XSS corpus and distributed rate-limit behavior remain open.
+- **Medium — SEC-28-014 / SEC-28-015:** Kavenegar and MeliPayamak credentials remain in URL paths. Both live adapters stay disabled pending provider/network log review and explicit clinic approval or a header-auth alternative.
+- **MFA recovery:** controlled lost-authenticator identity-proofing remains an operational rollout requirement.
+- **Staff profiles / patient-match flags:** 90-day defaults are documented but not automated until reliable deactivation/review lifecycle evidence exists.
+- No live AI, SMS, production or third-party testing was performed.
 
 ## Stop condition
 
-Do not merge Task 28 as complete or mark it production-ready while SEC-28-003 or other release blockers remain open, or while required privacy/retention decisions and deployment evidence are outstanding.
+Local prototype implementation is complete and CI-verified. Do not mark the application production-ready or enable real patient data/live providers until the remaining release blockers, legal/clinic review and deployment evidence are closed.
 
 No real patient data, patient images, real credentials, production commands, destructive database operations, live AI provider or live SMS provider were used.
 
@@ -84,7 +86,7 @@ No real patient data, patient images, real credentials, production commands, des
 - PostgreSQL advisory locks serialize both phone and IP quotas across application nodes. New issuance invalidates prior active challenges. A verified challenge is consumed under row lock in the same transaction as appointment creation.
 - Added synthetic-only feature coverage for success, wrong code, expiry, attempt exhaustion, resend cooldown, phone/IP quotas, invalidation, replay/consumption and provider failure; added browser API contract coverage.
 - SMS_OTP_DRIVER remains `null` by default. MeliPayamak remains disabled pending deployment secret injection and separate clinic approval. No live SMS requests were made.
-- **Open owner decision OD-28-18:** retention duration for OTP challenge metadata. No automatic purge is enabled until approved.
+- Terminal OTP challenge metadata is pruned after 30 days; active challenges are preserved. This is a prototype engineering default, not a legal retention approval.
 - Production TLS/proxy, DB privileges, storage ACLs, secret injection, backup separation/key ACLs, general distributed throttles and live provider activation are tracked in [the deployment verification checklist](security/task28-deployment-verification-checklist.md).
 
 ## Prototype retention and lifecycle defaults (2026-11-05)

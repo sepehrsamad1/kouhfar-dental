@@ -90,3 +90,8 @@ For a lost authenticator in a controlled test environment: an active clinic admi
 - No production TLS, reverse-proxy, database-role, secret-manager, storage ACL, backup separation, monitoring or restore claim is made.
 
 These choices are engineering defaults selected for prototype progress. Reassess all periods and controls before real patient data, external providers or production deployment.
+
+
+## Implementation verification note (2026-11-05)
+
+The prototype cleanup now preserves deletion requests under the `legal_hold` resolution code, as well as pending/under-review requests. CI run #1149 passed the synthetic boundary tests for Smart Smile expiry, queue metadata, notification outbox, OTP challenge metadata and deletion-request retention. This does not convert any provisional period into a statutory retention rule or production approval.

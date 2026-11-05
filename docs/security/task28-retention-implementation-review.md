@@ -94,13 +94,13 @@ Task 28 remains blocked by SEC-28-003 and the other documented release gates. Th
 
 ## Prototype default implementation update (2026-11-05)
 
-The user authorized provisional retention defaults for a local synthetic-data prototype. The following implementation has been added and must be verified by CI before it is called verified:
+The user authorized provisional retention defaults for a local synthetic-data prototype. The following implementation was verified by GitHub Actions run #1149 on 2026-11-05 (328 Laravel/Pest tests, 24,731 assertions; 36 Playwright tests; migrations, Pint, PHPStan, dependency audits and Gitleaks passed):
 
 - Smart Smile sessions now carry separate token and result expiry timestamps. The 24-hour token expiry is enforced for upload/status. Deletion remains possible with the original token after expiry. The 365-day result expiry clears only result JSON and leaves consent evidence/session metadata intact.
-- The cleanup command now removes terminal OTP challenge metadata after 30 days, completed-job metadata after 7 days, failed queue rows after 30 days, sent notification rows after 12 months, stale failed notification rows after 30 days, and closed/rejected deletion request rows after 3 years.
+- The cleanup command now removes terminal OTP challenge metadata after 30 days, completed-job metadata after 7 days, failed queue rows after 30 days, sent notification rows after 12 months, stale failed notification rows after 30 days, and closed/rejected deletion request rows after 3 years, preserving pending requests and legal holds.
 - Pending/running queue work, job batches, active OTP challenges, pending/under-review deletion requests, consent evidence, patient/CRM records and original audit logs are not purged by these rules.
-- New synthetic tests cover Smart Smile result expiry, token expiry/deletion access, OTP metadata retention, completed-job history, failed-job retention and deletion-request retention.
+- New synthetic tests cover Smart Smile result expiry, token expiry/deletion access, OTP metadata retention, completed-job history, failed-job retention, notification outbox retention and deletion-request retention including legal holds.
 
 Operational caveats: the failed queue cleanup removes serialized failed-job payloads after 30 days, so queue payloads must remain free of secrets, raw patient data and image content. The full database/files backup policy, physical backup separation, secret/key ACLs and isolated restore remain deployment tasks. Staff profile and patient-match cleanup are not automated because no reliable deactivation/review lifecycle is currently represented.
 
-The six-year consent evidence period and the 90-day staff/patient-match defaults are planning assumptions only; consent evidence is not automatically purged by code. No legal or production approval is implied.
+The six-year consent evidence period and the 90-day staff/patient-match defaults are planning assumptions only; consent evidence is not automatically purged by code. No legal or production approval is implied. The successful CI run is evidence for this code branch only, not a full production security assessment.

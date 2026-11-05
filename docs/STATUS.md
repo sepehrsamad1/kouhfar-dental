@@ -1,10 +1,10 @@
 # Project status
 
-Last updated: 2026-11-05 (Task 28 local-prototype retention defaults implemented; CI verification pending; production blockers remain)
+Last updated: 2026-11-05 (Task 28 local-prototype implementation CI-verified in run #1149; production blockers remain)
 
 ## Task 28 — Security and Privacy Audit
 
-Status: IMPLEMENTATION IN PROGRESS / ACCEPTANCE AND PRODUCTION RELEASE BLOCKED — branch `task/28-security-privacy-audit`. Latest pre-change CI run [#1094](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41856375577) passed on commit `de8d23133f777966c81728c2094e3e284814e60f` (322 Laravel/Pest tests, 24,708 assertions, 36 Playwright tests, migrations, Pint, PHPStan, dependency audits, JS lint/typecheck/build, Task 27 evaluation and Gitleaks). Prototype retention changes are newer and await a fresh CI run. Production use with real patient data remains blocked.
+Status: IMPLEMENTATION IN PROGRESS / ACCEPTANCE AND PRODUCTION RELEASE BLOCKED — branch `task/28-security-privacy-audit`. Latest CI run [#1149](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41949121638) passed on commit `05f307a15e8ce69480253f1bd1bde24d3969f423` (328 Laravel/Pest tests, 24,731 assertions, 36 Playwright tests, migrations, Pint, PHPStan, Composer/npm audits, JS lint/typecheck/build, Task 27 evaluation and Gitleaks). Local prototype implementation is CI-verified; production use remains blocked. Production use with real patient data remains blocked.
 
 - Target: OWASP ASVS v5.0.0 Level 2 (scoped engineering assessment, not certification).
 - Security changes: login redirect validation, production-default Secure session cookies, practitioner patient-edit/mobile-reveal privilege boundary, immediate session revocation on staff deactivation, SQL-looking search input, mass-assignment defenses and Kavenegar SSRF/redirect controls.
@@ -22,7 +22,7 @@ Status: IMPLEMENTATION IN PROGRESS / ACCEPTANCE AND PRODUCTION RELEASE BLOCKED �
 
 ## Task 28 — Prototype policy update (2026-11-05)
 
-User-authorized provisional local-test defaults are now recorded and partially implemented: Smart Smile token 24 hours / result 365 days; successful-job metadata 7 days; failed jobs 30 days; sent notifications 12 months; stale failed notification details 30 days; terminal OTP metadata 30 days; closed/rejected deletion requests 3 years. Consent evidence is not automatically deleted. Staff profile and patient-match cleanup remain non-automated until lifecycle evidence exists. Synthetic boundary tests were added. Latest changes are pending CI.
+User-authorized provisional local-test defaults are now recorded and implemented: Smart Smile token 24 hours / result 365 days; successful-job metadata 7 days; failed jobs 30 days; sent notifications 12 months; stale failed notification details 30 days; terminal OTP metadata 30 days; closed/rejected deletion requests 3 years. Consent evidence is not automatically deleted. Staff profile and patient-match cleanup remain non-automated until lifecycle evidence exists. Synthetic boundary tests passed in CI run #1149. The local synthetic-data prototype is implementation-complete.
 
 These periods are engineering assumptions for a local prototype, not universal legal standards. MeliPayamak, Kavenegar and live AI remain disabled. Production TLS/proxy, DB/storage/secrets, full DB/files backup and isolated recovery, provider log redaction, complete IDOR/CSRF/DOM-XSS and operational MFA recovery remain open release gates.
 

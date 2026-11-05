@@ -35,6 +35,11 @@ final class MeliPayamakOtpProvider implements OtpProvider
             }
 
             $payload = $response->json();
+            $status = is_array($payload) ? ($payload['status'] ?? null) : null;
+            if (is_string($status) && trim($status) !== '') {
+                throw new RuntimeException('MeliPayamak OTP delivery failed.');
+            }
+
             $code = is_array($payload) ? ($payload['code'] ?? null) : null;
             $code = is_string($code) || is_int($code) ? (string) $code : '';
 

@@ -18,7 +18,7 @@ return new class extends Migration
 
         DB::table('smart_smile_sessions')
             ->whereNull('token_expires_at')
-            ->update(['token_expires_at' => DB::raw("consented_at + INTERVAL '15 minutes'")]);
+            ->update(['token_expires_at' => DB::raw("consented_at + INTERVAL '24 hours'")]);
 
         DB::table('smart_smile_sessions')
             ->whereNotNull('result_generated_at')

@@ -170,6 +170,7 @@ it('prunes failed queue jobs after 30 days', function (): void {
 
     expect(DB::table('failed_jobs')->where('uuid', $oldUuid)->exists())->toBeFalse()
         ->and(DB::table('failed_jobs')->where('uuid', $recentUuid)->exists())->toBeTrue();
+});
 
 it('prunes terminal booking OTP metadata after 30 days and keeps recent challenges', function (): void {
     $oldId = (string) Str::uuid();

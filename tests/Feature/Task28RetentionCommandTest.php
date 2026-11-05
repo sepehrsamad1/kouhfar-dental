@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 use App\AIRequest;
 use App\AIUsage;
+use App\CompletedJobHistory;
 use App\IdempotencyRecord;
 use App\LoginAttempt;
+use App\SmartSmileSession;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -108,19 +110,64 @@ it('prunes idempotency records only after their 24-hour expiry', function (): vo
         ->and(IdempotencyRecord::query()->find($active->id))->not->toBeNull();
 });
 
-it('does not prune failed queue jobs while their retention policy remains undecided', function (): void {
-    $uuid = (string) Str::uuid();
-
-    DB::table('failed_jobs')->insert([
-        'uuid' => $uuid,
-        'connection' => 'database',
-        'queue' => 'default',
-        'payload' => json_encode(['displayName' => 'SyntheticFailedJob'], JSON_THROW_ON_ERROR),
-        'exception' => 'Synthetic failure metadata only.',
-        'failed_at' => now('UTC')->subDays(31),
+it('clears expired Smart Smile result payloads without deleting consent evidence', function (): void {
+    $expired = SmartSmileSession::factory()->create([
+        'result' => ['message' => 'Synthetic result'],
+        'result_generated_at' => now('UTC')->subDays(366),
+        'result_expires_at' => now('UTC')->subDay(),
+    ]);
+    $active = SmartSmileSession::factory()->create([
+        'result' => ['message' => 'Synthetic result'],
+        'result_generated_at' => now('UTC')->subDays(364),
+        'result_expires_at' => now('UTC')->addDay(),
     ]);
 
     Artisan::call('security:prune-expired-data');
 
-    expect(DB::table('failed_jobs')->where('uuid', $uuid)->exists())->toBeTrue();
+    expect(SmartSmileSession::query()->find($expired->id))
+        ->not->toBeNull()
+        ->and(SmartSmileSession::query()->find($expired->id)->result)->toBeNull()
+        ->and(SmartSmileSession::query()->find($expired->id)->consented_at)->not->toBeNull()
+        ->and(SmartSmileSession::query()->find($active->id)->result)->not->toBeNull();
+});
+
+it('prunes completed-job history after seven days', function (): void {
+    $old = CompletedJobHistory::query()->create([
+        'job_class' => 'SyntheticCompletedJob',
+        'queue_name' => 'default',
+        'attempts' => 1,
+        'completed_at' => now('UTC')->subDays(8),
+    ]);
+    $recent = CompletedJobHistory::query()->create([
+        'job_class' => 'SyntheticCompletedJob',
+        'queue_name' => 'default',
+        'attempts' => 1,
+        'completed_at' => now('UTC')->subDays(6),
+    ]);
+
+    Artisan::call('security:prune-expired-data');
+
+    expect(CompletedJobHistory::query()->find($old->id))->toBeNull()
+        ->and(CompletedJobHistory::query()->find($recent->id))->not->toBeNull();
+});
+
+it('prunes failed queue jobs after 30 days', function (): void {
+    $oldUuid = (string) Str::uuid();
+    $recentUuid = (string) Str::uuid();
+
+    foreach ([[$oldUuid, 31], [$recentUuid, 29]] as [$uuid, $days]) {
+        DB::table('failed_jobs')->insert([
+            'uuid' => $uuid,
+            'connection' => 'database',
+            'queue' => 'default',
+            'payload' => json_encode(['displayName' => 'SyntheticFailedJob'], JSON_THROW_ON_ERROR),
+            'exception' => 'Synthetic failure metadata only.',
+            'failed_at' => now('UTC')->subDays($days),
+        ]);
+    }
+
+    Artisan::call('security:prune-expired-data');
+
+    expect(DB::table('failed_jobs')->where('uuid', $oldUuid)->exists())->toBeFalse()
+        ->and(DB::table('failed_jobs')->where('uuid', $recentUuid)->exists())->toBeTrue();
 });

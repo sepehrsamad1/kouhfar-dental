@@ -66,6 +66,7 @@ final class PruneExpiredSecurityData extends Command
             && Schema::hasColumn('deletion_requests', 'reviewed_at')
             && Schema::hasColumn('deletion_requests', 'resolved_at')) {
             $counts['closed deletion requests'] = DB::table('deletion_requests')
+                ->where('resolution_code', '!=', 'legal_hold')
                 ->where(function ($query) use ($now): void {
                     $query->where(function ($closed) use ($now): void {
                         $closed->where('status', 'closed')

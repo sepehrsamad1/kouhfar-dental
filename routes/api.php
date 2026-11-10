@@ -17,13 +17,13 @@ Route::get('/v1/availability/{service}', PublicAvailabilityController::class)
     ->name('api.v1.availability.show');
 
 Route::post('/v1/booking-otp/issue', [BookingOtpController::class, 'issue'])
-    ->middleware(['web', 'throttle:30,1'])
+    ->middleware([ValidateCsrfToken::class, 'web', 'throttle:30,1'])
     ->name('api.v1.booking-otp.issue');
 
 Route::post('/v1/booking-otp/verify', [BookingOtpController::class, 'verify'])
-    ->middleware(['web', 'throttle:30,1'])
+    ->middleware([ValidateCsrfToken::class, 'web', 'throttle:30,1'])
     ->name('api.v1.booking-otp.verify');
 
 Route::post('/v1/appointments', [AppointmentController::class, 'store'])
-    ->middleware(['web', 'throttle:30,1'])
+    ->middleware([ValidateCsrfToken::class, 'web', 'throttle:30,1'])
     ->name('api.v1.appointments.store');

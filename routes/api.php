@@ -2,11 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\AppointmentController;
-use App\Http\Controllers\BookingOtpController;
 use App\Http\Controllers\PublicAvailabilityController;
 use App\Http\Controllers\PublicServicesController;
-use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/v1/services', PublicServicesController::class)

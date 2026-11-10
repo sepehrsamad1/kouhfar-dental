@@ -16,6 +16,8 @@ beforeEach(function (): void {
     config([
         'notifications.otp.driver' => 'melipayamak',
         'notifications.otp.melipayamak.token' => str_repeat('a', 32),
+        'notifications.otp.live_sms_approved' => true,
+        'notifications.otp.provider_url_path_risk_accepted' => true,
     ]);
     Carbon::setTestNow('2026-11-04T12:00:00Z');
 });

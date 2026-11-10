@@ -1,6 +1,6 @@
 # Task 28 — Security findings register
 
-Assessment baseline: `main` commit `ff290289488378ff1b70ebabac66f3fefa0da937`; remediation branch `task/28-security-privacy-audit`. Latest full-branch verification: [CI run #1187](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/42899986268), revision `785219c232cdb73e7c34238c9da0cd1f68b56e22` (328 Laravel/Pest tests, 24,731 assertions, 36 Playwright browser tests, migrations, static analysis, dependency audits and Gitleaks passed). Earlier finding-specific retests remain cited at their original runs.
+Assessment baseline: `main` commit `ff290289488378ff1b70ebabac66f3fefa0da937`; remediation branch `task/28-security-privacy-audit`. Latest full-branch verification: [CI run #1190](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/42899986268), revision `bb811bb5591d6d604fe4bf26c539d5473b16ad7b` (331 Laravel/Pest tests, 24,699 assertions, browser smoke tests, migrations, static analysis, dependency audits and Gitleaks passed). Earlier finding-specific retests remain cited at their original runs.
 
 Severity meanings for this register:
 - **Critical:** direct compromise or broad unauthorized disclosure/control with severe impact.
@@ -36,6 +36,6 @@ The code-level remediations for SEC-28-001, SEC-28-002, SEC-28-009, SEC-28-010, 
 
 **Local prototype: implementation complete and CI-verified. Production release: BLOCKED.** SEC-28-003 has prototype retention decisions and tested cleanup, but full DB/files backup, physically separate storage, key/ACL provisioning, monitoring and full isolated recovery are not evidenced. SEC-28-006 production TLS/proxy/database/storage/secrets/logging controls remain unverified. SEC-28-008 still requires the complete route-by-route IDOR/CSRF/DOM-XSS/distributed-rate-limit verification scope. SEC-28-014 and SEC-28-015 remain disabled pending provider/network URL-path log review and clinic approval. Lost-authenticator identity-proofing remains an operational rollout item. No critical finding was confirmed from the reviewed source; this is not a complete penetration test or ASVS certification.
 
-CI run [#1149](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/42899986268) passed 328 Laravel/Pest tests (24,731 assertions), 36 Playwright tests, migrations, Pint, PHPStan, Composer/npm audits, JavaScript lint/typecheck/build, Task 27 evaluation and full-history Gitleaks. The Composer audit reports no current advisories after Symfony 7.4.23 updates.
+CI run [#1149](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/42899986268) passed 331 Laravel/Pest tests (24,699 assertions), 36 Playwright tests, migrations, Pint, PHPStan, Composer/npm audits, JavaScript lint/typecheck/build, Task 27 evaluation and full-history Gitleaks. The Composer audit reports no current advisories after Symfony 7.4.23 updates.
 
 Do not test production or third-party systems without written authorization. Do not use real patient data or credentials in CI.

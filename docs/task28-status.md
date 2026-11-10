@@ -91,7 +91,7 @@ No real patient data, patient images, real credentials, production commands, des
 
 ## Prototype retention and lifecycle defaults (2026-11-05)
 
-The user delegated the remaining engineering defaults for the local prototype. The following implementation was added on the Task 28 branch and is awaiting CI verification:
+The user delegated the remaining engineering defaults for the local prototype. The following implementation was added on the Task 28 branch and is CI-verified by run #1192:
 
 - Smart Smile token lifetime is 24 hours. Expired tokens cannot upload or read status; the original token remains able to request deletion after expiry. Consent/session evidence is retained.
 - Smart Smile result payloads expire after 365 days. Cleanup clears only the result JSON; it does not delete the session or consent evidence. Raw Smart Smile input media continues to use the existing 90-day policy.

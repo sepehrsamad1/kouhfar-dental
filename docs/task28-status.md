@@ -6,8 +6,8 @@
 
 - Task: 28 — Security and Privacy Audit
 - Branch: `task/28-security-privacy-audit`
-- Latest CI-verified application revision: `bb811bb5591d6d604fe4bf26c539d5473b16ad7b` (GitHub Actions run [#1187](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/42899986268), completed successfully on 2026-11-10). The latest follow-up adds route-level CSRF middleware registration tests for public booking mutations.
-- The latest CI run #1190 passed on the current prototype branch head: full-history Gitleaks, Composer/npm audits, JavaScript lint/typecheck/build, Pint, PHPStan, PostgreSQL migrations, 331 Laravel/Pest tests (24,699 assertions), Task 27 deterministic release evaluation and browser smoke tests. Composer audit reports no security advisories after updating affected Symfony components to 7.4.23.
+- Latest CI-verified application revision: `19c4aa8403a8a0170d886e8227cbfe47f28b85cd` (GitHub Actions run #1192, completed successfully). The final follow-up includes route-level CSRF middleware registration tests for public booking mutations and synchronized Task 28 documentation.
+- CI run #1192 passed on the current prototype branch head: full-history Gitleaks, Composer/npm audits, JavaScript lint/typecheck/build, Pint, PHPStan, PostgreSQL migrations, 331 Laravel/Pest tests (24,699 assertions), Task 27 deterministic release evaluation and browser smoke tests. Composer audit reports no security advisories after updating affected Symfony components to 7.4.23.
 - Target standard: OWASP ASVS v5.0.0 Level 2 (scoped engineering assessment, not certification).
 - Scope: repository source/configuration/migrations/tests/CI. No production or third-party systems were tested.
 

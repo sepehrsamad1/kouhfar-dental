@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace AppServices;
+namespace App\Services;
 
-use AppNotificationsOtpMeliPayamakOtpProvider;
-use AppNotificationsOtpNullOtpProvider;
-use AppNotificationsOtpOtpProvider;
+use App\Notifications\Otp\MeliPayamakOtpProvider;
+use App\Notifications\Otp\NullOtpProvider;
+use App\Notifications\Otp\OtpProvider;
 use InvalidArgumentException;
 use RuntimeException;
 

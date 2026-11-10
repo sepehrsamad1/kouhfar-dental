@@ -102,6 +102,6 @@ The user delegated the remaining engineering defaults for the local prototype. T
 - Existing 90-day login hash, 12-month AI operational metadata, 24-hour idempotency and 30-day local log policies remain.
 - Consent evidence uses a provisional six-year planning baseline but is not automatically purged. Staff-profile 90-day and resolved patient-match 90-day periods remain documented planning defaults only because the current schema/workflow lacks safe deactivation/review lifecycle evidence.
 
-Added migration 2026_11_05_000001_add_task28_smart_smile_expiry.php, bounded cleanup logic and synthetic boundary tests. These changes are not yet CI-verified at this point in the document. See security/task28-owner-decisions.md for the complete policy and prototype/production boundary.
+Added migration 2026_11_05_000001_add_task28_smart_smile_expiry.php, bounded cleanup logic and synthetic boundary tests. These changes are CI-verified by run #1192. See security/task28-owner-decisions.md for the complete policy and prototype/production boundary.
 
 Important: the periods above are not universal legal standards. They are temporary local-prototype engineering defaults selected by the user. Real patient data, production deployment and live provider activation remain blocked pending legal/clinic review and deployment evidence.

@@ -1,6 +1,6 @@
 # Task 28 — Security and Privacy Audit
 
-**Status: LOCAL PROTOTYPE IMPLEMENTATION COMPLETE — CI run #1149 passed on 2026-11-05. Production acceptance/release remains blocked by infrastructure evidence, legal/clinic review and external-provider controls.**
+**Status: LOCAL PROTOTYPE IMPLEMENTATION COMPLETE — CI run #1192 passed on 2026-11-10/11. Production acceptance/release remains blocked by infrastructure evidence, legal/clinic review and external-provider controls.**
 
 ## Task identity
 

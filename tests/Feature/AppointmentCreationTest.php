@@ -24,7 +24,13 @@ use Illuminate\Support\Facades\Http;
 uses(RefreshDatabase::class);
 
 beforeEach(function (): void {
-    config(['booking.phone_verification_required' => false]);
+    config([
+        'booking.phone_verification_required' => false,
+        'notifications.otp.driver' => 'melipayamak',
+        'notifications.otp.melipayamak.token' => str_repeat('a', 32),
+        'notifications.otp.live_sms_approved' => true,
+        'notifications.otp.provider_url_path_risk_accepted' => true,
+    ]);
 });
 
 function bookingFixture(): array

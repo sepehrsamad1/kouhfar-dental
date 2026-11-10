@@ -1,6 +1,6 @@
 # Task 28 — OWASP ASVS v5.0.0 Level 2 checklist
 
-Assessment baseline: repository branch `task/28-security-privacy-audit`, based on main commit `ff290289488378ff1b70ebabac66f3fefa0da937`. Latest full-branch CI verification: run [#1187](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/42899986268), commit `785219c232cdb73e7c34238c9da0cd1f68b56e22`.
+Assessment baseline: repository branch `task/28-security-privacy-audit`, based on main commit `ff290289488378ff1b70ebabac66f3fefa0da937`. Latest full-branch CI verification: run [#1187](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/42899986268), commit `bb811bb5591d6d604fe4bf26c539d5473b16ad7b`.
 
 ## Target and scope
 
@@ -58,7 +58,7 @@ npm run build
 npm run test:browser
 ```
 
-Gitleaks scanned the full Git history (`fetch-depth: 0`) successfully in the latest CI run #1087. Do not test production or external providers without separate written authorization.
+Gitleaks scanned the full Git history (`fetch-depth: 0`) successfully in the latest CI run #1190. Do not test production or external providers without separate written authorization.
 
 ## Closure rule
 

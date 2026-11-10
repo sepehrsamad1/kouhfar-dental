@@ -78,7 +78,7 @@ it('keeps booking SMS disabled by default and fails closed without a provider', 
 it('rejects a state-changing public booking request without a valid CSRF token', function (): void {
     $service = Service::factory()->create(['is_active' => true, 'is_public_bookable' => true]);
 
-    $this->withMiddleware()
+    $this->withMiddleware(PreventRequestForgery::class)
         ->withHeader('Idempotency-Key', 'csrf-negative-test-0001')
         ->post('/api/v1/appointments', [
             'full_name' => 'Synthetic Booker',
@@ -92,7 +92,7 @@ it('rejects a state-changing public booking request without a valid CSRF token',
 });
 
 it('rejects a booking OTP issuance request without a valid CSRF token', function (): void {
-    $this->withMiddleware()
+    $this->withMiddleware(PreventRequestForgery::class)
         ->post('/api/v1/booking-otp/issue', ['mobile' => '09120000001'])
         ->assertStatus(419);
 

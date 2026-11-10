@@ -2,12 +2,15 @@
 
 declare(strict_types=1);
 
-use App\Notifications\Otp\MeliPayamakOtpProvider;\nuse App\Services\OtpProviderManager;
+use App\Notifications\Otp\MeliPayamakOtpProvider;
+use App\Services\OtpProviderManager;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 
 beforeEach(function (): void {
     config()->set('notifications.otp.melipayamak.token', str_repeat('a', 32));
+    config()->set('notifications.otp.live_sms_approved', true);
+    config()->set('notifications.otp.provider_url_path_risk_accepted', true);
 });
 
 it('posts only the normalized recipient to the fixed MeliPayamak OTP endpoint and returns provider code', function (): void {
@@ -75,7 +78,6 @@ it('rejects provider-declared errors even when a code is also present', function
 
     Http::assertSentCount(1);
 });
-
 
 it('fails closed when live SMS has not been explicitly approved', function (): void {
     config()->set('notifications.otp.live_sms_approved', false);

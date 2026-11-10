@@ -98,7 +98,27 @@ it('processes through the fake provider and never exposes clinical findings', fu
 
     expect($session->status)->toBe('completed')
         ->and($session->result['message'])->toContain('غیرتشخیصی')
-        ->and($session->result['message'])->not->toContain('بیماری');
+        ->and($session->result['message'])->not->toContain('بیماری')
+        ->and($session->result_generated_at)->not->toBeNull()
+        ->and($session->result_expires_at)->not->toBeNull();
+});
+
+it('expires Smart Smile read access after 24 hours but preserves deletion access', function (): void {
+    $granted = app(SmartSmileService::class)->grantConsent();
+
+    $this->postJson('/api/v1/smart-smile/status', ['consent_token' => $granted['token']])
+        ->assertOk();
+
+    $this->travel(25)->hours();
+
+    $this->postJson('/api/v1/smart-smile/status', ['consent_token' => $granted['token']])
+        ->assertNotFound();
+
+    $this->deleteJson('/api/v1/smart-smile', ['consent_token' => $granted['token']])
+        ->assertOk()
+        ->assertJsonPath('status', 'deleted');
+
+    expect(SmartSmileSession::query()->find($granted['session']->id)->consented_at)->not->toBeNull();
 });
 
 it('allows deletion through the consent token and soft-deletes the private image', function (): void {
@@ -113,7 +133,8 @@ it('allows deletion through the consent token and soft-deletes the private image
         ->assertJsonPath('status', 'deleted');
 
     expect(SmartSmileSession::query()->find($session->id)->status)->toBe('deleted')
-        ->and(MediaAsset::withTrashed()->find($session->media_asset_id)->deleted_at)->not->toBeNull();
+        ->and(MediaAsset::withTrashed()->find($session->media_asset_id)->deleted_at)->not->toBeNull()
+        ->and(SmartSmileSession::query()->find($session->id)->result_generated_at)->toBeNull();
 });
 
 it('rejects revoked consent and cannot access session data without the token', function (): void {

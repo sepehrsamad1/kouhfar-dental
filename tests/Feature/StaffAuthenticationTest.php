@@ -47,6 +47,90 @@ it('provides a staff login page and authenticates active staff', function (): vo
     expect(StaffSession::query()->where('user_id', $staff->id)->exists())->toBeTrue();
 });
 
+it('rejects backslash-based and external intended redirects after staff login', function (): void {
+    $staff = makeStaffUser(['email' => 'redirect@example.invalid']);
+
+    foreach (['/'.chr(92).'evil.example/path', '//evil.example/path', 'https://evil.example/path'] as $intended) {
+        $response = $this->withSession(['url.intended' => $intended])
+            ->post(route('staff.login.store'), [
+                'email' => $staff->email,
+                'password' => 'correct-password',
+            ]);
+
+        $response->assertRedirect(route('staff.dashboard'));
+        auth('staff')->logout();
+        $this->flushSession();
+    }
+});
+
+it('emits secure HttpOnly SameSite cookies when secure session cookies are enabled', function (): void {
+    config()->set('session.secure', true);
+    $staff = makeStaffUser(['email' => 'cookie@example.invalid']);
+
+    $response = $this->post(route('staff.login.store'), [
+        'email' => $staff->email,
+        'password' => 'correct-password',
+    ]);
+
+    $cookie = collect($response->headers->getCookies())
+        ->first(fn ($cookie) => $cookie->getName() === config('session.cookie'));
+
+    expect($cookie)->not->toBeNull()
+        ->and($cookie->isSecure())->toBeTrue()
+        ->and($cookie->isHttpOnly())->toBeTrue()
+        ->and($cookie->getSameSite())->toBe('lax');
+});
+
+it('prefixes non-local session cookie names with __Secure-', function (): void {
+    $originalAppEnv = getenv('APP_ENV');
+    $originalSessionCookie = getenv('SESSION_COOKIE');
+    $originalEnvApp = $_ENV['APP_ENV'] ?? null;
+    $originalServerApp = $_SERVER['APP_ENV'] ?? null;
+    $originalEnvCookie = $_ENV['SESSION_COOKIE'] ?? null;
+    $originalServerCookie = $_SERVER['SESSION_COOKIE'] ?? null;
+
+    putenv('APP_ENV=production');
+    putenv('SESSION_COOKIE=custom-session');
+    $_ENV['APP_ENV'] = 'production';
+    $_SERVER['APP_ENV'] = 'production';
+    $_ENV['SESSION_COOKIE'] = 'custom-session';
+    $_SERVER['SESSION_COOKIE'] = 'custom-session';
+
+    try {
+        $settings = require config_path('session.php');
+    } finally {
+        $originalAppEnv === false ? putenv('APP_ENV') : putenv('APP_ENV='.$originalAppEnv);
+        $originalSessionCookie === false ? putenv('SESSION_COOKIE') : putenv('SESSION_COOKIE='.$originalSessionCookie);
+
+        if ($originalEnvApp === null) {
+            unset($_ENV['APP_ENV']);
+        } else {
+            $_ENV['APP_ENV'] = $originalEnvApp;
+        }
+
+        if ($originalServerApp === null) {
+            unset($_SERVER['APP_ENV']);
+        } else {
+            $_SERVER['APP_ENV'] = $originalServerApp;
+        }
+
+        if ($originalEnvCookie === null) {
+            unset($_ENV['SESSION_COOKIE']);
+        } else {
+            $_ENV['SESSION_COOKIE'] = $originalEnvCookie;
+        }
+
+        if ($originalServerCookie === null) {
+            unset($_SERVER['SESSION_COOKIE']);
+        } else {
+            $_SERVER['SESSION_COOKIE'] = $originalServerCookie;
+        }
+    }
+
+    expect($settings['cookie'])->toBe('__Secure-custom-session')
+        ->and($settings['secure'])->toBeTrue();
+});
+
 it('regenerates the session id after successful login', function (): void {
     $staff = makeStaffUser(['email' => 'fixation@example.invalid']);
     $this->get(route('staff.login'));
@@ -123,6 +207,24 @@ it('invalidates the authenticated session on logout', function (): void {
     $registryId = session('staff_registry_session_id');
 
     $this->post(route('staff.logout'))->assertRedirect(route('staff.login'));
+
+    $this->assertGuest('staff');
+    expect(StaffSession::query()->find($registryId)->revoked_at)->not->toBeNull();
+});
+
+it('revokes an active staff session immediately after account deactivation', function (): void {
+    $staff = makeStaffUser(['email' => 'deactivated@example.invalid']);
+
+    $this->post(route('staff.login.store'), [
+        'email' => $staff->email,
+        'password' => 'correct-password',
+    ])->assertRedirect(route('staff.dashboard'));
+
+    $registryId = session('staff_registry_session_id');
+    $staff->forceFill(['is_active' => false])->save();
+
+    $this->get(route('staff.dashboard'))
+        ->assertRedirect(route('staff.login'));
 
     $this->assertGuest('staff');
     expect(StaffSession::query()->find($registryId)->revoked_at)->not->toBeNull();

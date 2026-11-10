@@ -71,7 +71,9 @@
                 <td>{{ $patient['full_name'] }}</td>
                 <td>
                     {{ $patient['mobile'] }}
-                    <a href="{{ route('staff.patients.reveal-mobile', $patient['id']) }}">نمایش شماره</a>
+                    @if ($canRevealMobile)
+                        <a href="{{ route('staff.patients.reveal-mobile', $patient['id']) }}">نمایش شماره</a>
+                    @endif
                 </td>
                 <td>{{ $patient['archived_at'] ? 'بایگانی‌شده' : 'فعال' }}</td>
                 <td>

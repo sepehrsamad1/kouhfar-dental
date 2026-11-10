@@ -79,7 +79,10 @@ final class SendAppointmentNotification implements ShouldBeUnique, ShouldQueue
             return;
         }
 
-        $outbox->increment('attempts');
+        $outbox->forceFill([
+            'attempts' => $outbox->attempts + 1,
+            'last_attempt_at' => now('UTC'),
+        ])->save();
 
         Notification::sendNow(
             $appointment->patient,

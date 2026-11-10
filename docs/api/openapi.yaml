@@ -32,6 +32,22 @@ x-task-12-staff-web-routes:
     - { method: POST, path: /staff/configuration/exceptions, access: admin }
     - { method: PATCH, path: /staff/configuration/exceptions/{exception}, access: admin }
     - { method: DELETE, path: /staff/configuration/exceptions/{exception}, access: admin }
+x-task-28-deletion-request-workflow:
+  description: >-
+    Authenticated staff web actions for review and administrative closure of a
+    deletion request. These actions record an assessment outcome only. They do
+    not delete patient, CRM, appointment, consent, media, backup or audit data.
+    Active administrators only; Laravel session authentication and CSRF apply.
+  states: [pending, under_review, rejected, closed]
+  reviewDecisions: [accept_for_assessment, reject]
+  rejectionReasonCodes: [identity_not_verified, outside_scope, duplicate_request]
+  resolutionCodes: [retained_by_policy, legal_hold, correction_completed, no_action_required]
+  routes:
+    - { method: POST, path: /staff/deletion-requests/{deletionRequest}/review, access: active-admin }
+    - { method: POST, path: /staff/deletion-requests/{deletionRequest}/close, access: active-admin }
+  securityBoundary: >-
+    Closing a request is not proof of physical erasure. No automatic deletion,
+    anonymization, backup rewrite or third-party propagation is performed.
 tags:
   - { name: public }
   - { name: staff }
@@ -402,3 +418,88 @@ paths:
       responses:
         '200': { description: Paginated, redacted, content: { application/json: { schema: { $ref: '#/components/schemas/Page' } } } }
         '403': { $ref: '#/components/responses/Error' }
+
+  /api/v1/smart-smile/consent:
+    post:
+      tags: [public]
+      description: Creates a consent session. The raw token is returned once; only its SHA-256 hash is stored. Token TTL is not yet configured and this endpoint remains disabled unless both release gates are enabled.
+      responses:
+        '201':
+          description: Consent session created
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status, consent_token, consent_version, non_diagnostic]
+                properties:
+                  status: { const: consented }
+                  consent_token: { type: string, description: Raw token returned only at creation. }
+                  consent_version: { type: string }
+                  non_diagnostic: { const: true }
+        '503': { description: Smart Smile disabled by release gate }
+  /api/v1/smart-smile/upload:
+    post:
+      tags: [public]
+      description: Uploads one private input image under an existing, non-revoked consent token. Raw inputs follow the separate 90-day media policy.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [consent_token, media]
+              properties:
+                consent_token: { type: string }
+                media: { type: string, format: binary }
+      responses:
+        '202':
+          description: Image accepted for asynchronous processing
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status, result, non_diagnostic, can_delete]
+                properties:
+                  status: { type: string, enum: [queued, processing, completed, failed, deleted] }
+                  result: { type: [object, "null"], additionalProperties: true }
+                  non_diagnostic: { const: true }
+                  can_delete: { type: boolean }
+        '403': { description: Missing or revoked consent }
+        '422': { description: Invalid image or request }
+        '503': { description: Smart Smile disabled by release gate }
+  /api/v1/smart-smile/status:
+    post:
+      tags: [public]
+      description: Returns the status and completed non-diagnostic result for the consent token holder.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [consent_token]
+              properties:
+                consent_token: { type: string }
+              additionalProperties: false
+      responses:
+        '200': { description: Current session state }
+        '404': { description: Token not found }
+        '503': { description: Smart Smile disabled by release gate }
+  /api/v1/smart-smile:
+    delete:
+      tags: [public]
+      description: Revokes the session, clears its result and soft-deletes its private input media. Consent evidence remains in the session record.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [consent_token]
+              properties:
+                consent_token: { type: string }
+              additionalProperties: false
+      responses:
+        '200': { description: Session revoked and result cleared }
+        '404': { description: Token not found }
+        '503': { description: Smart Smile disabled by release gate }

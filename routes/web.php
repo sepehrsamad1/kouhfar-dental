@@ -3,16 +3,20 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\AIAdminController;
+use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\AssistantController;
 use App\Http\Controllers\AvailabilityController;
+use App\Http\Controllers\BookingOtpController;
 use App\Http\Controllers\ClinicConfigurationController;
 use App\Http\Controllers\ContentItemController;
+use App\Http\Controllers\DeletionRequestController;
 use App\Http\Controllers\MediaAssetController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\SmartSmileController;
 use App\Http\Controllers\StaffAppointmentController;
 use App\Http\Controllers\StaffAuthController;
 use App\Http\Middleware\PreventStoreCache;
+use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 
@@ -20,6 +24,9 @@ Route::view('/', 'home')->name('home');
 Route::get('/booking/availability/{service}', AvailabilityController::class)->middleware('throttle:60,1')->name('booking.availability');
 Route::get('/content/{contentKey}/{locale}', [ContentItemController::class, 'show'])->where('locale', 'fa|en')->name('content.show');
 Route::post('/api/v1/assistant', AssistantController::class)->middleware('throttle:20,1')->name('assistant');
+Route::post('/api/v1/booking-otp/issue', [BookingOtpController::class, 'issue'])->middleware(['web', PreventRequestForgery::class, 'throttle:30,1'])->name('api.v1.booking-otp.issue');
+Route::post('/api/v1/booking-otp/verify', [BookingOtpController::class, 'verify'])->middleware(['web', PreventRequestForgery::class, 'throttle:30,1'])->name('api.v1.booking-otp.verify');
+Route::post('/api/v1/appointments', [AppointmentController::class, 'store'])->middleware(['web', PreventRequestForgery::class, 'throttle:30,1'])->name('api.v1.appointments.store');
 Route::post('/api/v1/smart-smile/consent', [SmartSmileController::class, 'consent'])->middleware('throttle:10,1')->name('smart-smile.consent');
 Route::post('/api/v1/smart-smile/upload', [SmartSmileController::class, 'upload'])->middleware('throttle:5,1')->name('smart-smile.upload');
 Route::post('/api/v1/smart-smile/status', [SmartSmileController::class, 'status'])->middleware('throttle:30,1')->name('smart-smile.status');
@@ -27,7 +34,11 @@ Route::delete('/api/v1/smart-smile', [SmartSmileController::class, 'delete'])->m
 
 Route::middleware('guest:staff')->group(function (): void {
     Route::get('/staff/login', [StaffAuthController::class, 'create'])->name('staff.login');
-    Route::post('/staff/login', [StaffAuthController::class, 'store'])->name('staff.login.store');
+    Route::post('/staff/login', [StaffAuthController::class, 'store'])->middleware('throttle:10,1')->name('staff.login.store');
+    Route::get('/staff/mfa/setup', [StaffAuthController::class, 'setup'])->name('staff.mfa.setup');
+    Route::post('/staff/mfa/setup', [StaffAuthController::class, 'completeSetup'])->middleware('throttle:10,1')->name('staff.mfa.setup.complete');
+    Route::get('/staff/mfa/challenge', [StaffAuthController::class, 'challenge'])->name('staff.mfa.challenge');
+    Route::post('/staff/mfa/challenge', [StaffAuthController::class, 'verify'])->middleware('throttle:10,1')->name('staff.mfa.verify');
 });
 
 Route::middleware(['auth:staff', 'staff.session.fresh', PreventStoreCache::class])->group(function (): void {
@@ -38,6 +49,10 @@ Route::middleware(['auth:staff', 'staff.session.fresh', PreventStoreCache::class
     Route::get('/staff/media/{mediaAsset}/download', [MediaAssetController::class, 'download'])->middleware('signed')->name('staff.media.download');
     Route::delete('/staff/media/{mediaAsset}', [MediaAssetController::class, 'delete'])->name('staff.media.delete');
     Route::post('/staff/logout', [StaffAuthController::class, 'destroy'])->name('staff.logout');
+    Route::get('/staff/mfa/recovery-codes', [StaffAuthController::class, 'recoveryCodes'])->name('staff.mfa.recovery-codes');
+    Route::post('/staff/deletion-requests/{deletionRequest}/review', [DeletionRequestController::class, 'review'])->name('staff.deletion-requests.review');
+    Route::post('/staff/deletion-requests/{deletionRequest}/close', [DeletionRequestController::class, 'close'])->name('staff.deletion-requests.close');
+
     Route::get('/staff/admin/audit', function () {
         Gate::authorize('view-audit-log');
 

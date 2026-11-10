@@ -7,6 +7,7 @@ namespace App\Providers;
 use App\AI\FakeAIProvider;
 use App\AIRequest;
 use App\Appointment;
+use App\CompletedJobHistory;
 use App\ContentItem;
 use App\MediaAsset;
 use App\Notifications\SmsChannel;
@@ -30,11 +31,14 @@ use App\Services\AIProviderManager;
 use App\Services\AIRequestRecorder;
 use App\Services\AIUsageRecorder;
 use App\Services\Clock;
+use App\Services\OtpProviderManager;
 use App\Services\SmsProviderManager;
 use App\Services\SystemClock;
 use App\StaffUser;
 use App\WorkingHour;
+use Illuminate\Queue\Events\JobProcessed;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -43,6 +47,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(SmsProviderManager::class);
+        $this->app->singleton(OtpProviderManager::class);
         $this->app->singleton(SmsChannel::class, fn ($app): SmsChannel => new SmsChannel(
             $app->make(SmsProviderManager::class)->resolve(),
         ));
@@ -56,6 +61,15 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Queue::after(function (JobProcessed $event): void {
+            CompletedJobHistory::query()->create([
+                'job_class' => $event->job->resolveName(),
+                'queue_name' => $event->job->getQueue(),
+                'attempts' => $event->job->attempts(),
+                'completed_at' => now('UTC'),
+            ]);
+        });
+
         View::composer('layouts.staff', function ($view): void {
             $view->with('aiControlSummary', app(AIControlService::class)->summary());
         });

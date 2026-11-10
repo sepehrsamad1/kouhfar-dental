@@ -10,6 +10,10 @@ it('uses the planned deletion request fields without enabling deletion', functio
         'target_id',
         'requested_by',
         'approved_by',
+        'reviewed_by',
+        'reviewed_at',
+        'resolved_at',
+        'resolution_code',
         'status',
         'created_at',
     ])

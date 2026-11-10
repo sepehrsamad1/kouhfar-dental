@@ -51,6 +51,11 @@ class AppointmentStoreRequest extends FormRequest
             'start_at' => ['required', 'string', 'max:64'],
             'practitioner_id' => ['prohibited'],
             'resource_id' => ['prohibited'],
+            'otp_challenge_id' => [
+                Rule::requiredIf(fn (): bool => (bool) config('booking.phone_verification_required')),
+                'nullable',
+                'uuid',
+            ],
             'idempotency_key' => [
                 'required',
                 'string',

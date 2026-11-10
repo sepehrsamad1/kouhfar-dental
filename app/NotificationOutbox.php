@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $dedupe_key
  * @property CarbonImmutable $scheduled_at
  * @property CarbonImmutable|null $sent_at
+ * @property CarbonImmutable|null $last_attempt_at
  * @property int $attempts
  * @property string|null $last_error
  */
@@ -66,6 +67,7 @@ class NotificationOutbox extends Model
             'attempts' => 'integer',
             'created_at' => 'immutable_datetime',
             'sent_at' => 'immutable_datetime',
+            'last_attempt_at' => 'immutable_datetime',
             'scheduled_at' => 'immutable_datetime',
             'type' => AppointmentNotificationType::class,
         ];

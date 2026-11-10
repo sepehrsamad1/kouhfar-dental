@@ -66,6 +66,7 @@ class PatientController
         return view('staff.patients.index', [
             'patients' => $patients,
             'canCreate' => in_array($user->role, ['admin', 'reception'], true),
+            'canRevealMobile' => in_array($user->role, ['admin', 'reception'], true),
         ]);
     }
 

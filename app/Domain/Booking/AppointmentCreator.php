@@ -16,6 +16,7 @@ use App\Patient;
 use App\Practitioner;
 use App\Resource;
 use App\Service;
+use App\Services\BookingOtpService;
 use App\Support\IranianPhoneNumber;
 use Carbon\CarbonImmutable;
 use DateTimeImmutable;
@@ -33,15 +34,19 @@ final class AppointmentCreator
 
     private AvailabilityRepository $availability;
 
+    private BookingOtpService $bookingOtp;
+
     public function __construct(
         AppointmentStateMachine $states,
         AvailabilityRepository $availability,
+        BookingOtpService $bookingOtp,
     ) {
         $this->states = $states;
         $this->availability = $availability;
+        $this->bookingOtp = $bookingOtp;
     }
 
-    public function create(array $input, string $idempotencyKey, string $ownerScope = 'public:appointment:create:v1'): array
+    public function create(array $input, string $idempotencyKey, string $ownerScope = 'public:appointment:create:v1', ?string $otpChallengeId = null): array
     {
         $normalizedInput = [
             'full_name' => trim($input['full_name']),
@@ -54,7 +59,7 @@ final class AppointmentCreator
 
         $requestHash = hash('sha256', $this->canonicalJson($normalizedInput));
 
-        return DB::transaction(function () use ($normalizedInput, $idempotencyKey, $ownerScope, $requestHash): array {
+        return DB::transaction(function () use ($normalizedInput, $idempotencyKey, $ownerScope, $requestHash, $otpChallengeId): array {
             $record = $this->lockIdempotencyRecord($ownerScope, $idempotencyKey, $requestHash);
 
             if ($record->response_status !== 0 && $record->response_body !== null) {
@@ -211,6 +216,14 @@ final class AppointmentCreator
                     409,
                     ['code' => 'SLOT_UNAVAILABLE', 'message' => 'The selected slot is no longer available.'],
                 );
+            }
+
+            if (config('booking.phone_verification_required')) {
+                if (! is_string($otpChallengeId) || $otpChallengeId === '') {
+                    throw new AppointmentBookingException('PHONE_VERIFICATION_REQUIRED', 'Phone verification is required.');
+                }
+
+                $this->bookingOtp->consume($otpChallengeId, $normalizedInput['mobile']);
             }
 
             AppointmentEvent::query()->create([

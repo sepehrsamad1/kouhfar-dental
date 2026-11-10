@@ -1,0 +1,203 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Services;
+
+use App\BookingOtpChallenge;
+use App\Support\IranianPhoneNumber;
+use Carbon\CarbonImmutable;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use RuntimeException;
+use Throwable;
+
+final class BookingOtpService
+{
+    private readonly OtpProviderManager $providers;
+
+    public function __construct(OtpProviderManager $providers)
+    {
+        $this->providers = $providers;
+    }
+
+    public function issue(string $phone, string $ip): string
+    {
+        $normalized = IranianPhoneNumber::normalize($phone);
+        $phoneHash = $this->digest('phone', $normalized);
+        $ipHash = $this->digest('ip', $ip);
+        $challengeId = (string) Str::uuid();
+
+        $createChallenge = function () use ($phoneHash, $ipHash, $challengeId): void {
+            DB::transaction(function () use ($phoneHash, $ipHash, $challengeId): void {
+                // PostgreSQL advisory locks enforce atomic quotas across application nodes.
+                if (DB::connection()->getDriverName() === 'pgsql') {
+                    $lockKeys = ['booking-otp:ip:'.$ipHash, 'booking-otp:phone:'.$phoneHash];
+                    sort($lockKeys, SORT_STRING);
+
+                    foreach ($lockKeys as $lockKey) {
+                        DB::selectOne('select pg_advisory_xact_lock(hashtextextended(?, 0))', [$lockKey]);
+                    }
+                }
+
+                $now = CarbonImmutable::now('UTC');
+                $cooldown = (int) config('booking.otp.resend_cooldown_seconds', 60);
+
+                $last = BookingOtpChallenge::query()
+                    ->where('phone_hash', $phoneHash)
+                    ->latest('created_at')
+                    ->first();
+
+                if ($last !== null && $last->created_at->greaterThan($now->subSeconds($cooldown))) {
+                    throw new BookingOtpRateLimitException;
+                }
+
+                $phone15 = BookingOtpChallenge::query()->where('phone_hash', $phoneHash)
+                    ->where('created_at', '>=', $now->subMinutes(15))->count();
+                $phoneHour = BookingOtpChallenge::query()->where('phone_hash', $phoneHash)
+                    ->where('created_at', '>=', $now->subHour())->count();
+                $ipHour = BookingOtpChallenge::query()->where('ip_hash', $ipHash)
+                    ->where('created_at', '>=', $now->subHour())->count();
+
+                if ($phone15 >= (int) config('booking.otp.phone_send_limit_15_minutes', 3)
+                    || $phoneHour >= (int) config('booking.otp.phone_send_limit_1_hour', 5)
+                    || $ipHour >= (int) config('booking.otp.ip_send_limit_1_hour', 10)) {
+                    throw new BookingOtpRateLimitException;
+                }
+
+                BookingOtpChallenge::query()
+                    ->where('phone_hash', $phoneHash)
+                    ->whereIn('status', ['dispatching', 'pending', 'verified'])
+                    ->update(['status' => 'invalidated', 'code_hash' => null, 'updated_at' => $now]);
+
+                BookingOtpChallenge::query()->create([
+                    'id' => $challengeId,
+                    'phone_hash' => $phoneHash,
+                    'ip_hash' => $ipHash,
+                    'status' => 'dispatching',
+                    'attempts' => 0,
+                    'expires_at' => $now->addMinutes((int) config('booking.otp.ttl_minutes', 5)),
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ]);
+            }, 3);
+        };
+
+        if (DB::connection()->getDriverName() === 'sqlite') {
+            // SQLite is supported for a single-machine local prototype only. File cache
+            // locks serialize the local issuance path; production must use PostgreSQL
+            // advisory locks (or another shared atomic lock provider).
+            $lockKeys = ['booking-otp:ip:'.$ipHash, 'booking-otp:phone:'.$phoneHash];
+            sort($lockKeys, SORT_STRING);
+
+            Cache::lock($lockKeys[0], 15)->block(5, function () use ($lockKeys, $createChallenge): void {
+                Cache::lock($lockKeys[1], 15)->block(5, $createChallenge);
+            });
+        } else {
+            $createChallenge();
+        }
+
+        try {
+            $code = $this->providers->resolve()->sendCode($normalized);
+            if (preg_match('/^[0-9]{4,12}$/D', $code) !== 1) {
+                throw new RuntimeException('OTP provider response is invalid.');
+            }
+
+            $now = CarbonImmutable::now('UTC');
+            $updated = BookingOtpChallenge::query()
+                ->whereKey($challengeId)
+                ->where('status', 'dispatching')
+                ->where('expires_at', '>', $now)
+                ->update([
+                    'code_hash' => $this->digest('code', $challengeId.'|'.$code),
+                    'status' => 'pending',
+                    'last_sent_at' => $now,
+                    'updated_at' => $now,
+                ]);
+
+            if ($updated !== 1) {
+                throw new RuntimeException('OTP challenge is no longer active.');
+            }
+
+            return $challengeId;
+        } catch (Throwable) {
+            BookingOtpChallenge::query()->whereKey($challengeId)
+                ->where('status', 'dispatching')
+                ->update(['status' => 'delivery_failed', 'updated_at' => CarbonImmutable::now('UTC')]);
+
+            // Do not chain provider exceptions; they may contain the token-bearing URL.
+            throw new RuntimeException('OTP delivery is unavailable.');
+        }
+    }
+
+    public function verify(string $challengeId, string $code): bool
+    {
+        return DB::transaction(function () use ($challengeId, $code): bool {
+            $challenge = BookingOtpChallenge::query()->whereKey($challengeId)->lockForUpdate()->first();
+
+            if ($challenge === null || $challenge->status !== 'pending') {
+                return false;
+            }
+
+            $now = CarbonImmutable::now('UTC');
+            if ($challenge->expires_at->lessThanOrEqualTo($now)) {
+                $challenge->forceFill(['status' => 'expired', 'code_hash' => null])->save();
+
+                return false;
+            }
+
+            $maxAttempts = (int) config('booking.otp.max_attempts', 5);
+            if ($challenge->attempts >= $maxAttempts) {
+                $challenge->forceFill(['status' => 'exhausted', 'code_hash' => null])->save();
+
+                return false;
+            }
+
+            $expected = $this->digest('code', $challengeId.'|'.$code);
+            if (! is_string($challenge->code_hash) || ! hash_equals($challenge->code_hash, $expected)) {
+                $attempts = $challenge->attempts + 1;
+                $challenge->forceFill([
+                    'attempts' => $attempts,
+                    'status' => $attempts >= $maxAttempts ? 'exhausted' : 'pending',
+                    'code_hash' => $attempts >= $maxAttempts ? null : $challenge->code_hash,
+                ])->save();
+
+                return false;
+            }
+
+            $challenge->forceFill(['status' => 'verified', 'verified_at' => $now, 'code_hash' => null])->save();
+
+            return true;
+        }, 3);
+    }
+
+    public function consume(string $challengeId, string $phone): void
+    {
+        $normalized = IranianPhoneNumber::normalize($phone);
+        $challenge = BookingOtpChallenge::query()->whereKey($challengeId)->lockForUpdate()->first();
+
+        if ($challenge === null
+            || $challenge->status !== 'verified'
+            || $challenge->consumed_at !== null
+            || $challenge->expires_at->lessThanOrEqualTo(CarbonImmutable::now('UTC'))
+            || ! hash_equals($challenge->phone_hash, $this->digest('phone', $normalized))) {
+            throw new BookingOtpVerificationException('Phone verification is required.');
+        }
+
+        $challenge->forceFill([
+            'status' => 'consumed',
+            'consumed_at' => CarbonImmutable::now('UTC'),
+        ])->save();
+    }
+
+    private function digest(string $purpose, string $value): string
+    {
+        $key = (string) config('app.key');
+        if ($key === '') {
+            throw new RuntimeException('Application key is not configured.');
+        }
+
+        return hash_hmac('sha256', $purpose.'|'.$value, $key);
+    }
+}

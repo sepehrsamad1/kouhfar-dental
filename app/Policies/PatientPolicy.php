@@ -23,7 +23,7 @@ class PatientPolicy
 
     public function update(StaffUser $user, Patient $patient): bool
     {
-        return $this->view($user, $patient);
+        return in_array($user->role, ['admin', 'reception'], true);
     }
 
     public function archive(StaffUser $user, Patient $patient): bool
@@ -33,7 +33,7 @@ class PatientPolicy
 
     public function revealMobile(StaffUser $user, Patient $patient): bool
     {
-        return $this->view($user, $patient);
+        return in_array($user->role, ['admin', 'reception'], true);
     }
 
     private function ownsPatient(StaffUser $user, Patient $patient): bool

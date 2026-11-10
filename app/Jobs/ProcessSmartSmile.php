@@ -52,13 +52,19 @@ final class ProcessSmartSmile implements ShouldQueue
             return;
         }
 
-        $session->forceFill(['status' => 'processing'])->save();
+        $session->forceFill([
+            'status' => 'processing',
+            'result_generated_at' => null,
+            'result_expires_at' => null,
+        ])->save();
 
         try {
             if (Storage::disk('media')->exists($asset->storage_key) === false) {
                 $session->forceFill([
                     'status' => 'failed',
                     'result' => ['message' => 'تصویر در دسترس نیست. لطفاً دوباره تلاش کنید.'],
+                    'result_generated_at' => null,
+                    'result_expires_at' => null,
                 ])->save();
 
                 return;
@@ -74,21 +80,28 @@ final class ProcessSmartSmile implements ShouldQueue
                 $session->forceFill([
                     'status' => 'failed',
                     'result' => ['message' => 'پردازش تصویر در حال حاضر در دسترس نیست. لطفاً بعداً دوباره تلاش کنید.'],
+                    'result_generated_at' => null,
+                    'result_expires_at' => null,
                 ])->save();
 
                 return;
             }
 
+            $generatedAt = now('UTC');
             $session->forceFill([
                 'status' => 'completed',
                 'result' => [
                     'message' => 'این خروجی صرفاً یک شبیه‌سازی غیرتشخیصی است و نتیجه پزشکی یا پیشنهاد درمانی محسوب نمی‌شود.',
                 ],
+                'result_generated_at' => $generatedAt,
+                'result_expires_at' => $generatedAt->copy()->addDays((int) config('smart_smile.result_retention_days', 365)),
             ])->save();
         } catch (Throwable) {
             $session->forceFill([
                 'status' => 'failed',
                 'result' => ['message' => 'پردازش تصویر با خطا مواجه شد. لطفاً بعداً دوباره تلاش کنید.'],
+                'result_generated_at' => null,
+                'result_expires_at' => null,
             ])->save();
         }
     }

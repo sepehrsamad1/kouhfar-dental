@@ -16,7 +16,6 @@ use App\Http\Controllers\SmartSmileController;
 use App\Http\Controllers\StaffAppointmentController;
 use App\Http\Controllers\StaffAuthController;
 use App\Http\Middleware\PreventStoreCache;
-use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 
@@ -24,7 +23,7 @@ Route::view('/', 'home')->name('home');
 Route::get('/booking/availability/{service}', AvailabilityController::class)->middleware('throttle:60,1')->name('booking.availability');
 Route::get('/content/{contentKey}/{locale}', [ContentItemController::class, 'show'])->where('locale', 'fa|en')->name('content.show');
 Route::post('/api/v1/assistant', AssistantController::class)->middleware('throttle:20,1')->name('assistant');
-Route::post('/api/v1/booking-otp/issue', [BookingOtpController::class, 'issue'])->middleware(['web', PreventRequestForgery::class, 'throttle:30,1'])->name('api.v1.booking-otp.issue');
+Route::post('/api/v1/booking-otp/issue', [BookingOtpController::class, 'issue'])->middleware(['web', 'throttle:30,1'])->name('api.v1.booking-otp.issue');
 Route::post('/api/v1/booking-otp/verify', [BookingOtpController::class, 'verify'])->middleware(['web', ValidateCsrfToken::class, 'throttle:30,1'])->name('api.v1.booking-otp.verify');
 Route::post('/api/v1/appointments', [AppointmentController::class, 'store'])->middleware(['web', ValidateCsrfToken::class, 'throttle:30,1'])->name('api.v1.appointments.store');
 Route::post('/api/v1/smart-smile/consent', [SmartSmileController::class, 'consent'])->middleware('throttle:10,1')->name('smart-smile.consent');

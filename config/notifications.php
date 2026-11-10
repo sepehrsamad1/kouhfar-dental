@@ -5,6 +5,12 @@ declare(strict_types=1);
 return [
     'otp' => [
         'driver' => env('SMS_OTP_DRIVER', 'null'),
+        // Explicit activation gate: live SMS must never become active accidentally because
+        // a deployment secret or cached configuration was copied into a new environment.
+        'live_sms_approved' => env('OTP_LIVE_SMS_APPROVED', false),
+        // MeliPayamak's current OTP contract carries its auth token in the HTTPS URL path.
+        // Production activation therefore also requires an explicit risk acceptance.
+        'provider_url_path_risk_accepted' => env('OTP_PROVIDER_URL_PATH_RISK_ACCEPTED', false),
         'melipayamak' => [
             'token' => env('MELIPAYAMAK_OTP_TOKEN'),
         ],

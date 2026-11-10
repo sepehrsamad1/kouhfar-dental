@@ -8,6 +8,7 @@ use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 
 beforeEach(function (): void {
+    config()->set('notifications.otp.driver', 'melipayamak');
     config()->set('notifications.otp.melipayamak.token', str_repeat('a', 32));
     config()->set('notifications.otp.live_sms_approved', true);
     config()->set('notifications.otp.provider_url_path_risk_accepted', true);

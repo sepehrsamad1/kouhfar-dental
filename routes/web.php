@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 use App\Http\Controllers\AIAdminController;
 use App\Http\Controllers\AppointmentController;
-use App\Http\Controllers\BookingOtpController;
 use App\Http\Controllers\AssistantController;
 use App\Http\Controllers\AvailabilityController;
+use App\Http\Controllers\BookingOtpController;
 use App\Http\Controllers\ClinicConfigurationController;
 use App\Http\Controllers\ContentItemController;
 use App\Http\Controllers\DeletionRequestController;

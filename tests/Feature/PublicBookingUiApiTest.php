@@ -75,6 +75,31 @@ it('keeps booking SMS disabled by default and fails closed without a provider', 
     Http::assertNothingSent();
 });
 
+
+it('rejects a state-changing public booking request without a valid CSRF token', function (): void {
+    $service = Service::factory()->create(['is_active' => true, 'is_public_bookable' => true]);
+
+    $this->withMiddleware()
+        ->withHeader('Idempotency-Key', 'csrf-negative-test-0001')
+        ->post('/api/v1/appointments', [
+            'full_name' => 'Synthetic Booker',
+            'mobile' => '09120000001',
+            'service_id' => $service->id,
+            'start_at' => '2026-10-29T09:30:00Z',
+        ])
+        ->assertStatus(419);
+
+    expect(Appointment::query()->count())->toBe(0);
+});
+
+it('rejects a booking OTP issuance request without a valid CSRF token', function (): void {
+    $this->withMiddleware()
+        ->post('/api/v1/booking-otp/issue', ['mobile' => '09120000001'])
+        ->assertStatus(419);
+
+    expect(BookingOtpChallenge::query()->count())->toBe(0);
+});
+
 it('keeps staff-only modules and routes out of the public Vite bundle', function (): void {
     $manifestPath = public_path('build/manifest.json');
     expect(file_exists($manifestPath))->toBeTrue();

@@ -13,4 +13,3 @@ Route::get('/v1/services', PublicServicesController::class)
 Route::get('/v1/availability/{service}', PublicAvailabilityController::class)
     ->middleware('throttle:60,1')
     ->name('api.v1.availability.show');
-

@@ -51,7 +51,7 @@ These are engineering defaults for synthetic local testing, not universal legal 
 
 ## Automated verification status
 
-GitHub Actions run [#1187](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/42899986268), commit `bb811bb5591d6d604fe4bf26c539d5473b16ad7b`, completed successfully on 2026-11-10:
+GitHub Actions run #1192, commit `19c4aa8403a8a0170d886e8227cbfe47f28b85cd`, completed successfully:
 - 331 Laravel/Pest tests passed (24,699 assertions), including Smart Smile expiry/deletion, terminal OTP retention, completed/failed job retention, notification outbox retention and deletion-request/legal-hold boundaries.
 - browser smoke tests passed.
 - PostgreSQL migrations, Pint and PHPStan passed.

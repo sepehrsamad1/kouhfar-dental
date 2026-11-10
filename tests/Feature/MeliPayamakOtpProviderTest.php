@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Notifications\Otp\MeliPayamakOtpProvider;
+use App\Notifications\Otp\MeliPayamakOtpProvider;\nuse App\Services\OtpProviderManager;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 
@@ -74,4 +74,21 @@ it('rejects provider-declared errors even when a code is also present', function
         ->toThrow(RuntimeException::class, 'MeliPayamak OTP delivery failed.');
 
     Http::assertSentCount(1);
+});
+
+
+it('fails closed when live SMS has not been explicitly approved', function (): void {
+    config()->set('notifications.otp.live_sms_approved', false);
+
+    expect(fn () => app(OtpProviderManager::class)->resolve())
+        ->toThrow(RuntimeException::class, 'Live OTP SMS is not explicitly approved.');
+});
+
+it('requires explicit provider URL-path risk acceptance in production', function (): void {
+    app()->detectEnvironment(fn () => 'production');
+    config()->set('notifications.otp.live_sms_approved', true);
+    config()->set('notifications.otp.provider_url_path_risk_accepted', false);
+
+    expect(fn () => app(OtpProviderManager::class)->resolve())
+        ->toThrow(RuntimeException::class, 'OTP provider URL-path credential risk is not approved.');
 });

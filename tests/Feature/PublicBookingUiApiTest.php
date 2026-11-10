@@ -75,7 +75,6 @@ it('keeps booking SMS disabled by default and fails closed without a provider', 
     Http::assertNothingSent();
 });
 
-
 it('rejects a state-changing public booking request without a valid CSRF token', function (): void {
     $service = Service::factory()->create(['is_active' => true, 'is_public_bookable' => true]);
 

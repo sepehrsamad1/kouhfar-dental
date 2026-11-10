@@ -6,7 +6,7 @@
 
 - Task: 28 — Security and Privacy Audit
 - Branch: `task/28-security-privacy-audit`
-- Latest fully CI-verified application revision before MeliPayamak local-setup follow-up: `05f307a15e8ce69480253f1bd1bde24d3969f423` (GitHub Actions run [#1149](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41949121638), completed successfully on 2026-11-05). SMS follow-up changes are awaiting their own CI run.
+- Latest CI-verified application revision: `785219c232cdb73e7c34238c9da0cd1f68b56e22` (GitHub Actions run [#1187](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/42899986268), completed successfully on 2026-11-10). The latest follow-up adds route-level CSRF middleware registration tests for public booking mutations.
 - CI run #1149 passed on the current prototype branch head: full-history Gitleaks, Composer/npm audits, JavaScript lint/typecheck/build, Pint, PHPStan, PostgreSQL migrations, 328 Laravel/Pest tests (24,731 assertions), Task 27 deterministic release evaluation and 36 Playwright browser tests. Composer audit reports no security advisories after updating affected Symfony components to 7.4.23.
 - Target standard: OWASP ASVS v5.0.0 Level 2 (scoped engineering assessment, not certification).
 - Scope: repository source/configuration/migrations/tests/CI. No production or third-party systems were tested.
@@ -51,7 +51,7 @@ These are engineering defaults for synthetic local testing, not universal legal 
 
 ## Automated verification status
 
-GitHub Actions run [#1149](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/41949121638), commit `05f307a15e8ce69480253f1bd1bde24d3969f423`, completed successfully on 2026-11-05:
+GitHub Actions run [#1187](https://github.com/sepehrsamad1/kouhfar-dental/actions/runs/42899986268), commit `785219c232cdb73e7c34238c9da0cd1f68b56e22`, completed successfully on 2026-11-10:
 - 328 Laravel/Pest tests passed (24,731 assertions), including Smart Smile expiry/deletion, terminal OTP retention, completed/failed job retention, notification outbox retention and deletion-request/legal-hold boundaries.
 - 36 Playwright browser tests passed.
 - PostgreSQL migrations, Pint and PHPStan passed.
@@ -60,7 +60,7 @@ GitHub Actions run [#1149](https://github.com/sepehrsamad1/kouhfar-dental/action
 - Task 27 deterministic release evaluation passed.
 - Full-history Gitleaks scan passed.
 
-This is CI verification of the local prototype code only. It does not verify production TLS/proxy, external provider logs, secret injection, storage/backup ACLs, full DB/files backup or isolated recovery.
+This is CI verification of the local prototype code only. The latest CI also verifies that the public appointment and booking-OTP mutation routes register Laravel's request-forgery middleware; actual browser negative-CSRF enforcement remains a staging/production evidence gate because Laravel suppresses CSRF enforcement during unit tests. It does not verify production TLS/proxy, external provider logs, secret injection, storage/backup ACLs, full DB/files backup or isolated recovery.
 
 ## Remaining production release blockers
 

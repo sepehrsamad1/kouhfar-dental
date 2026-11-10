@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\AIAdminController;
+use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\BookingOtpController;
 use App\Http\Controllers\AssistantController;
 use App\Http\Controllers\AvailabilityController;
 use App\Http\Controllers\ClinicConfigurationController;
@@ -21,6 +23,9 @@ Route::view('/', 'home')->name('home');
 Route::get('/booking/availability/{service}', AvailabilityController::class)->middleware('throttle:60,1')->name('booking.availability');
 Route::get('/content/{contentKey}/{locale}', [ContentItemController::class, 'show'])->where('locale', 'fa|en')->name('content.show');
 Route::post('/api/v1/assistant', AssistantController::class)->middleware('throttle:20,1')->name('assistant');
+Route::post('/api/v1/booking-otp/issue', [BookingOtpController::class, 'issue'])->middleware('throttle:30,1')->name('api.v1.booking-otp.issue');
+Route::post('/api/v1/booking-otp/verify', [BookingOtpController::class, 'verify'])->middleware('throttle:30,1')->name('api.v1.booking-otp.verify');
+Route::post('/api/v1/appointments', [AppointmentController::class, 'store'])->middleware('throttle:30,1')->name('api.v1.appointments.store');
 Route::post('/api/v1/smart-smile/consent', [SmartSmileController::class, 'consent'])->middleware('throttle:10,1')->name('smart-smile.consent');
 Route::post('/api/v1/smart-smile/upload', [SmartSmileController::class, 'upload'])->middleware('throttle:5,1')->name('smart-smile.upload');
 Route::post('/api/v1/smart-smile/status', [SmartSmileController::class, 'status'])->middleware('throttle:30,1')->name('smart-smile.status');

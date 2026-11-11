@@ -53,7 +53,7 @@ class DatabaseSeeder extends Seeder
             'buffer_before_minutes' => 0,
             'buffer_after_minutes' => 0,
             'is_active' => true,
-            'is_public_bookable' => false,
+            'is_public_bookable' => true,
         ]);
 
         Practitioner::query()->updateOrCreate(['id' => $practitionerId], [

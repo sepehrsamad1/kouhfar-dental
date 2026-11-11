@@ -1,5 +1,9 @@
 # Kouhfar Dental Clinic
 
+## University demo setup
+
+For a teammate-ready local setup with PostgreSQL, synthetic data, and demo OTP (no SMS provider required), see [`docs/UNIVERSITY_SETUP.md`](docs/UNIVERSITY_SETUP.md).
+
 Task 05 web package is implemented and verified. The public site remains a static/demo frontend; no API or external service integration was added.
 
 ## Run

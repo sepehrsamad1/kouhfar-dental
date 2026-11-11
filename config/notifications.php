@@ -5,19 +5,15 @@ declare(strict_types=1);
 return [
     'otp' => [
         'driver' => env('SMS_OTP_DRIVER', 'null'),
-        // Explicit activation gate: live SMS must never become active accidentally because
-        // a deployment secret or cached configuration was copied into a new environment.
         'live_sms_approved' => env('OTP_LIVE_SMS_APPROVED', false),
-        // MeliPayamak's current OTP contract carries its auth token in the HTTPS URL path.
-        // Production activation therefore also requires an explicit risk acceptance.
         'provider_url_path_risk_accepted' => env('OTP_PROVIDER_URL_PATH_RISK_ACCEPTED', false),
+        'university_demo_mode' => env('UNIVERSITY_DEMO_MODE', false),
+        'demo_code' => env('OTP_DEMO_CODE', '123456'),
         'melipayamak' => [
             'token' => env('MELIPAYAMAK_OTP_TOKEN'),
         ],
     ],
     'sms' => [
-        // Production capability is Kavenegar, but activation remains disabled until Task 15
-        // supplies approved credentials/subscription. Tests and local development use log/null.
         'driver' => env('SMS_DRIVER', 'log'),
         'timezone' => 'Asia/Tehran',
         'quiet_hours' => [

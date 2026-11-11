@@ -53,7 +53,7 @@ class DatabaseSeeder extends Seeder
             'buffer_before_minutes' => 0,
             'buffer_after_minutes' => 0,
             'is_active' => true,
-            'is_public_bookable' => false,
+            'is_public_bookable' => true,
         ]);
 
         Practitioner::query()->updateOrCreate(['id' => $practitionerId], [
@@ -123,7 +123,7 @@ class DatabaseSeeder extends Seeder
         $staff->forceFill([
             'email' => $email,
             'display_name' => $displayName,
-            'password_hash' => Hash::make(Str::random(32)),
+            'password_hash' => Hash::make(env('UNIVERSITY_DEMO_STAFF_PASSWORD', 'Demo1234!')),
             'role' => $role,
             'is_active' => true,
         ])->save();

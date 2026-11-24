@@ -2,6 +2,7 @@
 
 return [
     'default' => env('DB_CONNECTION', 'sqlite'),
+
     'connections' => [
         'sqlite' => [
             'driver' => 'sqlite',
@@ -10,6 +11,7 @@ return [
             'prefix' => '',
             'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
         ],
+
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => env('DB_URL'),
@@ -23,7 +25,14 @@ return [
             'prefix_indexes' => true,
             'search_path' => 'public',
             'sslmode' => 'prefer',
+
+            // Keep PostgreSQL timestamp handling in UTC.
+            'timezone' => env('DB_TIMEZONE', 'UTC'),
         ],
     ],
-    'migrations' => ['table' => 'migrations', 'update_date_on_publish' => true],
+
+    'migrations' => [
+        'table' => 'migrations',
+        'update_date_on_publish' => true,
+    ],
 ];

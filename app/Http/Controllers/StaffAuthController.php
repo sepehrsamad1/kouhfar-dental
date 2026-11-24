@@ -31,7 +31,11 @@ class StaffAuthController
         if (RateLimiter::tooManyAttempts($throttleKey, $maxAttempts)) {
             $this->recordAttempt($email, $request, false);
 
-            return back()->withErrors(['email' => 'اطلاعات ورود صحیح نیست.'])->onlyInput('email');
+            return back()
+                ->withErrors([
+                    'email' => 'اطلاعات ورود صحیح نیست.',
+                ])
+                ->onlyInput('email');
         }
 
         $authenticated = Auth::guard('staff')->attempt([
@@ -44,7 +48,11 @@ class StaffAuthController
             RateLimiter::hit($throttleKey, $decaySeconds);
             $this->recordAttempt($email, $request, false);
 
-            return back()->withErrors(['email' => 'اطلاعات ورود صحیح نیست.'])->onlyInput('email');
+            return back()
+                ->withErrors([
+                    'email' => 'اطلاعات ورود صحیح نیست.',
+                ])
+                ->onlyInput('email');
         }
 
         RateLimiter::clear($throttleKey);
@@ -57,16 +65,30 @@ class StaffAuthController
             'user_id' => Auth::guard('staff')->id(),
             'token_hash' => hash('sha256', Str::random(64)),
             'created_at' => $now,
-            'expires_at' => $absoluteMinutes === null ? $now->copy()->addYears(10) : $now->copy()->addMinutes((int) $absoluteMinutes),
+            'expires_at' => $absoluteMinutes === null
+                ? $now->copy()->addYears(10)
+                : $now->copy()->addMinutes((int) $absoluteMinutes),
             'last_seen_at' => $now,
         ]);
 
-        $request->session()->put('staff_registry_session_id', $registry->getKey());
-        $request->session()->put('staff_authenticated_at', $now->timestamp);
-        $request->session()->put('staff_last_activity_at', $now->timestamp);
+        $request->session()->put(
+            'staff_registry_session_id',
+            $registry->getKey()
+        );
+
+        $request->session()->put(
+            'staff_authenticated_at',
+            $now->timestamp
+        );
+
+        $request->session()->put(
+            'staff_last_activity_at',
+            $now->timestamp
+        );
+
         $this->recordAttempt($email, $request, true);
 
-        return redirect()->to($this->safeIntendedUrl());
+        return redirect()->to($this->safeIntendedUrl($request));
     }
 
     public function destroy(Request $request): RedirectResponse
@@ -74,39 +96,86 @@ class StaffAuthController
         $registryId = $request->session()->pull('staff_registry_session_id');
 
         if ($registryId !== null) {
-            StaffSession::query()->whereKey($registryId)->update(['revoked_at' => now('UTC')]);
+            StaffSession::query()
+                ->whereKey($registryId)
+                ->update([
+                    'revoked_at' => now('UTC'),
+                ]);
         }
 
         Auth::guard('staff')->logout();
+
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
         return redirect()->route('staff.login');
     }
 
-    private function safeIntendedUrl(): string
+    private function safeIntendedUrl(Request $request): string
     {
-        $intended = session()->pull('url.intended');
+        $intended = $request->session()->pull('url.intended');
 
         if (! is_string($intended) || $intended === '') {
             return route('staff.dashboard');
         }
 
-        $parts = parse_url($intended);
-
-        if ($parts === false || isset($parts['scheme'], $parts['host'], $parts['user'], $parts['pass'])) {
+        if (preg_match('/[\x00-\x20\x7F\\\\]/', $intended)) {
             return route('staff.dashboard');
         }
 
-        if (! str_starts_with($intended, '/') || str_starts_with($intended, '//')) {
+        $parts = parse_url($intended);
+
+        if ($parts === false || isset($parts['user']) || isset($parts['pass'])) {
+            return route('staff.dashboard');
+        }
+
+        $hasScheme = isset($parts['scheme']);
+        $hasHost = isset($parts['host']);
+
+        if ($hasScheme || $hasHost) {
+            if (! $hasScheme || ! $hasHost) {
+                return route('staff.dashboard');
+            }
+
+            $scheme = strtolower($parts['scheme']);
+            $host = strtolower($parts['host']);
+
+            if (
+                $scheme !== strtolower($request->getScheme())
+                || $host !== strtolower($request->getHost())
+            ) {
+                return route('staff.dashboard');
+            }
+
+            $expectedPort = $request->getPort();
+
+            $intendedPort = $parts['port'] ?? (
+                $scheme === 'https' ? 443 : 80
+            );
+
+            if ((int) $intendedPort !== $expectedPort) {
+                return route('staff.dashboard');
+            }
+
+            return $intended;
+        }
+
+        if (
+            ! isset($parts['path'])
+            || ! str_starts_with($intended, '/')
+            || str_starts_with($intended, '//')
+        ) {
             return route('staff.dashboard');
         }
 
         return url($intended);
     }
 
-    private function recordAttempt(string $email, Request $request, bool $success): void
-    {
+    private function recordAttempt(
+        string $email,
+        Request $request,
+        bool $success
+    ): void {
         LoginAttempt::query()->create([
             'identifier_hash' => hash('sha256', $email),
             'ip_hash' => hash('sha256', (string) $request->ip()),

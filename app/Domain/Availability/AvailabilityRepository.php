@@ -26,7 +26,6 @@ final class AvailabilityRepository
     public function forPublicService(Service $service, DateTimeImmutable $now, ?string $excludeAppointmentId = null): array
     {
         if ($service->is_active === false || $service->is_public_bookable === false) {
-
             return [];
         }
 
@@ -38,25 +37,29 @@ final class AvailabilityRepository
         /** @var EloquentCollection<int, ClinicWorkingHour> $clinicHourModels */
         $clinicHourModels = ClinicWorkingHour::query()->get();
         $clinicHours = $clinicHourModels->groupBy('weekday');
+
         /** @var EloquentCollection<int, Practitioner> $practitioners */
-        $practitioners = $service->practitioners()->where('practitioners.is_active', true)->get();
+        $practitioners = $service->practitioners()
+            ->where('practitioners.is_active', true)
+            ->get();
+
         $resourceQuery = Resource::query()
             ->where('is_active', true)
             ->whereHas('services', fn ($query) => $query->whereKey($service->getKey()));
+
         if ($service->required_resource_kind !== null) {
             $resourceQuery->where('kind', $service->required_resource_kind);
         }
+
         $compatibleResources = $resourceQuery->get();
 
         $eligiblePractitionerIds = $practitioners->modelKeys();
         $resourceIds = $compatibleResources->modelKeys();
-        if ($eligiblePractitionerIds === [] || $resourceIds === []) {
 
+        if ($eligiblePractitionerIds === [] || $resourceIds === []) {
             return [];
         }
 
-        // Include appointments whose service buffers overlap the requested window,
-        // even when their actual appointment interval sits just outside it.
         $maxBufferBefore = (int) (Service::query()->max('buffer_before_minutes') ?? 0);
         $maxBufferAfter = (int) (Service::query()->max('buffer_after_minutes') ?? 0);
 
@@ -79,11 +82,13 @@ final class AvailabilityRepository
             ->get();
 
         $appointmentIds = $appointmentModels->modelKeys();
+
         $practitionersByAppointment = DB::table('appointment_practitioners')
             ->whereIn('appointment_id', $appointmentIds)
             ->where('active', true)
             ->get(['appointment_id', 'practitioner_id'])
             ->groupBy('appointment_id');
+
         $resourcesByAppointment = DB::table('appointment_resources')
             ->whereIn('appointment_id', $appointmentIds)
             ->where('active', true)
@@ -91,20 +96,27 @@ final class AvailabilityRepository
             ->groupBy('appointment_id');
 
         $appointments = [];
+
         foreach ($appointmentModels as $appointment) {
             /** @var Service $serviceModel */
             $serviceModel = $appointment->service;
-            $appointmentPractitionerIds = $practitionersByAppointment->get($appointment->getKey(), collect())
+
+            $appointmentPractitionerIds = $practitionersByAppointment
+                ->get($appointment->getKey(), collect())
                 ->pluck('practitioner_id')
                 ->map(static fn ($id): string => (string) $id)
                 ->all();
-            $resourceIds = $resourcesByAppointment->get($appointment->getKey(), collect())
+
+            $appointmentResourceIds = $resourcesByAppointment
+                ->get($appointment->getKey(), collect())
                 ->pluck('resource_id')
                 ->map(static fn ($id): string => (string) $id)
                 ->all();
+
             $statusValue = (string) $appointment->getRawOriginal('status');
             $startAt = CarbonImmutable::parse((string) $appointment->start_at);
             $endAt = CarbonImmutable::parse((string) $appointment->end_at);
+
             $expiresAt = $appointment->expires_at === null
                 ? null
                 : CarbonImmutable::parse((string) $appointment->expires_at);
@@ -115,21 +127,29 @@ final class AvailabilityRepository
                 'status' => $statusValue,
                 'expires_at' => $expiresAt?->toDateTimeImmutable(),
                 'practitioner_ids' => $appointmentPractitionerIds,
-                'resource_ids' => $resourceIds,
+                'resource_ids' => $appointmentResourceIds,
             ];
         }
 
         /** @var EloquentCollection<int, WorkingHour> $workingHourModels */
-        $workingHourModels = WorkingHour::query()->whereIn('practitioner_id', $eligiblePractitionerIds)->get();
+        $workingHourModels = WorkingHour::query()
+            ->whereIn('practitioner_id', $eligiblePractitionerIds)
+            ->get();
+
         $workingHoursByPractitioner = $workingHourModels->groupBy('practitioner_id');
+
         /** @var EloquentCollection<int, ScheduleBreak> $breakModels */
         $breakModels = ScheduleBreak::query()
-            ->where(fn ($query) => $query->whereNull('practitioner_id')->orWhereIn('practitioner_id', $eligiblePractitionerIds))
+            ->where(fn ($query) => $query->whereNull('practitioner_id')
+                ->orWhereIn('practitioner_id', $eligiblePractitionerIds))
             ->get();
+
         $breaks = $breakModels->groupBy('weekday');
+
         /** @var EloquentCollection<int, ScheduleException> $exceptions */
         $exceptions = ScheduleException::query()
-            ->where(fn ($query) => $query->whereNull('practitioner_id')->orWhereIn('practitioner_id', $eligiblePractitionerIds))
+            ->where(fn ($query) => $query->whereNull('practitioner_id')
+                ->orWhereIn('practitioner_id', $eligiblePractitionerIds))
             ->where('starts_at', '<', $rangeEnd)
             ->where('ends_at', '>', $localNow->startOfDay()->utc())
             ->get();
@@ -148,8 +168,8 @@ final class AvailabilityRepository
                 $localNow,
                 $rangeEnd
             );
-            if ($periods === []) {
 
+            if ($periods === []) {
                 continue;
             }
 
@@ -188,6 +208,7 @@ final class AvailabilityRepository
         CarbonImmutable $rangeEnd
     ): array {
         $periods = [];
+
         $workingHourModels = $workingHoursByPractitioner->get($practitioner->id, collect());
         $practitionerHours = $workingHourModels->groupBy('weekday');
 
@@ -201,61 +222,65 @@ final class AvailabilityRepository
                 foreach ($staff as $staffHour) {
                     $start = $this->localTime($date, max($clinicHour->start_local, $staffHour->start_local));
                     $end = $this->localTime($date, min($clinicHour->end_local, $staffHour->end_local));
+
                     if ($end > $start) {
                         $segments[] = [$start, $end];
                     }
                 }
             }
 
-            // An explicit special opening is a manager-configured exception to the
-            // regular weekly schedule. Clinic-wide openings apply to every active
-            // practitioner; practitioner-scoped openings apply only to that practitioner.
             foreach ($exceptions as $exception) {
                 if ($exception->kind !== 'special_opening') {
-
                     continue;
                 }
-                if ($exception->practitioner_id !== null && $exception->practitioner_id !== $practitioner->id) {
 
+                if ($exception->practitioner_id !== null
+                    && $exception->practitioner_id !== $practitioner->id) {
                     continue;
                 }
-                $exceptionStart = CarbonImmutable::parse((string) $exception->starts_at)->toDateTimeImmutable();
-                $exceptionEnd = CarbonImmutable::parse((string) $exception->ends_at)->toDateTimeImmutable();
-                $dayStart = $date->startOfDay()->toDateTimeImmutable();
-                $dayEnd = $date->addDay()->startOfDay()->toDateTimeImmutable();
+
+                $exceptionStart = $this->exceptionTimeToUtc($exception, 'starts_at');
+                $exceptionEnd = $this->exceptionTimeToUtc($exception, 'ends_at');
+
+                $dayStart = $date->startOfDay()->utc()->toDateTimeImmutable();
+                $dayEnd = $date->addDay()->startOfDay()->utc()->toDateTimeImmutable();
+
                 $openingStart = $exceptionStart > $dayStart ? $exceptionStart : $dayStart;
                 $openingEnd = $exceptionEnd < $dayEnd ? $exceptionEnd : $dayEnd;
+
                 if ($openingEnd > $openingStart) {
                     $segments[] = [$openingStart, $openingEnd];
                 }
             }
 
             if ($segments === []) {
-
                 continue;
             }
 
-            // Normalize overlapping normal/opening intervals before subtracting breaks
-            // and closures so a special opening cannot re-open a closed interval.
             usort($segments, static fn (array $a, array $b): int => $a[0] <=> $b[0]);
+
             $merged = [];
+
             foreach ($segments as [$segmentStart, $segmentEnd]) {
                 if ($merged === [] || $segmentStart > $merged[array_key_last($merged)][1]) {
                     $merged[] = [$segmentStart, $segmentEnd];
                 } else {
                     $last = array_key_last($merged);
+
                     if ($segmentEnd > $merged[$last][1]) {
                         $merged[$last][1] = $segmentEnd;
                     }
                 }
             }
+
             $segments = $merged;
 
             foreach ($breaks->get($weekday, collect()) as $break) {
-                if ($break->practitioner_id !== null && $break->practitioner_id !== $practitioner->id) {
-
+                if ($break->practitioner_id !== null
+                    && $break->practitioner_id !== $practitioner->id) {
                     continue;
                 }
+
                 $segments = $this->subtract(
                     $segments,
                     $this->localTime($date, $break->start_local),
@@ -264,50 +289,70 @@ final class AvailabilityRepository
             }
 
             foreach ($exceptions as $exception) {
-                if ($exception->practitioner_id !== null && $exception->practitioner_id !== $practitioner->id) {
-
+                if ($exception->practitioner_id !== null
+                    && $exception->practitioner_id !== $practitioner->id) {
                     continue;
                 }
+
                 if (in_array($exception->kind, ['closed', 'holiday'], true)) {
                     $segments = $this->subtract(
                         $segments,
-                        CarbonImmutable::parse((string) $exception->starts_at)->toDateTimeImmutable(),
-                        CarbonImmutable::parse((string) $exception->ends_at)->toDateTimeImmutable()
+                        $this->exceptionTimeToUtc($exception, 'starts_at'),
+                        $this->exceptionTimeToUtc($exception, 'ends_at')
                     );
                 }
             }
 
             foreach ($segments as [$segmentStart, $segmentEnd]) {
-                $periods[] = ['start' => $segmentStart, 'end' => $segmentEnd];
+                $periods[] = [
+                    'start' => $segmentStart,
+                    'end' => $segmentEnd,
+                ];
             }
         }
 
         return $periods;
     }
 
+    private function exceptionTimeToUtc(ScheduleException $exception, string $column): DateTimeImmutable
+    {
+        $value = $exception->getRawOriginal($column);
+
+        return CarbonImmutable::parse((string) $value, 'UTC')
+            ->utc()
+            ->toDateTimeImmutable();
+    }
+
     private function localTime(CarbonImmutable $date, string $time): DateTimeImmutable
     {
-
-        return new DateTimeImmutable($date->format('Y-m-d').' '.substr($time, 0, 8), new DateTimeZone(self::TIMEZONE));
+        return new DateTimeImmutable(
+            $date->format('Y-m-d').' '.substr($time, 0, 8),
+            new DateTimeZone(self::TIMEZONE)
+        );
     }
 
     private function subtract(array $segments, DateTimeImmutable $cutStart, DateTimeImmutable $cutEnd): array
     {
         $result = [];
+
         foreach ($segments as [$start, $end]) {
             if ($cutEnd <= $start || $cutStart >= $end) {
                 $result[] = [$start, $end];
-
                 continue;
             }
+
             if ($cutStart > $start) {
                 $result[] = [$start, $cutStart];
             }
+
             if ($cutEnd < $end) {
                 $result[] = [$cutEnd, $end];
             }
         }
 
-        return array_values(array_filter($result, static fn (array $segment): bool => $segment[1] > $segment[0]));
+        return array_values(array_filter(
+            $result,
+            static fn (array $segment): bool => $segment[1] > $segment[0]
+        ));
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Appointment;
+use App\Enums\AppointmentStatus;
 use App\ClinicWorkingHour;
 use App\Practitioner;
 use App\Resource;
@@ -248,35 +249,94 @@ final class ClinicConfigurationController
     public function updateResource(Request $request, Resource $resource): RedirectResponse
     {
         Gate::authorize('update', $resource);
+
         $data = $request->validate([
             'version' => ['required', 'integer', 'min:1'],
             'name_fa' => ['required', 'string', 'min:2', 'max:200'],
             'kind' => ['required', 'string', 'min:2', 'max:80'],
             'is_active' => ['required', 'boolean'],
         ]);
-        if (! (bool) $data['is_active'] && $resource->is_active) {
-            $impacted = Appointment::query()
-                ->where('status', 'confirmed')->where('start_at', '>=', now('UTC'))
-                ->whereHas('resources', fn ($builder) => $builder->whereKey($resource->id)->where('appointment_resources.active', true))
-                ->orderBy('start_at')->get(['id']);
-            if ($impacted->isNotEmpty()) {
-                throw ValidationException::withMessages(['resource' => 'غیرفعال‌سازی منبع با نوبت‌های تأییدشده مرتبط است. تغییری ذخیره نشد. شناسه نوبت‌ها: '.$impacted->pluck('id')->implode(', ')]);
+
+        $updated = DB::transaction(function () use ($request, $resource, $data): bool {
+            $lockedResource = Resource::query()
+                ->whereKey($resource->getKey())
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            $version = (int) $data['version'];
+
+            if ($lockedResource->version !== $version) {
+                return false;
             }
+
+            if (! (bool) $data['is_active'] && $lockedResource->is_active) {
+                $now = now('UTC');
+
+                $impacted = Appointment::query()
+                    ->where(function ($query) use ($now): void {
+                        $query
+                            ->where('status', AppointmentStatus::Confirmed->value)
+                            ->orWhere(function ($pending) use ($now): void {
+                                $pending
+                                    ->where('status', AppointmentStatus::Pending->value)
+                                    ->where('expires_at', '>', $now);
+                            });
+                    })
+                    ->where('start_at', '>=', $now)
+                    ->whereHas('resources', fn ($builder) => $builder
+                        ->whereKey($lockedResource->getKey())
+                        ->where('appointment_resources.active', true))
+                    ->orderBy('start_at')
+                    ->get(['id']);
+
+                if ($impacted->isNotEmpty()) {
+                    throw ValidationException::withMessages([
+                        'resource' => 'غیرفعال‌سازی منبع دارای نوبت تأییدشده امکان‌پذیر نیست. شناسه نوبت‌ها: '.$impacted->pluck('id')->implode(', '),
+                    ]);
+                }
+            }
+
+            $before = [
+                'is_active' => $lockedResource->is_active,
+            ];
+
+            $changes = [
+                'name_fa' => $data['name_fa'],
+                'kind' => $data['kind'],
+                'is_active' => (bool) $data['is_active'],
+            ];
+
+            $affected = Resource::query()
+                ->whereKey($lockedResource->getKey())
+                ->where('version', $version)
+                ->update($changes + [
+                    'version' => DB::raw('version + 1'),
+                    'updated_at' => now('UTC'),
+                ]);
+
+            if ($affected !== 1) {
+                return false;
+            }
+
+            AuditLogger::record(
+                $request->user('staff'),
+                'configuration.resource_updated',
+                $lockedResource,
+                $before,
+                ['is_active' => $changes['is_active'], 'kind' => $changes['kind']],
+            );
+
+            return true;
+        });
+
+        if (! $updated) {
+            throw ValidationException::withMessages([
+                'version' => 'تنظیمات منبع هم‌زمان تغییر کرده است. صفحه را تازه‌سازی کنید.',
+            ]);
         }
-        $version = (int) $data['version'];
-        unset($data['version']);
-        $updated = Resource::query()->whereKey($resource->id)->where('version', $version)
-            ->update($data + ['version' => DB::raw('version + 1'), 'updated_at' => now('UTC')]);
-        if ($updated !== 1) {
-            throw ValidationException::withMessages(['version' => 'تنظیمات منبع هم‌زمان تغییر کرده است. صفحه را تازه‌سازی کنید.']);
-        }
-        AuditLogger::record($request->user('staff'), 'configuration.resource_updated', $resource, [
-            'is_active' => $resource->is_active,
-        ], ['is_active' => (bool) $data['is_active']]);
 
         return back()->with('success', 'تنظیمات منبع ذخیره شد.');
     }
-
     public function storeClinicHour(Request $request): RedirectResponse
     {
         Gate::authorize('manage-configuration');

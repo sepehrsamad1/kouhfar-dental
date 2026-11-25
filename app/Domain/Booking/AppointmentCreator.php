@@ -145,6 +145,13 @@ final class AppointmentCreator
                             ->lockForUpdate()
                             ->firstOrFail();
 
+                        if (! $resource->is_active) {
+                            throw new AppointmentBookingException(
+                                'SLOT_UNAVAILABLE',
+                                'The selected slot is no longer available.',
+                            );
+                        }
+
                         $conflictingPractitioner = DB::table('appointment_practitioners')
                             ->where('practitioner_id', $practitioner->getKey())
                             ->where('active', true)

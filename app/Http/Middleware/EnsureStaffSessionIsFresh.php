@@ -35,6 +35,11 @@ class EnsureStaffSessionIsFresh
             return $this->expire($request);
         }
 
+        // Reject sessions belonging to deactivated staff accounts.
+        if (! $guard->user()->is_active) {
+            return $this->expire($request, $registry);
+        }
+
         $now = now('UTC');
 
         $authenticatedAt = (int) $request->session()->get(

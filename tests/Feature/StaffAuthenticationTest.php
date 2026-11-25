@@ -339,3 +339,32 @@ it('does not expose password hashes in staff user array output', function () {
 
     expect($staff->toArray())->not->toHaveKey('password_hash');
 });
+
+it('revokes an authenticated session when the staff user is deactivated', function () {
+    $staff = createActiveStaffUser();
+
+    $session = StaffSession::create([
+        'user_id' => $staff->id,
+        'token_hash' => hash('sha256', 'deactivated-session-token'),
+        'created_at' => now(),
+        'expires_at' => now()->addHour(),
+        'last_seen_at' => now(),
+    ]);
+
+    $this->actingAs($staff, 'staff');
+
+    session([
+        'staff_registry_session_id' => $session->id,
+        'staff_authenticated_at' => now()->timestamp,
+        'staff_last_activity_at' => now()->timestamp,
+    ]);
+
+    $staff->update(['is_active' => false]);
+
+    $this->get(route('staff.dashboard'))
+        ->assertRedirect(route('staff.login'));
+
+    $this->assertGuest('staff');
+
+    expect($session->fresh()->revoked_at)->not->toBeNull();
+});

@@ -35,7 +35,7 @@
                 <label>وقفه قبل (دقیقه) <input type="number" name="buffer_before_minutes" min="0" max="1440" value="0" required></label>
                 <label>وقفه بعد (دقیقه) <input type="number" name="buffer_after_minutes" min="0" max="1440" value="10" required></label>
                 <label>نوع منبع موردنیاز <select name="required_resource_kind"><option value="">هنوز مشخص نشده</option><option value="dental_unit">یونیت دندان‌پزشکی مشترک</option><option value="consultation_room">فضای مشاوره</option></select></label>
-                <button type="submit">ثبت خدمت غیرفعال</button>
+                <button type="submit">ثبت خدمت فعال</button>
             </form>
         @endif
     </section>
@@ -71,7 +71,7 @@
         @if ($canManage)
             <form method="post" action="{{ route('staff.configuration.practitioners.store') }}">@csrf
                 <label>نام نمایشی پزشک <input name="display_name_fa" maxlength="200" required></label>
-                <button type="submit">ثبت پزشک غیرفعال</button>
+                <button type="submit">ثبت پزشک فعال</button>
             </form>
         @endif
     </section>

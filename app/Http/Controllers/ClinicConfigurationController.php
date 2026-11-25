@@ -59,18 +59,18 @@ final class ClinicConfigurationController
             'required_resource_kind' => ['nullable', Rule::in(['dental_unit', 'consultation_room'])],
         ]);
         $service = DB::transaction(fn () => Service::query()->create($data + [
-            'is_active' => false,
+            'is_active' => true,
             'is_public_bookable' => false,
         ]));
         AuditLogger::record($request->user('staff'), 'configuration.service_created', $service, null, [
-            'is_active' => false,
+            'is_active' => true,
             'duration_minutes' => (int) $data['duration_minutes'],
             'buffer_before_minutes' => (int) $data['buffer_before_minutes'],
             'buffer_after_minutes' => (int) $data['buffer_after_minutes'],
             'required_resource_kind' => $data['required_resource_kind'] ?? null,
         ]);
 
-        return back()->with('success', 'خدمت به صورت غیرفعال ثبت شد. فعال‌سازی عمومی تا تأیید تنظیمات انجام نمی‌شود.');
+        return back()->with('success', 'خدمت فعال ثبت شد. فعال‌سازی عمومی تا تأیید تنظیمات انجام نمی‌شود.');
     }
 
     public function updateService(Request $request, Service $service): RedirectResponse
@@ -140,10 +140,10 @@ final class ClinicConfigurationController
     {
         Gate::authorize('create', Practitioner::class);
         $data = $request->validate(['display_name_fa' => ['required', 'string', 'min:2', 'max:200']]);
-        $practitioner = Practitioner::query()->create(['display_name_fa' => $data['display_name_fa'], 'is_active' => false]);
-        AuditLogger::record($request->user('staff'), 'configuration.practitioner_created', $practitioner, null, ['is_active' => false]);
+        $practitioner = Practitioner::query()->create(['display_name_fa' => $data['display_name_fa'], 'is_active' => true]);
+        AuditLogger::record($request->user('staff'), 'configuration.practitioner_created', $practitioner, null, ['is_active' => true]);
 
-        return back()->with('success', 'پزشک به صورت غیرفعال ثبت شد؛ صلاحیت یا خدماتی به او اختصاص داده نشده است.');
+        return back()->with('success', 'پزشک فعال ثبت شد؛ صلاحیت یا خدماتی به او اختصاص داده نشده است.');
     }
 
     public function updatePractitioner(Request $request, Practitioner $practitioner): RedirectResponse

@@ -55,7 +55,8 @@ it('allows authorized staff to view configuration but only admin to change it', 
         ])
         ->assertRedirect();
 
-    expect(Service::query()->where('name_fa', 'خدمت آزمایشی')->firstOrFail()->is_active)->toBeFalse();
+    expect(Service::query()->where('name_fa', 'خدمت آزمایشی')->firstOrFail()->is_active)->toBeTrue();
+    expect(Service::query()->where('name_fa', 'خدمت آزمایشی')->firstOrFail()->is_public_bookable)->toBeFalse();
 });
 
 it('rejects cross-midnight clinic schedule periods', function (): void {
@@ -533,4 +534,21 @@ it('blocks narrowing practitioner hours when a confirmed appointment falls outsi
 
     expect(substr((string) $hour->refresh()->start_local, 0, 5))->toBe('12:00')
         ->and(Appointment::query()->whereKey($appointment->id)->exists())->toBeTrue();
+});
+
+it('creates new practitioners as active', function (): void {
+    $admin = configurationStaff('admin');
+
+    $this->actingAs($admin, 'staff')
+        ->post(route('staff.configuration.practitioners.store'), [
+            'display_name_fa' => 'پزشک آزمایشی',
+        ])
+        ->assertRedirect();
+
+    expect(
+        Practitioner::query()
+            ->where('display_name_fa', 'پزشک آزمایشی')
+            ->firstOrFail()
+            ->is_active
+    )->toBeTrue();
 });

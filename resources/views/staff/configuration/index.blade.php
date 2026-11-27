@@ -24,6 +24,12 @@
                 <label>وقفه بعد <input type="number" name="buffer_after_minutes" min="0" max="1440" value="{{ $service->buffer_after_minutes }}" required @disabled(! $canManage)></label>
                 <label>نوع منبع موردنیاز <select name="required_resource_kind" @disabled(! $canManage)><option value="">هنوز مشخص نشده</option><option value="dental_unit" @selected($service->required_resource_kind === 'dental_unit')>یونیت دندان‌پزشکی مشترک</option><option value="consultation_room" @selected($service->required_resource_kind === 'consultation_room')>فضای مشاوره</option></select></label>
                 <input type="hidden" name="is_active" value="0" @disabled(! $canManage)><label>فعال <input type="checkbox" name="is_active" value="1" @checked($service->is_active) @disabled(! $canManage)></label>
+<input type="hidden" name="is_public_bookable" value="0" @disabled(! $canManage)>
+<label>انتشار برای رزرو عمومی
+    <input type="checkbox" name="is_public_bookable" value="1"
+        @checked($service->is_public_bookable)
+        @disabled(! $canManage)>
+</label>
                 <button type="submit" @disabled(! $canManage)>ذخیره</button>
             </form>
         @endforeach

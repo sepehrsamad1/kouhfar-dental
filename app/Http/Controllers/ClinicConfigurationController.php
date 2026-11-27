@@ -73,68 +73,102 @@ final class ClinicConfigurationController
         return back()->with('success', 'خدمت فعال ثبت شد. فعال‌سازی عمومی تا تأیید تنظیمات انجام نمی‌شود.');
     }
 
-    public function updateService(Request $request, Service $service): RedirectResponse
-    {
-        Gate::authorize('update', $service);
-        $data = $request->validate([
-            'version' => ['required', 'integer', 'min:1'],
-            'name_fa' => ['required', 'string', 'min:2', 'max:200'],
-            'duration_minutes' => ['required', 'integer', 'min:1', 'max:1440'],
-            'buffer_before_minutes' => ['required', 'integer', 'min:0', 'max:1440'],
-            'buffer_after_minutes' => ['required', 'integer', 'min:0', 'max:1440'],
-            'required_resource_kind' => ['nullable', Rule::in(['dental_unit', 'consultation_room'])],
-            'is_active' => ['required', 'boolean'],
-        ]);
 
-        $configurationChanged = (int) $data['duration_minutes'] !== $service->duration_minutes
-            || (int) $data['buffer_before_minutes'] !== $service->buffer_before_minutes
-            || (int) $data['buffer_after_minutes'] !== $service->buffer_after_minutes
-            || ($data['required_resource_kind'] ?? null) !== $service->required_resource_kind;
-        if ($configurationChanged) {
-            $impacted = Appointment::query()
-                ->where('service_id', $service->id)
-                ->where('status', 'confirmed')
-                ->where('start_at', '>=', now('UTC'))
-                ->orderBy('start_at')
-                ->get(['id', 'start_at']);
-            if ($impacted->isNotEmpty()) {
-                throw ValidationException::withMessages([
-                    'service' => 'تغییر مدت، زمان حائل یا نوع منبع موردنیاز می‌تواند بر نوبت‌های تأییدشده اثر بگذارد. تغییر ذخیره نشد. شناسه نوبت‌ها: '.$impacted->pluck('id')->implode(', '),
-                ]);
-            }
+public function updateService(Request $request, Service $service): RedirectResponse
+{
+    Gate::authorize('update', $service);
+
+    $data = $request->validate([
+        'version' => ['required', 'integer', 'min:1'],
+        'name_fa' => ['required', 'string', 'min:2', 'max:200'],
+        'duration_minutes' => ['required', 'integer', 'min:1', 'max:1440'],
+        'buffer_before_minutes' => ['required', 'integer', 'min:0', 'max:1440'],
+        'buffer_after_minutes' => ['required', 'integer', 'min:0', 'max:1440'],
+        'required_resource_kind' => ['nullable', Rule::in(['dental_unit', 'consultation_room'])],
+        'is_active' => ['required', 'boolean'],
+        'is_public_bookable' => ['sometimes', 'boolean'],
+    ]);
+
+    $requestedPublicBookable = array_key_exists('is_public_bookable', $data)
+        ? (bool) $data['is_public_bookable']
+        : (bool) $service->is_public_bookable;
+
+
+    // Deactivating a service also disables its public availability.
+    $data['is_public_bookable'] = (bool) $data['is_active'] && $requestedPublicBookable;
+
+    $configurationChanged = (int) $data['duration_minutes'] !== $service->duration_minutes
+        || (int) $data['buffer_before_minutes'] !== $service->buffer_before_minutes
+        || (int) $data['buffer_after_minutes'] !== $service->buffer_after_minutes
+        || ($data['required_resource_kind'] ?? null) !== $service->required_resource_kind;
+
+    if ($configurationChanged) {
+        $impacted = Appointment::query()
+            ->where('service_id', $service->id)
+            ->where('status', 'confirmed')
+            ->where('start_at', '>=', now('UTC'))
+            ->orderBy('start_at')
+            ->get(['id', 'start_at']);
+
+        if ($impacted->isNotEmpty()) {
+            throw ValidationException::withMessages([
+                'service' => 'ØªØºÛŒÛŒØ± Ù…Ø¯ØªØŒ Ø²Ù…Ø§Ù† Ø­Ø§Ø¦Ù„ ÛŒØ§ Ù†ÙˆØ¹ Ù…Ù†Ø¨Ø¹ Ù…ÙˆØ±Ø¯Ù†ÛŒØ§Ø² Ù…ÛŒâ€ŒØªÙˆØ§Ù†Ø¯ Ø¨Ø± Ù†ÙˆØ¨Øªâ€ŒÙ‡Ø§ÛŒ ØªØ£ÛŒÛŒØ¯Ø´Ø¯Ù‡ Ø§Ø«Ø± Ø¨Ú¯Ø°Ø§Ø±Ø¯. ØªØºÛŒÛŒØ± Ø°Ø®ÛŒØ±Ù‡ Ù†Ø´Ø¯. Ø´Ù†Ø§Ø³Ù‡ Ù†ÙˆØ¨Øªâ€ŒÙ‡Ø§: '.$impacted->pluck('id')->implode(', '),
+            ]);
+        }
+    }
+
+    $updated = DB::transaction(function () use ($request, $service, $data): bool {
+        $version = (int) $data['version'];
+        unset($data['version']);
+
+        $updated = Service::query()
+            ->whereKey($service->getKey())
+            ->where('version', $version)
+            ->update($data + [
+                'version' => DB::raw('version + 1'),
+                'updated_at' => now('UTC'),
+            ]);
+
+        if ($updated !== 1) {
+            return false;
         }
 
-        $updated = DB::transaction(function () use ($request, $service, $data): bool {
-            $version = (int) $data['version'];
-            unset($data['version']);
-            $updated = Service::query()->whereKey($service->getKey())->where('version', $version)
-                ->update($data + ['version' => DB::raw('version + 1'), 'updated_at' => now('UTC')]);
-            if ($updated !== 1) {
-                return false;
-            }
-            AuditLogger::record($request->user('staff'), 'configuration.service_updated', $service, [
+        AuditLogger::record(
+            $request->user('staff'),
+            'configuration.service_updated',
+            $service,
+            [
                 'is_active' => $service->is_active,
+                'is_public_bookable' => $service->is_public_bookable,
                 'duration_minutes' => $service->duration_minutes,
                 'buffer_before_minutes' => $service->buffer_before_minutes,
                 'buffer_after_minutes' => $service->buffer_after_minutes,
                 'required_resource_kind' => $service->required_resource_kind,
-            ], [
+            ],
+            [
                 'is_active' => (bool) $data['is_active'],
+                'is_public_bookable' => (bool) $data['is_public_bookable'],
                 'duration_minutes' => (int) $data['duration_minutes'],
                 'buffer_before_minutes' => (int) $data['buffer_before_minutes'],
                 'buffer_after_minutes' => (int) $data['buffer_after_minutes'],
                 'required_resource_kind' => $data['required_resource_kind'] ?? null,
-            ]);
+            ]
+        );
 
-            return true;
-        });
+        return true;
+    });
 
-        if (! $updated) {
-            throw ValidationException::withMessages(['version' => 'این تنظیمات توسط کاربر دیگری تغییر کرده است. صفحه را تازه‌سازی و دوباره بررسی کنید.']);
-        }
-
-        return back()->with('success', 'تنظیمات خدمت ذخیره شد. سوابق و نوبت‌های قبلی حذف یا بازنویسی نشدند.');
+    if (! $updated) {
+        throw ValidationException::withMessages([
+            'version' => 'Ø§ÛŒÙ† ØªÙ†Ø¸ÛŒÙ…Ø§Øª ØªÙˆØ³Ø· Ú©Ø§Ø±Ø¨Ø± Ø¯ÛŒÚ¯Ø±ÛŒ ØªØºÛŒÛŒØ± Ú©Ø±Ø¯Ù‡ Ø§Ø³Øª. ØµÙØ­Ù‡ Ø±Ø§ ØªØ§Ø²Ù‡â€ŒØ³Ø§Ø²ÛŒ Ùˆ Ø¯ÙˆØ¨Ø§Ø±Ù‡ Ø¨Ø±Ø±Ø³ÛŒ Ú©Ù†ÛŒØ¯.',
+        ]);
     }
+
+    return back()->with(
+        'success',
+        'ØªÙ†Ø¸ÛŒÙ…Ø§Øª Ø®Ø¯Ù…Øª Ø°Ø®ÛŒØ±Ù‡ Ø´Ø¯. Ø³ÙˆØ§Ø¨Ù‚ Ùˆ Ù†ÙˆØ¨Øªâ€ŒÙ‡Ø§ÛŒ Ù‚Ø¨Ù„ÛŒ Ø­Ø°Ù ÛŒØ§ Ø¨Ø§Ø²Ù†ÙˆÛŒØ³ÛŒ Ù†Ø´Ø¯Ù†Ø¯.'
+    );
+}
 
     public function storePractitioner(Request $request): RedirectResponse
     {

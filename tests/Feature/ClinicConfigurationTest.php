@@ -134,7 +134,7 @@ it('blocks service duration changes that could affect confirmed appointments and
     $this->actingAs($admin, 'staff')
         ->from(route('staff.configuration.index'))
         ->patch(route('staff.configuration.services.update', $service), [
-            'version' => $service->version,
+            'version' => $service->refresh()->version,
             'name_fa' => $service->name_fa,
             'duration_minutes' => 30,
             'buffer_before_minutes' => 0,
@@ -258,7 +258,7 @@ it('audits service configuration changes with allowlisted before and after value
 
     $this->actingAs($admin, 'staff')
         ->patch(route('staff.configuration.services.update', $service), [
-            'version' => $service->version,
+            'version' => $service->refresh()->version,
             'name_fa' => $service->name_fa,
             'duration_minutes' => 45,
             'buffer_before_minutes' => 5,
@@ -551,4 +551,101 @@ it('creates new practitioners as active', function (): void {
             ->firstOrFail()
             ->is_active
     )->toBeTrue();
+});
+it('allows admin to publish an active service for public booking', function (): void {
+    $admin = configurationStaff('admin');
+
+    $service = Service::factory()->create([
+        'is_active' => true,
+        'is_public_bookable' => false,
+    ]);
+
+    $this->actingAs($admin, 'staff')
+        ->patch(route('staff.configuration.services.update', $service), [
+
+            'version' => $service->refresh()->version,
+            'name_fa' => $service->name_fa,
+            'duration_minutes' => $service->duration_minutes,
+            'buffer_before_minutes' => $service->buffer_before_minutes,
+            'buffer_after_minutes' => $service->buffer_after_minutes,
+            'is_active' => 1,
+            'is_public_bookable' => 1,
+        ])
+                ->assertSessionHasNoErrors()
+        ->assertRedirect();
+
+    expect($service->refresh()->is_public_bookable)->toBeTrue();
+});
+
+it('allows admin to unpublish an active service', function (): void {
+    $admin = configurationStaff('admin');
+
+    $service = Service::factory()->create([
+        'is_active' => true,
+        'is_public_bookable' => true,
+    ]);
+
+    $this->actingAs($admin, 'staff')
+        ->patch(route('staff.configuration.services.update', $service), [
+
+            'version' => $service->refresh()->version,
+            'name_fa' => $service->name_fa,
+            'duration_minutes' => $service->duration_minutes,
+            'buffer_before_minutes' => $service->buffer_before_minutes,
+            'buffer_after_minutes' => $service->buffer_after_minutes,
+            'is_active' => 1,
+            'is_public_bookable' => 0,
+        ])
+        ->assertRedirect();
+
+    expect($service->refresh()->is_public_bookable)->toBeFalse();
+});
+
+it('automatically unpublishes a service when it is deactivated', function (): void {
+    $admin = configurationStaff('admin');
+
+    $service = Service::factory()->create([
+        'is_active' => true,
+        'is_public_bookable' => true,
+    ]);
+
+    $this->actingAs($admin, 'staff')
+        ->patch(route('staff.configuration.services.update', $service), [
+
+            'version' => $service->refresh()->version,
+            'name_fa' => $service->name_fa,
+            'duration_minutes' => $service->duration_minutes,
+            'buffer_before_minutes' => $service->buffer_before_minutes,
+            'buffer_after_minutes' => $service->buffer_after_minutes,
+            'is_active' => 0,
+            'is_public_bookable' => 1,
+        ])
+        ->assertSessionHasNoErrors()
+                ->assertRedirect();
+
+    expect($service->refresh()->is_active)->toBeFalse()
+        ->and($service->is_public_bookable)->toBeFalse();
+});
+
+it('preserves public booking status when the field is omitted from an update', function (): void {
+    $admin = configurationStaff('admin');
+
+    $service = Service::factory()->create([
+        'is_active' => true,
+        'is_public_bookable' => true,
+    ]);
+
+    $this->actingAs($admin, 'staff')
+        ->patch(route('staff.configuration.services.update', $service), [
+            'version' => $service->version ?? 1,
+            'name_fa' => $service->name_fa,
+            'duration_minutes' => $service->duration_minutes,
+            'buffer_before_minutes' => $service->buffer_before_minutes,
+            'buffer_after_minutes' => $service->buffer_after_minutes,
+            'is_active' => 1,
+         ])
+        ->assertSessionHasNoErrors()
+        ->assertRedirect();
+
+    expect($service->refresh()->is_public_bookable)->toBeTrue();
 });

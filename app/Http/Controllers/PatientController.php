@@ -23,6 +23,7 @@ class PatientController
     public function index(PatientLookupRequest $request): View|JsonResponse
     {
         $user = $request->user('staff');
+
         $query = Patient::query()
             ->select(['id', 'full_name', 'mobile_normalized', 'archived_at', 'version'])
             ->when(
@@ -66,39 +67,48 @@ class PatientController
         return view('staff.patients.index', [
             'patients' => $patients,
             'canCreate' => in_array($user->role, ['admin', 'reception'], true),
+            'canUpdate' => in_array($user->role, ['admin', 'reception', 'practitioner'], true),
+            'canArchive' => $user->role === 'admin',
         ]);
     }
 
     public function store(PatientStoreRequest $request): JsonResponse|RedirectResponse
     {
         $normalized = $request->string('mobile_normalized')->toString();
+        $staff = $request->user('staff');
 
-        $duplicateCount = Patient::query()
-            ->where('mobile_normalized', $normalized)
-            ->count();
+        [$patient, $duplicateCount] = DB::transaction(
+            function () use ($request, $normalized, $staff): array {
+                $this->lockMobileNumber($normalized);
 
-        if ($duplicateCount > 0 && ! $request->boolean('confirm_duplicate')) {
+                $duplicateCount = Patient::query()
+                    ->where('mobile_normalized', $normalized)
+                    ->count();
+
+                if ($duplicateCount > 0 && ! $request->boolean('confirm_duplicate')) {
+                    return [null, $duplicateCount];
+                }
+
+                $patient = Patient::query()->create([
+                    'full_name' => trim($request->string('full_name')->toString()),
+                    'mobile_normalized' => $normalized,
+                ]);
+
+                AuditLogger::record($staff, 'patient.created', $patient, null, [
+                    'reason_code' => 'patient_created',
+                ]);
+
+                return [$patient, 0];
+            }
+        );
+
+        if ($duplicateCount > 0) {
             return $this->duplicateResponse(
                 $request,
                 'برای این شماره موبایل بیمار قبلی وجود دارد. ثبت بیمار جدید فقط پس از تأیید صریح انجام می‌شود.',
                 $duplicateCount
             );
         }
-
-        $staff = $request->user('staff');
-
-        $patient = DB::transaction(function () use ($request, $normalized, $staff): Patient {
-            $patient = Patient::query()->create([
-                'full_name' => trim($request->string('full_name')->toString()),
-                'mobile_normalized' => $normalized,
-            ]);
-
-            AuditLogger::record($staff, 'patient.created', $patient, null, [
-                'reason_code' => 'patient_created',
-            ]);
-
-            return $patient;
-        });
 
         if ($request->expectsJson()) {
             return response()->json($this->presentPatient($patient), 201);
@@ -109,22 +119,60 @@ class PatientController
             ->with('success', 'بیمار با موفقیت ثبت شد.');
     }
 
-    public function update(PatientUpdateRequest $request, Patient $patient): JsonResponse|RedirectResponse
+    public function update(PatientUpdateRequest $request, Patient $patient): JsonResponse|RedirectResponse|\Illuminate\Http\Response
     {
         Gate::forUser($request->user('staff'))->authorize('update', $patient);
 
         $expectedVersion = $request->integer('version');
+
         $normalized = $request->filled('mobile')
             ? $request->string('mobile_normalized')->toString()
             : $patient->mobile_normalized;
+
         $staff = $request->user('staff');
 
-        $duplicateCount = Patient::query()
-            ->where('mobile_normalized', $normalized)
-            ->where($patient->getKeyName(), '!=', $patient->getKey())
-            ->count();
+        [$updated, $duplicateCount] = DB::transaction(
+            function () use (
+                $request,
+                $patient,
+                $expectedVersion,
+                $normalized,
+                $staff
+            ): array {
+                $this->lockMobileNumber($normalized);
 
-        if ($duplicateCount > 0 && ! $request->boolean('confirm_duplicate')) {
+                $duplicateCount = Patient::query()
+                    ->where('mobile_normalized', $normalized)
+                    ->where($patient->getKeyName(), '!=', $patient->getKey())
+                    ->count();
+
+                if ($duplicateCount > 0 && ! $request->boolean('confirm_duplicate')) {
+                    return [false, $duplicateCount];
+                }
+
+                $affected = Patient::query()
+                    ->whereKey($patient->getKey())
+                    ->where('version', $expectedVersion)
+                    ->update([
+                        'full_name' => trim($request->string('full_name')->toString()),
+                        'mobile_normalized' => $normalized,
+                        'version' => DB::raw('version + 1'),
+                        'updated_at' => now('UTC'),
+                    ]);
+
+                if ($affected !== 1) {
+                    return [false, 0];
+                }
+
+                AuditLogger::record($staff, 'patient.updated', $patient, null, [
+                    'reason_code' => 'patient_updated',
+                ]);
+
+                return [true, 0];
+            }
+        );
+
+        if ($duplicateCount > 0) {
             return $this->duplicateResponse(
                 $request,
                 'شماره موبایل واردشده برای بیمار دیگری ثبت شده است. تأیید صریح برای استفاده از شماره تکراری لازم است.',
@@ -132,31 +180,17 @@ class PatientController
             );
         }
 
-        $updated = DB::transaction(function () use ($request, $patient, $expectedVersion, $normalized, $staff): bool {
-            $affected = Patient::query()
-                ->whereKey($patient->getKey())
-                ->where('version', $expectedVersion)
-                ->update([
-                    'full_name' => trim($request->string('full_name')->toString()),
-                    'mobile_normalized' => $normalized,
-                    'version' => DB::raw('version + 1'),
-                    'updated_at' => now('UTC'),
-                ]);
+        if (! $updated) {
+            $message = 'اطلاعات بیمار تغییر کرده است. صفحه را دوباره بارگذاری کنید و تغییرات خود را بررسی کنید.';
 
-            if ($affected !== 1) {
-                return false;
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => $message,
+                ], 409);
             }
 
-            AuditLogger::record($staff, 'patient.updated', $patient, null, [
-                'reason_code' => 'patient_updated',
-            ]);
-
-            return true;
-        });
-
-        if (! $updated) {
-            return response()->json([
-                'message' => 'اطلاعات بیمار تغییر کرده است. صفحه را دوباره بارگذاری کنید و تغییرات خود را بررسی کنید.',
+            return response()->view('staff.patients.conflict', [
+                'message' => $message,
             ], 409);
         }
 
@@ -212,8 +246,19 @@ class PatientController
         ]);
     }
 
-    private function duplicateResponse(Request $request, string $message, int $count): JsonResponse|RedirectResponse
+    private function lockMobileNumber(string $normalized): void
     {
+        DB::select(
+            'SELECT pg_advisory_xact_lock(hashtextextended(?, 0))',
+            ['kouhfar:patient-mobile:'.$normalized]
+        );
+    }
+
+    private function duplicateResponse(
+        Request $request,
+        string $message,
+        int $count
+    ): JsonResponse|RedirectResponse {
         if ($request->expectsJson()) {
             return response()->json([
                 'message' => $message,

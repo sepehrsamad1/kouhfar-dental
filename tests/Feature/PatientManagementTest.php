@@ -219,3 +219,59 @@ it('allows archive only to administrators', function (): void {
 
     expect($patient->refresh()->archived_at)->toBeNull();
 });
+
+
+it('returns an HTML 409 conflict page for stale patient updates', function (): void {
+    $reception = makePatientManagerStaff('reception');
+
+    $patient = Patient::factory()->create([
+        'full_name' => 'Old patient name',
+        'mobile_normalized' => '09121234567',
+    ]);
+
+    $response = $this->actingAs($reception, 'staff')
+        ->patch(route('staff.patients.update', $patient), [
+            'full_name' => 'New patient name',
+            'mobile' => '09121234567',
+            'version' => $patient->version + 1,
+        ]);
+
+    $response->assertStatus(409)
+        ->assertViewIs('staff.patients.conflict')
+        ->assertViewHas('message');
+
+    expect($patient->refresh()->full_name)->toBe('Old patient name');
+});
+
+it('acquires a PostgreSQL transaction lock before checking duplicate patient mobiles', function (): void {
+    $reception = makePatientManagerStaff('reception');
+    $queries = [];
+
+    DB::listen(function (\Illuminate\Database\Events\QueryExecuted $query) use (&$queries): void {
+        $queries[] = strtolower($query->sql);
+    });
+
+    $this->actingAs($reception, 'staff')
+        ->postJson(route('staff.patients.store'), [
+            'full_name' => 'Lock test patient',
+            'mobile' => '09129998877',
+        ])
+        ->assertCreated();
+
+    $lockIndex = null;
+    $patientCountIndex = null;
+
+    foreach ($queries as $index => $sql) {
+        if (str_contains($sql, 'pg_advisory_xact_lock')) {
+            $lockIndex = $index;
+        }
+
+        if (str_contains($sql, 'select count(*)') && str_contains($sql, 'patients')) {
+            $patientCountIndex = $index;
+        }
+    }
+
+    expect($lockIndex)->not->toBeNull()
+        ->and($patientCountIndex)->not->toBeNull()
+        ->and($lockIndex)->toBeLessThan($patientCountIndex);
+});

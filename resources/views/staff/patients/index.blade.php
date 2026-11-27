@@ -75,7 +75,7 @@
                 </td>
                 <td>{{ $patient['archived_at'] ? 'بایگانی‌شده' : 'فعال' }}</td>
                 <td>
-                    @can('update', \App\Patient::find($patient['id']))
+                    @if ($canUpdate)
                         <form method="post" action="{{ route('staff.patients.update', $patient['id']) }}">
                             @csrf
                             @method('PATCH')
@@ -88,15 +88,15 @@
                             </label>
                             <button type="submit">ذخیره</button>
                         </form>
-                    @endcan
-                    @can('archive', \App\Patient::find($patient['id']))
+                    @endif
+                    @if ($canArchive)
                         @if (! $patient['archived_at'])
                             <form method="post" action="{{ route('staff.patients.archive', $patient['id']) }}">
                                 @csrf
                                 <button type="submit">بایگانی</button>
                             </form>
                         @endif
-                    @endcan
+                    @endif
                 </td>
             </tr>
         @empty
